@@ -72,8 +72,8 @@ const AMENITIES: {
 
 const copy = {
   en: {
-    title: "One house. One key.",
-    sub: "A homestay kept by Erich Haldi himself, in Finsterwald in the UNESCO Biosphere Entlebuch.",
+    title: "Stay the night in Finsterwald",
+    sub: "A homestay kept by Erich Haldi himself, in the UNESCO Biosphere Entlebuch.",
     name: "Stay at Erich's bee house",
     place: "Finsterwald · Entlebuch",
     altitude: "about 1,060 m",
@@ -97,8 +97,8 @@ const copy = {
     cta: "Ask Erich about dates",
   },
   de: {
-    title: "Ein Haus. Ein Schlüssel.",
-    sub: "Eine Unterkunft, geführt von Erich Haldi selbst, in Finsterwald in der UNESCO Biosphäre Entlebuch.",
+    title: "Übernachten in Finsterwald",
+    sub: "Eine Unterkunft, geführt von Erich Haldi selbst, in der UNESCO Biosphäre Entlebuch.",
     name: "Zu Gast bei Erichs Bienenhaus",
     place: "Finsterwald · Entlebuch",
     altitude: "ca. 1060 m ü. M.",
