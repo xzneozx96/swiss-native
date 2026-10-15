@@ -43,6 +43,7 @@ import {
 import { Media } from "@/components/media";
 import { useLocale } from "@/contexts/locale-context";
 import { DetailCard } from "@/components/detail-card";
+import { zurichDate } from "@/features/catalog/lib/pickup";
 import { useTours } from "@/features/tours/hooks/use-tours";
 import { departureSeats } from "@/features/tours/lib/selectors";
 import { departurePhase } from "@/features/tours/merchant/lib/work";
@@ -421,6 +422,19 @@ function NoDeparturesYet({ error }: { error?: string }) {
   );
 }
 
+/** Departures already sorted by start, grouped by their Zurich day. */
+function visitDays<T extends { departure: Departure }>(rows: T[]): T[][] {
+  const days = new Map<string, T[]>();
+
+  for (const row of rows) {
+    const key = zurichDate(new Date(row.departure.startsAt));
+
+    days.set(key, [...(days.get(key) ?? []), row]);
+  }
+
+  return [...days.values()];
+}
+
 function DeparturesCard({ tour, error }: { tour: Tour; error?: string }) {
   const { t } = useLocale();
   const { data, departures, now } = useTours();
@@ -467,7 +481,70 @@ function DeparturesCard({ tour, error }: { tour: Tour; error?: string }) {
       <p className="text-sm text-pretty text-muted">
         {t("products.departures.note")}
       </p>
-      {upcoming.length ? (
+      {upcoming.length && tour.kind === "experience" ? (
+        // Visits start every 30 minutes: one header per day, one short line per start.
+        <ul className="flex flex-col gap-4">
+          {visitDays(upcoming).map((slots) => {
+            const first = slots[0].departure;
+
+            return (
+              <li key={first.id} className="flex flex-col gap-1">
+                <div className="flex items-center gap-4 py-2">
+                  <DateTile
+                    date={{
+                      weekday: weekday(first.startsAt),
+                      day: day(first.startsAt),
+                      month: month(first.startsAt),
+                    }}
+                  />
+                  <span className="flex min-w-0 flex-1 flex-col gap-0.5 text-sm tabular-nums">
+                    <span className="font-medium">
+                      {t("tourMerchant.visitsDay", {
+                        count: slots.length,
+                        from: time(first.startsAt),
+                        to: time(slots[slots.length - 1].departure.startsAt),
+                      })}
+                    </span>
+                    <span className="text-xs text-muted">
+                      {policyLine(first)}
+                    </span>
+                  </span>
+                </div>
+                <ul className="flex flex-col divide-y divide-separator rounded-2xl bg-surface-secondary">
+                  {slots.map(({ departure, phase, seats }) => (
+                    <li key={departure.id}>
+                      <button
+                        aria-label={t("products.departures.edit", {
+                          date: date(departure.startsAt),
+                        })}
+                        className="flex min-h-11 w-full items-center gap-3 px-3 text-start text-sm outline-none first:rounded-t-2xl last:rounded-b-2xl hover:bg-default focus-visible:focus-ring"
+                        type="button"
+                        onClick={() => setSeatsFor(departure.id)}
+                      >
+                        <span className="w-12 shrink-0 font-semibold tabular-nums">
+                          {time(departure.startsAt)}
+                        </span>
+                        <span className="flex-1 text-muted tabular-nums">
+                          {t("tourMerchant.seatsBooked", {
+                            count: seats.confirmed,
+                            capacity: seats.capacity,
+                          })}
+                          {phase !== "open" && ` · ${t(phaseChip[phase].key)}`}
+                        </span>
+                        <ChevronRightIcon
+                          aria-hidden
+                          className="shrink-0 text-muted"
+                          size={16}
+                        />
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              </li>
+            );
+          })}
+        </ul>
+      ) : upcoming.length ? (
         <ul className="flex flex-col divide-y divide-separator">
           {upcoming.map(({ departure, phase, seats }) => (
             <li key={departure.id} className="py-1 first:pt-0 last:pb-0">

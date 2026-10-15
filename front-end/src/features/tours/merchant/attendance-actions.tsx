@@ -4,6 +4,7 @@ import type { MessageKey } from "@/i18n/en";
 
 import { Button, toast } from "@heroui/react";
 
+import { kindKey, useBookingKind } from "../booking/kind";
 import { useTourActions, useTours } from "../hooks/use-tours";
 
 import { outcomeBlock } from "./lib/transitions";
@@ -54,6 +55,7 @@ export function AttendanceActions({
   const { now, role } = useTours();
   const { t } = useLocale();
   const { time, date } = useTourFormatting();
+  const kind = useBookingKind(booking);
   const { outcome } = useTourActions();
   const { confirm, dialog } = useConfirm();
   const blockText = useBlockText();
@@ -135,7 +137,12 @@ export function AttendanceActions({
           {attendBlock && (
             <p className="text-sm text-muted">
               {attendBlock.code === "not-ended"
-                ? t("tourMerchant.afterEndAt", { time: time(booking.endsAt) })
+                ? t(kindKey("tourMerchant.afterEndAt", kind), {
+                    time:
+                      kind === "stay"
+                        ? date(booking.endsAt)
+                        : time(booking.endsAt),
+                  })
                 : blockText(attendBlock)}
             </p>
           )}

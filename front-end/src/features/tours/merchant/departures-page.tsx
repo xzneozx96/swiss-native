@@ -34,6 +34,7 @@ import { Media } from "@/components/media";
 import { RowActions } from "@/components/row-actions";
 import { StatusChip } from "@/components/status-chip";
 import { useLocale } from "@/contexts/locale-context";
+import { zurichDate } from "@/features/catalog/lib/pickup";
 import { pickText } from "@/lib/localized";
 
 interface Row {
@@ -42,6 +43,83 @@ interface Row {
   phase: DeparturePhase;
   seats: ReturnType<typeof departureSeats>;
   work: TourWork;
+}
+
+/**
+ * One line of the schedule: a departure, or a bee house day with its many visit starts under
+ * one header (the visits start every 30 minutes, so one ticket each would bury the stays).
+ */
+interface Item extends Row {
+  id: string;
+  /** Set for a bee house day: its visits, soonest first. */
+  slots?: Row[];
+}
+
+const sumSeats = (rows: Row[]): Row["seats"] => ({
+  confirmed: rows.reduce((n, r) => n + r.seats.confirmed, 0),
+  held: rows.reduce((n, r) => n + r.seats.held, 0),
+  available: rows.reduce(
+    (n, r) => n + (bookable(r.phase) ? r.seats.available : 0),
+    0,
+  ),
+  capacity: rows.reduce((n, r) => n + r.seats.capacity, 0),
+});
+
+const sumWork = (rows: Row[]): TourWork => ({
+  toRecord: rows.flatMap((r) => r.work.toRecord),
+  overdue: rows.flatMap((r) => r.work.overdue),
+  owing: rows.flatMap((r) => r.work.owing),
+  reconcile: rows.flatMap((r) => r.work.reconcile),
+  toCollect: rows.reduce((n, r) => n + r.work.toCollect, 0),
+});
+
+/** Rows in order, each bee house day folded into one item where its first visit stands. */
+function groupDays(rows: Row[]): Item[] {
+  const items: Item[] = [];
+  const days = new Map<string, Item>();
+
+  for (const row of rows) {
+    if (row.tour?.kind !== "experience") {
+      items.push({ ...row, id: row.departure.id });
+      continue;
+    }
+    const key = zurichDate(new Date(row.departure.startsAt));
+    const day = days.get(key);
+
+    if (day) day.slots!.push(row);
+    else {
+      const item: Item = { ...row, id: `day-${key}`, slots: [row] };
+
+      days.set(key, item);
+      items.push(item);
+    }
+  }
+
+  return items.map((item) => {
+    if (!item.slots || item.slots.length < 2) {
+      return item.slots
+        ? { ...item.slots[0], id: item.slots[0].departure.id }
+        : item;
+    }
+    const slots = [...item.slots].sort(
+      (a, b) =>
+        Date.parse(a.departure.startsAt) - Date.parse(b.departure.startsAt),
+    );
+    const phases = slots.map((r) => r.phase);
+
+    return {
+      ...item,
+      departure: slots[0].departure,
+      slots,
+      phase: phases.includes("open")
+        ? "open"
+        : phases.every((p) => p === phases[0])
+          ? phases[0]
+          : "closed",
+      seats: sumSeats(slots),
+      work: sumWork(slots),
+    };
+  });
 }
 
 const attention: {
@@ -99,18 +177,31 @@ const bookable = (phase: DeparturePhase) =>
  * dots and words; seats and money in the dashed footer, one fact per row. The whole ticket
  * opens M06.
  */
-function DepartureCards({ rows }: { rows: Row[] }) {
+function DepartureCards({ rows }: { rows: Item[] }) {
   const { t, language } = useLocale();
   const { money, weekday, day, month } = useTourFormatting();
   const startText = useStartText();
 
   return (
     <ul className="flex flex-col gap-5 lg:hidden">
-      {rows.map(({ departure, tour, phase, seats, work }) => {
+      {rows.map(({ id, departure, tour, phase, seats, work, slots }) => {
         const items = attention.filter((a) => a.count(work) > 0);
 
+        if (slots)
+          return (
+            <li key={id}>
+              <DayCard
+                phase={phase}
+                seats={seats}
+                slots={slots}
+                tour={tour}
+                work={work}
+              />
+            </li>
+          );
+
         return (
-          <li key={departure.id}>
+          <li key={id}>
             <Link
               className={`${ticketSurface} outline-none hover:bg-surface-secondary focus-visible:focus-ring`}
               params={{ departureId: departure.id }}
@@ -203,36 +294,195 @@ function DepartureCards({ rows }: { rows: Row[] }) {
   );
 }
 
+/** The visit starts of one bee house day as links to their guest lists. */
+function SlotLinks({
+  slots,
+  compact = false,
+}: {
+  slots: Row[];
+  compact?: boolean;
+}) {
+  const { t } = useLocale();
+  const { time } = useTourFormatting();
+
+  if (compact)
+    return (
+      <span className="mt-1 flex flex-wrap gap-x-2 gap-y-1">
+        {slots.map(({ departure, seats }) => (
+          <Link
+            key={departure.id}
+            aria-label={`${time(departure.startsAt)}, ${t(
+              "tourMerchant.seatsBooked",
+              {
+                count: seats.confirmed,
+                capacity: seats.capacity,
+              },
+            )}`}
+            className={`rounded-md underline underline-offset-4 outline-none focus-visible:focus-ring ${seats.confirmed + seats.held > 0 ? "font-semibold text-foreground" : ""}`}
+            params={{ departureId: departure.id }}
+            to="/store/bookings/departures/$departureId"
+          >
+            {time(departure.startsAt)}
+          </Link>
+        ))}
+      </span>
+    );
+
+  return (
+    <ul className="flex flex-col divide-y divide-separator">
+      {slots.map(({ departure, seats, phase }) => (
+        <li key={departure.id}>
+          <Link
+            className="flex min-h-12 items-center gap-3 px-4 py-2 text-sm outline-none hover:bg-surface-secondary focus-visible:focus-ring focus-visible:ring-inset"
+            params={{ departureId: departure.id }}
+            to="/store/bookings/departures/$departureId"
+          >
+            <span className="w-14 shrink-0 font-semibold tabular-nums">
+              {time(departure.startsAt)}
+            </span>
+            <span className="flex-1 text-muted tabular-nums">
+              {t("tourMerchant.seatsBooked", {
+                count: seats.confirmed,
+                capacity: seats.capacity,
+              })}
+              {seats.held > 0 &&
+                ` · ${t("tourMerchant.onHold", { held: seats.held })}`}
+              {phase !== "open" && ` · ${t(phaseChip[phase].key)}`}
+            </span>
+            <ChevronRightIcon
+              aria-hidden
+              className="shrink-0 text-muted"
+              size={16}
+            />
+          </Link>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+/** Phones: a bee house day as one ticket, its date as the header, one line per visit. */
+function DayCard({
+  tour,
+  phase,
+  seats,
+  work,
+  slots,
+}: Pick<Item, "tour" | "phase" | "seats" | "work"> & { slots: Row[] }) {
+  const { t, language } = useLocale();
+  const { money, weekday, day, month, time } = useTourFormatting();
+  const first = slots[0].departure.startsAt;
+  const last = slots[slots.length - 1].departure.startsAt;
+  const items = attention.filter((a) => a.count(work) > 0);
+
+  return (
+    <section
+      aria-label={`${tour ? pickText(tour.name, language).text : ""}, ${weekday(first)} ${day(first)} ${month(first)}`}
+      className={ticketSurface}
+    >
+      <div className="flex items-center gap-4 p-4">
+        <DateTile
+          date={{
+            weekday: weekday(first),
+            day: day(first),
+            month: month(first),
+          }}
+          muted={phase === "cancelled"}
+          size="lg"
+        />
+        <div className="min-w-0 flex-1">
+          <h3 className="text-lg leading-tight font-semibold">
+            {tour && pickText(tour.name, language).text}
+          </h3>
+          <p className="mt-2 text-xs text-muted tabular-nums">
+            {t("tourMerchant.visitsDay", {
+              count: slots.length,
+              from: time(first),
+              to: time(last),
+            })}
+          </p>
+          <div className="mt-2 flex flex-wrap gap-2">
+            <KindChip kind={tour?.kind} />
+            {items.map((a) => (
+              <StatusChip key={a.key} tone={a.tone}>
+                {t(a.key, { count: a.count(work) })}
+              </StatusChip>
+            ))}
+          </div>
+        </div>
+      </div>
+      <SlotLinks slots={slots} />
+      <dl className="flex flex-col gap-2 border-t border-dashed border-separator px-4 py-3.5 text-sm">
+        {[
+          [
+            t("tourMerchant.booked"),
+            t("tourMerchant.seatsOf", {
+              count: seats.confirmed,
+              capacity: seats.capacity,
+            }),
+          ],
+          [t("tourMerchant.holds"), seats.held],
+          [
+            t("tourMerchant.available"),
+            bookable(phase) ? seats.available : "—",
+          ],
+          [t("tourMerchant.toCollect"), money(work.toCollect)],
+        ].map(([label, value], index) => (
+          <div
+            key={label}
+            className="flex items-baseline justify-between gap-4"
+          >
+            <dt className="shrink-0 text-muted">{label}</dt>
+            <dd
+              className={`text-end tabular-nums ${index === 0 ? "font-semibold" : "text-muted"}`}
+            >
+              {value}
+            </dd>
+          </div>
+        ))}
+      </dl>
+    </section>
+  );
+}
+
 function DepartureTable({
   rows,
   label,
   empty,
   isLoading,
 }: {
-  rows: Row[];
+  rows: Item[];
   label: string;
   isLoading?: boolean;
   /** Shown inside the table (a card on phones) when `rows` is empty. */
   empty?: EmptyStateProps;
 }) {
   const { t, language } = useLocale();
-  const { money } = useTourFormatting();
+  const { money, weekday, day, month, time } = useTourFormatting();
   const startText = useStartText();
   // Fixed shares, so the Upcoming and Ended tables line up column by column.
-  const columns: DataTableColumn<Row>[] = [
+  const columns: DataTableColumn<Item>[] = [
     {
       id: "departure",
       header: t("tourMerchant.departure"),
       headerClassName: "w-[28%]",
       isRowHeader: true,
       skeleton: "two-line",
-      render: ({ departure, tour, phase }) => (
+      render: ({ departure, tour, phase, slots }) => (
         <>
           <span className="block font-semibold">
             {tour && pickText(tour.name, language).text}
           </span>
           <span className="flex flex-wrap items-center gap-2 text-label text-muted tabular-nums">
-            {startText(tour?.kind, departure.startsAt)}
+            {slots
+              ? `${weekday(departure.startsAt)} ${day(departure.startsAt)} ${month(
+                  departure.startsAt,
+                )} · ${t("tourMerchant.visitsDay", {
+                  count: slots.length,
+                  from: time(slots[0].departure.startsAt),
+                  to: time(slots[slots.length - 1].departure.startsAt),
+                })}`
+              : startText(tour?.kind, departure.startsAt)}
             <KindChip kind={tour?.kind} />
             {phase !== "open" && (
               <StatusChip tone={phaseChip[phase].tone}>
@@ -240,6 +490,7 @@ function DepartureTable({
               </StatusChip>
             )}
           </span>
+          {slots && <SlotLinks compact slots={slots} />}
         </>
       ),
     },
@@ -288,28 +539,29 @@ function DepartureTable({
       columns={columns}
       contentClassName="table-fixed"
       empty={empty}
-      getRowHref={({ departure }) =>
-        `#/store/bookings/departures/${departure.id}`
+      getRowHref={({ departure, slots }) =>
+        slots ? undefined : `#/store/bookings/departures/${departure.id}`
       }
-      getRowId={({ departure }) => departure.id}
+      getRowId={({ id }) => id}
       isLoading={isLoading}
       label={label}
       rowActions={{
-        render: ({ departure, tour }) => (
-          <RowActions
-            actions={[
-              {
-                id: "open",
-                label: t("rowAction.openDeparture"),
-                icon: ArrowUpRightIcon,
-                href: `#/store/bookings/departures/${departure.id}`,
-              },
-            ]}
-            label={t("table.rowActions", {
-              name: tour ? pickText(tour.name, language).text : departure.id,
-            })}
-          />
-        ),
+        render: ({ departure, tour, slots }) =>
+          slots ? null : (
+            <RowActions
+              actions={[
+                {
+                  id: "open",
+                  label: t("rowAction.openDeparture"),
+                  icon: ArrowUpRightIcon,
+                  href: `#/store/bookings/departures/${departure.id}`,
+                },
+              ]}
+              label={t("table.rowActions", {
+                name: tour ? pickText(tour.name, language).text : departure.id,
+              })}
+            />
+          ),
         headerClassName: "w-[8%]",
       }}
       rows={rows}
@@ -341,10 +593,12 @@ export function TourDeparturesPage() {
   });
   const byStart = (a: Row, b: Row) =>
     Date.parse(a.departure.startsAt) - Date.parse(b.departure.startsAt);
-  const upcoming = rows.filter((r) => r.phase !== "ended").sort(byStart);
-  const ended = rows
-    .filter((r) => r.phase === "ended")
-    .sort((a, b) => byStart(b, a));
+  const upcoming = groupDays(
+    rows.filter((r) => r.phase !== "ended").sort(byStart),
+  );
+  const ended = groupDays(
+    rows.filter((r) => r.phase === "ended").sort((a, b) => byStart(b, a)),
+  );
 
   const noDepartures = {
     icon: BookingsIcon,

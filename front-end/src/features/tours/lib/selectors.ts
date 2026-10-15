@@ -20,12 +20,24 @@ export function findListing(
 export function participantSeats(group: TourParticipants): number {
   return group.adults + group.children;
 }
-export function tourTotal(tour: Tour, group: TourParticipants): number {
+/** The group's price; a stay's prices are per night. */
+export function tourTotal(
+  tour: Tour,
+  group: TourParticipants,
+  nights = 1,
+): number {
   return (
-    tour.adultPrice * group.adults +
-    tour.childPrice * group.children +
-    tour.infantPrice * group.infants
+    (tour.adultPrice * group.adults +
+      tour.childPrice * group.children +
+      tour.infantPrice * group.infants) *
+    nights
   );
+}
+/** The departures a booking holds places on: every night of a stay, else its one departure. */
+export function bookingNights(
+  booking: Pick<TourBooking, "departureId" | "nightIds">,
+): string[] {
+  return booking.nightIds?.length ? booking.nightIds : [booking.departureId];
 }
 export function bookingPaid(booking: TourBooking): number {
   return booking.payments
@@ -51,7 +63,7 @@ export function availableSeats(
   const held = data.bookings
     .filter(
       (b) =>
-        b.departureId === departureId &&
+        bookingNights(b).includes(departureId) &&
         (b.status === "pending_payment"
           ? Date.parse(b.holdUntil) > now.getTime()
           : !["expired", "cancelled"].includes(b.status)),
@@ -104,7 +116,9 @@ export function departureSeats(
   departureId: string,
   now: Date,
 ): { confirmed: number; held: number; available: number; capacity: number } {
-  const bookings = data.bookings.filter((b) => b.departureId === departureId);
+  const bookings = data.bookings.filter((b) =>
+    bookingNights(b).includes(departureId),
+  );
   const seats = (list: TourBooking[]) =>
     list.reduce((sum, b) => sum + participantSeats(b), 0);
 

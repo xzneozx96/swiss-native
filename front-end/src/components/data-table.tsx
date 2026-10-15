@@ -33,7 +33,7 @@ interface DataTableProps<T> {
   rows: T[];
   getRowId: (row: T) => string;
   /** Makes the whole row a link. */
-  getRowHref?: (row: T) => string;
+  getRowHref?: (row: T) => string | undefined;
   /** Back to page 1 when this changes, e.g. on a new tab, filter or search. */
   resetKey?: string;
   /**

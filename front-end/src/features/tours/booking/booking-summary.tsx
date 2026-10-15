@@ -1,4 +1,4 @@
-import type { TourBooking, TourParticipants } from "../types";
+import type { TourBooking, TourKind, TourParticipants } from "../types";
 
 import { useBookingKind, useKindT } from "./kind";
 
@@ -14,6 +14,7 @@ import { SurfaceCardBlock, SurfaceCardTitle } from "@/components/surface-card";
 import { useLocale } from "@/contexts/locale-context";
 import { BookingStatusLabels } from "@/features/tours/components/booking-status";
 import { useTours } from "@/features/tours/hooks/use-tours";
+import { bookingNights } from "@/features/tours/lib/selectors";
 import { formatMoney } from "@/lib/format";
 import { pickText } from "@/lib/localized";
 
@@ -68,6 +69,38 @@ export function useGroupText() {
       .join(" · ");
 }
 
+/** "3 nights" / "3 Nächte". */
+export function useNightsText() {
+  const { t } = useLocale();
+
+  return (count: number) =>
+    t(`tourBooking.nights.${count === 1 ? "one" : "other"}`, { count });
+}
+
+type Dated = Pick<
+  TourBooking,
+  "startsAt" | "endsAt" | "departureId" | "nightIds"
+>;
+
+/**
+ * When a booking takes place: a stay as "Check-in Sat, 24 Oct, 15:00 → check-out Tue, 27 Oct,
+ * 11:00 · 3 nights", anything else as its start.
+ */
+export function useWhenText() {
+  const { t } = useLocale();
+  const { date } = useBookingFormat();
+  const nights = useNightsText();
+
+  return (booking: Dated, kind: TourKind) =>
+    kind === "stay"
+      ? t("tourBooking.stayDates", {
+          checkIn: date(booking.startsAt),
+          checkOut: date(booking.endsAt),
+          nights: nights(bookingNights(booking).length),
+        })
+      : date(booking.startsAt);
+}
+
 const closed: TourBooking["status"][] = [
   "expired",
   "cancelled",
@@ -102,11 +135,14 @@ export function TourTicketHead({
   booking: TourBooking;
   size?: "md" | "lg";
 }) {
-  const { language } = useLocale();
+  const { t, language } = useLocale();
   const { day, time } = useBookingFormat();
   const groupText = useGroupText();
+  const nights = useNightsText();
   const name = pickText(booking.tourName, language);
   const photo = useTourPhoto(booking);
+  const isStay = useBookingKind(booking) === "stay";
+  const checkOut = day(booking.endsAt);
 
   return (
     <div className="flex items-center gap-4 p-4">
@@ -124,7 +160,13 @@ export function TourTicketHead({
         </h2>
         <span className={`${metaRow} tabular-nums`}>
           <ClockIcon aria-hidden className="mt-0.5 shrink-0" size={16} />
-          {time(booking.startsAt)}
+          {isStay
+            ? t("tourBooking.stayTicket", {
+                time: time(booking.startsAt),
+                checkOut: `${checkOut.weekday} ${checkOut.day} ${checkOut.month}`,
+                nights: nights(bookingNights(booking).length),
+              })
+            : time(booking.startsAt)}
         </span>
         <span className={metaRow}>
           <TravelGroupIcon aria-hidden className="mt-0.5 shrink-0" size={16} />
@@ -146,8 +188,9 @@ const rowIcon = "mt-0.5 shrink-0";
  */
 export function BookingSummary({ booking }: { booking: TourBooking }) {
   const { t, language } = useLocale();
-  const kt = useKindT(useBookingKind(booking));
-  const { date } = useBookingFormat();
+  const kind = useBookingKind(booking);
+  const kt = useKindT(kind);
+  const when = useWhenText();
   const groupText = useGroupText();
   const name = pickText(booking.tourName, language);
   const meeting = pickText(booking.meetingPoint, language);
@@ -171,7 +214,7 @@ export function BookingSummary({ booking }: { booking: TourBooking }) {
         <div className="flex flex-col gap-1.5">
           <p className={row}>
             <BookingsIcon aria-hidden className={rowIcon} size={16} />
-            {date(booking.startsAt)}
+            {when(booking, kind)}
           </p>
           <p className={row}>
             <TravelGroupIcon aria-hidden className={rowIcon} size={16} />

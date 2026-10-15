@@ -15,6 +15,7 @@ export function ChoiceSheet({
   action,
   isOpen,
   onOpenChange,
+  summary,
   children,
 }: {
   title: string;
@@ -26,6 +27,8 @@ export function ChoiceSheet({
   };
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
+  /** The choice in words above the button, kept in sight while the body scrolls. */
+  summary?: ReactNode;
   children: ReactNode;
 }) {
   const exitRef = useSheetExit();
@@ -45,7 +48,10 @@ export function ChoiceSheet({
           <Drawer.Body className="flex flex-col gap-7 overflow-y-auto">
             {children}
           </Drawer.Body>
-          <Drawer.Footer className="pt-3 pb-[calc(env(safe-area-inset-bottom,0px)+16px)]">
+          <Drawer.Footer
+            className={`pt-3 pb-[calc(env(safe-area-inset-bottom,0px)+16px)] ${summary ? "flex-col items-stretch gap-2" : ""}`}
+          >
+            {summary}
             <Button
               fullWidth
               className="h-14 text-base"

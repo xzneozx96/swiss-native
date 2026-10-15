@@ -2,6 +2,7 @@ import type { Departure, Tour, TourBooking, TourData } from "../../types";
 
 import {
   balanceOverdue,
+  bookingNights,
   bookingBalance,
   reconciliationAmount,
 } from "../../lib/selectors";
@@ -73,7 +74,32 @@ export function departureBookings(
   data: TourData,
   departureId: string,
 ): TourBooking[] {
-  return data.bookings.filter((b) => b.departureId === departureId);
+  return data.bookings.filter((b) => bookingNights(b).includes(departureId));
+}
+
+export type StayNightRole = "arrives" | "stays" | "leaves";
+
+/**
+ * Where one stay night falls in a booking: the guests arrive that day, stay over from an earlier
+ * night, or spend their last night (they leave the next morning). A one-night stay arrives.
+ */
+export function stayNightRole(
+  booking: Pick<TourBooking, "departureId" | "nightIds">,
+  departureId: string,
+): { role: StayNightRole; night: number; nights: number } {
+  const nights = bookingNights(booking);
+  const index = Math.max(0, nights.indexOf(departureId));
+
+  return {
+    role:
+      index === 0
+        ? "arrives"
+        : index === nights.length - 1
+          ? "leaves"
+          : "stays",
+    night: index + 1,
+    nights: nights.length,
+  };
 }
 
 const statusOrder: TourBooking["status"][] = [

@@ -112,7 +112,7 @@ const staffTemplates: Partial<Record<TourMailTemplate, Template>> = {
 };
 
 const MONEY = ["amount", "total", "paid", "balance"];
-const TIMES = ["startsAt", "dueAt", "holdUntil", "graceUntil"];
+const TIMES = ["startsAt", "endsAt", "dueAt", "holdUntil", "graceUntil"];
 
 function fill(text: string, vars: Record<string, string | number>): string {
   return text.replace(/\{(\w+)\}/g, (match, name: string) =>
@@ -149,6 +149,13 @@ export function renderTourMail(mail: Mail): {
           ? formatOrderDateTime(String(value), locale)
           : value;
   }
+  // "3 nights" in the recipient's language; mail stored before stays had nights reads 1.
+  const nights = Number(mail.params.nights ?? 1);
+
+  vars.nights = fill(
+    copy[nights === 1 ? "tourBooking.nights.one" : "tourBooking.nights.other"],
+    { count: nights },
+  );
 
   const kind = String(mail.params.kind ?? "tour");
   // A stay or an experience words a line as `<key>.<kind>` or `<key>.listing`, else as a tour.

@@ -23,6 +23,7 @@ import {
   departureEnd,
   departurePhase,
   manifestOrder,
+  stayNightRole,
   tourWork,
 } from "./lib/work";
 import {
@@ -50,6 +51,8 @@ import {
 import { StatusChip } from "@/components/status-chip";
 import { useLocale } from "@/contexts/locale-context";
 import { pickText } from "@/lib/localized";
+import { useNightsText } from "@/features/tours/booking/booking-summary";
+import { kindKey } from "@/features/tours/booking/kind";
 
 /** Payment only takes a colour when it needs action, as on the M03 ticket. */
 const paymentText: Record<StatusTone, string> = {
@@ -119,6 +122,27 @@ function BookingStatus({ booking }: { booking: TourBooking }) {
   const { status } = useBookingLabels(booking);
 
   return <ToneLine tone={status.tone}>{status.text}</ToneLine>;
+}
+
+/** A stay night's guests: arriving (with their nights), staying over, or on their last night. */
+function StayNightTag({
+  booking,
+  departureId,
+}: {
+  booking: TourBooking;
+  departureId: string;
+}) {
+  const { t } = useLocale();
+  const nightsText = useNightsText();
+  const { role, night, nights } = stayNightRole(booking, departureId);
+
+  return (
+    <p className="text-sm font-medium">
+      {role === "arrives"
+        ? t("tourMerchant.night.arrives", { nights: nightsText(nights) })
+        : t(`tourMerchant.night.${role}`, { night, count: nights })}
+    </p>
+  );
 }
 
 function BookingLink({ booking }: { booking: TourBooking }) {
@@ -205,6 +229,9 @@ export function TourManifestPage({ departureId }: { departureId: string }) {
       skeleton: "two-line",
       render: (booking) => (
         <>
+          {tour.kind === "stay" && (
+            <StayNightTag booking={booking} departureId={departureId} />
+          )}
           <GroupText group={booking} />
           <div className="mt-2">
             <BookingStatusLabels booking={booking} />
@@ -290,7 +317,7 @@ export function TourManifestPage({ departureId }: { departureId: string }) {
                 })}
               </Alert.Title>
               <Alert.Description>
-                {t("tourMerchant.recordHelp")}
+                {t(kindKey("tourMerchant.recordHelp", tour.kind))}
               </Alert.Description>
             </Alert.Content>
           </Alert>
@@ -298,9 +325,13 @@ export function TourManifestPage({ departureId }: { departureId: string }) {
       ) : (
         <p className="flex items-start gap-2 text-sm text-muted">
           <InfoIcon aria-hidden className="mt-0.5 shrink-0" size={16} />
-          {t("tourMerchant.afterEndAt", {
-            time: time(new Date(departureEnd(departure, tour)).toISOString()),
-          })}
+          {tour.kind === "stay"
+            ? t(kindKey("tourMerchant.afterEnd", tour.kind))
+            : t(kindKey("tourMerchant.afterEndAt", tour.kind), {
+                time: time(
+                  new Date(departureEnd(departure, tour)).toISOString(),
+                ),
+              })}
         </p>
       )}
       <DataTable
@@ -333,6 +364,12 @@ export function TourManifestPage({ departureId }: { departureId: string }) {
                     </div>
                     <div className="flex flex-col gap-2 px-4 pb-4">
                       <BookingStatus booking={booking} />
+                      {tour.kind === "stay" && (
+                        <StayNightTag
+                          booking={booking}
+                          departureId={departureId}
+                        />
+                      )}
                       <GroupText group={booking} />
                     </div>
                     <div className="flex flex-col gap-3 border-t border-dashed border-separator px-4 py-3.5">

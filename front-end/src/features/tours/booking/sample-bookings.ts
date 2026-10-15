@@ -35,7 +35,7 @@ export function addSampleTourBookings(
     newBooking({
       id: `${PREFIX}${id}`,
       tour,
-      departure,
+      departures: [departure],
       draft: {
         adults: 1,
         children: 0,

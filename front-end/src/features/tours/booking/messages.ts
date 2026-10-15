@@ -135,12 +135,12 @@ export const tourBookingEn = {
   "tourBooking.event.other": "Booking updated",
   "tourBooking.bookings": "Bookings",
   "tourBooking.intro.stay":
-    "Your stay is reserved only after you continue. Check your check-in and your group before booking.",
+    "Your stay is reserved only after you continue. Check your dates and your group before booking.",
   "tourBooking.intro.experience":
     "Your places are reserved only after you continue. Check the date and your group before booking. The bees are planned for 2027, so this is a first-season date.",
-  "tourBooking.edit.stay": "Edit check-in or group",
+  "tourBooking.edit.stay": "Edit dates or group",
   "tourBooking.edit.experience": "Edit date or group",
-  "tourBooking.chooseAnother.stay": "Choose another check-in",
+  "tourBooking.chooseAnother.stay": "Choose other dates",
   "tourBooking.chooseAnother.experience": "Choose another date",
   "tourBooking.error.departure.listing":
     "This date is no longer available. Choose a new date.",
@@ -155,6 +155,12 @@ export const tourBookingEn = {
   "tourBooking.later.experience":
     "Book without paying now. Your places are confirmed and the balance is due before your visit.",
   "tourBooking.detail.stay": "Your stay",
+  "tourBooking.stayDates":
+    "Check-in {checkIn} → check-out {checkOut} · {nights}",
+  "tourBooking.stayTicket": "{time} → {checkOut} · {nights}",
+  "tourBooking.nights.one": "{count} night",
+  "tourBooking.nights.other": "{count} nights",
+  "tourBooking.perNights": "{line} × {nights}",
   "tourBooking.detail.experience": "Your experience",
   "tourBooking.confirmed.stay": "Your stay is confirmed",
   "tourBooking.confirmed.experience": "Your experience is confirmed",
@@ -174,9 +180,9 @@ export const tourBookingEn = {
     "Some experience details are only available in English.",
   "tourBooking.event.delivered.stay": "Stay completed",
   "tourBooking.event.delivered.experience": "Experience attended",
-  "tourMail.tourLine.stay": "Stay: {tour}, {startsAt}",
+  "tourMail.tourLine.stay": "Stay: {tour}, {startsAt} → {endsAt} · {nights}",
   "tourMail.tourLine.experience": "Experience: {tour}, {startsAt}",
-  "tourMail.when.stay": "Check-in: {startsAt}",
+  "tourMail.when.stay": "Check-in {startsAt} → check-out {endsAt} · {nights}",
   "tourMail.meeting.stay": "Check-in place: {meetingPoint}",
   "tourMail.N10.cancel.listing":
     "If it is not paid by then, the booking is cancelled and your places are released, as the payment policy states.",
@@ -332,12 +338,12 @@ export const tourBookingDe: Record<keyof typeof tourBookingEn, string> = {
   "tourBooking.event.other": "Buchung aktualisiert",
   "tourBooking.bookings": "Buchungen",
   "tourBooking.intro.stay":
-    "Ihr Aufenthalt wird erst beim Fortfahren reserviert. Prüfen Sie Check-in und Gruppe vor der Buchung.",
+    "Ihr Aufenthalt wird erst beim Fortfahren reserviert. Prüfen Sie Daten und Gruppe vor der Buchung.",
   "tourBooking.intro.experience":
     "Ihre Plätze werden erst beim Fortfahren reserviert. Prüfen Sie Datum und Gruppe vor der Buchung. Die Bienen sind für 2027 geplant, daher ist dies ein Termin der ersten Saison.",
-  "tourBooking.edit.stay": "Check-in oder Gruppe ändern",
+  "tourBooking.edit.stay": "Daten oder Gruppe ändern",
   "tourBooking.edit.experience": "Datum oder Gruppe ändern",
-  "tourBooking.chooseAnother.stay": "Anderen Check-in wählen",
+  "tourBooking.chooseAnother.stay": "Andere Daten wählen",
   "tourBooking.chooseAnother.experience": "Anderes Datum wählen",
   "tourBooking.error.departure.listing":
     "Dieses Datum ist nicht mehr verfügbar. Wählen Sie ein neues Datum.",
@@ -352,6 +358,11 @@ export const tourBookingDe: Record<keyof typeof tourBookingEn, string> = {
   "tourBooking.later.experience":
     "Buchen Sie ohne sofortige Zahlung. Ihre Plätze sind bestätigt. Der Restbetrag ist vor Ihrem Besuch fällig.",
   "tourBooking.detail.stay": "Ihr Aufenthalt",
+  "tourBooking.stayDates": "Anreise {checkIn} → Abreise {checkOut} · {nights}",
+  "tourBooking.stayTicket": "{time} → {checkOut} · {nights}",
+  "tourBooking.nights.one": "{count} Nacht",
+  "tourBooking.nights.other": "{count} Nächte",
+  "tourBooking.perNights": "{line} × {nights}",
   "tourBooking.detail.experience": "Ihr Erlebnis",
   "tourBooking.confirmed.stay": "Ihr Aufenthalt ist bestätigt",
   "tourBooking.confirmed.experience": "Ihr Erlebnis ist bestätigt",
@@ -371,9 +382,10 @@ export const tourBookingDe: Record<keyof typeof tourBookingEn, string> = {
     "Einige Angaben zum Erlebnis gibt es nur auf Englisch.",
   "tourBooking.event.delivered.stay": "Aufenthalt abgeschlossen",
   "tourBooking.event.delivered.experience": "Am Erlebnis teilgenommen",
-  "tourMail.tourLine.stay": "Aufenthalt: {tour}, {startsAt}",
+  "tourMail.tourLine.stay":
+    "Aufenthalt: {tour}, {startsAt} → {endsAt} · {nights}",
   "tourMail.tourLine.experience": "Erlebnis: {tour}, {startsAt}",
-  "tourMail.when.stay": "Check-in: {startsAt}",
+  "tourMail.when.stay": "Anreise {startsAt} → Abreise {endsAt} · {nights}",
   "tourMail.meeting.stay": "Check-in-Ort: {meetingPoint}",
   "tourMail.N10.cancel.listing":
     "Ist der Betrag bis dahin nicht bezahlt, wird die Buchung storniert und Ihre Plätze werden freigegeben, wie es die Zahlungsregel festhält.",

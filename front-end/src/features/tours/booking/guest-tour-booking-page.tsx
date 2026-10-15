@@ -6,7 +6,11 @@ import { Alert, Button, buttonVariants } from "@heroui/react";
 import { useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 
-import { TourTicketHead, useBookingFormat } from "./booking-summary";
+import {
+  TourTicketHead,
+  useBookingFormat,
+  useNightsText,
+} from "./booking-summary";
 import { useBookingKind, useKindT } from "./kind";
 import { ExpiredHeadline, ReconciliationNotice } from "./expired-notice";
 import {
@@ -34,7 +38,11 @@ import { TripCard } from "@/features/trip/components/trip-card";
 import { useBack } from "@/hooks/use-back";
 import { shop } from "@/features/catalog/seed";
 import { BookingStatusLabels } from "@/features/tours/components/booking-status";
-import { bookingBalance, bookingPaid } from "@/features/tours/lib/selectors";
+import {
+  bookingBalance,
+  bookingNights,
+  bookingPaid,
+} from "@/features/tours/lib/selectors";
 import { TourBookingReview } from "@/features/tours/reviews";
 import { pickText } from "@/lib/localized";
 
@@ -371,6 +379,8 @@ export function BookingMoney({
 }) {
   const { t } = useLocale();
   const { money } = useBookingFormat();
+  const nightsText = useNightsText();
+  const nights = bookingNights(booking).length;
   const balance = bookingBalance(booking);
   const lines = [
     { kind: "adults", count: booking.adults, price: booking.adultPrice },
@@ -390,12 +400,20 @@ export function BookingMoney({
                 className="flex justify-between gap-3 text-sm tabular-nums"
               >
                 <dt className="text-muted">
-                  {t(`tourBooking.${line.kind}`, {
-                    count: line.count,
-                    price: money(line.price),
-                  })}
+                  {nights > 1
+                    ? t("tourBooking.perNights", {
+                        line: t(`tourBooking.${line.kind}`, {
+                          count: line.count,
+                          price: money(line.price),
+                        }),
+                        nights: nightsText(nights),
+                      })
+                    : t(`tourBooking.${line.kind}`, {
+                        count: line.count,
+                        price: money(line.price),
+                      })}
                 </dt>
-                <dd>{money(line.count * line.price)}</dd>
+                <dd>{money(line.count * line.price * nights)}</dd>
               </div>
             ))}
         </dl>

@@ -22,6 +22,13 @@ export const tourMerchantEn = {
   "tourMerchant.kind.experience": "Experience",
   "tourMerchant.checkIn": "Check-in {date}",
   "tourMerchant.checkInTime": "Check-in",
+  "tourMerchant.checkOutTime": "Check-out",
+  "tourMerchant.visitsDay": "{count} visits · {from}–{to}",
+  "tourMerchant.nightsLabel": "Nights",
+  "tourMerchant.night.arrives": "Arrives · {nights}",
+  "tourMerchant.night.stays": "Stays · night {night} of {count}",
+  "tourMerchant.night.leaves": "Leaves next morning · night {night} of {count}",
+  "tourMerchant.arriving": "{count} arriving",
   "tourMerchant.departuresIntro":
     "Every departure with its seats, money to collect and work to do.",
   "tourMerchant.upcoming": "Upcoming",
@@ -66,6 +73,20 @@ export const tourMerchantEn = {
   "tourMerchant.afterEnd": "Results can be recorded after the tour ends.",
   "tourMerchant.afterEndAt":
     "Results can be recorded after the tour ends at {time}.",
+  "tourMerchant.afterEnd.stay":
+    "Results can be recorded after the guests check out.",
+  "tourMerchant.afterEnd.experience":
+    "Results can be recorded after the visit ends.",
+  "tourMerchant.afterEndAt.stay":
+    "Results can be recorded after check-out, {time}.",
+  "tourMerchant.afterEndAt.experience":
+    "Results can be recorded after the visit ends at {time}.",
+  "tourMerchant.recordHelp.stay":
+    "The guests have checked out. Record service delivered or no-show for each booking. Nothing is completed automatically.",
+  "tourMerchant.recordHelp.experience":
+    "The visit has ended. Record service delivered or no-show for each booking. Nothing is completed automatically.",
+  "tourMerchant.departure.stay": "Stay",
+  "tourMerchant.meeting.stay": "Check-in place",
   "tourMerchant.overdueSince": "Overdue since {date}",
   "tourMerchant.delivered": "Service delivered",
   "tourMerchant.noShow": "No-show",
@@ -262,6 +283,13 @@ export const tourMerchantDe: Record<keyof typeof tourMerchantEn, string> = {
   "tourMerchant.kind.experience": "Erlebnis",
   "tourMerchant.checkIn": "Check-in {date}",
   "tourMerchant.checkInTime": "Check-in",
+  "tourMerchant.checkOutTime": "Check-out",
+  "tourMerchant.visitsDay": "{count} Besuche · {from}–{to}",
+  "tourMerchant.nightsLabel": "Nächte",
+  "tourMerchant.night.arrives": "Reist an · {nights}",
+  "tourMerchant.night.stays": "Bleibt · Nacht {night} von {count}",
+  "tourMerchant.night.leaves": "Reist am Morgen ab · Nacht {night} von {count}",
+  "tourMerchant.arriving": "{count} reisen an",
   "tourMerchant.departuresIntro":
     "Alle Termine mit Plätzen, offenen Beträgen und anstehenden Aufgaben.",
   "tourMerchant.upcoming": "Bevorstehend",
@@ -309,6 +337,20 @@ export const tourMerchantDe: Record<keyof typeof tourMerchantEn, string> = {
     "Ergebnisse können nach dem Ende der Tour erfasst werden.",
   "tourMerchant.afterEndAt":
     "Ergebnisse können nach Tourende um {time} erfasst werden.",
+  "tourMerchant.afterEnd.stay":
+    "Ergebnisse können nach der Abreise der Gäste erfasst werden.",
+  "tourMerchant.afterEnd.experience":
+    "Ergebnisse können nach Ende des Besuchs erfasst werden.",
+  "tourMerchant.afterEndAt.stay":
+    "Ergebnisse können nach der Abreise erfasst werden, {time}.",
+  "tourMerchant.afterEndAt.experience":
+    "Ergebnisse können nach Ende des Besuchs um {time} erfasst werden.",
+  "tourMerchant.recordHelp.stay":
+    "Die Gäste sind abgereist. Für jede Buchung erbrachte Leistung oder Nichterscheinen erfassen. Nichts wird automatisch abgeschlossen.",
+  "tourMerchant.recordHelp.experience":
+    "Der Besuch ist beendet. Für jede Buchung erbrachte Leistung oder Nichterscheinen erfassen. Nichts wird automatisch abgeschlossen.",
+  "tourMerchant.departure.stay": "Aufenthalt",
+  "tourMerchant.meeting.stay": "Check-in-Ort",
   "tourMerchant.overdueSince": "Überfällig seit {date}",
   "tourMerchant.delivered": "Leistung erbracht",
   "tourMerchant.noShow": "Nicht erschienen",

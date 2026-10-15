@@ -11,6 +11,7 @@ import type {
 
 import {
   availableSeats,
+  bookingNights,
   bookingPaid,
   firstPaymentAmount,
   tourTotal,
@@ -30,12 +31,13 @@ export const openPayment = (booking: TourBooking) =>
 
 /**
  * A new booking with its prices, policies and hold deadline snapshotted at
- * creation (AC11, AC15).
+ * creation (AC11, AC15). A stay passes every night it books, in order: the first night gives
+ * the check-in, payment policy and balance deadline, the last one the check-out morning.
  */
 export function newBooking({
   id,
   tour,
-  departure,
+  departures,
   draft,
   guestId,
   language,
@@ -43,7 +45,7 @@ export function newBooking({
 }: {
   id: string;
   tour: Tour;
-  departure: Departure;
+  departures: Departure[];
   draft: TourParticipants &
     Pick<
       TourDraft,
@@ -54,7 +56,9 @@ export function newBooking({
   now: Date;
 }): TourBooking {
   const at = now.toISOString();
-  const total = tourTotal(tour, draft);
+  const departure = departures[0];
+  const last = departures[departures.length - 1];
+  const total = tourTotal(tour, draft, departures.length);
   const record = {
     id,
     ref: `SK-T${id.slice(0, 6).toUpperCase()}`,
@@ -62,6 +66,7 @@ export function newBooking({
     language,
     tourId: tour.id,
     departureId: departure.id,
+    ...(tour.kind === "stay" ? { nightIds: departures.map((d) => d.id) } : {}),
     adults: draft.adults,
     children: draft.children,
     infants: draft.infants,
@@ -78,7 +83,7 @@ export function newBooking({
     meetingPoint: structuredClone(tour.meetingPoint),
     startsAt: departure.startsAt,
     endsAt: new Date(
-      Date.parse(departure.startsAt) + tour.durationMinutes * 60000,
+      Date.parse(last.startsAt) + tour.durationMinutes * 60000,
     ).toISOString(),
     total,
     firstAmount: firstPaymentAmount(departure.policy, total),
@@ -103,14 +108,18 @@ export function newBooking({
       };
 }
 
-/** Adds the booking only if its seats still fit when the change is applied (AC05). */
+/**
+ * Adds the booking only if its seats still fit when the change is applied (AC05): for a stay,
+ * on every night it books.
+ */
 export function addBooking(
   data: TourData,
   booking: TourBooking,
   now: Date,
 ): TourData {
-  return booking.adults + booking.children >
-    availableSeats(data, booking.departureId, now)
+  return bookingNights(booking).some(
+    (id) => booking.adults + booking.children > availableSeats(data, id, now),
+  )
     ? data
     : { ...data, bookings: [...data.bookings, booking] };
 }
@@ -125,17 +134,19 @@ export function missingParticipantInfo(
     .map((field) => field.id);
 }
 
-/** The guest's own hold on this departure that is still running, if any. */
+/** The guest's own hold, still running, on this departure or on any of these stay nights. */
 export function activeHold(
   data: TourData,
   guestId: string,
-  departureId: string,
+  departureIds: string | string[],
   now: Date,
 ): TourBooking | undefined {
+  const ids = typeof departureIds === "string" ? [departureIds] : departureIds;
+
   return data.bookings.find(
     (b) =>
       b.guestId === guestId &&
-      b.departureId === departureId &&
+      bookingNights(b).some((id) => ids.includes(id)) &&
       b.status === "pending_payment" &&
       !holdLapsed(b, now),
   );
@@ -298,7 +309,7 @@ export function competingHold(
     newBooking({
       id: crypto.randomUUID(),
       tour,
-      departure,
+      departures: [departure],
       draft: {
         adults: seats,
         children: 0,

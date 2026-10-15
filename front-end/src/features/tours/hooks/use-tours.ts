@@ -1,4 +1,5 @@
 import type {
+  Departure,
   TourActionResult,
   TourBooking,
   TourData,
@@ -14,7 +15,11 @@ import type {
 
 import { useEffect, useState } from "react";
 
-import { availableSeats, bookingAmountDue } from "../lib/selectors";
+import {
+  availableSeats,
+  bookingAmountDue,
+  bookingNights,
+} from "../lib/selectors";
 import { mailTourGuest, mailTourStaff } from "../merchant/lib/mail";
 import { createTourSeed } from "../seed";
 import {
@@ -80,15 +85,21 @@ export function useTourActions() {
     const draft = currentData.draft;
     const guestId = state.data.signedInGuestId;
     const tour = currentData.tours.find((t) => t.id === draft.tourId);
-    const departure = currentData.departures.find(
-      (d) => d.id === draft.departureId && d.tourId === draft.tourId,
+    // A stay books every night of the draft; anything else its one departure.
+    const nightIds =
+      tour?.kind === "stay" ? bookingNights(draft) : [draft.departureId];
+    const chosen = nightIds.map((id) =>
+      currentData.departures.find(
+        (d) => d.id === id && d.tourId === draft.tourId,
+      ),
     );
+    const departure = chosen[0];
 
     if (!guestId) return { error: "sign-in" };
     if (
       !tour?.published ||
       !departure ||
-      departure.closed ||
+      chosen.some((d) => !d || d.closed || d.cancelledAt) ||
       Date.parse(departure.startsAt) <= now().getTime()
     )
       return { error: "departure" };
@@ -99,12 +110,15 @@ export function useTourActions() {
       )
     )
       return { error: "participants" };
-    const held = activeHold(currentData, guestId, departure.id, now());
+    const held = activeHold(currentData, guestId, nightIds, now());
 
     if (held) return { error: "held", bookingId: held.id };
     if (
-      draft.adults + draft.children >
-      availableSeats(currentData, departure.id, now())
+      nightIds.some(
+        (id) =>
+          draft.adults + draft.children >
+          availableSeats(currentData, id, now()),
+      )
     )
       return { error: "capacity" };
     if (!draft.contactName.trim() || !/^\+?[\d ()-]{8,}$/.test(draft.phone))
@@ -114,7 +128,7 @@ export function useTourActions() {
     const booking = newBooking({
       id: crypto.randomUUID(),
       tour,
-      departure,
+      departures: chosen as Departure[],
       draft,
       guestId,
       language,

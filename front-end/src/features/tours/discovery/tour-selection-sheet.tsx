@@ -1,14 +1,11 @@
 import type { Tour } from "../types";
 
-import { Alert, Description, Label, Radio, RadioGroup } from "@heroui/react";
 import { useCanGoBack, useNavigate, useRouter } from "@tanstack/react-router";
 import { useEffect, useRef } from "react";
 
 import { ChoiceSheet } from "@/components/choice-sheet";
 import { EmptyState } from "@/components/empty-state";
-import { InfoIcon, SelectedIcon, TourIcon } from "@/components/icons";
-import { QuantityStepper } from "@/components/quantity-stepper";
-import { StatusChip } from "@/components/status-chip";
+import { InfoIcon, TourIcon } from "@/components/icons";
 import { useLocale } from "@/contexts/locale-context";
 import { zurichDate } from "@/features/catalog/lib/pickup";
 import { useTourActions, useTours } from "@/features/tours/hooks/use-tours";
@@ -20,7 +17,15 @@ import {
   tourTotal,
   upcomingDepartures,
 } from "@/features/tours/lib/selectors";
-import { ageBandLabels } from "@/features/tours/discovery/age-bands";
+import {
+  DeparturePicker,
+  PickerSummary,
+} from "@/features/tours/discovery/listing-picker/departure-picker";
+import {
+  usePickerFormat,
+  useSlotChoice,
+  useSlotModel,
+} from "@/features/tours/discovery/listing-picker/model";
 import { formatMoney, formatShortDate } from "@/lib/format";
 import { pickText } from "@/lib/localized";
 
@@ -31,7 +36,7 @@ declare module "@tanstack/history" {
   }
 }
 
-export function useTourSelection(tour: Tour, isOpen: boolean) {
+function useTourSelection(tour: Tour, isOpen: boolean) {
   const { t, intlLocale } = useLocale();
   const { data, draft, now } = useTours();
   const { updateDraft } = useTourActions();
@@ -56,6 +61,7 @@ export function useTourSelection(tour: Tour, isOpen: boolean) {
       updateDraft({
         tourId: tour.id,
         departureId: first?.id ?? "",
+        nightIds: undefined,
         adults: 2,
         children: 1,
         infants: 0,
@@ -63,13 +69,9 @@ export function useTourSelection(tour: Tour, isOpen: boolean) {
   }, [isOpen, draft.tourId, tour.id, first?.id, updateDraft]);
 
   return {
-    choices,
     departureId,
     group,
     selected,
-    seats,
-    usedSeats,
-    overCapacity,
     valid,
     total,
     dueToday,
@@ -80,36 +82,46 @@ export function useTourSelection(tour: Tour, isOpen: boolean) {
 
 type TourSelection = ReturnType<typeof useTourSelection>;
 
-/** The sheet's content: departures, group, payment. Shared by the tour sheet and the home listing sheet. */
-export function TourSelectionBody({
-  tour,
-  selection,
-  departuresLabel,
-  intro,
-}: {
-  tour: Tour;
-  selection: TourSelection;
-  departuresLabel?: string;
-  intro?: string;
-}) {
+/**
+ * The shared departure picker over the tour's draft: the grid picks the day, the day's
+ * departure (or one of its times) the departure; seats are counted as a tour counts them.
+ */
+function useTourPicker(tour: Tour, selection: TourSelection) {
   const { t, intlLocale } = useLocale();
-  const { data, now } = useTours();
   const { updateDraft } = useTourActions();
-  const {
-    choices,
-    departureId,
-    group,
-    selected,
-    seats,
-    usedSeats,
-    overCapacity,
-    total,
-    dueToday,
-    money,
-  } = selection;
-  const ages = ageBandLabels(tour.ageBands, t);
+  const model = useSlotModel(tour);
   const plural = (count: number) =>
     new Intl.PluralRules(intlLocale).select(count) === "one" ? "one" : "other";
+  const f = usePickerFormat(model.today, {
+    seatsLeft: (n) =>
+      n === 0
+        ? t("tourDiscovery.soldOut")
+        : t(`tourDiscovery.available.${plural(n)}`, { count: n }),
+  });
+  const choice = useSlotChoice(model, f, {
+    group: selection.group,
+    setGroup: ({ adults, children, infants }) =>
+      updateDraft({ adults, children, infants }),
+    slotId: selection.departureId,
+    setSlotId: (departureId) => updateDraft({ departureId }),
+  });
+
+  return { model, f, choice };
+}
+
+type TourPicker = ReturnType<typeof useTourPicker>;
+
+/** The sheet's content: the departure picker, then what the chosen departure costs and when. */
+function TourSelectionBody({
+  selection,
+  picker,
+}: {
+  selection: TourSelection;
+  picker: TourPicker;
+}) {
+  const { t, intlLocale } = useLocale();
+  const { now } = useTours();
+  const { selected, total, dueToday, money } = selection;
   const date = (iso: string) =>
     formatShortDate(zurichDate(new Date(iso)), zurichDate(now), intlLocale);
   const time = (iso: string) =>
@@ -121,124 +133,27 @@ export function TourSelectionBody({
 
   return (
     <>
-      {intro && <p className="text-sm text-foreground">{intro}</p>}
-      {choices.length === 0 ? (
-        <EmptyState
-          action={{ label: t("tourDiscovery.browse"), to: "/tours" }}
-          icon={TourIcon}
-          message={t("tourDiscovery.noDates")}
-        />
-      ) : (
-        // C03 option tiles: filled; chosen = red border and the corner check (owner, round 3).
-        <RadioGroup
-          className="gap-2"
-          value={departureId}
-          onChange={(value) => updateDraft({ departureId: value })}
-        >
-          <Label className="text-heading">
-            {departuresLabel ?? t("tourDiscovery.departures")}
-          </Label>
-          {choices.map((departure) => {
-            const available = availableSeats(data, departure.id, now);
-
-            return (
-              <Radio
-                key={departure.id}
-                className="group relative !mt-0 w-full rounded-2xl border-2 border-transparent bg-default px-3.5 py-3 transition-colors hover:bg-default-hover has-data-[focus-visible=true]:focus-ring data-[selected=true]:border-accent"
-                isDisabled={available === 0}
-                value={departure.id}
-              >
-                <Radio.Content className="items-start">
-                  <div className="flex min-w-0 flex-1 flex-col gap-1">
-                    <span className="font-semibold group-data-[selected=true]:text-accent-soft-foreground">
-                      {date(departure.startsAt)} · {time(departure.startsAt)}
-                    </span>
-                    <Description className="px-0 group-data-[selected=true]:text-accent-soft-foreground">
-                      {t("tourDiscovery.adults")} {money(tour.adultPrice)} ·{" "}
-                      {t("tourDiscovery.children")} {money(tour.childPrice)}
-                    </Description>
-                    <Description className="px-0 group-data-[selected=true]:text-accent-soft-foreground">
-                      {t(`tourDiscovery.policyShort.${departure.policy}`)}
-                    </Description>
-                    <div className="pt-1">
-                      <StatusChip tone={available > 0 ? "success" : "neutral"}>
-                        {available > 0
-                          ? t(`tourDiscovery.available.${plural(available)}`, {
-                              count: available,
-                            })
-                          : t("tourDiscovery.soldOut")}
-                      </StatusChip>
-                    </div>
-                  </div>
-                </Radio.Content>
-                <SelectedIcon
-                  aria-hidden
-                  className="absolute -end-1 -top-1 hidden size-4.5 rounded-full bg-surface text-accent group-data-[selected=true]:block"
-                  weight="Filled"
-                />
-              </Radio>
-            );
-          })}
-        </RadioGroup>
-      )}
-      {/* Ink, as the sheet's field labels; the drawer body's own text is muted. */}
-      <section className="flex flex-col gap-3 text-foreground">
-        <h3 className="text-heading">{t("tourDiscovery.group")}</h3>
-        {/* One row per age group, as the quantity row in the C03 sheet. The boxes keep their
-            width when a hint wraps (German copy). */}
-        <div className="flex flex-col divide-y divide-separator [&_.number-field\_\_group]:shrink-0 [&>*]:py-3.5 [&>*:first-child]:pt-0 [&>*:last-child]:pb-0">
-          <QuantityStepper
-            hint={`${ages.adults} · ${t("tourDiscovery.each", {
-              price: money(tour.adultPrice),
-            })}`}
-            label={t("tourDiscovery.adults")}
-            max={Math.max(group.adults, seats - group.children, 1)}
-            min={1}
-            value={group.adults}
-            onChange={(adults) => updateDraft({ adults })}
-          />
-          <QuantityStepper
-            hint={`${ages.children} · ${t("tourDiscovery.each", {
-              price: money(tour.childPrice),
-            })}`}
-            label={t("tourDiscovery.children")}
-            max={Math.max(group.children, seats - group.adults, 0)}
-            min={0}
-            value={group.children}
-            onChange={(children) => updateDraft({ children })}
-          />
-          <QuantityStepper
-            hint={`${ages.infants} · ${
-              tour.infantPrice
-                ? t("tourDiscovery.each", {
-                    price: money(tour.infantPrice),
-                  })
-                : t("tourDiscovery.free")
-            } · ${t("tourDiscovery.noSeat")}`}
-            label={t("tourDiscovery.infants")}
-            max={6}
-            min={0}
-            value={group.infants}
-            onChange={(infants) => updateDraft({ infants })}
-          />
-        </div>
-        <p className="text-sm text-muted">{t("tourDiscovery.seatNote")}</p>
-        <p aria-live="polite" className="font-semibold">
-          {t(`tourDiscovery.seatSummary.${plural(usedSeats)}`, {
-            count: usedSeats,
-          })}
-        </p>
-        {selected && overCapacity && (
-          <Alert className="alert--soft" status="warning">
-            <Alert.Indicator />
-            <Alert.Content>
-              <Alert.Description>
-                {t("tourDiscovery.capacityError")}
-              </Alert.Description>
-            </Alert.Content>
-          </Alert>
-        )}
-      </section>
+      <DeparturePicker
+        choice={picker.choice}
+        config={{
+          policyText: (policy) => t(`tourDiscovery.policyShort.${policy}`),
+          policyVaries: picker.f.t("policyVaries"),
+          empty: (
+            <EmptyState
+              action={{ label: t("tourDiscovery.browse"), to: "/tours" }}
+              icon={TourIcon}
+              message={t("tourDiscovery.noDates")}
+            />
+          ),
+          soldOut: (
+            <p className="text-sm text-foreground">
+              {t("tourDiscovery.soldOutBody")}
+            </p>
+          ),
+        }}
+        f={picker.f}
+        model={picker.model}
+      />
       {selected && (
         <section className="flex flex-col gap-3 text-foreground">
           <h3 className="text-heading">{t("tourDiscovery.payment")}</h3>
@@ -274,7 +189,7 @@ export function TourSelectionBody({
         </section>
       )}
       {/* The C03 sheet's closing note: a plain icon line. */}
-      <p className="flex items-start gap-2 text-sm">
+      <p className="flex items-start gap-2 text-sm text-foreground">
         <InfoIcon
           aria-hidden
           className="mt-0.5 shrink-0 text-muted"
@@ -291,13 +206,12 @@ export function TourSelectionBody({
  * address is `/tours/{slug}?book=true`, so a reload, Back from C11 and C11's Edit reopen it
  * with the draft; closing returns to C09 without leaving an entry to bounce on.
  */
-export function TourSelectionSheet({
-  tour,
-  isOpen,
-}: {
-  tour: Tour;
-  isOpen: boolean;
-}) {
+export function TourSelectionSheet(props: { tour: Tour; isOpen: boolean }) {
+  // The detail route stays mounted from one tour to the next: the picker starts afresh.
+  return <TourSheet key={props.tour.id} {...props} />;
+}
+
+function TourSheet({ tour, isOpen }: { tour: Tour; isOpen: boolean }) {
   const { t, language } = useLocale();
   const navigate = useNavigate();
   const router = useRouter();
@@ -305,6 +219,7 @@ export function TourSelectionSheet({
   // X, a swipe, Escape and the backdrop all close: one step back per history entry.
   const closedFrom = useRef<string>(undefined);
   const selection = useTourSelection(tour, isOpen);
+  const picker = useTourPicker(tour, selection);
 
   const close = () => {
     const { state, href } = router.state.location;
@@ -341,12 +256,13 @@ export function TourSelectionSheet({
       }}
       closeLabel={t("tourDiscovery.close")}
       isOpen={isOpen}
+      summary={<PickerSummary choice={picker.choice} f={picker.f} />}
       title={pickText(tour.name, language).text}
       onOpenChange={(open) => {
         if (!open) close();
       }}
     >
-      <TourSelectionBody selection={selection} tour={tour} />
+      <TourSelectionBody picker={picker} selection={selection} />
     </ChoiceSheet>
   );
 }

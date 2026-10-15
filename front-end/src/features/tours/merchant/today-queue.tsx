@@ -8,7 +8,13 @@ import { Link } from "@tanstack/react-router";
 import { useTours } from "../hooks/use-tours";
 import { balanceOverdue, departureSeats } from "../lib/selectors";
 
-import { balanceToCollect, departurePhase, tourWork } from "./lib/work";
+import {
+  balanceToCollect,
+  departureBookings,
+  departurePhase,
+  stayNightRole,
+  tourWork,
+} from "./lib/work";
 import { KindChip, useTourFormatting } from "./shared";
 
 import {
@@ -176,6 +182,15 @@ export function NextDeparturesWidget({ className = "lg:col-span-3" }) {
   const { t, language } = useLocale();
   const { weekday, day, month, time } = useTourFormatting();
   const today = zurichDate(now);
+  // Guests whose stay starts this night; the others stay over from an earlier one.
+  const arrivals = (departureId: string) =>
+    departureBookings(data, departureId)
+      .filter(
+        (b) =>
+          !["expired", "cancelled"].includes(b.status) &&
+          stayNightRole(b, departureId).role === "arrives",
+      )
+      .reduce((sum, b) => sum + b.adults + b.children, 0);
   const next = departures
     .filter((d) => {
       const phase = departurePhase(
@@ -256,6 +271,10 @@ export function NextDeparturesWidget({ className = "lg:col-span-3" }) {
                       {tour?.kind === "stay" &&
                         `${t("tourMerchant.checkInTime")} `}
                       {time(departure.startsAt)} ·{" "}
+                      {tour?.kind === "stay" &&
+                        `${t("tourMerchant.arriving", {
+                          count: arrivals(departure.id),
+                        })} · `}
                       {t("tourMerchant.seatsBooked", {
                         count: seats.confirmed,
                         capacity: seats.capacity,

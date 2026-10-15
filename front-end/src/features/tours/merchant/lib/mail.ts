@@ -3,7 +3,11 @@ import type { Language } from "@/contexts/locale-context";
 import type { DemoState } from "@/features/demo/types";
 import type { MailParams } from "@/features/notifications/types";
 
-import { bookingBalance, bookingPaid } from "../../lib/selectors";
+import {
+  bookingBalance,
+  bookingNights,
+  bookingPaid,
+} from "../../lib/selectors";
 
 import { sendMail } from "@/features/notifications/mail";
 import { pickText } from "@/lib/localized";
@@ -26,6 +30,8 @@ function bookingParams(
     tour: pickText(booking.tourName, language).text,
     meetingPoint: pickText(booking.meetingPoint, language).text,
     startsAt: booking.startsAt,
+    endsAt: booking.endsAt,
+    nights: bookingNights(booking).length,
     dueAt: booking.balanceDueAt,
     guest: booking.contactName,
     adults: booking.adults,

@@ -4,7 +4,12 @@ import { Alert, Button, Form, Input, Label, TextField } from "@heroui/react";
 import { useNavigate } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 
-import { useBookingFormat, useGroupText } from "./booking-summary";
+import {
+  useBookingFormat,
+  useGroupText,
+  useNightsText,
+  useWhenText,
+} from "./booking-summary";
 import { useKindT } from "./kind";
 import { activeHold } from "./transitions";
 
@@ -32,6 +37,7 @@ import { useRequireSignIn } from "@/features/auth/hooks/use-require-sign-in";
 import { useTourActions, useTours } from "@/features/tours/hooks/use-tours";
 import {
   availableSeats,
+  bookingNights,
   firstPaymentAmount,
   isTour,
   participantSeats,
@@ -56,6 +62,8 @@ export function TourReviewPage({ slug }: { slug: string }) {
   const { signedIn, requireSignIn } = useRequireSignIn();
   const { money, date } = useBookingFormat();
   const groupText = useGroupText();
+  const when = useWhenText();
+  const nightsText = useNightsText();
   const [error, setError] = useState<{ code: string; bookingId?: string }>();
   // The booking just submitted: leave for payment only once it is really in the data.
   const [created, setCreated] = useState<{ id: string; later: boolean }>();
@@ -66,9 +74,14 @@ export function TourReviewPage({ slug }: { slug: string }) {
   const tour = tours.find(
     (item) => item.slug === slug && item.id === draft.tourId,
   );
-  const departure = departures.find(
-    (item) => item.id === draft.departureId && item.tourId === tour?.id,
+  // A stay holds every night of the draft; the first one is its check-in.
+  const nights = (
+    tour?.kind === "stay" ? bookingNights(draft) : [draft.departureId]
+  ).map((id) =>
+    departures.find((item) => item.id === id && item.tourId === tour?.id),
   );
+  const departure = nights.every(Boolean) ? nights[0] : undefined;
+  const nightIds = nights.flatMap((night) => (night ? [night.id] : []));
   const kt = useKindT(tour?.kind ?? "tour");
   const edit = useBack(
     () =>
@@ -119,16 +132,26 @@ export function TourReviewPage({ slug }: { slug: string }) {
         message={kt("tourBooking.error.departure")}
       />
     );
-  const total = tourTotal(tour, draft);
+  const total = tourTotal(tour, draft, nightIds.length);
+  const last = nights[nights.length - 1] ?? departure;
+  const endsAt = new Date(
+    Date.parse(last.startsAt) + tour.durationMinutes * 60_000,
+  ).toISOString();
+  // Price lines of a stay carry the number of nights: "Adults · 2 × CHF 180.00 × 3 nights".
+  const perNights = (line: string) =>
+    nightIds.length > 1
+      ? t("tourBooking.perNights", {
+          line,
+          nights: nightsText(nightIds.length),
+        })
+      : line;
   const firstAmount = firstPaymentAmount(departure.policy, total);
   const text = (value: Parameters<typeof pickText>[0]) =>
     pickText(value, language);
   const fallback = [tour.name, tour.meetingPoint, tour.cancellationPolicy]
     .map((value) => text(value))
     .find((value) => value.isFallback && value.text);
-  const held = guestId
-    ? activeHold(data, guestId, departure.id, now)
-    : undefined;
+  const held = guestId ? activeHold(data, guestId, nightIds, now) : undefined;
   // C11 "departure just sold out" (or already held by this guest): shown as soon as it is
   // true, and rechecked on submit.
   const shownError =
@@ -137,7 +160,9 @@ export function TourReviewPage({ slug }: { slug: string }) {
       ? undefined
       : held
         ? { code: "held", bookingId: held.id }
-        : participantSeats(draft) > availableSeats(data, departure.id, now)
+        : nightIds.some(
+              (id) => participantSeats(draft) > availableSeats(data, id, now),
+            )
           ? { code: "capacity" }
           : undefined);
   const submit = () =>
@@ -195,7 +220,17 @@ export function TourReviewPage({ slug }: { slug: string }) {
                 <div className="flex flex-col gap-1.5">
                   <p className={row}>
                     <BookingsIcon aria-hidden className={rowIcon} size={16} />
-                    <span>{date(departure.startsAt)}</span>
+                    <span>
+                      {when(
+                        {
+                          startsAt: departure.startsAt,
+                          endsAt,
+                          departureId: departure.id,
+                          nightIds,
+                        },
+                        tour.kind,
+                      )}
+                    </span>
                   </p>
                   <div className={row}>
                     <TravelGroupIcon
@@ -301,28 +336,40 @@ export function TourReviewPage({ slug }: { slug: string }) {
                 </SurfaceCardTitle>
                 <dl className="flex flex-col gap-2">
                   <Amount
-                    amount={money(draft.adults * tour.adultPrice)}
-                    label={t("tourBooking.adults", {
-                      count: draft.adults,
-                      price: money(tour.adultPrice),
-                    })}
+                    amount={money(
+                      draft.adults * tour.adultPrice * nightIds.length,
+                    )}
+                    label={perNights(
+                      t("tourBooking.adults", {
+                        count: draft.adults,
+                        price: money(tour.adultPrice),
+                      }),
+                    )}
                   />
                   {draft.children > 0 && (
                     <Amount
-                      amount={money(draft.children * tour.childPrice)}
-                      label={t("tourBooking.children", {
-                        count: draft.children,
-                        price: money(tour.childPrice),
-                      })}
+                      amount={money(
+                        draft.children * tour.childPrice * nightIds.length,
+                      )}
+                      label={perNights(
+                        t("tourBooking.children", {
+                          count: draft.children,
+                          price: money(tour.childPrice),
+                        }),
+                      )}
                     />
                   )}
                   {draft.infants > 0 && (
                     <Amount
-                      amount={money(draft.infants * tour.infantPrice)}
-                      label={t("tourBooking.infants", {
-                        count: draft.infants,
-                        price: money(tour.infantPrice),
-                      })}
+                      amount={money(
+                        draft.infants * tour.infantPrice * nightIds.length,
+                      )}
+                      label={perNights(
+                        t("tourBooking.infants", {
+                          count: draft.infants,
+                          price: money(tour.infantPrice),
+                        }),
+                      )}
                     />
                   )}
                 </dl>

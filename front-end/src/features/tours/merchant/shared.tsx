@@ -1,10 +1,13 @@
 import type { TourBlock } from "./lib/transitions";
 import type { DeparturePhase } from "./lib/work";
-import type { TourKind, TourParticipants } from "../types";
+import type { TourBooking, TourKind, TourParticipants } from "../types";
 import type { StatusTone } from "@/components/status-chip";
 import type { MessageKey } from "@/i18n/en";
 
 import { Chip } from "@heroui/react";
+
+import { bookingNights } from "../lib/selectors";
+import { useNightsText } from "../booking/booking-summary";
 
 import { StatusDangerIcon } from "@/components/icons";
 import { useLocale } from "@/contexts/locale-context";
@@ -58,6 +61,31 @@ export function useStartText() {
     kind === "stay"
       ? t("tourMerchant.checkIn", { date: date(iso) })
       : date(iso);
+}
+
+/**
+ * A booking's dates: a stay as "Check-in … → check-out … · 3 nights", anything else as its
+ * start (with the stay's check-in wording for an old one-night record without an end).
+ */
+export function useBookingWhen() {
+  const { t } = useLocale();
+  const { date } = useTourFormatting();
+  const nights = useNightsText();
+
+  return (
+    kind: TourKind | undefined,
+    booking: Pick<
+      TourBooking,
+      "startsAt" | "endsAt" | "departureId" | "nightIds"
+    >,
+  ) =>
+    kind === "stay"
+      ? t("tourBooking.stayDates", {
+          checkIn: date(booking.startsAt),
+          checkOut: date(booking.endsAt),
+          nights: nights(bookingNights(booking).length),
+        })
+      : date(booking.startsAt);
 }
 
 const activityKeys: Record<string, MessageKey> = {

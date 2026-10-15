@@ -1143,14 +1143,20 @@ type BookingContact = Pick<
   "id" | "ref" | "guestId" | "contactName" | "phone"
 >;
 
-/** A confirmed sample booking with its first payment made, priced from the tour and departure. */
+/**
+ * A confirmed sample booking with its first payment made, priced from the tour and departure.
+ * A stay may pass several nights, in order.
+ */
 function seededBooking(
   tour: Tour,
-  departure: Departure,
+  booked: Departure | Departure[],
   contact: BookingContact,
   group: TourParticipants,
 ): TourBooking {
-  const total = tourTotal(tour, group);
+  const nights = Array.isArray(booked) ? booked : [booked];
+  const departure = nights[0];
+  const last = nights[nights.length - 1];
+  const total = tourTotal(tour, group, nights.length);
   const firstAmount = firstPaymentAmount(departure.policy, total);
   const createdAt = "2026-10-11T09:00:00+02:00";
 
@@ -1160,11 +1166,12 @@ function seededBooking(
     language: "en",
     tourId: tour.id,
     departureId: departure.id,
+    ...(nights.length > 1 ? { nightIds: nights.map((d) => d.id) } : {}),
     tourName: structuredClone(tour.name),
     meetingPoint: structuredClone(tour.meetingPoint),
     startsAt: departure.startsAt,
     endsAt: new Date(
-      Date.parse(departure.startsAt) + tour.durationMinutes * 60_000,
+      Date.parse(last.startsAt) + tour.durationMinutes * 60_000,
     ).toISOString(),
     childName: "",
     total,
@@ -1201,17 +1208,19 @@ const zurichHour = new Intl.DateTimeFormat("en-GB", {
 });
 
 /** An ISO time with the Zurich offset (CET or CEST) in force on that day. */
-function zurichTime(day: string, hour: number): string {
+function zurichTime(day: string, hour: number, minute = 0): string {
   const [year, month, date] = day.split("-").map(Number);
+  const hh = String(hour).padStart(2, "0");
+  const mm = String(minute).padStart(2, "0");
 
   for (const offset of [1, 2]) {
-    const instant = Date.UTC(year, month - 1, date, hour - offset);
+    const instant = Date.UTC(year, month - 1, date, hour - offset, minute);
 
     if (Number(zurichHour.format(instant)) === hour)
-      return `${day}T${String(hour).padStart(2, "0")}:00:00+0${offset}:00`;
+      return `${day}T${hh}:${mm}:00+0${offset}:00`;
   }
 
-  throw new Error(`No Zurich time for ${day} ${hour}:00`);
+  throw new Error(`No Zurich time for ${day} ${hh}:${mm}`);
 }
 function addDays(day: string, days: number): string {
   return new Date(Date.parse(`${day}T00:00:00Z`) + days * 86_400_000)
@@ -1225,11 +1234,12 @@ function listingDeparture(
   day: string,
   hour: number,
   capacity: number,
+  minute = 0,
 ): Departure {
   return {
     id,
     tourId,
-    startsAt: zurichTime(day, hour),
+    startsAt: zurichTime(day, hour, minute),
     capacity,
     policy: "deposit",
     balanceDueAt: zurichTime(addDays(day, -1), 18),
@@ -1241,21 +1251,74 @@ const stayDepartures = Array.from({ length: 16 }, (_, i) => {
 
   return listingDeparture(`stay-${day}`, "stay", day, 15, 6);
 });
+
+/**
+ * Visits that start every `step` minutes from `open` and end by `close`, on each day (Zurich
+ * wall-clock time): "09:00"–"17:00", 30 minutes, 120 minutes long gives 09:00 to 15:00.
+ * Ids read `experience-2027-04-17-0930`.
+ */
+export function slotDepartures({
+  days,
+  open,
+  close,
+  step,
+  durationMinutes,
+  capacity,
+}: {
+  days: string[];
+  open: string;
+  close: string;
+  step: number;
+  durationMinutes: number;
+  capacity: number;
+}): Departure[] {
+  const minutes = (time: string) => {
+    const [h, m] = time.split(":").map(Number);
+
+    return h * 60 + m;
+  };
+  const starts: number[] = [];
+
+  for (
+    let at = minutes(open);
+    at + durationMinutes <= minutes(close);
+    at += step
+  )
+    starts.push(at);
+
+  return days.flatMap((day) =>
+    starts.map((at) => {
+      const hour = Math.floor(at / 60);
+      const minute = at % 60;
+      const hhmm = `${String(hour).padStart(2, "0")}${String(minute).padStart(2, "0")}`;
+
+      return listingDeparture(
+        `experience-${day}-${hhmm}`,
+        "experience",
+        day,
+        hour,
+        capacity,
+        minute,
+      );
+    }),
+  );
+}
 // First season: the bees are planned for 2027, so these are the first spring and summer weekends.
-const experienceDepartures = [
-  "2027-04-17",
-  "2027-05-15",
-  "2027-06-05",
-  "2027-06-26",
-  "2027-07-24",
-  "2027-08-14",
-].flatMap((saturday) =>
-  [saturday, addDays(saturday, 1)].flatMap((day) =>
-    [10, 14].map((hour) =>
-      listingDeparture(`experience-${day}-${hour}`, "experience", day, hour, 8),
-    ),
-  ),
-);
+const experienceDepartures = slotDepartures({
+  days: [
+    "2027-04-17",
+    "2027-05-15",
+    "2027-06-05",
+    "2027-06-26",
+    "2027-07-24",
+    "2027-08-14",
+  ].flatMap((saturday) => [saturday, addDays(saturday, 1)]),
+  open: "09:00",
+  close: "17:00",
+  step: 30,
+  durationMinutes: 120,
+  capacity: 8,
+});
 
 export function createTourSeed(): TourData {
   const departures = [
@@ -1562,7 +1625,7 @@ export function createTourSeed(): TourData {
   );
   const experienceHold = seededBooking(
     experience,
-    departureOf("experience-2027-05-15-10"),
+    departureOf("experience-2027-05-15-1000"),
     {
       id: "experience-daniel",
       ref: "SK-T1064",
@@ -1573,9 +1636,12 @@ export function createTourSeed(): TourData {
     { adults: 2, children: 1, infants: 0 },
   );
   const listingBookings: TourBooking[] = [
+    // Three nights, so the stay's range shows on the dashboard and in the account.
     seededBooking(
       stay,
-      departureOf("stay-2026-10-30"),
+      ["stay-2026-10-30", "stay-2026-10-31", "stay-2026-11-01"].map(
+        departureOf,
+      ),
       {
         id: "stay-erich",
         ref: "SK-T1061",
@@ -1596,7 +1662,7 @@ export function createTourSeed(): TourData {
     },
     seededBooking(
       experience,
-      departureOf("experience-2027-04-17-14"),
+      departureOf("experience-2027-04-17-1400"),
       {
         id: "experience-sofia",
         ref: "SK-T1063",
@@ -1605,6 +1671,56 @@ export function createTourSeed(): TourData {
         phone: "+39 333 555 0147",
       },
       { adults: 2, children: 2, infants: 0 },
+    ),
+    // A sold-out night and a few places gone, so the stay calendar shows both.
+    seededBooking(
+      stay,
+      departureOf("stay-2026-10-28"),
+      {
+        id: "stay-elena",
+        ref: "SK-T1065",
+        guestId: "g-elena",
+        contactName: "Elena Novak",
+        phone: "+41 78 555 01 49",
+      },
+      { adults: 4, children: 2, infants: 0 },
+    ),
+    seededBooking(
+      stay,
+      departureOf("stay-2026-10-25"),
+      {
+        id: "stay-lars",
+        ref: "SK-T1066",
+        guestId: "g-lars",
+        contactName: "Lars Jensen",
+        phone: "+45 20 55 01 50",
+      },
+      { adults: 2, children: 0, infants: 0 },
+    ),
+    // A sold-out visit and one with two places left on the first bee house day.
+    seededBooking(
+      experience,
+      departureOf("experience-2027-04-17-0900"),
+      {
+        id: "experience-marie",
+        ref: "SK-T1067",
+        guestId: "g-marie",
+        contactName: "Marie Dubois",
+        phone: "+33 6 55 50 01 51",
+      },
+      { adults: 6, children: 2, infants: 0 },
+    ),
+    seededBooking(
+      experience,
+      departureOf("experience-2027-04-17-1000"),
+      {
+        id: "experience-peter",
+        ref: "SK-T1068",
+        guestId: "g-peter",
+        contactName: "Peter Schmid",
+        phone: "+41 79 555 01 52",
+      },
+      { adults: 4, children: 2, infants: 0 },
     ),
     {
       ...experienceHold,

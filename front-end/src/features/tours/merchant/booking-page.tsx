@@ -8,7 +8,14 @@ import { useState } from "react";
 
 import { BookingStatusLabels } from "../components/booking-status";
 import { useTours } from "../hooks/use-tours";
-import { balanceOverdue, bookingBalance, bookingPaid } from "../lib/selectors";
+import {
+  balanceOverdue,
+  bookingBalance,
+  bookingNights,
+  bookingPaid,
+} from "../lib/selectors";
+import { useNightsText } from "../booking/booking-summary";
+import { kindKey } from "../booking/kind";
 
 import { AttendanceActions } from "./attendance-actions";
 import { externalPaymentBlock } from "./lib/transitions";
@@ -21,7 +28,7 @@ import {
   KindChip,
   actorKey,
   useBlockText,
-  useStartText,
+  useBookingWhen,
   useTourFormatting,
 } from "./shared";
 import { useOverdueCheck } from "./use-overdue-check";
@@ -88,6 +95,8 @@ const policyKeys: Record<TourBooking["policy"], MessageKey> = {
 function SnapshotCard({ booking }: { booking: TourBooking }) {
   const { t, language } = useLocale();
   const { money, date } = useTourFormatting();
+  const nightsText = useNightsText();
+  const nights = bookingNights(booking).length;
   const lines = [
     ["tourMerchant.price.adults", booking.adults, booking.adultPrice],
     ["tourMerchant.price.children", booking.children, booking.childPrice],
@@ -108,9 +117,14 @@ function SnapshotCard({ booking }: { booking: TourBooking }) {
               className="flex flex-wrap justify-between gap-x-3 tabular-nums"
             >
               <dt className="text-muted">
-                {t(key, { count, price: money(price) })}
+                {nights > 1
+                  ? t("tourBooking.perNights", {
+                      line: t(key, { count, price: money(price) }),
+                      nights: nightsText(nights),
+                    })
+                  : t(key, { count, price: money(price) })}
               </dt>
-              <dd>{money(count * price)}</dd>
+              <dd>{money(count * price * nights)}</dd>
             </div>
           ))}
         <div className="flex flex-wrap justify-between gap-x-3 border-t border-separator pt-2 text-base font-semibold tabular-nums">
@@ -235,7 +249,8 @@ export function MerchantTourBookingPage({ bookingId }: { bookingId: string }) {
   const { bookings, tours, role, now } = useTours();
   const { t, language } = useLocale();
   const { money, date } = useTourFormatting();
-  const startText = useStartText();
+  const when = useBookingWhen();
+  const nightsText = useNightsText();
   const blockText = useBlockText();
   const [paymentOpen, setPaymentOpen] = useState(false);
   const isWide = useIsWide();
@@ -449,7 +464,10 @@ export function MerchantTourBookingPage({ bookingId }: { bookingId: string }) {
     </DetailCard>
   );
   const departure = (
-    <DetailCard icon={ClockIcon} title={t("tourMerchant.departure")}>
+    <DetailCard
+      icon={ClockIcon}
+      title={t(kindKey("tourMerchant.departure", kind ?? "tour"))}
+    >
       <Facts
         items={[
           {
@@ -460,9 +478,24 @@ export function MerchantTourBookingPage({ bookingId }: { bookingId: string }) {
             ),
             value: date(booking.startsAt),
           },
-          { label: t("tourMerchant.ends"), value: date(booking.endsAt) },
           {
-            label: t("tourMerchant.meeting"),
+            label: t(
+              kind === "stay"
+                ? "tourMerchant.checkOutTime"
+                : "tourMerchant.ends",
+            ),
+            value: date(booking.endsAt),
+          },
+          ...(kind === "stay"
+            ? [
+                {
+                  label: t("tourMerchant.nightsLabel"),
+                  value: nightsText(bookingNights(booking).length),
+                },
+              ]
+            : []),
+          {
+            label: t(kindKey("tourMerchant.meeting", kind ?? "tour")),
             value: pickText(booking.meetingPoint, language).text,
           },
           {
@@ -547,7 +580,7 @@ export function MerchantTourBookingPage({ bookingId }: { bookingId: string }) {
               {pickText(booking.tourName, language).text}
             </p>
             <p className="text-sm text-muted tabular-nums">
-              {startText(kind, booking.startsAt)}
+              {when(kind, booking)}
             </p>
           </div>
           <div className="flex flex-wrap items-start gap-2 lg:[&>div]:justify-end">

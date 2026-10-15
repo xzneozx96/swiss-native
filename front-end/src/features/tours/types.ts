@@ -84,6 +84,8 @@ export interface TourParticipants {
 export interface TourDraft extends TourParticipants {
   tourId: string;
   departureId: string;
+  /** Stay only: every night booked, in order; the first is `departureId` (the check-in). */
+  nightIds?: string[];
   contactName: string;
   phone: string;
   childName: string;
@@ -104,7 +106,10 @@ interface BookingRecord extends TourParticipants {
   guestId: string;
   language: Language;
   tourId: string;
+  /** The departure the booking starts with: a stay's check-in night. */
   departureId: string;
+  /** Stay only: every night booked, in order, starting with `departureId`. Absent = one night. */
+  nightIds?: string[];
   tourName: LocalizedText;
   meetingPoint: LocalizedText;
   startsAt: string;

@@ -6,8 +6,10 @@ import {
   TourTicketHead,
   isClosedBooking,
   useBookingFormat,
+  useNightsText,
   useTourPhoto,
 } from "./booking-summary";
+import { useBookingKind } from "./kind";
 
 import { EmptyState } from "@/components/empty-state";
 import { ChevronRightIcon, TourIcon } from "@/components/icons";
@@ -20,6 +22,7 @@ import {
 import { useLocale } from "@/contexts/locale-context";
 import { BookingStatusLabels } from "@/features/tours/components/booking-status";
 import { useTours } from "@/features/tours/hooks/use-tours";
+import { bookingNights } from "@/features/tours/lib/selectors";
 import { pickText } from "@/lib/localized";
 
 /**
@@ -99,6 +102,8 @@ function BookingTicket({ booking }: { booking: TourBooking }) {
 function PastRow({ booking }: { booking: TourBooking }) {
   const { language } = useLocale();
   const { money, date } = useBookingFormat();
+  const nights = useNightsText();
+  const isStay = useBookingKind(booking) === "stay";
   const name = pickText(booking.tourName, language);
   const photo = useTourPhoto(booking);
 
@@ -125,6 +130,7 @@ function PastRow({ booking }: { booking: TourBooking }) {
             </div>
             <span className="text-sm text-muted tabular-nums">
               {booking.ref} · {date(booking.startsAt)}
+              {isStay && ` · ${nights(bookingNights(booking).length)}`}
             </span>
           </div>
           <BookingStatusLabels booking={booking} />

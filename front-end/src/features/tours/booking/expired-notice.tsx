@@ -32,6 +32,7 @@ export function useRebook(booking: TourBooking) {
     updateDraft({
       tourId: booking.tourId,
       departureId: booking.departureId,
+      nightIds: booking.nightIds,
       adults: booking.adults,
       children: booking.children,
       infants: booking.infants,
