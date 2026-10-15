@@ -3,10 +3,20 @@ import type {
   Tour,
   TourBooking,
   TourData,
+  TourKind,
   TourParticipants,
   TourPaymentPolicy,
 } from "../types";
 
+export function isTour(tour: Pick<Tour, "kind">): boolean {
+  return tour.kind === "tour";
+}
+export function findListing(
+  data: TourData,
+  kind: Exclude<TourKind, "tour">,
+): Tour | undefined {
+  return data.tours.find((tour) => tour.kind === kind);
+}
 export function participantSeats(group: TourParticipants): number {
   return group.adults + group.children;
 }

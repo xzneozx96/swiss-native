@@ -10,12 +10,13 @@ import { CompactBar, SearchButton } from "@/components/layout/top-bar-buttons";
 import { useScrolledPast } from "@/hooks/use-scrolled-past";
 import { useLocale } from "@/contexts/locale-context";
 import { useTours } from "@/features/tours/hooks/use-tours";
+import { isTour } from "@/features/tours/lib/selectors";
 
 export function TourListPage() {
   // A tour added in M13 stays off C08 until its first publish; the seeded Pilatus draft
   // still shows as "Coming soon" (owner note, 15.10.2026). An archived tour is gone.
   const tours = useTours().tours.filter(
-    (tour) => !tour.unannounced && !tour.archivedAt,
+    (tour) => isTour(tour) && !tour.unannounced && !tour.archivedAt,
   );
   const { t } = useLocale();
   const [bannerEnd, scrolledPast] = useScrolledPast<HTMLDivElement>();

@@ -20,6 +20,7 @@ const cancellationPolicy = {
 export const tourSeed: Tour[] = [
   {
     id: "old-town",
+    kind: "tour",
     longStory: storyFromChapters({
       title: {
         en: "The pass where the ice left",
@@ -220,6 +221,7 @@ export const tourSeed: Tour[] = [
   },
   {
     id: "lake",
+    kind: "tour",
     longStory: storyFromChapters({
       title: {
         en: "A trade route that became a power station",
@@ -411,6 +413,7 @@ export const tourSeed: Tour[] = [
   },
   {
     id: "night",
+    kind: "tour",
     longStory: storyFromChapters({
       title: {
         en: "A road that was drawn, not just built",
@@ -603,6 +606,7 @@ export const tourSeed: Tour[] = [
   },
   {
     id: "workshop",
+    kind: "tour",
     longStory: storyFromChapters({
       title: {
         en: "The king of mountain passes",
@@ -799,6 +803,7 @@ export const tourSeed: Tour[] = [
   },
   {
     id: "pilatus",
+    kind: "tour",
     longStory: storyFromChapters({
       title: {
         en: "Up where the road finally arrived",
@@ -985,6 +990,141 @@ export const tourSeed: Tour[] = [
       },
     ],
   },
+  {
+    id: "stay",
+    kind: "stay",
+    slug: "stay-finsterwald",
+    name: {
+      en: "Stay at Erich's bee house",
+      de: "Zu Gast bei Erichs Bienenhaus",
+    },
+    summary: {
+      en: "A night at Erich's bee house in Finsterwald, Entlebuch",
+      de: "Eine Nacht in Erichs Bienenhaus in Finsterwald, Entlebuch",
+    },
+    description: {
+      en: "A homestay kept by Erich Haldi himself, in the UNESCO Biosphere Entlebuch. Check-in is at 15:00; you leave the next morning. Prices and times are demo values, and the rooms are still to be confirmed with Erich.",
+      de: "Eine Unterkunft, geführt von Erich Haldi selbst, in der UNESCO Biosphäre Entlebuch. Check-in ist um 15:00 Uhr, am nächsten Morgen reist man ab. Preise und Zeiten sind Demowerte, die Zimmer sind noch mit Erich zu klären.",
+    },
+    longStory: storyFromChapters({
+      title: {
+        en: "A house in the Biosphere",
+        de: "Ein Haus in der Biosphäre",
+      },
+      chapters: [
+        {
+          photo: "finsterwald-1",
+          title: {
+            en: "A house in the Biosphere",
+            de: "Ein Haus in der Biosphäre",
+          },
+          body: {
+            en: "Finsterwald lies in the UNESCO Biosphere Entlebuch. Erich Haldi keeps the house himself and welcomes riders who want to finish a pass day with a quiet night. Rooms and meals are still to be confirmed with him.",
+            de: "Finsterwald liegt in der UNESCO Biosphäre Entlebuch. Erich Haldi führt das Haus selbst und empfängt Fahrerinnen und Fahrer, die einen Passtag mit einer ruhigen Nacht beenden wollen. Zimmer und Verpflegung sind noch mit ihm zu klären.",
+          },
+        },
+      ],
+    }),
+    photos: [
+      "finsterwald-1",
+      "finsterwald-2",
+      "finsterwald-3",
+      "finsterwald-4",
+    ],
+    durationMinutes: 1200,
+    adultPrice: 18000,
+    childPrice: 9000,
+    infantPrice: 0,
+    meetingPoint: {
+      en: "Finsterwald, Entlebuch. The exact address is sent after booking.",
+      de: "Finsterwald, Entlebuch. Die genaue Adresse folgt nach der Buchung.",
+    },
+    included: [
+      {
+        en: "One night with Erich Haldi as your host",
+        de: "Eine Nacht mit Erich Haldi als Gastgeber",
+      },
+    ],
+    excluded: {
+      en: "Meals, drinks and travel. Which extras the stay offers is still to be confirmed with Erich.",
+      de: "Essen, Getränke und Anreise. Welche Extras die Unterkunft bietet, ist noch mit Erich zu klären.",
+    },
+    conditions: {
+      en: "Demo prices and times. Check-in from 15:00. Children under the infant age stay free.",
+      de: "Demopreise und Demozeiten. Check-in ab 15:00 Uhr. Kleinkinder übernachten gratis.",
+    },
+    cancellationPolicy,
+    published: true,
+    itinerary: [],
+    ageBands: { childFrom: 6, adultFrom: 16 },
+    participantFields: [],
+  },
+  {
+    id: "experience",
+    kind: "experience",
+    slug: "bee-house-experience",
+    name: {
+      en: "Erich's Bee House",
+      de: "Erichs Bienenhaus",
+    },
+    summary: {
+      en: "A first-season visit to the bee house in Finsterwald, 2027",
+      de: "Ein Besuch im Bienenhaus in Finsterwald in der ersten Saison 2027",
+    },
+    description: {
+      en: "The bees are planned for 2027 and nothing at the bee house operates yet. These are first-season dates in spring and summer 2027: a two-hour visit with Erich at the bee house in the UNESCO Biosphere Entlebuch. Prices and times are demo values.",
+      de: "Die Bienen sind für 2027 geplant, und im Bienenhaus läuft noch nichts. Das sind Termine der ersten Saison im Frühling und Sommer 2027: ein zweistündiger Besuch mit Erich im Bienenhaus in der UNESCO Biosphäre Entlebuch. Preise und Zeiten sind Demowerte.",
+    },
+    longStory: storyFromChapters({
+      title: { en: "Bees, planned for 2027", de: "Bienen, geplant für 2027" },
+      chapters: [
+        {
+          photo: "finsterwald-6",
+          title: {
+            en: "Bees, planned for 2027",
+            de: "Bienen, geplant für 2027",
+          },
+          body: {
+            en: "Erich plans to keep bees at the house from 2027. Nothing operates yet, so these first-season dates are a preview of a two-hour visit: the hives, the honey and the valley around them.",
+            de: "Erich plant ab 2027 Bienen am Haus. Noch läuft nichts, diese Termine der ersten Saison sind deshalb eine Vorschau auf einen zweistündigen Besuch: die Völker, der Honig und das Tal ringsum.",
+          },
+        },
+      ],
+    }),
+    photos: [
+      "finsterwald-6",
+      "finsterwald-8",
+      "finsterwald-3",
+      "finsterwald-5",
+    ],
+    durationMinutes: 120,
+    adultPrice: 6500,
+    childPrice: 3500,
+    infantPrice: 0,
+    meetingPoint: {
+      en: "Finsterwald, Entlebuch. Confirmed with Erich after booking.",
+      de: "Finsterwald, Entlebuch. Wird nach der Buchung mit Erich bestätigt.",
+    },
+    included: [
+      {
+        en: "A two-hour visit at the bee house with Erich",
+        de: "Ein zweistündiger Besuch im Bienenhaus mit Erich",
+      },
+    ],
+    excluded: {
+      en: "Travel and meals. The programme depends on the first bee season in 2027.",
+      de: "Anreise und Essen. Das Programm hängt von der ersten Bienensaison 2027 ab.",
+    },
+    conditions: {
+      en: "First-season dates: the bees are planned for 2027, so the programme and the dates can still change. Demo prices and times.",
+      de: "Termine der ersten Saison: Die Bienen sind für 2027 geplant, Programm und Termine können sich noch ändern. Demopreise und Demozeiten.",
+    },
+    cancellationPolicy,
+    published: true,
+    itinerary: [],
+    ageBands: { childFrom: 6, adultFrom: 16 },
+    participantFields: [],
+  },
 ];
 export function emptyTourDraft(): TourDraft {
   return {
@@ -1053,6 +1193,69 @@ function seededBooking(
         : [],
   };
 }
+
+const zurichHour = new Intl.DateTimeFormat("en-GB", {
+  timeZone: "Europe/Zurich",
+  hour: "2-digit",
+  hourCycle: "h23",
+});
+
+/** An ISO time with the Zurich offset (CET or CEST) in force on that day. */
+function zurichTime(day: string, hour: number): string {
+  const [year, month, date] = day.split("-").map(Number);
+
+  for (const offset of [1, 2]) {
+    const instant = Date.UTC(year, month - 1, date, hour - offset);
+
+    if (Number(zurichHour.format(instant)) === hour)
+      return `${day}T${String(hour).padStart(2, "0")}:00:00+0${offset}:00`;
+  }
+
+  throw new Error(`No Zurich time for ${day} ${hour}:00`);
+}
+function addDays(day: string, days: number): string {
+  return new Date(Date.parse(`${day}T00:00:00Z`) + days * 86_400_000)
+    .toISOString()
+    .slice(0, 10);
+}
+/** A deposit departure whose balance is due at 18:00 the day before it starts. */
+function listingDeparture(
+  id: string,
+  tourId: string,
+  day: string,
+  hour: number,
+  capacity: number,
+): Departure {
+  return {
+    id,
+    tourId,
+    startsAt: zurichTime(day, hour),
+    capacity,
+    policy: "deposit",
+    balanceDueAt: zurichTime(addDays(day, -1), 18),
+    closed: false,
+  };
+}
+const stayDepartures = Array.from({ length: 16 }, (_, i) => {
+  const day = addDays("2026-10-24", i);
+
+  return listingDeparture(`stay-${day}`, "stay", day, 15, 6);
+});
+// First season: the bees are planned for 2027, so these are the first spring and summer weekends.
+const experienceDepartures = [
+  "2027-04-17",
+  "2027-05-15",
+  "2027-06-05",
+  "2027-06-26",
+  "2027-07-24",
+  "2027-08-14",
+].flatMap((saturday) =>
+  [saturday, addDays(saturday, 1)].flatMap((day) =>
+    [10, 14].map((hour) =>
+      listingDeparture(`experience-${day}-${hour}`, "experience", day, hour, 8),
+    ),
+  ),
+);
 
 export function createTourSeed(): TourData {
   const departures = [
@@ -1340,11 +1543,93 @@ export function createTourSeed(): TourData {
   }
   // Steps 2.10–2.14: overdue policies, completion, cancellation and reconciliation cases.
   const operations = operationsFixtures(tourSeed, departures);
+  const listingDepartures = [...stayDepartures, ...experienceDepartures];
+  const stay = tourSeed.find((t) => t.id === "stay")!;
+  const experience = tourSeed.find((t) => t.id === "experience")!;
+  const departureOf = (id: string) =>
+    listingDepartures.find((d) => d.id === id)!;
+  const stayPaidInFull = seededBooking(
+    stay,
+    departureOf("stay-2026-11-02"),
+    {
+      id: "stay-yuki",
+      ref: "SK-T1062",
+      guestId: "g-yuki",
+      contactName: "Yuki Tanaka",
+      phone: "+41 79 555 01 46",
+    },
+    { adults: 2, children: 0, infants: 0 },
+  );
+  const experienceHold = seededBooking(
+    experience,
+    departureOf("experience-2027-05-15-10"),
+    {
+      id: "experience-daniel",
+      ref: "SK-T1064",
+      guestId: "g-daniel",
+      contactName: "Daniel Meier",
+      phone: "+41 76 555 01 48",
+    },
+    { adults: 2, children: 1, infants: 0 },
+  );
+  const listingBookings: TourBooking[] = [
+    seededBooking(
+      stay,
+      departureOf("stay-2026-10-30"),
+      {
+        id: "stay-erich",
+        ref: "SK-T1061",
+        guestId: "g-erich",
+        contactName: "Erich Haldi",
+        phone: "+41 79 123 45 67",
+      },
+      { adults: 2, children: 1, infants: 0 },
+    ),
+    {
+      ...stayPaidInFull,
+      payments: [
+        {
+          ...stayPaidInFull.payments[0],
+          amount: stayPaidInFull.total,
+        },
+      ],
+    },
+    seededBooking(
+      experience,
+      departureOf("experience-2027-04-17-14"),
+      {
+        id: "experience-sofia",
+        ref: "SK-T1063",
+        guestId: "g-sofia",
+        contactName: "Sofia Rossi",
+        phone: "+39 333 555 0147",
+      },
+      { adults: 2, children: 2, infants: 0 },
+    ),
+    {
+      ...experienceHold,
+      status: "expired",
+      holdUntil: null,
+      payments: [],
+      activity: [
+        {
+          at: "2026-10-11T09:00:00+02:00",
+          event: "created",
+          actor: "guest",
+        },
+        {
+          at: "2026-10-11T09:15:00+02:00",
+          event: "expired",
+          actor: "system",
+        },
+      ],
+    },
+  ];
 
   return {
     tours: structuredClone(tourSeed),
-    departures: [...departures, ...operations.departures],
-    bookings: [...bookings, ...operations.bookings],
+    departures: [...departures, ...operations.departures, ...listingDepartures],
+    bookings: [...bookings, ...operations.bookings, ...listingBookings],
     draft: emptyTourDraft(),
   };
 }

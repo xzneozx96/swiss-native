@@ -7,6 +7,7 @@ import { useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 
 import { TourTicketHead, useBookingFormat } from "./booking-summary";
+import { useBookingKind, useKindT } from "./kind";
 import { ExpiredHeadline, ReconciliationNotice } from "./expired-notice";
 import {
   HoldNotice,
@@ -65,6 +66,7 @@ const owes = (booking: TourBooking) =>
 export function GuestTourBookingPage({ bookingId }: { bookingId: string }) {
   const { booking, now } = useOwnedBooking(bookingId);
   const { t } = useLocale();
+  const kt = useKindT(useBookingKind(booking ?? { tourId: "" }));
   const navigate = useNavigate();
   const back = useBack(
     () =>
@@ -81,8 +83,10 @@ export function GuestTourBookingPage({ bookingId }: { bookingId: string }) {
   return (
     <div className="flex flex-1 flex-col pb-12">
       <header className="sticky top-0 z-20 flex h-14 items-center gap-2 bg-background/90 px-4 pt-[env(safe-area-inset-top,0px)] backdrop-blur-xl">
-        <BackButton label={t("account.section.bookings")} onPress={back} />
-        <h1 className="text-[17px] font-semibold">{t("tourBooking.detail")}</h1>
+        <BackButton label={t("tourBooking.bookings")} onPress={back} />
+        <h1 className="text-[17px] font-semibold">
+          {kt("tourBooking.detail")}
+        </h1>
       </header>
       <div className="flex flex-col gap-3 px-4 pt-2">
         <BookingTicket booking={booking} now={now} />
@@ -137,7 +141,9 @@ function BookingTicket({ booking, now }: { booking: TourBooking; now: Date }) {
   const expired = booking.status === "expired";
   const due = owes(booking);
   const reviewable =
-    booking.status === "completed" && bookingBalance(booking) === 0;
+    useBookingKind(booking) === "tour" &&
+    booking.status === "completed" &&
+    bookingBalance(booking) === 0;
 
   return (
     <SurfaceCard>
@@ -164,6 +170,7 @@ function BookingTicket({ booking, now }: { booking: TourBooking; now: Date }) {
  */
 function OverviewPanel({ booking, now }: { booking: TourBooking; now: Date }) {
   const { t, language } = useLocale();
+  const kt = useKindT(useBookingKind(booking));
   const meeting = pickText(booking.meetingPoint, language);
 
   return (
@@ -172,7 +179,7 @@ function OverviewPanel({ booking, now }: { booking: TourBooking; now: Date }) {
         <Fact icon={TourIcon} label={t("tourBooking.reference")}>
           <span className="font-medium tabular-nums">{booking.ref}</span>
         </Fact>
-        <Fact icon={PickupIcon} label={t("tourBooking.meeting")}>
+        <Fact icon={PickupIcon} label={kt("tourBooking.meeting")}>
           <span className="font-serif text-card-title" lang={meeting.language}>
             {meeting.text}
           </span>
@@ -273,6 +280,7 @@ function PaymentsPanel({ booking }: { booking: TourBooking }) {
 /** Logged events as C15's Progress stepper; seeded bookings log none, so say so, as payments do. */
 function ActivityPanel({ booking }: { booking: TourBooking }) {
   const { t } = useLocale();
+  const kt = useKindT(useBookingKind(booking));
   const { date } = useBookingFormat();
 
   return (
@@ -282,7 +290,7 @@ function ActivityPanel({ booking }: { booking: TourBooking }) {
         <TimelineSteps
           label={t("tourBooking.timeline")}
           steps={booking.activity.map((event) => ({
-            text: t(activityKeys[event.event] ?? "tourBooking.event.other"),
+            text: kt(activityKeys[event.event] ?? "tourBooking.event.other"),
             time: date(event.at),
           }))}
         />

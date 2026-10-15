@@ -20,6 +20,7 @@ export function isProductTab(value: unknown): value is ProductTab {
 
 export interface ProductRow {
   id: string;
+  kind: Tour["kind"];
   /** Opens M13. */
   href: string;
   name: string;
@@ -48,7 +49,7 @@ function upcomingCount(
   ).length;
 }
 
-/** M11 rows for the Tours tab, in the seed's order (the host's own order). */
+/** M11 rows, in the seed's order (the host's own order): tours, the stay and the experience. */
 export function useMerchantProducts() {
   const { t, language, intlLocale } = useLocale();
   const { state } = useDemo();
@@ -60,6 +61,7 @@ export function useMerchantProducts() {
 
   const tourRow = (tour: Tour): ProductRow => ({
     id: tour.id,
+    kind: tour.kind,
     href: `#/store/products/tours/${tour.id}`,
     name: pick(tour.name),
     photo: tour.photos[0],
@@ -80,7 +82,13 @@ export function useMerchantProducts() {
     ],
   });
 
-  return { tours: tourData.tours.map(tourRow) };
+  const rows = tourData.tours.map(tourRow);
+
+  return {
+    tours: rows.filter((r) => r.kind === "tour"),
+    stays: rows.filter((r) => r.kind === "stay"),
+    experiences: rows.filter((r) => r.kind === "experience"),
+  };
 }
 
 /**

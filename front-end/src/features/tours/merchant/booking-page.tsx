@@ -18,8 +18,10 @@ import {
   GroupText,
   OverduePill,
   activityKey,
+  KindChip,
   actorKey,
   useBlockText,
+  useStartText,
   useTourFormatting,
 } from "./shared";
 import { useOverdueCheck } from "./use-overdue-check";
@@ -230,15 +232,17 @@ function HistoryCard({ booking }: { booking: TourBooking }) {
  * record external payments (M08) and outcomes. Adjustments and refunds are Phase 3.
  */
 export function MerchantTourBookingPage({ bookingId }: { bookingId: string }) {
-  const { bookings, role, now } = useTours();
+  const { bookings, tours, role, now } = useTours();
   const { t, language } = useLocale();
   const { money, date } = useTourFormatting();
+  const startText = useStartText();
   const blockText = useBlockText();
   const [paymentOpen, setPaymentOpen] = useState(false);
   const isWide = useIsWide();
 
   useOverdueCheck();
   const booking = bookings.find((item) => item.id === bookingId);
+  const kind = tours.find((item) => item.id === booking?.tourId)?.kind;
 
   if (!booking)
     return (
@@ -449,7 +453,11 @@ export function MerchantTourBookingPage({ bookingId }: { bookingId: string }) {
       <Facts
         items={[
           {
-            label: t("tourMerchant.departure"),
+            label: t(
+              kind === "stay"
+                ? "tourMerchant.checkInTime"
+                : "tourMerchant.departure",
+            ),
             value: date(booking.startsAt),
           },
           { label: t("tourMerchant.ends"), value: date(booking.endsAt) },
@@ -539,10 +547,11 @@ export function MerchantTourBookingPage({ bookingId }: { bookingId: string }) {
               {pickText(booking.tourName, language).text}
             </p>
             <p className="text-sm text-muted tabular-nums">
-              {date(booking.startsAt)}
+              {startText(kind, booking.startsAt)}
             </p>
           </div>
-          <div className="lg:[&>div]:justify-end">
+          <div className="flex flex-wrap items-start gap-2 lg:[&>div]:justify-end">
+            <KindChip kind={kind} />
             <BookingStatusLabels booking={booking} />
           </div>
         </div>

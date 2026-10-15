@@ -31,6 +31,8 @@ import {
   ToneLine,
   phaseChip,
   ticketSurface,
+  KindChip,
+  useStartText,
   useTourFormatting,
 } from "./shared";
 import { useOverdueCheck } from "./use-overdue-check";
@@ -151,6 +153,7 @@ export function TourManifestPage({ departureId }: { departureId: string }) {
   const { data, departures, tours, now } = useTours();
   const { t, language } = useLocale();
   const { date, time, money } = useTourFormatting();
+  const startText = useStartText();
 
   const isLoading = useSimulatedLoading();
 
@@ -243,7 +246,7 @@ export function TourManifestPage({ departureId }: { departureId: string }) {
             </h1>
             <p className="font-medium">{pickText(tour.name, language).text}</p>
             <p className="text-sm text-muted tabular-nums">
-              {date(departure.startsAt)}
+              {startText(tour.kind, departure.startsAt)}
             </p>
             <p className="text-sm text-muted tabular-nums">
               {t("tourMerchant.seatSummary", {
@@ -255,6 +258,7 @@ export function TourManifestPage({ departureId }: { departureId: string }) {
             </p>
           </div>
           <div className="flex flex-wrap items-start gap-2 lg:justify-end">
+            <KindChip kind={tour.kind} />
             <StatusChip tone={phaseChip[phase].tone}>
               {t(phaseChip[phase].key)}
             </StatusChip>

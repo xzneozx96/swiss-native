@@ -20,8 +20,11 @@ export interface TourStop {
   /** Practical tip for this stop (access, facilities), shown in the stop sheet. */
   note?: LocalizedText;
 }
+/** A motorbike pass tour, the night at Erich's bee house, or the bee house visit. */
+export type TourKind = "tour" | "stay" | "experience";
 export interface Tour {
   id: string;
+  kind: TourKind;
   slug: string;
   name: LocalizedText;
   summary: LocalizedText;

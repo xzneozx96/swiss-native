@@ -11,6 +11,7 @@ import { SurfaceCard, SurfaceCardBlock } from "@/components/surface-card";
 import { useLocale } from "@/contexts/locale-context";
 import { useTourActions, useTours } from "@/features/tours/hooks/use-tours";
 import {
+  isTour,
   reconciliationAmount,
   reconciliationPayments,
 } from "@/features/tours/lib/selectors";
@@ -37,11 +38,16 @@ export function useRebook(booking: TourBooking) {
       contactName: booking.contactName,
       phone: booking.phone,
     });
-    void navigate({
-      to: "/tours/$slug",
-      params: { slug: tour.slug },
-      search: { book: true },
-    });
+    // A stay or an experience has no page of its own: its booking sheet opens from home.
+    void navigate(
+      isTour(tour)
+        ? {
+            to: "/tours/$slug",
+            params: { slug: tour.slug },
+            search: { book: true },
+          }
+        : { to: "/" },
+    );
   };
 }
 

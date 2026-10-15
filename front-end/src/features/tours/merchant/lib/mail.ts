@@ -13,8 +13,15 @@ export type TourMailTemplate =
   "N07" | "N08" | "N09" | "N10" | "N11" | "N13" | "N15" | "N22";
 
 /** What every tour email can show, worded in the recipient's language. Money in Rappen, dates ISO. */
-function bookingParams(booking: TourBooking, language: Language): MailParams {
+function bookingParams(
+  state: DemoState,
+  booking: TourBooking,
+  language: Language,
+): MailParams {
   return {
+    kind:
+      state.data.tours?.tours.find((tour) => tour.id === booking.tourId)
+        ?.kind ?? "tour",
     ref: booking.ref,
     tour: pickText(booking.tourName, language).text,
     meetingPoint: pickText(booking.meetingPoint, language).text,
@@ -49,7 +56,7 @@ export function mailTourGuest(
     language: booking.language,
     template,
     bookingId: booking.id,
-    params: { ...bookingParams(booking, booking.language), ...params },
+    params: { ...bookingParams(state, booking, booking.language), ...params },
   });
 }
 
@@ -68,6 +75,6 @@ export function mailTourStaff(
     language: staffLanguage,
     template,
     bookingId: booking.id,
-    params: { ...bookingParams(booking, staffLanguage), ...params },
+    params: { ...bookingParams(state, booking, staffLanguage), ...params },
   });
 }

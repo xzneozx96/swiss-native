@@ -85,7 +85,14 @@ const guestTemplates: Record<TourMailTemplate, Template> = {
   },
   N15: {
     subject: "tourMail.N15.subject",
-    body: ["tourMail.greeting", "tourMail.N15.thanks", "tourMail.N15.review"],
+    body: [
+      "tourMail.greeting",
+      "tourMail.N15.thanks",
+      (p) =>
+        p.kind === "stay" || p.kind === "experience"
+          ? null
+          : "tourMail.N15.review",
+    ],
   },
   N22: {
     subject: "tourMail.N22.subject",
@@ -143,12 +150,22 @@ export function renderTourMail(mail: Mail): {
           : value;
   }
 
+  const kind = String(mail.params.kind ?? "tour");
+  // A stay or an experience words a line as `<key>.<kind>` or `<key>.listing`, else as a tour.
+  const text = (key: MessageKey): string => {
+    const variant = [`${key}.${kind}`, `${key}.listing`].find(
+      (candidate) => kind !== "tour" && candidate in copy,
+    );
+
+    return copy[(variant ?? key) as MessageKey];
+  };
+
   return {
-    subject: fill(copy[template.subject], vars),
+    subject: fill(text(template.subject), vars),
     body: template.body.flatMap((line) => {
       const key = typeof line === "function" ? line(mail.params) : line;
 
-      return key ? [fill(copy[key], vars)] : [];
+      return key ? [fill(text(key), vars)] : [];
     }),
   };
 }

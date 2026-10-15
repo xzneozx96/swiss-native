@@ -4,6 +4,7 @@ import { useNavigate } from "@tanstack/react-router";
 import { BookingSummary, useBookingFormat } from "./booking-summary";
 import { calendarHref } from "./calendar";
 import { BookingMoney, GuestTourBookingPage } from "./guest-tour-booking-page";
+import { useBookingKind, useKindT } from "./kind";
 import { MissingBooking, useOwnedBooking } from "./tour-payment-page";
 
 import { BookingsIcon, StatusSuccessIcon } from "@/components/icons";
@@ -17,6 +18,7 @@ import { pickText } from "@/lib/localized";
 export function TourConfirmedPage({ bookingId }: { bookingId: string }) {
   const { booking, now } = useOwnedBooking(bookingId);
   const { t, language } = useLocale();
+  const kt = useKindT(useBookingKind(booking ?? { tourId: "" }));
   const { money, date } = useBookingFormat();
   const navigate = useNavigate();
   const trip = useTripProfile({ bookingId });
@@ -35,9 +37,9 @@ export function TourConfirmedPage({ bookingId }: { bookingId: string }) {
           <StatusSuccessIcon aria-hidden size={30} />
         </span>
         <h1 className="font-serif text-display text-balance">
-          {t("tourBooking.confirmed")}
+          {kt("tourBooking.confirmed")}
         </h1>
-        <p className="text-muted">{t("tourBooking.confirmedBody")}</p>
+        <p className="text-muted">{kt("tourBooking.confirmedBody")}</p>
         {booking.policy === "later" && bookingBalance(booking) > 0 && (
           <p className="text-sm font-medium">
             {t("tourBooking.laterDue", {

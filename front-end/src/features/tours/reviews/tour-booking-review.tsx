@@ -7,7 +7,7 @@ import { Link } from "@tanstack/react-router";
 import { useState } from "react";
 
 import { useBookingFormat, useGroupText } from "../booking/booking-summary";
-import { bookingBalance } from "../lib/selectors";
+import { bookingBalance, isTour } from "../lib/selectors";
 
 import { useLocale } from "@/contexts/locale-context";
 import { ReviewItem } from "@/features/catalog/components/review-item";
@@ -45,6 +45,8 @@ export function TourBookingReview({ booking }: { booking: TourBooking }) {
     (item) => item.id === booking.id,
   );
   const eligible =
+    tour !== undefined &&
+    isTour(tour) &&
     latest?.status === "completed" &&
     bookingBalance(latest) === 0 &&
     latest.guestId === state.data.signedInGuestId;

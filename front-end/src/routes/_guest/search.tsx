@@ -8,6 +8,7 @@ import {
 
 import { useLocale } from "@/contexts/locale-context";
 import { useDemo } from "@/features/demo";
+import { isTour } from "@/features/tours/lib/selectors";
 import { GlobalSearch } from "@/features/search/components/global-search";
 import { formatMoney } from "@/lib/format";
 import { pickText } from "@/lib/localized";
@@ -35,6 +36,7 @@ function SearchPage() {
   if (query) {
     const tours = (state.data.tours?.tours ?? []).filter(
       (tour) =>
+        isTour(tour) &&
         tour.published &&
         matches(
           pickText(tour.name, language).text,

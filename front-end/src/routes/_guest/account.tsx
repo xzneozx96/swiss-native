@@ -33,7 +33,7 @@ export const Route = createFileRoute("/_guest/account")({
 });
 
 const sectionTitle: Record<AccountSection, MessageKey> = {
-  bookings: "account.section.bookings",
+  bookings: "tourBooking.bookings",
   payments: "account.section.payments",
   profile: "account.section.profile",
   notifications: "account.section.notifications",

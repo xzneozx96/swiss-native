@@ -12,9 +12,11 @@ import { departureSeats } from "../lib/selectors";
 
 import { departureBookings, departurePhase, tourWork } from "./lib/work";
 import {
+  KindChip,
   ToneLine,
   phaseChip,
   ticketSurface,
+  useStartText,
   useTourFormatting,
 } from "./shared";
 import { useOverdueCheck } from "./use-overdue-check";
@@ -99,7 +101,8 @@ const bookable = (phase: DeparturePhase) =>
  */
 function DepartureCards({ rows }: { rows: Row[] }) {
   const { t, language } = useLocale();
-  const { date, money, weekday, day, month } = useTourFormatting();
+  const { money, weekday, day, month } = useTourFormatting();
+  const startText = useStartText();
 
   return (
     <ul className="flex flex-col gap-5 lg:hidden">
@@ -129,8 +132,11 @@ function DepartureCards({ rows }: { rows: Row[] }) {
                     {tour && pickText(tour.name, language).text}
                   </h3>
                   <p className="mt-2 text-xs text-muted tabular-nums">
-                    {date(departure.startsAt)}
+                    {startText(tour?.kind, departure.startsAt)}
                   </p>
+                  <div className="mt-2">
+                    <KindChip kind={tour?.kind} />
+                  </div>
                 </div>
                 <ChevronRightIcon
                   aria-hidden
@@ -210,7 +216,8 @@ function DepartureTable({
   empty?: EmptyStateProps;
 }) {
   const { t, language } = useLocale();
-  const { date, money } = useTourFormatting();
+  const { money } = useTourFormatting();
+  const startText = useStartText();
   // Fixed shares, so the Upcoming and Ended tables line up column by column.
   const columns: DataTableColumn<Row>[] = [
     {
@@ -225,7 +232,8 @@ function DepartureTable({
             {tour && pickText(tour.name, language).text}
           </span>
           <span className="flex flex-wrap items-center gap-2 text-label text-muted tabular-nums">
-            {date(departure.startsAt)}
+            {startText(tour?.kind, departure.startsAt)}
+            <KindChip kind={tour?.kind} />
             {phase !== "open" && (
               <StatusChip tone={phaseChip[phase].tone}>
                 {t(phaseChip[phase].key)}

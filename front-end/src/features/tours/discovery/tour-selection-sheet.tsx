@@ -31,26 +31,10 @@ declare module "@tanstack/history" {
   }
 }
 
-/**
- * C10 departure and group: a bottom sheet on C09, as C03's "Your gift" sheet (2.4-r5). Its
- * address is `/tours/{slug}?book=true`, so a reload, Back from C11 and C11's Edit reopen it
- * with the draft; closing returns to C09 without leaving an entry to bounce on.
- */
-export function TourSelectionSheet({
-  tour,
-  isOpen,
-}: {
-  tour: Tour;
-  isOpen: boolean;
-}) {
-  const { t, language, intlLocale } = useLocale();
+export function useTourSelection(tour: Tour, isOpen: boolean) {
+  const { t, intlLocale } = useLocale();
   const { data, draft, now } = useTours();
   const { updateDraft } = useTourActions();
-  const navigate = useNavigate();
-  const router = useRouter();
-  const canGoBack = useCanGoBack();
-  // X, a swipe, Escape and the backdrop all close: one step back per history entry.
-  const closedFrom = useRef<string>(undefined);
   const choices = upcomingDepartures(data, tour.id, now);
   const first = nextAvailableDeparture(data, tour.id, now);
   const changingTour = draft.tourId !== tour.id;
@@ -64,40 +48,7 @@ export function TourSelectionSheet({
     Boolean(selected) && seats > 0 && !overCapacity && group.adults >= 1;
   const total = tourTotal(tour, group);
   const dueToday = selected ? firstPaymentAmount(selected.policy, total) : 0;
-  const ages = ageBandLabels(tour.ageBands, t);
-  const plural = (count: number) =>
-    new Intl.PluralRules(intlLocale).select(count) === "one" ? "one" : "other";
   const money = (rappen: number) => formatMoney(rappen / 100, intlLocale);
-  const date = (iso: string) =>
-    formatShortDate(zurichDate(new Date(iso)), zurichDate(now), intlLocale);
-  const time = (iso: string) =>
-    new Intl.DateTimeFormat(intlLocale, {
-      hour: "2-digit",
-      minute: "2-digit",
-      timeZone: "Europe/Zurich",
-    }).format(new Date(iso));
-
-  const close = () => {
-    const { state, href } = router.state.location;
-    const entry = state.__TSR_key ?? href;
-
-    if (closedFrom.current === entry) return;
-    closedFrom.current = entry;
-    if (canGoBack && state.bookOverDetail) router.history.back();
-    else
-      void navigate({
-        to: "/tours/$slug",
-        params: { slug: tour.slug },
-        search: {},
-        replace: true,
-        resetScroll: false,
-      });
-  };
-
-  // Closed: Forward may bring the same entry back, and its X must work again.
-  useEffect(() => {
-    if (!isOpen) closedFrom.current = undefined;
-  }, [isOpen]);
 
   // Only an open sheet starts a draft for this tour: viewing C09 keeps another tour's draft.
   useEffect(() => {
@@ -111,24 +62,66 @@ export function TourSelectionSheet({
       });
   }, [isOpen, draft.tourId, tour.id, first?.id, updateDraft]);
 
+  return {
+    choices,
+    departureId,
+    group,
+    selected,
+    seats,
+    usedSeats,
+    overCapacity,
+    valid,
+    total,
+    dueToday,
+    money,
+    reviewLabel: t("tourDiscovery.review", { total: money(total) }),
+  };
+}
+
+type TourSelection = ReturnType<typeof useTourSelection>;
+
+/** The sheet's content: departures, group, payment. Shared by the tour sheet and the home listing sheet. */
+export function TourSelectionBody({
+  tour,
+  selection,
+  departuresLabel,
+  intro,
+}: {
+  tour: Tour;
+  selection: TourSelection;
+  departuresLabel?: string;
+  intro?: string;
+}) {
+  const { t, intlLocale } = useLocale();
+  const { data, now } = useTours();
+  const { updateDraft } = useTourActions();
+  const {
+    choices,
+    departureId,
+    group,
+    selected,
+    seats,
+    usedSeats,
+    overCapacity,
+    total,
+    dueToday,
+    money,
+  } = selection;
+  const ages = ageBandLabels(tour.ageBands, t);
+  const plural = (count: number) =>
+    new Intl.PluralRules(intlLocale).select(count) === "one" ? "one" : "other";
+  const date = (iso: string) =>
+    formatShortDate(zurichDate(new Date(iso)), zurichDate(now), intlLocale);
+  const time = (iso: string) =>
+    new Intl.DateTimeFormat(intlLocale, {
+      hour: "2-digit",
+      minute: "2-digit",
+      timeZone: "Europe/Zurich",
+    }).format(new Date(iso));
+
   return (
-    <ChoiceSheet
-      action={{
-        label: t("tourDiscovery.review", { total: money(total) }),
-        isDisabled: !valid,
-        onPress: () =>
-          void navigate({
-            to: "/tours/$slug/book/review",
-            params: { slug: tour.slug },
-          }),
-      }}
-      closeLabel={t("tourDiscovery.close")}
-      isOpen={isOpen}
-      title={pickText(tour.name, language).text}
-      onOpenChange={(open) => {
-        if (!open) close();
-      }}
-    >
+    <>
+      {intro && <p className="text-sm text-foreground">{intro}</p>}
       {choices.length === 0 ? (
         <EmptyState
           action={{ label: t("tourDiscovery.browse"), to: "/tours" }}
@@ -143,7 +136,7 @@ export function TourSelectionSheet({
           onChange={(value) => updateDraft({ departureId: value })}
         >
           <Label className="text-heading">
-            {t("tourDiscovery.departures")}
+            {departuresLabel ?? t("tourDiscovery.departures")}
           </Label>
           {choices.map((departure) => {
             const available = availableSeats(data, departure.id, now);
@@ -289,6 +282,71 @@ export function TourSelectionSheet({
         />
         {t("tourDiscovery.noHold")}
       </p>
+    </>
+  );
+}
+
+/**
+ * C10 departure and group: a bottom sheet on C09, as C03's "Your gift" sheet (2.4-r5). Its
+ * address is `/tours/{slug}?book=true`, so a reload, Back from C11 and C11's Edit reopen it
+ * with the draft; closing returns to C09 without leaving an entry to bounce on.
+ */
+export function TourSelectionSheet({
+  tour,
+  isOpen,
+}: {
+  tour: Tour;
+  isOpen: boolean;
+}) {
+  const { t, language } = useLocale();
+  const navigate = useNavigate();
+  const router = useRouter();
+  const canGoBack = useCanGoBack();
+  // X, a swipe, Escape and the backdrop all close: one step back per history entry.
+  const closedFrom = useRef<string>(undefined);
+  const selection = useTourSelection(tour, isOpen);
+
+  const close = () => {
+    const { state, href } = router.state.location;
+    const entry = state.__TSR_key ?? href;
+
+    if (closedFrom.current === entry) return;
+    closedFrom.current = entry;
+    if (canGoBack && state.bookOverDetail) router.history.back();
+    else
+      void navigate({
+        to: "/tours/$slug",
+        params: { slug: tour.slug },
+        search: {},
+        replace: true,
+        resetScroll: false,
+      });
+  };
+
+  // Closed: Forward may bring the same entry back, and its X must work again.
+  useEffect(() => {
+    if (!isOpen) closedFrom.current = undefined;
+  }, [isOpen]);
+
+  return (
+    <ChoiceSheet
+      action={{
+        label: selection.reviewLabel,
+        isDisabled: !selection.valid,
+        onPress: () =>
+          void navigate({
+            to: "/tours/$slug/book/review",
+            params: { slug: tour.slug },
+          }),
+      }}
+      closeLabel={t("tourDiscovery.close")}
+      isOpen={isOpen}
+      title={pickText(tour.name, language).text}
+      onOpenChange={(open) => {
+        if (!open) close();
+      }}
+    >
+      <TourSelectionBody selection={selection} tour={tour} />
     </ChoiceSheet>
   );
 }

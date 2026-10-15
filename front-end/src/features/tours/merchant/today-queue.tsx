@@ -9,7 +9,7 @@ import { useTours } from "../hooks/use-tours";
 import { balanceOverdue, departureSeats } from "../lib/selectors";
 
 import { balanceToCollect, departurePhase, tourWork } from "./lib/work";
-import { useTourFormatting } from "./shared";
+import { KindChip, useTourFormatting } from "./shared";
 
 import {
   ChevronRightIcon,
@@ -250,8 +250,11 @@ export function NextDeparturesWidget({ className = "lg:col-span-3" }) {
                       <span className="truncate">
                         {tour && pickText(tour.name, language).text}
                       </span>
+                      <KindChip kind={tour?.kind} />
                     </span>
                     <span className="text-sm text-muted tabular-nums">
+                      {tour?.kind === "stay" &&
+                        `${t("tourMerchant.checkInTime")} `}
                       {time(departure.startsAt)} ·{" "}
                       {t("tourMerchant.seatsBooked", {
                         count: seats.confirmed,

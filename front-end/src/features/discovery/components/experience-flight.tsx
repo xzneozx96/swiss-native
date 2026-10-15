@@ -7,13 +7,14 @@
  * one red node (on a photo's edge, or at the start of the dance), and the path runs
  * through them in order. Between rows it only travels inside the empty row gap; inside
  * a row it stays in the photo column, passing behind the photos. Bees are planned from
- * 2027; nothing here is bookable, so the action is an email to the host.
+ * 2027; the first-season dates are bookable from the sheet the main button opens.
  */
 import { useLayoutEffect, useRef, useState } from "react";
 
 import { ArrowRightIcon } from "@/components/icons";
 import { useLocale } from "@/contexts/locale-context";
 import { shop } from "@/features/catalog/seed";
+import { ListingBookingSheet } from "@/features/tours/discovery/listing-booking-sheet";
 import { photoUrl } from "@/lib/photos";
 
 const copy = {
@@ -41,7 +42,8 @@ const copy = {
     end: "First flight",
     endWhen: "planned for 2027",
     note: "Honey notes are typical of the region, not a promise.",
-    cta: "Ask Erich about 2027",
+    cta: "Reserve a spot",
+    ask: "Ask Erich by email",
     alts: [
       "Gabled wooden bee house with painted flight boards",
       "A bee on a dandelion",
@@ -72,7 +74,8 @@ const copy = {
     end: "Erster Flug",
     endWhen: "geplant für 2027",
     note: "Die Honignoten sind typisch für die Region, kein Versprechen.",
-    cta: "Erich zu 2027 fragen",
+    cta: "Platz reservieren",
+    ask: "Erich per E-Mail fragen",
     alts: [
       "Bienenhaus aus Holz mit Giebel und bemalten Flugbrettern",
       "Eine Biene auf einem Löwenzahn",
@@ -313,6 +316,7 @@ export function ExperienceFlight() {
   const c = copy[language];
   const stageRef = useRef<HTMLDivElement>(null);
   const [geo, setGeo] = useState<Geometry | null>(null);
+  const [booking, setBooking] = useState(false);
 
   // Re-measure on every size change of the stage (width, wrapping copy, web fonts).
   useLayoutEffect(() => {
@@ -461,17 +465,30 @@ export function ExperienceFlight() {
       </div>
 
       <div className="flex flex-col gap-3 px-5 pt-2">
-        <a
+        <button
           className="flex h-12 items-center justify-center gap-2 rounded-full bg-accent px-5 text-sm font-semibold text-accent-foreground outline-none focus-visible:ring-2 focus-visible:ring-[#F1EEE4] active:scale-[0.98]"
-          href={`mailto:${shop.email}?subject=${encodeURIComponent(c.title)}`}
+          type="button"
+          onClick={() => setBooking(true)}
         >
           {c.cta}
           <ArrowRightIcon size={16} />
+        </button>
+        <a
+          className="self-center text-[13px] leading-[18px] font-semibold text-[#F1EEE4]/75 underline underline-offset-4 outline-none focus-visible:ring-2 focus-visible:ring-[#F1EEE4]"
+          href={`mailto:${shop.email}?subject=${encodeURIComponent(c.title)}`}
+        >
+          {c.ask}
         </a>
         <p className="text-center text-[12px] leading-4 text-[#F1EEE4]/55">
           {c.note}
         </p>
       </div>
+
+      <ListingBookingSheet
+        isOpen={booking}
+        kind="experience"
+        onClose={() => setBooking(false)}
+      />
     </section>
   );
 }

@@ -59,7 +59,7 @@ export const tourBookingEn = {
     "Your booking could not be created. Check the details and try again.",
   "tourBooking.missing": "We couldn’t find this booking for your account.",
   "tourBooking.empty":
-    "Your next adventure starts here. Your tour bookings will appear here.",
+    "Your next adventure starts here. Your bookings will appear here.",
   "tourBooking.explore": "Explore tours",
   "tourBooking.past": "Past bookings",
   "tourBooking.detail": "Your tour booking",
@@ -133,6 +133,61 @@ export const tourBookingEn = {
   "tourBooking.event.no_show": "No-show recorded",
   "tourBooking.event.completed": "Booking completed",
   "tourBooking.event.other": "Booking updated",
+  "tourBooking.bookings": "Bookings",
+  "tourBooking.intro.stay":
+    "Your stay is reserved only after you continue. Check your check-in and your group before booking.",
+  "tourBooking.intro.experience":
+    "Your places are reserved only after you continue. Check the date and your group before booking. The bees are planned for 2027, so this is a first-season date.",
+  "tourBooking.edit.stay": "Edit check-in or group",
+  "tourBooking.edit.experience": "Edit date or group",
+  "tourBooking.chooseAnother.stay": "Choose another check-in",
+  "tourBooking.chooseAnother.experience": "Choose another date",
+  "tourBooking.error.departure.listing":
+    "This date is no longer available. Choose a new date.",
+  "tourBooking.error.capacity.listing":
+    "There are not enough places left for your group. Choose another date or adjust your group.",
+  "tourBooking.deposit.stay":
+    "Pay a 30% deposit now. Your remaining balance is due before check-in.",
+  "tourBooking.deposit.experience":
+    "Pay a 30% deposit now. Your remaining balance is due before your visit.",
+  "tourBooking.later.stay":
+    "Book without paying now. Your stay is confirmed and the balance is due before check-in.",
+  "tourBooking.later.experience":
+    "Book without paying now. Your places are confirmed and the balance is due before your visit.",
+  "tourBooking.detail.stay": "Your stay",
+  "tourBooking.detail.experience": "Your experience",
+  "tourBooking.confirmed.stay": "Your stay is confirmed",
+  "tourBooking.confirmed.experience": "Your experience is confirmed",
+  "tourBooking.confirmedBody.stay":
+    "Keep your booking reference handy and arrive at the check-in place on your arrival day.",
+  "tourBooking.confirmedBody.experience":
+    "Keep your booking reference handy and be at the meeting point before the start.",
+  "tourBooking.meeting.stay": "Where to check in",
+  "tourBooking.meeting.experience": "Where to meet",
+  "tourBooking.onlyInGerman.stay":
+    "Some stay details are only available in German.",
+  "tourBooking.onlyInGerman.experience":
+    "Some experience details are only available in German.",
+  "tourBooking.onlyInEnglish.stay":
+    "Some stay details are only available in English.",
+  "tourBooking.onlyInEnglish.experience":
+    "Some experience details are only available in English.",
+  "tourBooking.event.delivered.stay": "Stay completed",
+  "tourBooking.event.delivered.experience": "Experience attended",
+  "tourMail.tourLine.stay": "Stay: {tour}, {startsAt}",
+  "tourMail.tourLine.experience": "Experience: {tour}, {startsAt}",
+  "tourMail.when.stay": "Check-in: {startsAt}",
+  "tourMail.meeting.stay": "Check-in place: {meetingPoint}",
+  "tourMail.N10.cancel.listing":
+    "If it is not paid by then, the booking is cancelled and your places are released, as the payment policy states.",
+  "tourMail.N11.cancelled.listing":
+    "The balance of {balance} for {tour} on {startsAt} was not paid by {dueAt}. As the payment policy states, your booking is cancelled and your places are released.",
+  "tourMail.N11.again.listing": "To book another date, make a new booking.",
+  "tourMail.N13.tomorrow.stay": "Your stay {ref} starts tomorrow, {startsAt}.",
+  "tourMail.N13.tomorrow.experience":
+    "Your experience {ref} starts tomorrow, {startsAt}.",
+  "tourMail.N15.subject.stay": "Thank you for your stay: {tour}",
+  "tourMail.N15.subject.experience": "Thank you for visiting: {tour}",
 } as const;
 
 export const tourBookingDe: Record<keyof typeof tourBookingEn, string> = {
@@ -199,7 +254,7 @@ export const tourBookingDe: Record<keyof typeof tourBookingEn, string> = {
     "Die Buchung konnte nicht erstellt werden. Prüfen Sie die Angaben und versuchen Sie es erneut.",
   "tourBooking.missing": "Diese Buchung wurde in Ihrem Konto nicht gefunden.",
   "tourBooking.empty":
-    "Ihr nächstes Abenteuer beginnt hier. Ihre Tourbuchungen erscheinen hier.",
+    "Ihr nächstes Abenteuer beginnt hier. Ihre Buchungen erscheinen hier.",
   "tourBooking.explore": "Touren entdecken",
   "tourBooking.past": "Vergangene Buchungen",
   "tourBooking.detail": "Ihre Tourbuchung",
@@ -275,4 +330,61 @@ export const tourBookingDe: Record<keyof typeof tourBookingEn, string> = {
   "tourBooking.event.no_show": "Nicht erschienen erfasst",
   "tourBooking.event.completed": "Buchung abgeschlossen",
   "tourBooking.event.other": "Buchung aktualisiert",
+  "tourBooking.bookings": "Buchungen",
+  "tourBooking.intro.stay":
+    "Ihr Aufenthalt wird erst beim Fortfahren reserviert. Prüfen Sie Check-in und Gruppe vor der Buchung.",
+  "tourBooking.intro.experience":
+    "Ihre Plätze werden erst beim Fortfahren reserviert. Prüfen Sie Datum und Gruppe vor der Buchung. Die Bienen sind für 2027 geplant, daher ist dies ein Termin der ersten Saison.",
+  "tourBooking.edit.stay": "Check-in oder Gruppe ändern",
+  "tourBooking.edit.experience": "Datum oder Gruppe ändern",
+  "tourBooking.chooseAnother.stay": "Anderen Check-in wählen",
+  "tourBooking.chooseAnother.experience": "Anderes Datum wählen",
+  "tourBooking.error.departure.listing":
+    "Dieses Datum ist nicht mehr verfügbar. Wählen Sie ein neues Datum.",
+  "tourBooking.error.capacity.listing":
+    "Für Ihre Gruppe sind nicht genug Plätze frei. Wählen Sie ein anderes Datum oder passen Sie die Gruppe an.",
+  "tourBooking.deposit.stay":
+    "Bezahlen Sie jetzt 30 % Anzahlung. Der Restbetrag ist vor dem Check-in fällig.",
+  "tourBooking.deposit.experience":
+    "Bezahlen Sie jetzt 30 % Anzahlung. Der Restbetrag ist vor Ihrem Besuch fällig.",
+  "tourBooking.later.stay":
+    "Buchen Sie ohne sofortige Zahlung. Ihr Aufenthalt ist bestätigt. Der Restbetrag ist vor dem Check-in fällig.",
+  "tourBooking.later.experience":
+    "Buchen Sie ohne sofortige Zahlung. Ihre Plätze sind bestätigt. Der Restbetrag ist vor Ihrem Besuch fällig.",
+  "tourBooking.detail.stay": "Ihr Aufenthalt",
+  "tourBooking.detail.experience": "Ihr Erlebnis",
+  "tourBooking.confirmed.stay": "Ihr Aufenthalt ist bestätigt",
+  "tourBooking.confirmed.experience": "Ihr Erlebnis ist bestätigt",
+  "tourBooking.confirmedBody.stay":
+    "Halten Sie Ihre Buchungsnummer bereit und kommen Sie am Anreisetag zum Check-in-Ort.",
+  "tourBooking.confirmedBody.experience":
+    "Halten Sie Ihre Buchungsnummer bereit und seien Sie vor Beginn am Treffpunkt.",
+  "tourBooking.meeting.stay": "Wo Sie einchecken",
+  "tourBooking.meeting.experience": "Treffpunkt",
+  "tourBooking.onlyInGerman.stay":
+    "Einige Angaben zum Aufenthalt gibt es nur auf Deutsch.",
+  "tourBooking.onlyInGerman.experience":
+    "Einige Angaben zum Erlebnis gibt es nur auf Deutsch.",
+  "tourBooking.onlyInEnglish.stay":
+    "Einige Angaben zum Aufenthalt gibt es nur auf Englisch.",
+  "tourBooking.onlyInEnglish.experience":
+    "Einige Angaben zum Erlebnis gibt es nur auf Englisch.",
+  "tourBooking.event.delivered.stay": "Aufenthalt abgeschlossen",
+  "tourBooking.event.delivered.experience": "Am Erlebnis teilgenommen",
+  "tourMail.tourLine.stay": "Aufenthalt: {tour}, {startsAt}",
+  "tourMail.tourLine.experience": "Erlebnis: {tour}, {startsAt}",
+  "tourMail.when.stay": "Check-in: {startsAt}",
+  "tourMail.meeting.stay": "Check-in-Ort: {meetingPoint}",
+  "tourMail.N10.cancel.listing":
+    "Ist der Betrag bis dahin nicht bezahlt, wird die Buchung storniert und Ihre Plätze werden freigegeben, wie es die Zahlungsregel festhält.",
+  "tourMail.N11.cancelled.listing":
+    "Der Restbetrag von {balance} für {tour} am {startsAt} wurde bis {dueAt} nicht bezahlt. Wie es die Zahlungsregel festhält, ist Ihre Buchung storniert und Ihre Plätze sind wieder frei.",
+  "tourMail.N11.again.listing":
+    "Für ein anderes Datum nehmen Sie bitte eine neue Buchung vor.",
+  "tourMail.N13.tomorrow.stay":
+    "Ihr Aufenthalt {ref} beginnt morgen, {startsAt}.",
+  "tourMail.N13.tomorrow.experience":
+    "Ihr Erlebnis {ref} beginnt morgen, {startsAt}.",
+  "tourMail.N15.subject.stay": "Danke für Ihren Aufenthalt: {tour}",
+  "tourMail.N15.subject.experience": "Danke für Ihren Besuch: {tour}",
 };

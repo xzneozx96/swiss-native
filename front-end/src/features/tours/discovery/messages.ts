@@ -74,6 +74,9 @@ export const tourDiscoveryEn = {
   "tourDiscovery.onlyInGerman":
     "This tour’s details are only available in German.",
   "tourDiscovery.sample": "Sample tour policies · awaiting merchant approval",
+  "tourDiscovery.checkIn": "Check-in",
+  "tourDiscovery.firstSeason":
+    "The bees are planned for 2027 and nothing at the bee house operates yet. These are first-season dates in spring and summer 2027; prices and times are demo values.",
 };
 
 export const tourDiscoveryDe: Record<keyof typeof tourDiscoveryEn, string> = {
@@ -154,4 +157,7 @@ export const tourDiscoveryDe: Record<keyof typeof tourDiscoveryEn, string> = {
   "tourDiscovery.onlyInGerman":
     "Die Angaben zu dieser Tour gibt es nur auf Deutsch.",
   "tourDiscovery.sample": "Beispielregeln · Zustimmung des Händlers ausstehend",
+  "tourDiscovery.checkIn": "Anreise",
+  "tourDiscovery.firstSeason":
+    "Die Bienen sind für 2027 geplant, und im Bienenhaus läuft noch nichts. Das sind Termine der ersten Saison im Frühling und Sommer 2027; Preise und Zeiten sind Demowerte.",
 };

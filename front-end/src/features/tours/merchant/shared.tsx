@@ -1,8 +1,10 @@
 import type { TourBlock } from "./lib/transitions";
 import type { DeparturePhase } from "./lib/work";
-import type { TourParticipants } from "../types";
+import type { TourKind, TourParticipants } from "../types";
 import type { StatusTone } from "@/components/status-chip";
 import type { MessageKey } from "@/i18n/en";
+
+import { Chip } from "@heroui/react";
 
 import { StatusDangerIcon } from "@/components/icons";
 import { useLocale } from "@/contexts/locale-context";
@@ -26,6 +28,36 @@ export function useTourFormatting() {
     dayMonth: (iso: string) => format(iso, { day: "numeric", month: "short" }),
     time: (iso: string) => format(iso, { timeStyle: "short" }),
   };
+}
+
+const kindKeys: Record<TourKind, MessageKey> = {
+  tour: "tourMerchant.kind.tour",
+  stay: "tourMerchant.kind.stay",
+  experience: "tourMerchant.kind.experience",
+};
+
+/** What the record is, in words only: it is not a status, so no status icon. */
+export function KindChip({ kind }: { kind?: TourKind }) {
+  const { t } = useLocale();
+
+  if (!kind) return null;
+
+  return (
+    <Chip size="lg" variant="soft">
+      <Chip.Label>{t(kindKeys[kind])}</Chip.Label>
+    </Chip>
+  );
+}
+
+/** A departure's start as a date and time; a stay starts with its check-in. */
+export function useStartText() {
+  const { t } = useLocale();
+  const { date } = useTourFormatting();
+
+  return (kind: TourKind | undefined, iso: string) =>
+    kind === "stay"
+      ? t("tourMerchant.checkIn", { date: date(iso) })
+      : date(iso);
 }
 
 const activityKeys: Record<string, MessageKey> = {

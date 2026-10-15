@@ -487,6 +487,7 @@ export function useTourEditor(
     setStorageFull(false);
     const base: Tour = tour ?? {
       id: newId("tour"),
+      kind: "tour",
       // C22 owns /tours/private-tour, so no tour may take that slug.
       slug: uniqueSlug(
         edit.name,

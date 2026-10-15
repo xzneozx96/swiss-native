@@ -288,7 +288,7 @@ export const en = {
   "account.editProfile": "Edit profile",
   "account.back": "Back",
   "account.hub.activity": "Your activity",
-  "account.section.bookings": "Tour bookings",
+  "account.section.bookings": "Bookings",
   "account.section.payments": "Payments",
   "account.section.profile": "Language",
   "account.section.notifications": "Emails and notifications",

@@ -1,5 +1,7 @@
 import type { TourBooking, TourParticipants } from "../types";
 
+import { useBookingKind, useKindT } from "./kind";
+
 import { DateTile } from "@/components/date-tile";
 import {
   BookingsIcon,
@@ -144,6 +146,7 @@ const rowIcon = "mt-0.5 shrink-0";
  */
 export function BookingSummary({ booking }: { booking: TourBooking }) {
   const { t, language } = useLocale();
+  const kt = useKindT(useBookingKind(booking));
   const { date } = useBookingFormat();
   const groupText = useGroupText();
   const name = pickText(booking.tourName, language);
@@ -177,7 +180,7 @@ export function BookingSummary({ booking }: { booking: TourBooking }) {
           <p className={row}>
             <PickupIcon aria-hidden className={rowIcon} size={16} />
             <span>
-              {t("tourBooking.meeting")}:{" "}
+              {kt("tourBooking.meeting")}:{" "}
               <span lang={meeting.language}>{meeting.text}</span>
             </span>
           </p>

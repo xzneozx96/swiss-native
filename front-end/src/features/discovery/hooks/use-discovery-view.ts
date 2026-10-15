@@ -2,6 +2,7 @@ import type { DiscoveryHomeView } from "../components/discovery-home";
 
 import { useLocale } from "@/contexts/locale-context";
 import { useDemo } from "@/features/demo";
+import { isTour } from "@/features/tours/lib/selectors";
 
 /** Builds the discovery home from the tour data and the language. */
 export function useDiscoveryView(): DiscoveryHomeView {
@@ -9,7 +10,7 @@ export function useDiscoveryView(): DiscoveryHomeView {
   const { state } = useDemo();
 
   const tours = (state.data.tours?.tours ?? []).filter(
-    (tour) => tour.published,
+    (tour) => isTour(tour) && tour.published,
   );
 
   return {

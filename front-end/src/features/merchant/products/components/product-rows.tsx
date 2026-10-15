@@ -37,20 +37,16 @@ function MoreMenu({
   onAction: ProductRowsProps["onAction"];
 }) {
   const { t } = useLocale();
-  const actions: RowAction<ProductAction>[] = [
-    { id: "edit", label: t("products.action.edit"), icon: EditIcon },
-    row.archived
-      ? {
-          id: "restore",
-          label: t("products.action.restore"),
-          icon: RestoreIcon,
-        }
-      : {
-          id: "archive",
-          label: t("products.action.archive"),
-          icon: ArchiveIcon,
-        },
-  ];
+  const edit: RowAction<ProductAction> = {
+    id: "edit",
+    label: t("products.action.edit"),
+    icon: EditIcon,
+  };
+  const archive: RowAction<ProductAction> = row.archived
+    ? { id: "restore", label: t("products.action.restore"), icon: RestoreIcon }
+    : { id: "archive", label: t("products.action.archive"), icon: ArchiveIcon };
+  // The stay and the experience are never archived: they are the host's one record each.
+  const actions = row.kind === "tour" ? [edit, archive] : [edit];
 
   return (
     <RowActions

@@ -1,6 +1,8 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Navigate } from "@tanstack/react-router";
 
 import { TourDetailPage } from "@/features/tours/discovery";
+import { useTours } from "@/features/tours/hooks/use-tours";
+import { isTour } from "@/features/tours/lib/selectors";
 
 export const Route = createFileRoute("/_guest/tours/$slug")({
   staticData: { hideTabBar: true, ownsBottomSpace: true },
@@ -12,10 +14,13 @@ export const Route = createFileRoute("/_guest/tours/$slug")({
 });
 
 function Page() {
-  return (
-    <TourDetailPage
-      isBooking={Route.useSearch().book === true}
-      slug={Route.useParams().slug}
-    />
-  );
+  const slug = Route.useParams().slug;
+  const isBooking = Route.useSearch().book === true;
+  const { tours } = useTours();
+  const listing = tours.find((tour) => tour.slug === slug);
+
+  // The stay and the bee house have no detail page: they book from the home sheet.
+  if (listing && !isTour(listing)) return <Navigate replace to="/" />;
+
+  return <TourDetailPage isBooking={isBooking} slug={slug} />;
 }

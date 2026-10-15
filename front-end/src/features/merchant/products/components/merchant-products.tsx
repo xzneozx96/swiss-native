@@ -13,7 +13,6 @@ import {
 import { ProductRows } from "./product-rows";
 
 import { useConfirm } from "@/components/confirm-dialog";
-import { EmptyState } from "@/components/empty-state";
 import {
   FilterButton,
   FilterChips,
@@ -53,18 +52,17 @@ export function MerchantProducts({ tab }: { tab: ProductTab }) {
       label: t("products.tab.tours"),
       badge: all.tours.filter((r) => !r.archived).length,
     },
-    // Stays and experiences are a later stage (PRD §7.0): listed, with nothing in them yet.
     {
       id: "stays",
       to: "/store/products/stays",
       label: t("products.tab.stays"),
-      badge: t("home.soon"),
+      badge: all.stays.length,
     },
     {
       id: "experiences",
       to: "/store/products/experiences",
       label: t("products.tab.experiences"),
-      badge: t("home.soon"),
+      badge: all.experiences.length,
     },
   ] as const;
   const selectedLabel = tabs.find((item) => item.id === tab)?.label ?? "";
@@ -127,32 +125,28 @@ export function MerchantProducts({ tab }: { tab: ProductTab }) {
       : null;
 
   const panel = (id: ProductTab) => {
-    if (id === "stays" || id === "experiences") {
-      return (
-        <EmptyState icon={OptionIcon} message={t(`products.empty.${id}`)} />
-      );
-    }
+    const isListing = id !== "tours";
 
     return (
       <ProductRows
         columns={[
-          t("products.column.tour"),
+          t(isListing ? "products.column.listing" : "products.column.tour"),
           t("products.column.status"),
           t("products.column.price"),
           t("products.column.departures"),
         ]}
         empty={{
-          icon: TourIcon,
+          icon: isListing ? OptionIcon : TourIcon,
           message: t(
-            view.length === 1 && view[0] === "archived"
+            !isListing && view.length === 1 && view[0] === "archived"
               ? "products.empty.archived"
-              : "products.empty.tours",
+              : `products.empty.${id}`,
           ),
         }}
         isLoading={isLoading}
         label={selectedLabel}
         resetKey={`${id}|${selectedLabel}|${view.join()}`}
-        rows={tours}
+        rows={isListing ? all[id] : tours}
         onAction={(row, action) => void onAction(row, action)}
       />
     );

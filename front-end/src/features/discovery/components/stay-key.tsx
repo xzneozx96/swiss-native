@@ -26,6 +26,7 @@ import {
 } from "@/components/icons";
 import { useLocale } from "@/contexts/locale-context";
 import { shop } from "@/features/catalog/seed";
+import { ListingBookingSheet } from "@/features/tours/discovery/listing-booking-sheet";
 
 /**
  * The amenities a rider looks for, shown as icons. Flip `confirmed` once the client
@@ -94,7 +95,8 @@ const copy = {
     routeNote:
       "Typical times without traffic. Snow can close the passes. Without a car: train from Lucerne to Entlebuch, then bus 232 to Finsterwald, about 10 minutes.",
     unknown: "Rooms, beds, breakfast and price: ask Erich.",
-    cta: "Ask Erich about dates",
+    cta: "Book a stay",
+    ask: "Ask Erich by email",
   },
   de: {
     title: "Übernachten in Finsterwald",
@@ -119,7 +121,8 @@ const copy = {
     routeNote:
       "Übliche Zeiten ohne Verkehr. Schnee kann die Pässe sperren. Ohne Auto: Bahn von Luzern nach Entlebuch, dann Bus 232 nach Finsterwald, etwa 10 Minuten.",
     unknown: "Zimmer, Betten, Frühstück und Preis: bitte Erich fragen.",
-    cta: "Erich nach Terminen fragen",
+    cta: "Aufenthalt buchen",
+    ask: "Erich per E-Mail fragen",
   },
 };
 
@@ -229,6 +232,7 @@ export function StayKey() {
   const c = copy[language];
   const reduced = useReducedMotion();
   const [flipped, setFlipped] = useState(false);
+  const [booking, setBooking] = useState(false);
   // Each swing alternates between two identical keyframes, so a new one always restarts.
   const [swing, setSwing] = useState(0);
   const stageRef = useRef<HTMLDivElement>(null);
@@ -432,14 +436,27 @@ export function StayKey() {
         <p className="text-center text-[13px] leading-[18px] text-[#33312E]/75">
           {c.unknown}
         </p>
-        <a
+        <button
           className="flex h-12 items-center justify-center gap-2 rounded-full bg-accent px-5 text-sm font-semibold text-accent-foreground outline-none focus-visible:ring-2 focus-visible:ring-[#33312E] focus-visible:ring-offset-2 active:scale-[0.98]"
-          href={`mailto:${shop.email}?subject=${encodeURIComponent(c.name)}`}
+          type="button"
+          onClick={() => setBooking(true)}
         >
           {c.cta}
           <ArrowRightIcon size={16} />
+        </button>
+        <a
+          className="self-center text-[13px] leading-[18px] font-semibold text-[#33312E]/75 underline underline-offset-4 outline-none focus-visible:ring-2 focus-visible:ring-[#33312E]"
+          href={`mailto:${shop.email}?subject=${encodeURIComponent(c.name)}`}
+        >
+          {c.ask}
         </a>
       </div>
+
+      <ListingBookingSheet
+        isOpen={booking}
+        kind="stay"
+        onClose={() => setBooking(false)}
+      />
     </section>
   );
 }

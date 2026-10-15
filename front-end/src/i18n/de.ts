@@ -299,7 +299,7 @@ export const de: Record<MessageKey, string> = {
   "account.editProfile": "Profil bearbeiten",
   "account.back": "Zurück",
   "account.hub.activity": "Ihre Aktivität",
-  "account.section.bookings": "Tourbuchungen",
+  "account.section.bookings": "Buchungen",
   "account.section.payments": "Zahlungen",
   "account.section.profile": "Sprache",
   "account.section.notifications": "E-Mails und Mitteilungen",

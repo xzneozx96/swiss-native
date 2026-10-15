@@ -5,6 +5,7 @@ import { useNavigate } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 
 import { useBookingFormat, useGroupText } from "./booking-summary";
+import { useKindT } from "./kind";
 import { activeHold } from "./transitions";
 
 import { useBack } from "@/hooks/use-back";
@@ -32,6 +33,7 @@ import { useTourActions, useTours } from "@/features/tours/hooks/use-tours";
 import {
   availableSeats,
   firstPaymentAmount,
+  isTour,
   participantSeats,
   tourTotal,
 } from "@/features/tours/lib/selectors";
@@ -67,14 +69,19 @@ export function TourReviewPage({ slug }: { slug: string }) {
   const departure = departures.find(
     (item) => item.id === draft.departureId && item.tourId === tour?.id,
   );
+  const kt = useKindT(tour?.kind ?? "tour");
   const edit = useBack(
     () =>
-      void navigate({
-        to: "/tours/$slug",
-        params: { slug },
-        search: { book: true },
-        replace: true,
-      }),
+      void navigate(
+        !tour || isTour(tour)
+          ? {
+              to: "/tours/$slug",
+              params: { slug },
+              search: { book: true },
+              replace: true,
+            }
+          : { to: "/", replace: true },
+      ),
   );
 
   useEffect(() => {
@@ -103,9 +110,13 @@ export function TourReviewPage({ slug }: { slug: string }) {
   if (!tour || !departure)
     return (
       <EmptyState
-        action={{ label: t("tourBooking.explore"), to: "/tours" }}
+        action={
+          tour && !isTour(tour)
+            ? { label: t("nav.explore"), to: "/" }
+            : { label: t("tourBooking.explore"), to: "/tours" }
+        }
         icon={TourIcon}
-        message={t("tourBooking.error.departure")}
+        message={kt("tourBooking.error.departure")}
       />
     );
   const total = tourTotal(tour, draft);
@@ -151,7 +162,7 @@ export function TourReviewPage({ slug }: { slug: string }) {
   return (
     <div className="flex flex-1 flex-col">
       <header className="sticky top-0 z-20 flex h-14 items-center gap-2 bg-background/90 ps-4 pe-4 pt-[env(safe-area-inset-top,0px)] backdrop-blur-xl">
-        <BackButton label={t("tourBooking.edit")} onPress={edit} />
+        <BackButton label={kt("tourBooking.edit")} onPress={edit} />
         <h1 className="font-serif text-title">{t("tourBooking.review")}</h1>
       </header>
       <Form
@@ -163,7 +174,7 @@ export function TourReviewPage({ slug }: { slug: string }) {
       >
         {/* C06 Review and send: tinted note, then white cards; C05's fields and heading. */}
         <div className="flex flex-col gap-5 px-6 pt-2 pb-5">
-          <InfoNote text={t("tourBooking.intro")} />
+          <InfoNote text={kt("tourBooking.intro")} />
           <div className="flex flex-col gap-4 pt-1">
             <SurfaceCard aria-labelledby="tour-review-name">
               <SurfaceCardBlock>
@@ -197,7 +208,7 @@ export function TourReviewPage({ slug }: { slug: string }) {
                   <p className={row}>
                     <PickupIcon aria-hidden className={rowIcon} size={16} />
                     <span>
-                      {t("tourBooking.meeting")}:{" "}
+                      {kt("tourBooking.meeting")}:{" "}
                       <span lang={text(tour.meetingPoint).language}>
                         {text(tour.meetingPoint).text}
                       </span>
@@ -206,7 +217,7 @@ export function TourReviewPage({ slug }: { slug: string }) {
                   {fallback && (
                     <p className={`${row} text-muted`}>
                       <InfoIcon aria-hidden className={rowIcon} size={16} />
-                      {t(
+                      {kt(
                         fallback.language === "de"
                           ? "tourBooking.onlyInGerman"
                           : "tourBooking.onlyInEnglish",
@@ -221,7 +232,7 @@ export function TourReviewPage({ slug }: { slug: string }) {
                 type="button"
                 onClick={edit}
               >
-                {t("tourBooking.edit")}
+                {kt("tourBooking.edit")}
                 <ChevronRightIcon aria-hidden className="shrink-0" size={18} />
               </button>
             </SurfaceCard>
@@ -348,7 +359,7 @@ export function TourReviewPage({ slug }: { slug: string }) {
               <SurfaceCardBlock>
                 <div className="flex flex-col gap-2 text-sm">
                   <p className="text-muted">
-                    {t(`tourBooking.${departure.policy}`)}
+                    {kt(`tourBooking.${departure.policy}`)}
                   </p>
                   {departure.policy !== "later" && (
                     <p className="text-muted">{t("tourBooking.holdRule")}</p>
@@ -389,7 +400,9 @@ export function TourReviewPage({ slug }: { slug: string }) {
                 <Alert.Indicator />
                 <Alert.Content className="min-w-0 items-start gap-2">
                   <Alert.Description>
-                    {t(errorKeys[shownError.code] ?? "tourBooking.error.other")}
+                    {kt(
+                      errorKeys[shownError.code] ?? "tourBooking.error.other",
+                    )}
                   </Alert.Description>
                   {(shownError.code === "capacity" ||
                     shownError.code === "departure") && (
@@ -399,7 +412,7 @@ export function TourReviewPage({ slug }: { slug: string }) {
                       variant="tertiary"
                       onPress={edit}
                     >
-                      {t("tourBooking.chooseAnother")}
+                      {kt("tourBooking.chooseAnother")}
                     </Button>
                   )}
                   {shownError.code === "held" && shownError.bookingId && (
