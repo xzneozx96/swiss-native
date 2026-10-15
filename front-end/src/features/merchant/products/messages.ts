@@ -9,7 +9,6 @@ export const productsEn = {
   "products.intro":
     "Your tours as guests see them. Text in English or German is enough to publish.",
   "products.tabsLabel": "Product types",
-  "products.column.actions": "Actions",
   "products.action.more": "Actions for {name}",
   "products.action.edit": "Edit",
   "products.action.archive": "Archive",
@@ -250,6 +249,11 @@ export const productsEn = {
     "Draft: guests can't book this tour. Publishing shows it in the tour list with its departures.",
   "products.review.archived.tour":
     "Archived: guests don't see this tour. Restore it as a draft to publish it again.",
+  "products.empty.gifts": "No keepsakes yet.",
+  "products.empty.pickup": "No pickup points yet.",
+  "products.story.help.gift":
+    "Needed to publish, in English or German. Guests open it from \u201cThe story behind it\u201d on the keepsake page.",
+  "products.step.pickup": "Pickup & preparation",
 } as const;
 
 export const productsDe: Record<keyof typeof productsEn, string> = {
@@ -262,7 +266,6 @@ export const productsDe: Record<keyof typeof productsEn, string> = {
   "products.intro":
     "Ihre Touren, wie Gäste sie sehen. Text auf Englisch oder Deutsch reicht zum Veröffentlichen.",
   "products.tabsLabel": "Produktarten",
-  "products.column.actions": "Aktionen",
   "products.action.more": "Aktionen für {name}",
   "products.action.edit": "Bearbeiten",
   "products.action.archive": "Archivieren",
@@ -506,4 +509,9 @@ export const productsDe: Record<keyof typeof productsEn, string> = {
     "Entwurf: Gäste können diese Tour nicht buchen. Veröffentlicht erscheint sie in der Tourliste mit ihren Terminen.",
   "products.review.archived.tour":
     "Archiviert: Gäste sehen diese Tour nicht. Stellen Sie sie als Entwurf wieder her, um sie erneut zu veröffentlichen.",
+  "products.empty.gifts": "Noch keine Andenken.",
+  "products.empty.pickup": "Noch keine Abholstellen.",
+  "products.story.help.gift":
+    "Zum Veröffentlichen nötig, auf Englisch oder Deutsch. Gäste öffnen sie auf der Andenken-Seite über «Die Geschichte dahinter».",
+  "products.step.pickup": "Abholung & Vorbereitung",
 };

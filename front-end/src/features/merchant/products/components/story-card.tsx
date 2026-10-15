@@ -16,12 +16,13 @@ import { isEmptyDoc } from "@/lib/rich-text";
 const StoryEditor = lazy(() => import("./story-editor"));
 
 /**
- * The long story (C09 "About this tour") in one language, inside the
+ * The long story (C03 "About this gift", C09 "About this tour") in one language, inside the
  * stepper's Story step, whose EN | DE switch picks the language: the title and the rich-text
  * editor. A must to publish since 15.10.2026 (owner): a title and a body in at least one
  * language; the other language missing is a warning.
  */
 export function StoryCard({
+  kind,
   language,
   title,
   body,
@@ -30,6 +31,7 @@ export function StoryCard({
   titleError,
   bodyError,
 }: {
+  kind: "gift" | "tour";
   language: Language;
   title: LocalizedText;
   body: LocalizedRich;
@@ -50,7 +52,7 @@ export function StoryCard({
       title={t("products.story.title")}
     >
       <p className="text-sm text-pretty text-muted">
-        {t("products.story.help.tour")}
+        {t(`products.story.help.${kind}`)}
       </p>
       <LocalizedField
         error={titleError}

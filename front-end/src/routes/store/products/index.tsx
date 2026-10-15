@@ -1,40 +1,26 @@
-import type { ProductTab } from "@/features/merchant/products/hooks/use-merchant-products";
+import { createFileRoute, redirect } from "@tanstack/react-router";
 
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+const TAB_PAGES = {
+  tours: "/store/products/tours",
+  stays: "/store/products/stays",
+  experiences: "/store/products/experiences",
+} as const;
 
-import { MerchantProducts } from "@/features/merchant/products/components/merchant-products";
-import { isProductTab } from "@/features/merchant/products/hooks/use-merchant-products";
+type Tab = keyof typeof TAB_PAGES;
 
-interface ProductsSearch {
-  /** Selected tab (D3); absent = Tours. */
-  tab?: Exclude<ProductTab, "tours">;
-}
+const isTab = (value: unknown): value is Tab =>
+  typeof value === "string" && value in TAB_PAGES;
 
-// M11 Products. M13 is /store/products/tours/$tourId.
+// M11 Products. The host offers tours, a stay and an experience, so the index opens Tours;
+// the old `?tab=` links still land on the right page. M13 is /store/products/tours/$tourId.
 export const Route = createFileRoute("/store/products/")({
-  validateSearch: (search: Record<string, unknown>): ProductsSearch => ({
-    tab:
-      isProductTab(search.tab) && search.tab !== "tours"
-        ? search.tab
-        : undefined,
+  validateSearch: (search: Record<string, unknown>): { tab?: Tab } => ({
+    tab: isTab(search.tab) ? search.tab : undefined,
   }),
-  component: ProductsPage,
+  beforeLoad: ({ search }) => {
+    throw redirect({
+      to: TAB_PAGES[search.tab ?? "tours"],
+      replace: true,
+    });
+  },
 });
-
-function ProductsPage() {
-  const { tab = "tours" } = Route.useSearch();
-  const navigate = useNavigate({ from: "/store/products/" });
-
-  return (
-    <MerchantProducts
-      tab={tab}
-      onTabChange={(next) =>
-        void navigate({
-          search: next === "tours" ? {} : { tab: next },
-          replace: true,
-          resetScroll: false,
-        })
-      }
-    />
-  );
-}

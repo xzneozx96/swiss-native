@@ -93,6 +93,10 @@ for (const lang of ["en", "de"]) {
   const toolbar = card.getByRole("toolbar", { name: c.toolbar });
   check(`[${lang}] the story card has a labelled toolbar with 11 labelled buttons`, (await toolbar.getByRole("button").count()) === 11 && (await toolbar.getByRole("button").evaluateAll((bs) => bs.every((b) => b.getAttribute("aria-label")))));
   const editor = card.getByRole("textbox", { name: c.storyField, exact: true });
+  // The switch opens on the interface language (owner, 15.10.2026); the checks below use English.
+  check(`[${lang}] the story's language switch opens on the interface language`, (await page.getByRole("tab", { selected: true }).first().innerText()).startsWith(lang === "en" ? c.english : c.german));
+  await tab(true).click();
+  await wait(800);
   check(`[${lang}] the seeded story loads into the editor (converted chapters)`, (await editor.innerText()).includes("A bridge built to guard the town"));
   check(`[${lang}] toolbar and editor fit 375px`, !(await overflow()));
   await tab(true).click();
@@ -230,6 +234,8 @@ for (const lang of ["en", "de"]) {
   check(`[${lang}] empty draft: name and category errors, nothing stored`, (await page.getByText(c.draftName).first().isVisible()) && (await page.getByText(c.categoryError).isVisible()) && page.url().endsWith("/gifts/new"));
   check(`[${lang}] focus moves to the name`, await page.evaluate(() => document.activeElement?.tagName === "INPUT"));
   const before = (await data(page)).products.length;
+  // English text, so the stored record is found by its English name in both runs.
+  await tab(true).click();
   await page.getByLabel(c.name, { exact: true }).fill("Chapel Bridge bottle opener");
   await page.getByRole("region", { name: lang === "en" ? "Photo and category" : "Foto und Kategorie" }).getByRole("button", { name: new RegExp(c.category) }).click();
   await wait(400);
@@ -313,6 +319,7 @@ for (const lang of ["en", "de"]) {
 
   // A second gift with the same name gets its own slug.
   await open(page, "#/store/products/gifts/new");
+  await tab(true).click();
   await page.getByLabel(c.name, { exact: true }).fill("Chapel Bridge bottle opener");
   await page.getByRole("region", { name: lang === "en" ? "Photo and category" : "Foto und Kategorie" }).getByRole("button", { name: new RegExp(c.category) }).click();
   await wait(400);
@@ -323,6 +330,7 @@ for (const lang of ["en", "de"]) {
 
   // An option added to an existing gift: new id, the old ids unchanged.
   await open(page, "#/store/products/gifts/p-knife?step=options");
+  await tab(true).click();
   await page.getByRole("button", { name: c.addOption }).click();
   const lastName = page.getByLabel(new RegExp(`^${c.nameEn}`)).last();
   await lastName.fill("Extra large");
@@ -347,6 +355,7 @@ for (const lang of ["en", "de"]) {
   await page.reload();
   await wait(1000);
   await open(page, "#/store/products/gifts/p-keyring");
+  await tab(true).click();
   await page.getByLabel(c.name, { exact: true }).fill("Pilatus keyring, brass");
   await save();
   check(`[${lang}] near the storage budget the save is refused in the bar`, (await page.getByRole("status").innerText()).includes(lang === "en" ? "storage on this device is full" : "Speicher des Prototyps") && (await data(page)).products.find((p) => p.id === "p-keyring").name.en !== "Pilatus keyring, brass");

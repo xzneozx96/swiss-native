@@ -188,7 +188,7 @@ function LinkForm({ editor, onDone }: { editor: Editor; onDone: () => void }) {
  * The long story's rich-text editor (Tiptap, owner 15.10.2026): a labelled toolbar with
  * heading, bold, italic, both lists, quote, link, photos (upload or library) and
  * undo/redo, wrapping at 375px, then the text in the guest sheet's typography. Loaded
- * lazily, so only M13 pulls in Tiptap.
+ * lazily, so only M12 and M13 pull in Tiptap.
  */
 export default function StoryEditor({
   label,

@@ -55,6 +55,11 @@ export const requestsEn = {
   "requestMail.N17.interests": "Interests: {interests}",
   "requestMail.N17.reply":
     "Reply by email with a tour plan and its price, then mark the request as answered.",
+  "privateTour.entry.captionDates": "your dates",
+  "privateTour.entry.captionGroup": "your group",
+  "privateTour.entry.size": "Up to 50 guests",
+  "privateTour.entry.dates": "On your dates",
+  "privateTour.entry.planned": "Planned by our team",
 };
 
 export const requestsDe: Record<keyof typeof requestsEn, string> = {
@@ -118,4 +123,9 @@ export const requestsDe: Record<keyof typeof requestsEn, string> = {
   "requestMail.N17.interests": "Interessen: {interests}",
   "requestMail.N17.reply":
     "Antworten Sie per E-Mail mit einem Tourvorschlag und dem Preis und markieren Sie die Anfrage dann als beantwortet.",
+  "privateTour.entry.captionDates": "Ihre Daten",
+  "privateTour.entry.captionGroup": "Ihre Gruppe",
+  "privateTour.entry.size": "Bis zu 50 Gäste",
+  "privateTour.entry.dates": "An Ihren Daten",
+  "privateTour.entry.planned": "Von unserem Team geplant",
 };

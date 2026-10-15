@@ -831,6 +831,7 @@ export function TourEditor({
                 ? error
                 : undefined
             }
+            kind="tour"
             language={lang}
             title={edit.storyTitle}
             titleError={
@@ -867,7 +868,6 @@ export function TourEditor({
         languages={languageStatus(editor.missing)}
         published={editor.live}
         subtitle={`${t("products.kind.tour")} · ${t("products.duration", { hours })}`}
-        tab="tours"
         title={
           pickText(edit.name, language).text ||
           (tour ? pickText(tour.name, language).text : t("products.new.tour"))

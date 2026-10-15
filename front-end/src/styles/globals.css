@@ -107,6 +107,25 @@ button {
 }
 
 /*
+ * Bottom sheets slide up on open (owner, 15.10.2026). HeroUI's own slide waits for React Aria's
+ * entering state, which ends before the first paint when nothing is animating on mount, so
+ * the sheet only faded in. A keyframe runs from the first frame whatever that state does.
+ */
+@keyframes sheet-slide-in {
+  from {
+    translate: 0 100%;
+  }
+}
+
+.drawer__content--bottom .drawer__dialog {
+  animation: sheet-slide-in 250ms cubic-bezier(0.32, 0.72, 0, 1);
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+  }
+}
+
+/*
  * Hover for clickable list cards (owner, 15.10.2026): the card stays white and lifts to the
  * overlay shadow. A grey fill blended into the page and hid the grey icon tiles.
  */

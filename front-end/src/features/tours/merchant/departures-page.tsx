@@ -20,10 +20,16 @@ import {
 import { useOverdueCheck } from "./use-overdue-check";
 
 import { DataTable } from "@/components/data-table";
+import { useSimulatedLoading } from "@/hooks/use-simulated-loading";
 import { DateTile } from "@/components/date-tile";
 import { MerchantPageHeader } from "@/components/layout/merchant-page-header";
-import { BookingsIcon, ChevronRightIcon } from "@/components/icons";
+import {
+  ArrowUpRightIcon,
+  BookingsIcon,
+  ChevronRightIcon,
+} from "@/components/icons";
 import { Media } from "@/components/media";
+import { RowActions } from "@/components/row-actions";
 import { StatusChip } from "@/components/status-chip";
 import { useLocale } from "@/contexts/locale-context";
 import { pickText } from "@/lib/localized";
@@ -195,9 +201,11 @@ function DepartureTable({
   rows,
   label,
   empty,
+  isLoading,
 }: {
   rows: Row[];
   label: string;
+  isLoading?: boolean;
   /** Shown inside the table (a card on phones) when `rows` is empty. */
   empty?: EmptyStateProps;
 }) {
@@ -208,8 +216,9 @@ function DepartureTable({
     {
       id: "departure",
       header: t("tourMerchant.departure"),
-      headerClassName: "w-[34%]",
+      headerClassName: "w-[28%]",
       isRowHeader: true,
+      skeleton: "two-line",
       render: ({ departure, tour, phase }) => (
         <>
           <span className="block font-semibold">
@@ -259,7 +268,8 @@ function DepartureTable({
     {
       id: "attention",
       header: t("tourMerchant.needsAttention"),
-      headerClassName: "w-[30%]",
+      headerClassName: "w-[28%]",
+      skeleton: "chip",
       render: ({ work }) => <Attention work={work} />,
     },
   ];
@@ -274,7 +284,26 @@ function DepartureTable({
         `#/store/bookings/departures/${departure.id}`
       }
       getRowId={({ departure }) => departure.id}
+      isLoading={isLoading}
       label={label}
+      rowActions={{
+        render: ({ departure, tour }) => (
+          <RowActions
+            actions={[
+              {
+                id: "open",
+                label: t("rowAction.openDeparture"),
+                icon: ArrowUpRightIcon,
+                href: `#/store/bookings/departures/${departure.id}`,
+              },
+            ]}
+            label={t("table.rowActions", {
+              name: tour ? pickText(tour.name, language).text : departure.id,
+            })}
+          />
+        ),
+        headerClassName: "w-[8%]",
+      }}
       rows={rows}
     />
   );
@@ -287,6 +316,8 @@ function DepartureTable({
 export function TourDeparturesPage() {
   const { data, departures, tours, now } = useTours();
   const { t } = useLocale();
+
+  const isLoading = useSimulatedLoading();
 
   useOverdueCheck();
   const rows: Row[] = departures.map((departure) => {
@@ -321,6 +352,7 @@ export function TourDeparturesPage() {
       {rows.length === 0 && (
         <DepartureTable
           empty={noDepartures}
+          isLoading={isLoading}
           label={t("tourMerchant.departures")}
           rows={[]}
         />
@@ -339,7 +371,11 @@ export function TourDeparturesPage() {
             <h2 className="text-heading" id={`departures-${group.id}`}>
               {group.title}
             </h2>
-            <DepartureTable label={group.title} rows={group.rows} />
+            <DepartureTable
+              isLoading={isLoading}
+              label={group.title}
+              rows={group.rows}
+            />
           </section>
         ))}
     </div>

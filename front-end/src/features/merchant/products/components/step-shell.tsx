@@ -283,7 +283,7 @@ export function StepBody({
   );
 }
 
-/** "This tour is archived …" with "Restore as draft", instead of publishing (coordinator, rev. 2). */
+/** "This gift is archived …" with "Restore as draft", instead of publishing (coordinator, rev. 2). */
 export function ArchivedNotice({
   text,
   onRestore,

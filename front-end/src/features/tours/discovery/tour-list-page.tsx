@@ -1,13 +1,10 @@
+import { buttonVariants } from "@heroui/react";
 import { Link } from "@tanstack/react-router";
 
 import { TourCard } from "./tour-card";
 
 import { EmptyState } from "@/components/empty-state";
-import {
-  ChevronRightIcon,
-  TourIcon,
-  TravelGroupIcon,
-} from "@/components/icons";
+import { ArrowRightIcon, TourIcon } from "@/components/icons";
 import { Media } from "@/components/media";
 import { CompactBar, SearchButton } from "@/components/layout/top-bar-buttons";
 import { useScrolledPast } from "@/hooks/use-scrolled-past";
@@ -63,34 +60,78 @@ export function TourListPage() {
 }
 
 /**
- * C22's entry below the list (outline step 6), shown even with no tours: a white card with
- * C07's link row, ink rather than red so the tour cards stay the screen's focus.
+ * C22's entry below the list (outline step 6), shown even with no tours: two polaroids with
+ * a note pinned between them (lab option C1, owner choice 15.10.2026), in the family of the
+ * home Polaroid stack, then the headline and the one red primary action.
  */
 function PrivateTourEntry() {
   const { t } = useLocale();
+  const facts = [
+    t("privateTour.entry.size"),
+    t("privateTour.entry.dates"),
+    t("privateTour.entry.planned"),
+  ];
+  const shots = [
+    {
+      photo: "grimsel-pass-2",
+      caption: t("privateTour.entry.captionDates"),
+      tilt: "-rotate-6 translate-y-3",
+    },
+    {
+      photo: "gotthard-pass-3",
+      caption: t("privateTour.entry.captionGroup"),
+      tilt: "rotate-3",
+    },
+  ];
 
   return (
     <section
       aria-labelledby="private-tour-entry"
-      className="mt-3 flex flex-col divide-y divide-separator rounded-3xl bg-surface shadow-surface"
+      className="mt-3 flex flex-col items-center gap-5 rounded-3xl bg-hero-cream px-5 pt-6 pb-6 text-center"
     >
-      <div className="flex items-start gap-4 p-5">
-        <span className="flex size-11 shrink-0 items-center justify-center rounded-full bg-surface-secondary">
-          <TravelGroupIcon aria-hidden size={22} />
-        </span>
-        <div className="flex min-w-0 flex-col gap-1">
-          <h2 className="font-serif text-card-title" id="private-tour-entry">
-            {t("privateTour.entry.title")}
-          </h2>
-          <p className="text-sm text-muted">{t("privateTour.entry.body")}</p>
-        </div>
+      {/* The polaroids are in the flow, so their height (it grows with the width) pushes the
+          headline down instead of covering it; the note floats between them, above the
+          captions. */}
+      <div className="relative flex w-full max-w-sm justify-between pb-3">
+        {shots.map((shot) => (
+          <figure
+            key={shot.photo}
+            aria-hidden
+            className={`flex w-[46%] flex-col gap-1 bg-white p-1.5 pb-2 shadow-overlay ${shot.tilt}`}
+          >
+            <Media alt="" className="aspect-square" photo={shot.photo} />
+            <figcaption className="font-serif text-xs italic">
+              {shot.caption}
+            </figcaption>
+          </figure>
+        ))}
+        <ul className="absolute start-1/2 top-[4%] z-10 flex w-[48%] -translate-x-1/2 -rotate-2 flex-col bg-[#fdf2a8] p-2 text-start font-serif text-[11px] leading-snug italic shadow-overlay min-[360px]:top-[16%] min-[360px]:w-[42%] min-[360px]:gap-0.5 min-[360px]:p-2.5 min-[360px]:text-xs min-[400px]:text-sm">
+          <span
+            aria-hidden
+            className="absolute -top-2 start-1/2 size-4 -translate-x-1/2 rounded-full bg-accent shadow-[0_2px_3px_rgba(0,0,0,0.3)] ring-2 ring-white/60"
+          />
+          {facts.map((fact) => (
+            <li key={fact}>· {fact}</li>
+          ))}
+        </ul>
+      </div>
+      <div className="flex max-w-[30ch] flex-col gap-1.5">
+        <h2
+          className="font-serif text-title text-balance"
+          id="private-tour-entry"
+        >
+          {t("privateTour.entry.title")}
+        </h2>
+        <p className="text-sm text-foreground/75">
+          {t("privateTour.entry.body")}
+        </p>
       </div>
       <Link
-        className="flex min-h-12 items-center justify-between gap-3 rounded-b-3xl px-5 text-sm font-medium outline-none hover:bg-surface-secondary focus-visible:focus-ring"
+        className={`${buttonVariants({ variant: "primary" })} transition-transform active:scale-[0.98]`}
         to="/tours/private-tour"
       >
         {t("privateTour.entry.action")}
-        <ChevronRightIcon aria-hidden className="shrink-0" size={18} />
+        <ArrowRightIcon aria-hidden size={18} />
       </Link>
     </section>
   );

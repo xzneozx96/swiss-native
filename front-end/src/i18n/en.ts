@@ -59,7 +59,6 @@ export const en = {
   "home.experience.highlight1": "First bees in 2027",
   "home.experience.highlight2": "Entlebuch biosphere",
   "home.experience.highlight3": "Honey like wine",
-  "home.experience.action": "See the bee house",
   "service.hostedBy": "Hosted by {name}",
   "service.contact": "Ask {name}",
   "home.photoAlt": "The Furka Pass road winding down into the Urseren valley",
@@ -344,6 +343,16 @@ export const en = {
   "pagination.prevText": "Prev",
   "pagination.nextText": "Next",
   "pagination.page": "Page {page}",
+  "tripProfile.intro":
+    "Optional: 3 short questions. Your answers don’t change your pickup dates.",
+  "table.actions": "Actions",
+  "filter.title": "Filters",
+  "table.rowActions": "Actions for {name}",
+  "rowAction.openDeparture": "Open guest list",
+  "reports.filter.button": "Filters",
+  "reports.filter.buttonCount": "Filters ({count})",
+  "reports.filter.apply": "Show results",
+  "reports.filter.clear": "Clear filters",
 } as const;
 
 export type MessageKey = keyof typeof en;

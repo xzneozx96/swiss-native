@@ -1,18 +1,13 @@
 import type { ProductRow } from "../hooks/use-merchant-products";
 import type { DataTableColumn } from "@/components/data-table";
 import type { EmptyStateProps } from "@/components/empty-state";
-
-import { Button, Dropdown, Label } from "@heroui/react";
+import type { RowAction } from "@/components/row-actions";
 
 import { LanguageChip, PublishChip } from "./status-chips";
 
-import {
-  ArchiveIcon,
-  EditIcon,
-  MoreIcon,
-  RestoreIcon,
-} from "@/components/icons";
+import { ArchiveIcon, EditIcon, RestoreIcon } from "@/components/icons";
 import { DataTable } from "@/components/data-table";
+import { RowActions } from "@/components/row-actions";
 import { Media } from "@/components/media";
 import { StatusChip } from "@/components/status-chip";
 import { useLocale } from "@/contexts/locale-context";
@@ -30,6 +25,7 @@ interface ProductRowsProps {
   empty?: EmptyStateProps;
   /** Back to page 1 when this changes. */
   resetKey?: string;
+  isLoading?: boolean;
 }
 
 /** Edit and archive (or restore), in a ⋯ menu as on M15, so a tap on a row never archives. */
@@ -41,7 +37,7 @@ function MoreMenu({
   onAction: ProductRowsProps["onAction"];
 }) {
   const { t } = useLocale();
-  const items: { id: ProductAction; label: string; icon: typeof EditIcon }[] = [
+  const actions: RowAction<ProductAction>[] = [
     { id: "edit", label: t("products.action.edit"), icon: EditIcon },
     row.archived
       ? {
@@ -57,29 +53,11 @@ function MoreMenu({
   ];
 
   return (
-    <Dropdown>
-      <Button
-        isIconOnly
-        aria-label={t("products.action.more", { name: row.name })}
-        size="sm"
-        variant="tertiary"
-      >
-        <MoreIcon size={18} />
-      </Button>
-      <Dropdown.Popover placement="bottom end">
-        <Dropdown.Menu
-          aria-label={t("products.action.more", { name: row.name })}
-          onAction={(key) => onAction(row, key as ProductAction)}
-        >
-          {items.map((item) => (
-            <Dropdown.Item key={item.id} id={item.id} textValue={item.label}>
-              <item.icon aria-hidden size={16} />
-              <Label>{item.label}</Label>
-            </Dropdown.Item>
-          ))}
-        </Dropdown.Menu>
-      </Dropdown.Popover>
-    </Dropdown>
+    <RowActions
+      actions={actions}
+      label={t("products.action.more", { name: row.name })}
+      onAction={(id) => onAction(row, id)}
+    />
   );
 }
 
@@ -97,7 +75,7 @@ function StateChip({ row }: { row: ProductRow }) {
 /**
  * Phones: one card per tour in the M03 ticket shape (1.10b/c). Photo, name and meta
  * where M03 has the date tile and guest; the publish and language chips; the price,
- * availability in the dashed footer, one fact per row. The card opens M13.
+ * upcoming departures in the dashed footer, one fact per row. The card opens M13.
  */
 function StackedRows({ rows, label, onAction }: ProductRowsProps) {
   return (
@@ -113,7 +91,7 @@ function StackedRows({ rows, label, onAction }: ProductRowsProps) {
               />
               <div className="min-w-0 flex-1">
                 <h3 className="text-lg leading-tight font-semibold break-words hyphens-auto">
-                  {/* The whole card opens M13; the menu sits above the stretched link. */}
+                  {/* The whole card opens M12/M13; the menu sits above the stretched link. */}
                   <a
                     className="rounded-md outline-none after:absolute after:inset-0 focus-visible:focus-ring"
                     href={row.href}
@@ -160,7 +138,6 @@ function StackedRows({ rows, label, onAction }: ProductRowsProps) {
 }
 
 export function ProductRows(props: ProductRowsProps) {
-  const { t } = useLocale();
   const { columns: names, onAction } = props;
   const columns: DataTableColumn<ProductRow>[] = [
     {
@@ -168,6 +145,7 @@ export function ProductRows(props: ProductRowsProps) {
       header: names[0],
       headerClassName: "w-[36%]",
       isRowHeader: true,
+      skeleton: "lead",
       render: (row) => (
         <div className="flex items-center gap-3">
           <Media
@@ -191,6 +169,7 @@ export function ProductRows(props: ProductRowsProps) {
       id: "status",
       header: names[1],
       headerClassName: "w-[19%]",
+      skeleton: "chip",
       cellClassName: "py-2",
       render: (row) => (
         <div className="flex flex-col items-start gap-1.5 [&_svg]:shrink-0">
@@ -199,24 +178,14 @@ export function ProductRows(props: ProductRowsProps) {
         </div>
       ),
     },
-    ...[2, 3, 4].map((fact) => ({
+    ...[2, 3].map((fact) => ({
       id: `fact-${fact}`,
       header: names[fact],
-      headerClassName: fact === 4 ? "w-[12%]" : "w-[13%]",
+      headerClassName: "w-[15%]",
       cellClassName: (row: ProductRow) =>
         `whitespace-nowrap tabular-nums ${row.facts[fact - 2]?.isWarning ? "text-warning" : ""}`,
       render: (row: ProductRow) => row.facts[fact - 2]?.value,
     })),
-    {
-      id: "actions",
-      header: t("products.column.actions"),
-      headerClassName: "w-[7%] text-end",
-      render: (row) => (
-        <div className="flex justify-end">
-          <MoreMenu row={row} onAction={onAction} />
-        </div>
-      ),
-    },
   ];
 
   return (
@@ -227,8 +196,13 @@ export function ProductRows(props: ProductRowsProps) {
       contentClassName="table-fixed"
       empty={props.empty}
       getRowId={(row) => row.id}
+      isLoading={props.isLoading}
       label={props.label}
       resetKey={props.resetKey}
+      rowActions={{
+        render: (row) => <MoreMenu row={row} onAction={onAction} />,
+        headerClassName: "w-[7%]",
+      }}
       rows={props.rows}
     />
   );

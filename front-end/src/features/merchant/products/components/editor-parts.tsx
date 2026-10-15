@@ -1,4 +1,3 @@
-import type { ProductTab } from "../hooks/use-merchant-products";
 import type {
   LanguageStatus,
   MissingText,
@@ -14,7 +13,6 @@ import {
   FieldError,
   Input,
   Label,
-  Skeleton,
   Tabs,
   TextArea,
   TextField,
@@ -26,6 +24,7 @@ import { LANGUAGES, hasText, languageStatus } from "../lib/completeness";
 
 import { LanguageChip, PublishChip } from "./status-chips";
 
+import { EditorFormSkeleton } from "@/components/layout/detail-skeletons";
 import { MerchantBackBar } from "@/components/layout/merchant-back-bar";
 import { StatusChip } from "@/components/status-chip";
 import { BackIcon } from "@/components/icons";
@@ -89,14 +88,12 @@ export function useFocusFirstInvalid(
 
 /** M04 header: back link to the M11 tab, the record as the one h1, its kind, both chips. */
 export function EditorHeader({
-  tab,
   title,
   subtitle,
   published,
   archived = false,
   languages,
 }: {
-  tab: ProductTab;
   title: string;
   subtitle: string;
   published: boolean;
@@ -109,14 +106,12 @@ export function EditorHeader({
     <header className="flex flex-col gap-3">
       <MerchantBackBar
         label={t("products.back")}
-        search={tab === "tours" ? {} : { tab }}
         title={title}
-        to="/store/products"
+        to="/store/products/tours"
       />
       <Link
         className="hidden w-fit items-center gap-1.5 rounded-lg text-sm text-muted outline-none hover:text-foreground focus-visible:focus-ring lg:flex"
-        search={tab === "tours" ? {} : { tab }}
-        to="/store/products"
+        to="/store/products/tours"
       >
         <BackIcon aria-hidden size={16} />
         {t("products.back")}
@@ -142,7 +137,7 @@ export function EditorHeader({
 }
 
 /**
- * The EN and DE tabs of a text card (M13). A tab whose language misses required
+ * The EN and DE tabs of a text card (M12, M13, M14). A tab whose language misses required
  * text carries the warning icon; its panel opens with what is missing and what guests see.
  */
 export function LanguageTabs({
@@ -159,7 +154,7 @@ export function LanguageTabs({
   /** Saving needs a complete language (published); a draft only hears what publishing needs. */
   requireComplete?: boolean;
   /**
-   * One stepper step's fields (M13, revision 2): only a translation gap (text the other
+   * One stepper step's fields (M12/M13, revision 2): only a translation gap (text the other
    * language has) is announced; empty fields are flagged by Next, Save and Review.
    */
   stepAlerts?: boolean;
@@ -318,14 +313,5 @@ export function LocalizedField({
 
 /** The editor's loading state, in M04's skeleton shape (spec §5.5: never a full-page spinner). */
 export function EditorSkeleton() {
-  return (
-    <div className="flex flex-col gap-5 lg:gap-6">
-      <Skeleton className="h-4 w-24 rounded-lg" />
-      <Skeleton className="h-8 w-1/2 rounded-lg" />
-      <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_300px]">
-        <Skeleton className="h-96 rounded-3xl" />
-        <Skeleton className="hidden h-64 rounded-3xl lg:block" />
-      </div>
-    </div>
-  );
+  return <EditorFormSkeleton cards={3} />;
 }

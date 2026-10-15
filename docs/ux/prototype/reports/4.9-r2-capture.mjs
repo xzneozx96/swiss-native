@@ -36,7 +36,7 @@ const copy = {
     neededAny: "Needed in English or German.", categoryError: "Choose a sub-category.", photoRequired: "Add a photo to publish.", priceError: "Enter a price above CHF 0.", storyTitleLabel: "Story title", storyBody: "Story", storyCard: "The story behind it",
     emptyStory: "Still empty in both languages: story behind it.", hasErrors: "Has errors",
     add: "Add keepsake", name: "Name", shortStory: "Short story", category: "Sub-category", pocketKnives: "Pocket knives", library: "Choose from library", use: "Use this photo", photoCard: "Photo and category",
-    nameEn: "Name in English", price: "Price", inStock: "In stock", cancellation: "Cancellation policy", prepDays: "Preparation days", preview: /picked up from (.+)\./,
+    optionName: "Name in English", price: "Price", inStock: "In stock", cancellation: "Cancellation policy", prepDays: "Preparation days", preview: /picked up from (.+)\./,
     english: "English", german: "German", deMissing: "DE missing", deWarning: "German is missing: name.",
     knife: "Kapellbrücke pocket knife", actions: "Actions for Kapellbrücke pocket knife", archive: "Archive", archived: "Archived", archivedNotice: "This keepsake is archived",
   },
@@ -48,7 +48,7 @@ const copy = {
     neededAny: "Nötig auf Englisch oder Deutsch.", categoryError: "Wählen Sie eine Unterkategorie.", photoRequired: "Fügen Sie ein Foto hinzu, um zu veröffentlichen.", priceError: "Geben Sie einen Preis über CHF 0 ein.", storyTitleLabel: "Titel der Geschichte", storyBody: "Geschichte", storyCard: "Die Geschichte dahinter",
     emptyStory: "In beiden Sprachen noch leer: Geschichte dahinter.", hasErrors: "Hat Fehler",
     add: "Andenken hinzufügen", name: "Name", shortStory: "Kurze Geschichte", category: "Unterkategorie", pocketKnives: "Taschenmesser", library: "Aus der Bibliothek wählen", use: "Dieses Foto verwenden", photoCard: "Foto und Kategorie",
-    nameEn: "Name auf Englisch", price: "Preis", inStock: "Am Lager", cancellation: "Stornierungsbedingungen", prepDays: "Vorbereitungstage", preview: /kann ab (.+) abgeholt/,
+    optionName: "Name auf Deutsch", price: "Preis", inStock: "Am Lager", cancellation: "Stornierungsbedingungen", prepDays: "Vorbereitungstage", preview: /kann ab (.+) abgeholt/,
     english: "Englisch", german: "Deutsch", deMissing: "DE fehlt", deWarning: "Auf Deutsch fehlt: Name.",
     knife: "Kapellbrücke Taschenmesser", actions: "Aktionen für Kapellbrücke Taschenmesser", archive: "Archivieren", archived: "Archiviert", archivedNotice: "Dieses Andenken ist archiviert",
   },
@@ -123,6 +123,9 @@ for (const lang of ["en", "de"]) {
   await wait(1000);
   check(`[${lang}] Add gift opens step 1 with the phone progress bar and All steps`, (await onStep(1)) && (await page.getByRole("progressbar").isVisible()) && (await button(c.all).isVisible()), await stepTitle());
   check(`[${lang}] while creating the bar offers Save draft and Next, no Back on step 1`, (await button(c.saveDraft).isVisible()) && (await button(c.next).isVisible()) && (await button(c.back).count()) === 0);
+  // The step's language switch opens on the interface language (owner, 15.10.2026); the walk
+  // writes in that language, so the DE run creates a German-only keepsake.
+  check(`[${lang}] the language switch opens on the interface language`, (await page.getByRole("tab", { selected: true }).first().innerText()).startsWith(lang === "en" ? c.english : c.german));
   bars["new gift, step 1"] = await barLayout(page);
   await openSheet();
   const locked = [];
@@ -160,7 +163,7 @@ for (const lang of ["en", "de"]) {
 
   // Options: Next on an option without name and price.
   await next();
-  const optionName = page.getByLabel(new RegExp(`^${c.nameEn}`)).first();
+  const optionName = page.getByLabel(new RegExp(`^${c.optionName}`)).first();
   check(`[${lang}] Next on empty Options: stays, the option name and price marked`, (await onStep(2)) && (await optionName.getAttribute("aria-invalid")) === "true" && (await page.getByText(c.priceError).isVisible()));
   check(`[${lang}] focus on the option name, clear of the sticky bar`, (await optionName.evaluate((el) => el === document.activeElement)) && (await focusClear(page)).ok, await focusClear(page));
   await shot(page, "create-options-errors", lang, "Add gift, Next on the Options step: the option name and price are marked, focus on the option name");
@@ -194,7 +197,7 @@ for (const lang of ["en", "de"]) {
   const before = (await data(page)).products.length;
   await button(c.saveDraft).click();
   await wait(1200);
-  const created = (await data(page)).products.find((p) => p.name.en === "Chapel Bridge bottle opener");
+  const created = (await data(page)).products.find((p) => p.name[lang] === "Chapel Bridge bottle opener");
   check(`[${lang}] Save draft without a story stores the draft`, (await data(page)).products.length === before + 1 && created?.published === false && !created.longStory, created && { id: created.id, story: created.longStory });
   check(`[${lang}] the address moves to the gift, still on Story, and the bar says the draft is saved`, page.url().includes(`/gifts/${created?.id}?step=story`) && (await page.getByRole("status").filter({ hasText: c.savedDraft }).isVisible()), page.url());
   await next();
@@ -226,7 +229,7 @@ for (const lang of ["en", "de"]) {
   await button(c.publish).click();
   await wait(900);
   const live = (await data(page)).products.find((p) => p.id === created.id);
-  check(`[${lang}] with a story it publishes`, live.published === true && live.longStory?.title?.en === "Opened on the bridge" && (await page.getByRole("status").filter({ hasText: c.saved }).isVisible()), { p: live.published, t: live.longStory?.title });
+  check(`[${lang}] with a story it publishes`, live.published === true && live.longStory?.title?.[lang] === "Opened on the bridge" && (await page.getByRole("status").filter({ hasText: c.saved }).isVisible()), { p: live.published, t: live.longStory?.title });
   bars["live, Review"] = await barLayout(page);
   check(`[${lang}] a live gift's Review offers Unpublish and Save changes`, (await button(c.unpublish).isVisible()) && (await button(c.save).isVisible()));
   await shot(page, "review-live", lang, "Review of a published gift: Unpublish and Save changes in the bar");

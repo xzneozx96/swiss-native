@@ -28,10 +28,13 @@ import { Route as GuestToursPrivateTourRouteImport } from './routes/_guest/tours
 import { Route as StoreBookingsIndexRouteImport } from './routes/store/bookings/index'
 import { Route as StoreBookingsBookingIdRouteImport } from './routes/store/bookings/$bookingId'
 import { Route as StoreProductsIndexRouteImport } from './routes/store/products/index'
+import { Route as StoreProductsExperiencesRouteImport } from './routes/store/products/experiences'
+import { Route as StoreProductsStaysRouteImport } from './routes/store/products/stays'
 import { Route as GuestAccountBookingsBookingIdRouteImport } from './routes/_guest/account_.bookings.$bookingId'
 import { Route as GuestToursSlugBookRouteImport } from './routes/_guest/tours/$slug_.book'
 import { Route as GuestToursPrivateTourSentRouteImport } from './routes/_guest/tours/private-tour_.sent'
 import { Route as StoreBookingsDeparturesDepartureIdRouteImport } from './routes/store/bookings/departures/$departureId'
+import { Route as StoreProductsToursIndexRouteImport } from './routes/store/products/tours/index'
 import { Route as StoreProductsToursTourIdRouteImport } from './routes/store/products/tours/$tourId'
 import { Route as StoreProductsToursNewRouteImport } from './routes/store/products/tours/new'
 import { Route as GuestAccountBookingsBookingIdConfirmedRouteImport } from './routes/_guest/account_.bookings.$bookingId_.confirmed'
@@ -132,6 +135,17 @@ const StoreProductsIndexRoute = StoreProductsIndexRouteImport.update({
   path: '/products/',
   getParentRoute: () => StoreRoute,
 } as any)
+const StoreProductsExperiencesRoute =
+  StoreProductsExperiencesRouteImport.update({
+    id: '/products/experiences',
+    path: '/products/experiences',
+    getParentRoute: () => StoreRoute,
+  } as any)
+const StoreProductsStaysRoute = StoreProductsStaysRouteImport.update({
+  id: '/products/stays',
+  path: '/products/stays',
+  getParentRoute: () => StoreRoute,
+} as any)
 const GuestAccountBookingsBookingIdRoute =
   GuestAccountBookingsBookingIdRouteImport.update({
     id: '/account_/bookings/$bookingId',
@@ -155,6 +169,11 @@ const StoreBookingsDeparturesDepartureIdRoute =
     path: '/departures/$departureId',
     getParentRoute: () => StoreBookingsRoute,
   } as any)
+const StoreProductsToursIndexRoute = StoreProductsToursIndexRouteImport.update({
+  id: '/products/tours/',
+  path: '/products/tours/',
+  getParentRoute: () => StoreRoute,
+} as any)
 const StoreProductsToursTourIdRoute =
   StoreProductsToursTourIdRouteImport.update({
     id: '/products/tours/$tourId',
@@ -201,6 +220,8 @@ export interface FileRoutesByFullPath {
   '/tours/$slug': typeof GuestToursSlugRoute
   '/tours/private-tour': typeof GuestToursPrivateTourRoute
   '/store/bookings/$bookingId': typeof StoreBookingsBookingIdRoute
+  '/store/products/experiences': typeof StoreProductsExperiencesRoute
+  '/store/products/stays': typeof StoreProductsStaysRoute
   '/tours/': typeof GuestToursIndexRoute
   '/store/bookings/': typeof StoreBookingsIndexRoute
   '/store/products/': typeof StoreProductsIndexRoute
@@ -210,6 +231,7 @@ export interface FileRoutesByFullPath {
   '/store/bookings/departures/$departureId': typeof StoreBookingsDeparturesDepartureIdRoute
   '/store/products/tours/$tourId': typeof StoreProductsToursTourIdRoute
   '/store/products/tours/new': typeof StoreProductsToursNewRoute
+  '/store/products/tours/': typeof StoreProductsToursIndexRoute
   '/account/bookings/$bookingId/confirmed': typeof GuestAccountBookingsBookingIdConfirmedRoute
   '/account/bookings/$bookingId/pay': typeof GuestAccountBookingsBookingIdPayRoute
   '/tours/$slug/book/review': typeof GuestToursSlugBookReviewRoute
@@ -227,6 +249,8 @@ export interface FileRoutesByTo {
   '/tours/$slug': typeof GuestToursSlugRoute
   '/tours/private-tour': typeof GuestToursPrivateTourRoute
   '/store/bookings/$bookingId': typeof StoreBookingsBookingIdRoute
+  '/store/products/experiences': typeof StoreProductsExperiencesRoute
+  '/store/products/stays': typeof StoreProductsStaysRoute
   '/tours': typeof GuestToursIndexRoute
   '/store/bookings': typeof StoreBookingsIndexRoute
   '/store/products': typeof StoreProductsIndexRoute
@@ -236,6 +260,7 @@ export interface FileRoutesByTo {
   '/store/bookings/departures/$departureId': typeof StoreBookingsDeparturesDepartureIdRoute
   '/store/products/tours/$tourId': typeof StoreProductsToursTourIdRoute
   '/store/products/tours/new': typeof StoreProductsToursNewRoute
+  '/store/products/tours': typeof StoreProductsToursIndexRoute
   '/account/bookings/$bookingId/confirmed': typeof GuestAccountBookingsBookingIdConfirmedRoute
   '/account/bookings/$bookingId/pay': typeof GuestAccountBookingsBookingIdPayRoute
   '/tours/$slug/book/review': typeof GuestToursSlugBookReviewRoute
@@ -258,6 +283,8 @@ export interface FileRoutesById {
   '/_guest/tours/$slug': typeof GuestToursSlugRoute
   '/_guest/tours/private-tour': typeof GuestToursPrivateTourRoute
   '/store/bookings/$bookingId': typeof StoreBookingsBookingIdRoute
+  '/store/products/experiences': typeof StoreProductsExperiencesRoute
+  '/store/products/stays': typeof StoreProductsStaysRoute
   '/_guest/tours/': typeof GuestToursIndexRoute
   '/store/bookings/': typeof StoreBookingsIndexRoute
   '/store/products/': typeof StoreProductsIndexRoute
@@ -267,6 +294,7 @@ export interface FileRoutesById {
   '/store/bookings/departures/$departureId': typeof StoreBookingsDeparturesDepartureIdRoute
   '/store/products/tours/$tourId': typeof StoreProductsToursTourIdRoute
   '/store/products/tours/new': typeof StoreProductsToursNewRoute
+  '/store/products/tours/': typeof StoreProductsToursIndexRoute
   '/_guest/account_/bookings/$bookingId_/confirmed': typeof GuestAccountBookingsBookingIdConfirmedRoute
   '/_guest/account_/bookings/$bookingId_/pay': typeof GuestAccountBookingsBookingIdPayRoute
   '/_guest/tours/$slug_/book_/review': typeof GuestToursSlugBookReviewRoute
@@ -289,6 +317,8 @@ export interface FileRouteTypes {
     | '/tours/$slug'
     | '/tours/private-tour'
     | '/store/bookings/$bookingId'
+    | '/store/products/experiences'
+    | '/store/products/stays'
     | '/tours/'
     | '/store/bookings/'
     | '/store/products/'
@@ -298,6 +328,7 @@ export interface FileRouteTypes {
     | '/store/bookings/departures/$departureId'
     | '/store/products/tours/$tourId'
     | '/store/products/tours/new'
+    | '/store/products/tours/'
     | '/account/bookings/$bookingId/confirmed'
     | '/account/bookings/$bookingId/pay'
     | '/tours/$slug/book/review'
@@ -315,6 +346,8 @@ export interface FileRouteTypes {
     | '/tours/$slug'
     | '/tours/private-tour'
     | '/store/bookings/$bookingId'
+    | '/store/products/experiences'
+    | '/store/products/stays'
     | '/tours'
     | '/store/bookings'
     | '/store/products'
@@ -324,6 +357,7 @@ export interface FileRouteTypes {
     | '/store/bookings/departures/$departureId'
     | '/store/products/tours/$tourId'
     | '/store/products/tours/new'
+    | '/store/products/tours'
     | '/account/bookings/$bookingId/confirmed'
     | '/account/bookings/$bookingId/pay'
     | '/tours/$slug/book/review'
@@ -345,6 +379,8 @@ export interface FileRouteTypes {
     | '/_guest/tours/$slug'
     | '/_guest/tours/private-tour'
     | '/store/bookings/$bookingId'
+    | '/store/products/experiences'
+    | '/store/products/stays'
     | '/_guest/tours/'
     | '/store/bookings/'
     | '/store/products/'
@@ -354,6 +390,7 @@ export interface FileRouteTypes {
     | '/store/bookings/departures/$departureId'
     | '/store/products/tours/$tourId'
     | '/store/products/tours/new'
+    | '/store/products/tours/'
     | '/_guest/account_/bookings/$bookingId_/confirmed'
     | '/_guest/account_/bookings/$bookingId_/pay'
     | '/_guest/tours/$slug_/book_/review'
@@ -500,6 +537,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof StoreProductsIndexRouteImport
       parentRoute: typeof StoreRoute
     }
+    '/store/products/experiences': {
+      id: '/store/products/experiences'
+      path: '/products/experiences'
+      fullPath: '/store/products/experiences'
+      preLoaderRoute: typeof StoreProductsExperiencesRouteImport
+      parentRoute: typeof StoreRoute
+    }
+    '/store/products/stays': {
+      id: '/store/products/stays'
+      path: '/products/stays'
+      fullPath: '/store/products/stays'
+      preLoaderRoute: typeof StoreProductsStaysRouteImport
+      parentRoute: typeof StoreRoute
+    }
     '/_guest/account_/bookings/$bookingId': {
       id: '/_guest/account_/bookings/$bookingId'
       path: '/account/bookings/$bookingId'
@@ -527,6 +578,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/store/bookings/departures/$departureId'
       preLoaderRoute: typeof StoreBookingsDeparturesDepartureIdRouteImport
       parentRoute: typeof StoreBookingsRoute
+    }
+    '/store/products/tours/': {
+      id: '/store/products/tours/'
+      path: '/products/tours'
+      fullPath: '/store/products/tours/'
+      preLoaderRoute: typeof StoreProductsToursIndexRouteImport
+      parentRoute: typeof StoreRoute
     }
     '/store/products/tours/$tourId': {
       id: '/store/products/tours/$tourId'
@@ -637,9 +695,12 @@ interface StoreRouteChildren {
   StoreBookingsRoute: typeof StoreBookingsRouteWithChildren
   StoreSalesRoute: typeof StoreSalesRoute
   StoreIndexRoute: typeof StoreIndexRoute
+  StoreProductsExperiencesRoute: typeof StoreProductsExperiencesRoute
+  StoreProductsStaysRoute: typeof StoreProductsStaysRoute
   StoreProductsIndexRoute: typeof StoreProductsIndexRoute
   StoreProductsToursTourIdRoute: typeof StoreProductsToursTourIdRoute
   StoreProductsToursNewRoute: typeof StoreProductsToursNewRoute
+  StoreProductsToursIndexRoute: typeof StoreProductsToursIndexRoute
 }
 
 const StoreRouteChildren: StoreRouteChildren = {
@@ -647,9 +708,12 @@ const StoreRouteChildren: StoreRouteChildren = {
   StoreBookingsRoute: StoreBookingsRouteWithChildren,
   StoreSalesRoute: StoreSalesRoute,
   StoreIndexRoute: StoreIndexRoute,
+  StoreProductsExperiencesRoute: StoreProductsExperiencesRoute,
+  StoreProductsStaysRoute: StoreProductsStaysRoute,
   StoreProductsIndexRoute: StoreProductsIndexRoute,
   StoreProductsToursTourIdRoute: StoreProductsToursTourIdRoute,
   StoreProductsToursNewRoute: StoreProductsToursNewRoute,
+  StoreProductsToursIndexRoute: StoreProductsToursIndexRoute,
 }
 
 const StoreRouteWithChildren = StoreRoute._addFileChildren(StoreRouteChildren)

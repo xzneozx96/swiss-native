@@ -1,11 +1,4 @@
-import type { PeriodId } from "../lib/analytics";
 import type { ReactNode } from "react";
-
-import { Tabs } from "@heroui/react";
-import { useId } from "react";
-import { Area, AreaChart, ResponsiveContainer, YAxis } from "recharts";
-
-const noAnimation = { isAnimationActive: false } as const;
 
 /**
  * A dashboard widget after HeroUI Pro's Widget: a tinted shell with a header (title,
@@ -77,81 +70,5 @@ export function TooltipCard({
         </p>
       ))}
     </div>
-  );
-}
-
-/** Sparkline: the period's daily values, no axes; decorative (the value and delta say it). */
-export function Sparkline({
-  values,
-  colour,
-  height,
-}: {
-  values: (number | null)[];
-  colour: string;
-  height: number;
-}) {
-  const gradient = useId();
-  const data = values.map((value, index) => ({ index, value }));
-
-  return (
-    <div aria-hidden className="min-w-0" style={{ height }}>
-      <ResponsiveContainer height="100%" width="100%">
-        <AreaChart
-          accessibilityLayer={false}
-          data={data}
-          margin={{ top: 4, right: 4, bottom: 0, left: 4 }}
-        >
-          <defs>
-            <linearGradient id={gradient} x1="0" x2="0" y1="0" y2="1">
-              <stop offset="0%" stopColor={colour} stopOpacity={0.18} />
-              <stop offset="100%" stopColor={colour} stopOpacity={0} />
-            </linearGradient>
-          </defs>
-          <YAxis hide domain={[0, "auto"]} />
-          <Area
-            {...noAnimation}
-            connectNulls
-            dataKey="value"
-            dot={false}
-            fill={`url(#${gradient})`}
-            stroke={colour}
-            strokeWidth={2}
-            type="monotone"
-          />
-        </AreaChart>
-      </ResponsiveContainer>
-    </div>
-  );
-}
-
-export function PeriodTabs({
-  period,
-  periods,
-  label,
-  onChange,
-}: {
-  period: PeriodId;
-  periods: { id: PeriodId; label: string }[];
-  label: string;
-  onChange: (id: PeriodId) => void;
-}) {
-  return (
-    <Tabs
-      className="w-full sm:w-auto"
-      selectedKey={period}
-      onSelectionChange={(key) => onChange(key as PeriodId)}
-    >
-      <Tabs.ListContainer className="sm:w-96">
-        <Tabs.List aria-label={label}>
-          {periods.map((p, index) => (
-            <Tabs.Tab key={p.id} id={p.id}>
-              {index > 0 && <Tabs.Separator />}
-              {p.label}
-              <Tabs.Indicator />
-            </Tabs.Tab>
-          ))}
-        </Tabs.List>
-      </Tabs.ListContainer>
-    </Tabs>
   );
 }

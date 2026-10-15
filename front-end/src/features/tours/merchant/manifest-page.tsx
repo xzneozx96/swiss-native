@@ -36,6 +36,7 @@ import {
 import { useOverdueCheck } from "./use-overdue-check";
 
 import { DataTable } from "@/components/data-table";
+import { useSimulatedLoading } from "@/hooks/use-simulated-loading";
 import { EmptyState } from "@/components/empty-state";
 import { MerchantBackBar } from "@/components/layout/merchant-back-bar";
 import {
@@ -143,13 +144,15 @@ function Phone({ booking }: { booking: TourBooking }) {
 
 /**
  * M06 Guest list of one departure: every booking with its group, contact and payment label.
- * After the tour ends, the host records service delivered or no-show per booking;
+ * After the tour ends, Owner and Manager record service delivered or no-show per booking;
  * the departure itself is never marked completed by time alone.
  */
 export function TourManifestPage({ departureId }: { departureId: string }) {
   const { data, departures, tours, now } = useTours();
   const { t, language } = useLocale();
   const { date, time, money } = useTourFormatting();
+
+  const isLoading = useSimulatedLoading();
 
   useOverdueCheck();
   const departure = departures.find((item) => item.id === departureId);
@@ -174,6 +177,7 @@ export function TourManifestPage({ departureId }: { departureId: string }) {
       id: "guest",
       header: t("tourMerchant.guest"),
       isRowHeader: true,
+      skeleton: "two-line",
       render: (booking) => (
         <>
           <Link
@@ -195,6 +199,7 @@ export function TourManifestPage({ departureId }: { departureId: string }) {
     {
       id: "group",
       header: t("tourMerchant.group"),
+      skeleton: "two-line",
       render: (booking) => (
         <>
           <GroupText group={booking} />
@@ -339,6 +344,7 @@ export function TourManifestPage({ departureId }: { departureId: string }) {
         columns={columns}
         empty={empty}
         getRowId={(booking) => booking.id}
+        isLoading={isLoading}
         label={t("tourMerchant.manifest")}
         rows={rows}
       />

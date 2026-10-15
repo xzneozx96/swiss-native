@@ -278,7 +278,7 @@ export function useTourEditor(
   step: TourStep,
   go: (step: TourStep) => void,
 ) {
-  const { t } = useLocale();
+  const { t, language: interfaceLanguage } = useLocale();
   const { state } = useDemo();
   const now = useDemoNow();
   const navigate = useNavigate();
@@ -288,7 +288,8 @@ export function useTourEditor(
   const archive = useProductArchive();
   const [edit, setEdit] = useState(() => (tour ? toEdit(tour) : blankEdit()));
   const [saved, setSaved] = useState(edit);
-  const [language, setLanguage] = useState<Language>("en");
+  // The step language switch opens on the interface language (owner, 15.10.2026).
+  const [language, setLanguage] = useState<Language>(interfaceLanguage);
   const [attempt, setAttempt] = useState<{
     level: Level;
     step?: TourStep;

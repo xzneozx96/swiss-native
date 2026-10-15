@@ -62,7 +62,6 @@ export const de: Record<MessageKey, string> = {
   "home.experience.highlight1": "Erste Bienen 2027",
   "home.experience.highlight2": "Biosphäre Entlebuch",
   "home.experience.highlight3": "Honig wie Wein",
-  "home.experience.action": "Bienenhaus ansehen",
   "service.hostedBy": "Gastgeber: {name}",
   "service.contact": "{name} fragen",
   "home.photoAlt": "Die Furkapass-Strasse, die ins Urserental hinunterführt",
@@ -357,4 +356,14 @@ export const de: Record<MessageKey, string> = {
   "pagination.prevText": "Zurück",
   "pagination.nextText": "Weiter",
   "pagination.page": "Seite {page}",
+  "tripProfile.intro":
+    "Freiwillig: 3 kurze Fragen. Ihre Antworten ändern nichts an Ihren Abholdaten.",
+  "table.actions": "Aktionen",
+  "filter.title": "Filter",
+  "table.rowActions": "Aktionen für {name}",
+  "rowAction.openDeparture": "Gästeliste öffnen",
+  "reports.filter.button": "Filter",
+  "reports.filter.buttonCount": "Filter ({count})",
+  "reports.filter.apply": "Ergebnisse zeigen",
+  "reports.filter.clear": "Filter zurücksetzen",
 };

@@ -70,10 +70,11 @@ export function Pager({
   return (
     <Pagination
       aria-label={t("pagination.label")}
-      className={compact ? "mt-4 flex-wrap justify-between gap-3" : undefined}
+      // HeroUI stacks the summary over the pages on narrow screens; keep one row, apart.
+      className={`flex-row items-center justify-between gap-3 ${compact ? "mt-4" : ""}`}
       size="sm"
     >
-      <Pagination.Summary className="text-sm text-muted tabular-nums">
+      <Pagination.Summary className="self-center text-sm text-muted tabular-nums">
         {to === from
           ? t("pagination.summaryOne", { item: count(to), total: count(total) })
           : t("pagination.summary", {
@@ -82,7 +83,7 @@ export function Pager({
               total: count(total),
             })}
       </Pagination.Summary>
-      <Pagination.Content>
+      <Pagination.Content className="self-center">
         <Pagination.Item>
           <Pagination.Previous
             aria-label={compact ? t("pagination.previous") : undefined}

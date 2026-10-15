@@ -26,6 +26,7 @@ import { useLocale } from "@/contexts/locale-context";
 import { zurichDate } from "@/features/catalog/lib/pickup";
 import { useDemoNow } from "@/features/demo";
 import { formatShortDate } from "@/lib/format";
+import { useSheetExit } from "@/components/sheet-exit";
 
 export interface TripProfileProps {
   status: TripStatus;
@@ -367,6 +368,7 @@ export function DateSheet({
   onDone: (iso: string | undefined) => void;
   onClose: () => void;
 }) {
+  const exitRef = useSheetExit();
   const { t } = useLocale();
   const today = parseDate(zurichDate(useDemoNow()));
   const [date, setDate] = useState<CalendarDate | null>(
@@ -377,6 +379,7 @@ export function DateSheet({
     <Drawer.Backdrop isOpen onOpenChange={(open) => !open && onClose()}>
       <Drawer.Content className="mx-auto max-w-[430px]" placement="bottom">
         <Drawer.Dialog className="flex max-h-[92dvh] flex-col">
+          <span ref={exitRef} hidden />
           <Drawer.Handle />
           <Drawer.Header className="flex items-center justify-between">
             <Drawer.Heading className="text-title">{title}</Drawer.Heading>

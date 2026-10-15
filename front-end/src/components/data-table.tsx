@@ -1,16 +1,25 @@
 import type { EmptyStateProps } from "@/components/empty-state";
 import type { ReactNode } from "react";
+import type { SkeletonShape } from "@/components/data-table-skeleton";
 
 import { Table } from "@heroui/react";
 
+import {
+  SKELETON_ROWS,
+  SkeletonCell,
+  TicketSkeletons,
+} from "@/components/data-table-skeleton";
 import { EmptyState, TableEmptyState } from "@/components/empty-state";
 import { Pager, usePaged } from "@/components/list-pagination";
+import { useLocale } from "@/contexts/locale-context";
 
 export interface DataTableColumn<T> {
   id: string;
   header: ReactNode;
   render: (row: T) => ReactNode;
   isRowHeader?: boolean;
+  /** What the cells hold, so the loading bars match; default one line. */
+  skeleton?: SkeletonShape;
   /** Width or alignment of the column, e.g. "w-[36%]" or "text-end". */
   headerClassName?: string;
   cellClassName?: string | ((row: T) => string);
@@ -34,9 +43,21 @@ interface DataTableProps<T> {
   cards?: (pageRows: T[]) => ReactNode;
   /** Shown inside the table when `rows` is empty, and as a card on phones. */
   empty?: EmptyStateProps;
+  /** Draws the real headers with column-shaped bars (and loading tickets on phones). */
+  isLoading?: boolean;
   /**
-   * Where the table sits. "page" (default) puts it on its own white card; "card" is for a table
-   * already inside a card or widget. Both draw the same plain rows (owner review 15.10.2026).
+   * The trailing Actions column: usually a `RowActions` ⋯ menu. A row with `getRowHref` stays
+   * a link everywhere but on this cell.
+   */
+  rowActions?: {
+    render: (row: T) => ReactNode;
+    /** Width of the column; default "w-24". */
+    headerClassName?: string;
+  };
+  /**
+   * Where the table sits. "page" (default) is a table on its own, in HeroUI's default look;
+   * "card" is for a table inside a widget with a heading, which draws the plain rows
+   * (HeroUI's secondary variant) because the widget already is the card (owner 15.10.2026).
    */
   variant?: "page" | "card";
   className?: string;
@@ -57,42 +78,59 @@ export function DataTable<T>({
   resetKey,
   cards,
   empty,
+  isLoading,
+  rowActions,
   variant,
   className,
   contentClassName,
 }: DataTableProps<T>) {
+  const { t } = useLocale();
   const { pageItems, pager } = usePaged(rows, resetKey);
   const isOnPage = variant !== "card";
-  const tableClass = [
-    cards && "hidden lg:block",
-    // On the page the table gets its own white card; the rows inside stay plain.
-    isOnPage && "rounded-3xl bg-surface p-2 shadow-surface",
-    className,
-  ]
+  const allColumns: DataTableColumn<T>[] = rowActions
+    ? [
+        ...columns,
+        {
+          id: "actions",
+          header: t("table.actions"),
+          skeleton: "action",
+          headerClassName: `${rowActions.headerClassName ?? "w-24"} text-end`,
+          render: (row) => (
+            <div className="flex justify-end">{rowActions.render(row)}</div>
+          ),
+        },
+      ]
+    : columns;
+  const tableClass = [cards && "hidden lg:block", className]
     .filter(Boolean)
     .join(" ");
 
   return (
     <>
-      {cards && (
-        <>
-          {empty && !rows.length && (
+      {cards &&
+        (isLoading ? (
+          <TicketSkeletons />
+        ) : (
+          <>
+            {empty && !rows.length && (
+              <div className="lg:hidden">
+                <EmptyState {...empty} />
+              </div>
+            )}
+            {cards(pageItems)}
             <div className="lg:hidden">
-              <EmptyState {...empty} />
+              <Pager compact pager={pager} />
             </div>
-          )}
-          {cards(pageItems)}
-          <div className="lg:hidden">
-            <Pager compact pager={pager} />
-          </div>
-        </>
-      )}
-      {/* One look everywhere: HeroUI's plain rows (secondary), small muted headers, dividers. */}
-      <Table className={tableClass || undefined} variant="secondary">
+          </>
+        ))}
+      <Table
+        className={tableClass || undefined}
+        variant={isOnPage ? undefined : "secondary"}
+      >
         <Table.ScrollContainer>
           <Table.Content aria-label={label} className={contentClassName}>
             <Table.Header>
-              {columns.map((column) => (
+              {allColumns.map((column) => (
                 <Table.Column
                   key={column.id}
                   className={column.headerClassName}
@@ -103,32 +141,47 @@ export function DataTable<T>({
               ))}
             </Table.Header>
             <Table.Body
-              renderEmptyState={empty && (() => <TableEmptyState {...empty} />)}
+              renderEmptyState={
+                empty && !isLoading
+                  ? () => <TableEmptyState {...empty} />
+                  : undefined
+              }
             >
-              {pageItems.map((row) => (
-                <Table.Row
-                  key={getRowId(row)}
-                  className={getRowHref ? "cursor-pointer" : undefined}
-                  href={getRowHref?.(row)}
-                >
-                  {columns.map((column) => (
-                    <Table.Cell
-                      key={column.id}
-                      className={
-                        typeof column.cellClassName === "function"
-                          ? column.cellClassName(row)
-                          : column.cellClassName
-                      }
-                    >
-                      {column.render(row)}
-                    </Table.Cell>
-                  ))}
-                </Table.Row>
-              ))}
+              {isLoading &&
+                Array.from({ length: SKELETON_ROWS }, (_, index) => (
+                  <Table.Row key={`loading-${index}`}>
+                    {allColumns.map((column) => (
+                      <Table.Cell key={column.id}>
+                        <SkeletonCell index={index} shape={column.skeleton} />
+                      </Table.Cell>
+                    ))}
+                  </Table.Row>
+                ))}
+              {!isLoading &&
+                pageItems.map((row) => (
+                  <Table.Row
+                    key={getRowId(row)}
+                    className={getRowHref ? "cursor-pointer" : undefined}
+                    href={getRowHref?.(row)}
+                  >
+                    {allColumns.map((column) => (
+                      <Table.Cell
+                        key={column.id}
+                        className={
+                          typeof column.cellClassName === "function"
+                            ? column.cellClassName(row)
+                            : column.cellClassName
+                        }
+                      >
+                        {column.render(row)}
+                      </Table.Cell>
+                    ))}
+                  </Table.Row>
+                ))}
             </Table.Body>
           </Table.Content>
         </Table.ScrollContainer>
-        {pager.pages > 1 && (
+        {!isLoading && pager.pages > 1 && (
           <Table.Footer>
             <Pager pager={pager} />
           </Table.Footer>

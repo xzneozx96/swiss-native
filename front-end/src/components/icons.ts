@@ -72,6 +72,8 @@ export const CloseIcon = stable(Reicon.Xmark, "CloseIcon");
 
 // Option tiles: the chosen tile's corner check (C03, C10; use weight="Filled")
 export const SelectedIcon = stable(Reicon.TickCircle, "SelectedIcon");
+export const CopyIcon = stable(Reicon.Copy, "CopyIcon");
+export const CopiedIcon = stable(Reicon.CopySuccess, "CopiedIcon");
 
 // Detail highlights
 export const PickupIcon = stable(Reicon.Location, "PickupIcon");
@@ -109,7 +111,7 @@ export const CardIcon = stable(Reicon.Card, "CardIcon");
 export const CashIcon = stable(Reicon.Money, "CashIcon");
 export const BankIcon = stable(Reicon.Bank, "BankIcon");
 export const NotificationIcon = stable(Reicon.Notification, "NotificationIcon");
-export const LogoutIcon = stable(Reicon.Logout, "LogoutIcon");
+export const LogoutIcon = stable(Reicon.Logout4, "LogoutIcon");
 export const ProfileEditIcon = stable(Reicon.UserEdit, "ProfileEditIcon");
 export const SendIcon = stable(Reicon.Send, "SendIcon");
 /** The C21 trip assistant (R19). */

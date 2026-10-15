@@ -1,6 +1,7 @@
 import { Skeleton, Tabs } from "@heroui/react";
 import { useNavigate } from "@tanstack/react-router";
 
+import { STICKY_TABS } from "@/components/layout/sticky-tabs";
 import { MerchantPageHeader } from "@/components/layout/merchant-page-header";
 import { useLocale } from "@/contexts/locale-context";
 
@@ -43,7 +44,7 @@ export function OverviewFrame({
           })
         }
       >
-        <Tabs.ListContainer className="lg:hidden">
+        <Tabs.ListContainer className={`lg:hidden ${STICKY_TABS}`}>
           <Tabs.List aria-label={t("overviewPages.label")} className="w-full">
             {OVERVIEW_PAGES.map((p) => (
               <Tabs.Tab

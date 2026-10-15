@@ -12,6 +12,7 @@ export type TextFieldId =
   | "name"
   | "story"
   | "cancellation"
+  | "options"
   | "summary"
   | "description"
   | "meetingPoint"
@@ -19,6 +20,8 @@ export type TextFieldId =
   | "included"
   | "excluded"
   | "conditions"
+  | "openingHours"
+  | "instructions"
   | "longStory";
 
 export interface RequiredText {

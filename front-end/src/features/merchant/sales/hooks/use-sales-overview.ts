@@ -11,6 +11,7 @@ import {
   SALES_PERIODS,
   bucketKey,
   bucketSlots,
+  addDays,
   bucketOf,
   inSalesRange,
   salesRanges,
@@ -397,6 +398,95 @@ export function useSalesOverview(
       };
     });
 
+  // All time, whatever the period: the total, where it stands, the last 30 days against the
+  // 30 before, and the last seven months (Overview › Sales only).
+  const placedAll = sales.filter((s) => !s.lost);
+  const totalAll = sum(placedAll, (s) => s.value);
+  const collectedAll = sum(payments, (p) => p.amount);
+  const unpaidAll = sum(placedAll, (s) => s.outstanding);
+  const valueIn = (r: DayRange) =>
+    sum(
+      placedAll.filter((s) => s.day >= r.start && s.day <= r.end),
+      (s) => s.value,
+    );
+  const last30 = valueIn({ start: addDays(today, -29), end: today });
+  const before30 = valueIn({
+    start: addDays(today, -59),
+    end: addDays(today, -30),
+  });
+  const change = deltaOf(last30, before30, "up", intlLocale);
+  const firstMonth = `${(firstDay < today ? firstDay : today).slice(0, 8)}01`;
+  const monthStart = (back: number) => {
+    const d = new Date(`${today.slice(0, 8)}01T12:00:00Z`);
+
+    d.setUTCMonth(d.getUTCMonth() - back);
+
+    return d.toISOString().slice(0, 10);
+  };
+  const monthFmt = (o: Intl.DateTimeFormatOptions, iso: string) =>
+    new Intl.DateTimeFormat(intlLocale, { ...o, timeZone: "UTC" }).format(
+      new Date(`${iso}T12:00:00Z`),
+    );
+  const months = Array.from({ length: 7 }, (_, i) => {
+    const id = monthStart(6 - i);
+    const total = sum(
+      placedAll.filter((s) => s.day.slice(0, 7) === id.slice(0, 7)),
+      (s) => s.value,
+    );
+    const hasData = id >= firstMonth;
+    const label = monthFmt({ month: "long", year: "numeric" }, id);
+
+    return {
+      id,
+      tick: monthFmt({ month: "short" }, id),
+      label,
+      hasData,
+      total: hasData ? total : 0,
+      valueText: hasData ? money(total) : "–",
+      isCurrent: i === 6,
+      ariaLabel: t("salesOverview.months.open", {
+        month: label,
+        value: hasData ? money(total) : "–",
+      }),
+    };
+  });
+  const allTime = {
+    since: monthFmt(
+      { day: "numeric", month: "long", year: "numeric" },
+      firstDay < today ? firstDay : today,
+    ),
+    total: money(totalAll),
+    delta: change.delta
+      ? ({
+          text: change.delta,
+          tone: change.tone,
+          direction: change.direction,
+          label: t("salesOverview.allTime.delta", { delta: change.delta }),
+        } satisfies DeltaView)
+      : null,
+    sentence: t("salesOverview.allTime.sentence", {
+      last: money(last30),
+      previous: money(before30),
+    }),
+    parts: [
+      {
+        id: "collected",
+        label: t("salesOverview.collected"),
+        amount: collectedAll,
+        value: money(collectedAll),
+        colour: "var(--chart-1)",
+      },
+      {
+        id: "unpaid",
+        label: t("salesOverview.unpaidShort"),
+        amount: Math.max(0, unpaidAll),
+        value: money(unpaidAll),
+        colour: "var(--chart-1-light)",
+      },
+    ],
+    months,
+  };
+
   return {
     periods: SALES_PERIODS.map((id) => ({
       id,
@@ -416,6 +506,7 @@ export function useSalesOverview(
     isEmpty: cur.placed.length === 0 && cur.paid.length === 0,
     today,
     firstDay,
+    allTime,
   };
 }
 

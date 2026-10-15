@@ -27,11 +27,11 @@ const check = (name, ok, detail = "") => {
   console.log(`${ok ? "PASS" : "FAIL"} ${name}${detail === "" ? "" : ` | ${typeof detail === "string" ? detail : JSON.stringify(detail)}`}`);
 };
 const wait = (ms) => new Promise((r) => setTimeout(r, ms));
-// Revision 2: the option labels follow the step's EN | DE tab, which starts at English in
-// both interface languages, so the DE run reads "Preis: Medium" and "Am Lager: Large".
+// Revision 2: the option labels follow the step's EN | DE tab, which opens on the interface
+// language (owner, 15.10.2026), so the DE run reads "Preis: Mittel" and "Am Lager: Gross".
 const copy = {
   en: { gifts: "Keepsakes", knife: "Kapellbrücke pocket knife", knifeDe: "Kapellbrücke Taschenmesser", print: "Limited-edition print: Water Tower at dawn", name: "Name", german: "German", english: "English", save: "Save changes", saved: "Saved. Guests see the change now.", noChanges: "No unsaved changes", next: "Next", publish: "Publish", unpublish: "Unpublish", maxChars: "Maximum characters", prepDays: "Preparation days", priceMedium: "Price: Medium", stockLarge: "In stock: Large", deposit: "Deposit, then the rest", depositPct: "Deposit (%)", firstDue: "First payment deadline (hours)", commission: "Commission rate", altstadt: "Shop Altstadt", bahnhof: "Pickup point Bahnhof", fixErrors: "Check the marked fields.", neededAny: "Needed in English or German.", deWarning: "German is missing: name.", belowHeld: "Accepted orders hold 1, so stock can’t be lower.", placesError: "Choose at least one pickup point.", published: "Published", draft: "Draft", deMissing: "DE missing", engraveC03: "up to 10 characters", depositC03: /30%.*12 hours/, add: "Add to cart", draftNote: "Draft: guests don't see this keepsake.", notFound: "This keepsake is not in the shop.", stepper: "Steps" },
-  de: { gifts: "Andenken", knife: "Kapellbrücke Taschenmesser", knifeDe: "Kapellbrücke Taschenmesser", print: "Limited-edition print: Water Tower at dawn", name: "Name", german: "Deutsch", english: "Englisch", save: "Änderungen speichern", saved: "Gespeichert. Gäste sehen die Änderung sofort.", noChanges: "Keine ungespeicherten Änderungen", next: "Weiter", publish: "Veröffentlichen", unpublish: "Zurückziehen", maxChars: "Maximale Zeichenzahl", prepDays: "Vorbereitungstage", priceMedium: "Preis: Medium", stockLarge: "Am Lager: Large", deposit: "Anzahlung, dann der Rest", depositPct: "Anzahlung (%)", firstDue: "Frist für die erste Zahlung (Stunden)", commission: "Provisionssatz", altstadt: "Laden Altstadt", bahnhof: "Abholstelle Bahnhof", fixErrors: "Prüfen Sie die markierten Felder.", neededAny: "Nötig auf Englisch oder Deutsch.", deWarning: "Auf Deutsch fehlt: Name.", belowHeld: "Angenommene Bestellungen reservieren 1, weniger geht nicht.", placesError: "Wählen Sie mindestens eine Abholstelle.", published: "Veröffentlicht", draft: "Entwurf", deMissing: "DE fehlt", engraveC03: "bis zu 10 Zeichen", depositC03: /12 Stunden eine Anzahlung von 30 %/, add: "In den Warenkorb", draftNote: "Entwurf: Gäste sehen dieses Andenken nicht.", notFound: "Dieses Andenken gibt es im Shop nicht.", stepper: "Schritte" },
+  de: { gifts: "Andenken", knife: "Kapellbrücke Taschenmesser", knifeDe: "Kapellbrücke Taschenmesser", print: "Limited-edition print: Water Tower at dawn", name: "Name", german: "Deutsch", english: "Englisch", save: "Änderungen speichern", saved: "Gespeichert. Gäste sehen die Änderung sofort.", noChanges: "Keine ungespeicherten Änderungen", next: "Weiter", publish: "Veröffentlichen", unpublish: "Zurückziehen", maxChars: "Maximale Zeichenzahl", prepDays: "Vorbereitungstage", priceMedium: "Preis: Mittel", stockLarge: "Am Lager: Gross", deposit: "Anzahlung, dann der Rest", depositPct: "Anzahlung (%)", firstDue: "Frist für die erste Zahlung (Stunden)", commission: "Provisionssatz", altstadt: "Laden Altstadt", bahnhof: "Abholstelle Bahnhof", fixErrors: "Prüfen Sie die markierten Felder.", neededAny: "Nötig auf Englisch oder Deutsch.", deWarning: "Auf Deutsch fehlt: Name.", belowHeld: "Angenommene Bestellungen reservieren 1, weniger geht nicht.", placesError: "Wählen Sie mindestens eine Abholstelle.", published: "Veröffentlicht", draft: "Entwurf", deMissing: "DE fehlt", engraveC03: "bis zu 10 Zeichen", depositC03: /12 Stunden eine Anzahlung von 30 %/, add: "In den Warenkorb", draftNote: "Entwurf: Gäste sehen dieses Andenken nicht.", notFound: "Dieses Andenken gibt es im Shop nicht.", stepper: "Schritte" },
 };
 
 async function setup(page, lang) {
@@ -96,12 +96,13 @@ for (const lang of ["en", "de"]) {
     const nav = document.querySelector("nav.fixed");
     return !!bar && !!nav && bar.getBoundingClientRect().bottom <= nav.getBoundingClientRect().top;
   }));
+  check(`[${lang}] the step's language switch opens on the interface language`, (await page.getByRole("tab", { selected: true }).first().innerText()).startsWith(lang === "en" ? c.english : c.german));
   await page.screenshot({ path: `${OUT}/m12-top-${lang}.png` });
 
   // Edit engraving and a price (Options), preparation (Pickup), the payment policy and
   // deadline, the commission (Payment); one Save changes from the Payment step.
   await next();
-  await tab("en").click();
+  await tab(lang).click();
   await setNumber(page, c.maxChars, 10);
   await setNumber(page, c.priceMedium, 56);
   await next();
@@ -139,6 +140,8 @@ for (const lang of ["en", "de"]) {
   // Required text: no language complete blocks the save; focus goes to the first empty field.
   await toM12();
   const name = () => page.getByLabel(c.name, { exact: true });
+  await tab("en").click();
+  await wait(200);
   await name().fill("");
   await tab("de").click();
   await wait(200);
@@ -179,7 +182,7 @@ for (const lang of ["en", "de"]) {
 
   // Stock below the units held by accepted orders (SK-1028 holds 1 Large).
   await toM12("options");
-  await tab("en").click();
+  await tab(lang).click();
   await setNumber(page, c.stockLarge, 0);
   await save();
   check(`[${lang}] stock below held: the error shows and nothing is saved`, (await page.getByText(c.belowHeld).isVisible()) && (await knifeData(page)).variants.find((v) => v.id === "l").stock === 2);

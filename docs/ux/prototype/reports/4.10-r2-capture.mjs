@@ -5,6 +5,8 @@
 // its departure on C10 and M05 with the same seats. Editing the old-town walk opens any step and
 // saves from a middle step (C09 shows it). Per-step EN | DE tabs with the missing-language dot;
 // an archived tour offers "Restore as draft" instead of Publish; the phone "All steps" sheet.
+// The EN | DE switch opens on the interface language (owner, 15.10.2026); the walk writes English
+// in both runs, so the DE run picks the English tab first.
 // 375px, DPR 2, EN and DE; a few 1280px shots (the numbered step list in the left column). No console errors, no horizontal overflow.
 // Run from a folder with playwright-core: node 4.10-r2-capture.mjs <screens dir>
 import { chromium } from "playwright-core";
@@ -34,7 +36,7 @@ const copy = {
     storyCard: "The story behind it", storyTitle: "Story title", storyField: "Story", saveDraft: "Save draft", savedDraft: "Draft saved. Guests don't see it yet.", publish: "Publish", unpublish: "Unpublish", save: "Save changes", saved: "Saved. Guests see the change now.",
     refused: "Not published yet: fix the steps marked in red.", storyMissing: "Still empty in both languages: story behind it.", editStep: (s) => `Edit ${s}`,
     addDeparture: "Add departure", datePick: "Choose a date", seats: "Seats", full: "Pay in full", available: "10 seats available", seatsM05: "0 of 10",
-    langTab: "English", german: "German", deMissing: "DE missing", gapAlert: "German is missing: summary.",
+    langTab: "English", english: "English", german: "German", deMissing: "DE missing", gapAlert: "German is missing: summary.",
     actionsFor: (n) => `Actions for ${n}`, archive: "Archive", archivedNotice: "This tour is archived", restore: "Restore as draft", archivedChip: "Archived",
     pages: "Pages", pageNext: "Next", optional: "Optional.",
   },
@@ -47,7 +49,7 @@ const copy = {
     storyCard: "Die Geschichte dahinter", storyTitle: "Titel der Geschichte", storyField: "Geschichte", saveDraft: "Entwurf speichern", savedDraft: "Entwurf gespeichert. Gäste sehen ihn noch nicht.", publish: "Veröffentlichen", unpublish: "Zurückziehen", save: "Änderungen speichern", saved: "Gespeichert. Gäste sehen die Änderung sofort.",
     refused: "Noch nicht veröffentlicht: Beheben Sie die rot markierten Schritte.", storyMissing: "In beiden Sprachen noch leer: Geschichte dahinter.", editStep: (s) => `${s} bearbeiten`,
     addDeparture: "Termin hinzufügen", datePick: "Datum wählen", seats: "Plätze", full: "Ganz bezahlen", available: "10 Plätze verfügbar", seatsM05: "0 von 10",
-    langTab: "Deutsch", german: "Deutsch", deMissing: "DE fehlt", gapAlert: "Auf Deutsch fehlt: Kurzbeschreibung.",
+    langTab: "Deutsch", english: "Englisch", german: "Deutsch", deMissing: "DE fehlt", gapAlert: "Auf Deutsch fehlt: Kurzbeschreibung.",
     actionsFor: (n) => `Aktionen für ${n}`, archive: "Archivieren", archivedNotice: "Diese Tour ist archiviert", restore: "Als Entwurf wiederherstellen", archivedChip: "Archiviert",
     pages: "Seiten", pageNext: "Weiter", optional: "Optional.",
   },
@@ -136,6 +138,8 @@ for (const lang of ["en", "de"]) {
   check(`[${lang}] Basics errors: name, summary, description in either language, and the photo`, (await page.getByText(c.neededAny).count()) === 3 && (await page.getByText(c.photoRequired).isVisible()));
   await focusedOn(c.name, "Basics");
   await shot("create-basics-errors", "Basics: Next on an empty step marks name, summary, description and photo; focus on Name");
+  check(`[${lang}] the new tour's text opens on the interface language (${c.langTab})`, (await page.getByRole("tab", { selected: true }).first().innerText()).startsWith(c.langTab));
+  await page.getByRole("tab", { name: new RegExp(`^${c.english}`) }).first().click();
   await page.getByLabel(c.name, { exact: true }).fill("Lantern walk");
   await page.getByLabel(c.summary, { exact: true }).fill("An evening walk by lantern light");
   await page.getByLabel(c.description, { exact: true }).fill("A guide with a lantern leads you through the quiet old town.");
@@ -234,6 +238,8 @@ for (const lang of ["en", "de"]) {
   await storyReview.getByRole("button", { name: c.editStep(c.storyStep) }).click();
   await wait(800);
   check(`[${lang}] "Edit" on the Story section opens the Story step`, page.url().endsWith("?step=story"));
+  // The stored draft reopened on the interface language; its text is English, so is the story.
+  await page.getByRole("tab", { name: new RegExp(`^${c.english}`) }).first().click();
   await page.getByLabel(c.storyTitle, { exact: true }).fill("Lucerne after dark");
   await page.getByRole("textbox", { name: c.storyField, exact: true }).click();
   await page.keyboard.type("When the shops close, the lanes belong to the lantern again.");
@@ -269,7 +275,7 @@ for (const lang of ["en", "de"]) {
   await page.getByRole("dialog").locator("ol > li > button").filter({ hasText: c.details }).click();
   await wait(700);
   check(`[${lang}] the sheet jumps to step 2`, page.url().endsWith("?step=details") && (await stepTitle()).includes(c.stepOf(2, c.details)));
-  await page.getByRole("tab", { name: new RegExp(`^${c.langTab}`) }).first().click();
+  check(`[${lang}] editing opens the step on the interface language (${c.langTab})`, (await page.getByRole("tab", { selected: true }).first().innerText()).startsWith(c.langTab));
   const meeting = page.getByLabel(c.meetingPoint, { exact: true });
   const newMeeting = `${await meeting.inputValue()} (flower boxes)`;
   await meeting.fill(newMeeting);

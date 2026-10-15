@@ -31,6 +31,8 @@ import {
 
 import { useSalesOverview } from "../hooks/use-sales-overview";
 
+import { SalesAllTime } from "./sales-all-time";
+
 import { DataTable } from "@/components/data-table";
 import { EmptyState } from "@/components/empty-state";
 import { ChevronDownIcon, ReportsIcon } from "@/components/icons";
@@ -401,6 +403,19 @@ export function SalesOverview() {
 
   return (
     <section aria-labelledby="sales-heading" className="flex flex-col gap-4">
+      <SalesAllTime
+        view={view}
+        onMonthSelect={(start) => {
+          // A month opens as its days, up to today for the running month.
+          const last = new Date(`${start.slice(0, 8)}01T12:00:00Z`);
+
+          last.setUTCMonth(last.getUTCMonth() + 1, 0);
+          const end = last.toISOString().slice(0, 10);
+
+          setCustom({ start, end: end < view.today ? end : view.today });
+          setPeriod("custom");
+        }}
+      />
       <div className="flex items-start justify-between gap-3 sm:items-end">
         <div className="flex min-w-0 flex-col">
           <h2 className="text-heading" id="sales-heading">

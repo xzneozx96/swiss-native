@@ -49,7 +49,7 @@ export function usePhotoInput(onPhoto: (photo: string) => void) {
 }
 
 /**
- * The main photo of a tour (C08, C09): the photo, then "Upload
+ * The main photo of a gift or tour (C02, C01, C03, C08, C09): the photo, then "Upload
  * photo" and "Choose from library", ink buttons. Library photos are kept by slug.
  */
 export function PhotoField({

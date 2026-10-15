@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+# Run right after `git merge upstream/main --no-commit`, before resolving anything else.
+# Removes what upstream adds for features Swiss Native does not ship, so it never has to be
+# reviewed again. Safe to run repeatedly. See UPSTREAM-SYNC.md.
+set -euo pipefail
+cd "$(dirname "$0")/.."
+S=front-end/src
+
+git rm -rq --ignore-unmatch --cached -- \
+  "$S/features/content" "$S/features/reports" "$S/features/partners" \
+  "$S/features/merchant/partners" "$S/features/requests/merchant" \
+  "$S/features/catalog/categories.ts" "$S/features/tours/lucerne" \
+  "$S/features/lab" "$S/routes/store/content" "$S/routes/store/partners" \
+  "$S/routes/store/reports" "$S/routes/store/requests" \
+  "$S/routes/store/products/gifts" "$S/routes/store/products/categories.tsx" \
+  "$S/routes/store/products/pickup.tsx" "$S/routes/partner" "$S/routes/r.\$code.tsx" \
+  "$S/features/Brienz" "$S/features/Lucerne" 2>/dev/null || true
+
+# Remove the same paths from the working tree.
+rm -rf \
+  "$S/features/content" "$S/features/reports" "$S/features/partners" \
+  "$S/features/merchant/partners" "$S/features/requests/merchant" \
+  "$S/features/catalog/categories.ts" "$S/features/tours/lucerne" \
+  "$S/features/lab" "$S/routes/store/content" "$S/routes/store/partners" \
+  "$S/routes/store/reports" "$S/routes/store/requests" \
+  "$S/routes/store/products/gifts" "$S/routes/store/products/categories.tsx" \
+  "$S/routes/store/products/pickup.tsx" "$S/routes/partner" "$S/routes/r.\$code.tsx" \
+  "$S/features/Brienz" "$S/features/Lucerne"
+rm -f "$S"/routes/lab.*.tsx
+
+echo "Pruned. Next: resolve the remaining conflicts, then run tsc, eslint and vite build."

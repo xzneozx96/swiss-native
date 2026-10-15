@@ -30,7 +30,7 @@ export interface ProductRow {
   /** Archived from the row menu: listed under "Archived" only, hidden from guests. */
   archived: boolean;
   languages: LanguageStatus;
-  /** Footer and table facts, in column order: price, availability. */
+  /** Footer and table facts, in column order: price, upcoming departures. */
   facts: { label: string; value: string; isWarning?: boolean }[];
 }
 
@@ -48,7 +48,7 @@ function upcomingCount(
   ).length;
 }
 
-/** M11 rows for the tours tab, in the seed's order (the shop's own order). */
+/** M11 rows for the Tours tab, in the seed's order (the host's own order). */
 export function useMerchantProducts() {
   const { t, language, intlLocale } = useLocale();
   const { state } = useDemo();
@@ -80,14 +80,13 @@ export function useMerchantProducts() {
     ],
   });
 
-  return {
-    tours: tourData.tours.map(tourRow),
-  };
+  return { tours: tourData.tours.map(tourRow) };
 }
 
 /**
- * Archive and restore from the M11 row menu (owner, 15.10.2026). Archiving hides the tour from
- * guests (and unpublishes it) and moves it under "Archived"; bookings that point at it are kept. Restoring brings it back as a draft to publish again.
+ * Archive and restore from the M11 row menu (owner, 15.10.2026). Archiving unpublishes the
+ * tour, hides it from guests and moves it under "Archived"; bookings that point at it are
+ * kept. Restoring brings it back as a draft to publish again.
  */
 export function useProductArchive() {
   const { update } = useDemo();

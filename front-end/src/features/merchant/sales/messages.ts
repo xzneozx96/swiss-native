@@ -50,6 +50,17 @@ export const salesOverviewEn = {
   "salesOverview.top.share": "Share",
   "salesOverview.top.guests.one": "{count} guest",
   "salesOverview.top.guests.other": "{count} guests",
+  "salesOverview.unpaidShort": "Unpaid",
+  "salesOverview.allTime.title": "Total sales",
+  "salesOverview.allTime.since": "Since the first booking on {date}",
+  "salesOverview.allTime.sentence":
+    "{last} in the last 30 days, compared with {previous} in the 30 days before.",
+  "salesOverview.allTime.delta": "{delta} compared with the 30 days before",
+  "salesOverview.allTime.parts": "Where the sales stand",
+  "salesOverview.allTime.share": "{share} of total sales",
+  "salesOverview.months.title": "Sales per month",
+  "salesOverview.months.description": "Select a month to open it",
+  "salesOverview.months.open": "Open {month}: {value}",
 } as const;
 
 export const salesOverviewDe: Record<keyof typeof salesOverviewEn, string> = {
@@ -103,4 +114,15 @@ export const salesOverviewDe: Record<keyof typeof salesOverviewEn, string> = {
   "salesOverview.top.share": "Anteil",
   "salesOverview.top.guests.one": "{count} Gast",
   "salesOverview.top.guests.other": "{count} Gäste",
+  "salesOverview.unpaidShort": "Offen",
+  "salesOverview.allTime.title": "Gesamtverkäufe",
+  "salesOverview.allTime.since": "Seit der ersten Buchung am {date}",
+  "salesOverview.allTime.sentence":
+    "{last} in den letzten 30 Tagen, verglichen mit {previous} in den 30 Tagen davor.",
+  "salesOverview.allTime.delta": "{delta} verglichen mit den 30 Tagen davor",
+  "salesOverview.allTime.parts": "Wie die Verkäufe stehen",
+  "salesOverview.allTime.share": "{share} der Gesamtverkäufe",
+  "salesOverview.months.title": "Verkäufe pro Monat",
+  "salesOverview.months.description": "Monat auswählen, um ihn zu öffnen",
+  "salesOverview.months.open": "{month} öffnen: {value}",
 };

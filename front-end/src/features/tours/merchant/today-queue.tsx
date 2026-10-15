@@ -106,8 +106,9 @@ function TaskLink({
 /**
  * M02 tour work, inside the Today part of Overview, in the M02 widget look (1.9t): each open
  * task (results to record, overdue balances, delivered but owed, payments to reconcile) is its
- * own stat card with the round arrow button; the next departures sit in a widget; the tour
- * balance still to collect is its own card.
+ * own stat card with the round arrow button; the next departures sit in a widget like Next
+ * pickups; the tour balance still to collect is its own card. Tour money stays a separate
+ * figure from the gift "Still to collect" (AC19: no double counting, goods and tours apart).
  */
 /** The tours' tasks with work open (or all four, as tiles at 0, with `showAll`). */
 export function TourTaskTiles({
@@ -277,7 +278,7 @@ export function NextDeparturesWidget({ className = "lg:col-span-3" }) {
 
 type CollectStage = "upcoming" | "overdue" | "owing";
 
-/** Each stage in a status colour: due later info, overdue danger, owed warning. */
+/** Each stage in a status colour, as the gift card: due later info, overdue danger, owed warning. */
 const collectStages: {
   id: CollectStage;
   label: MessageKey;
@@ -307,7 +308,8 @@ function stageOf(booking: TourBooking, now: Date): CollectStage {
 }
 
 /**
- * The tour balance still to collect, in the M02 widget look: the total, one stacked bar by stage, a legend that opens the bookings, and
+ * The tour balance still to collect, apart from the gifts' (AC19), in the gift Still to
+ * collect look: the total, one stacked bar by stage, a legend that opens the bookings, and
  * the next balance that falls due.
  */
 export function TourCollectWidget({ className = "lg:col-span-2" }) {
