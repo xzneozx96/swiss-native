@@ -1,15 +1,14 @@
+import type { StatusTone } from "@/components/status-chip";
+import type { Payment } from "@/features/payment/types";
+import type { TourBooking } from "@/features/tours/types";
 import type { MessageKey } from "@/i18n/en";
-import type { ShownLabel } from "@/features/orders/hooks/use-orders";
-import type { Order, Payment } from "@/features/orders/types";
 
 import { useLocale } from "@/contexts/locale-context";
-import { useGuestOrders } from "@/features/orders/hooks/use-orders";
-import { formatOrderDateTime } from "@/features/orders/lib/format";
-import {
-  amountDueNow,
-  paymentsAfterCancellation,
-} from "@/features/orders/lib/selectors";
-import { isClosedOrder } from "@/features/transactions/hooks/use-transaction-row";
+import { useDemoNow } from "@/features/demo";
+import { isClosedBooking } from "@/features/tours/booking/booking-summary";
+import { useTours } from "@/features/tours/hooks/use-tours";
+import { bookingAmountDue } from "@/features/tours/lib/selectors";
+import { formatOrderDateTime } from "@/lib/dates";
 import { formatMoney } from "@/lib/format";
 import { pickText } from "@/lib/localized";
 
@@ -22,14 +21,14 @@ const methodKey: Record<Payment["method"], MessageKey> = {
 
 export interface AccountPaymentRow {
   id: string;
-  orderId: string;
+  bookingId: string;
   method: Payment["method"];
   amount: string;
   ref: string;
-  gift: string;
+  tour: string;
   /** "Cash · 09.10.2026, 16:20" (payments keep the full numeric date). */
   meta: string;
-  status: ShownLabel;
+  status: { text: string; tone: StatusTone };
 }
 
 export interface AccountPaymentMonth {
@@ -39,16 +38,21 @@ export interface AccountPaymentMonth {
 }
 
 /**
- * Payment info on the account hub: open orders with money due now, and every payment the
- * guest made or the shop recorded, newest first and grouped by month. The PRD stores no
+ * Payment info on the account hub: open bookings with money due now, and every payment the
+ * guest made or the host recorded, newest first and grouped by month. The PRD stores no
  * cards, so there is no saved-method data to read.
  */
 export function useAccountPayments() {
   const { t, language, intlLocale } = useLocale();
-  const orders = useGuestOrders();
+  const { bookings, guestId } = useTours();
+  const now = useDemoNow();
+  const owned = bookings.filter((booking) => booking.guestId === guestId);
 
-  const status = (order: Order, p: Payment): ShownLabel =>
-    paymentsAfterCancellation(order).includes(p)
+  const status = (
+    booking: TourBooking,
+    p: Payment,
+  ): AccountPaymentRow["status"] =>
+    booking.lateResults?.some((late) => late.paymentId === p.id)
       ? { text: t("guestOrder.paymentStatus.late"), tone: "warning" }
       : p.status === "succeeded"
         ? { text: t("guestOrder.paymentStatus.succeeded"), tone: "success" }
@@ -64,20 +68,20 @@ export function useAccountPayments() {
 
   const months: AccountPaymentMonth[] = [];
 
-  orders
-    .flatMap((order) => order.payments.map((p) => ({ order, p })))
+  owned
+    .flatMap((booking) => booking.payments.map((p) => ({ booking, p })))
     .sort((a, b) => b.p.at.localeCompare(a.p.at))
-    .forEach(({ order, p }) => {
+    .forEach(({ booking, p }) => {
       const label = monthLabel.format(new Date(p.at));
       const row: AccountPaymentRow = {
         id: p.id,
-        orderId: order.id,
+        bookingId: booking.id,
         method: p.method,
         amount: formatMoney(p.amount / 100, intlLocale),
-        ref: order.ref,
-        gift: pickText(order.lines[0].productName, language).text,
+        ref: booking.ref,
+        tour: pickText(booking.tourName, language).text,
         meta: `${t(methodKey[p.method])} · ${formatOrderDateTime(p.at, intlLocale)}`,
-        status: status(order, p),
+        status: status(booking, p),
       };
       const last = months[months.length - 1];
 
@@ -86,7 +90,15 @@ export function useAccountPayments() {
     });
 
   return {
-    due: orders.filter((o) => !isClosedOrder(o) && amountDueNow(o) > 0),
+    due: owned.filter(
+      (booking) =>
+        !isClosedBooking(booking) &&
+        bookingAmountDue(booking) > 0 &&
+        !(
+          booking.status === "pending_payment" &&
+          Date.parse(booking.holdUntil) <= now.getTime()
+        ),
+    ),
     months,
   };
 }

@@ -1,0 +1,166 @@
+PASS [en] Content has Articles, Comments and Reviews tabs with counts | {"articles":9,"comments":43,"reviews":89}
+PASS [en] Articles is selected by default
+PASS [en] All lists every language version, drafts included
+PASS [en] the DE draft shows a Draft chip and "No English version"
+PASS [en] the EN-only story shows Published and "No German version"
+PASS [en] no horizontal overflow on the list
+PASS [en] the German filter keeps ?lang=["de"] in the URL | http://localhost:5251/#/store/content?lang=%5B%22de%22%5D
+PASS [en] German lists only the DE versions
+PASS [en] English lists only the EN versions
+PASS [en] the editor shows the draft state
+PASS [en] publishing with an empty photo block shows the field errors
+PASS [en] the panel sums up the fields to fix
+PASS [en] focus moves to the first field to fix (the photo) | Choose photo: Photo
+PASS [en] nothing was published
+PASS [en] the photo sheet offers the shop's library
+PASS [en] choosing the photo and a caption clears the errors
+PASS [en] the link sheet lists published gifts and tours only
+PASS [en] the sheet counts the links (2 of 6)
+PASS [en] the tour moved above the gift
+PASS [en] unsaved changes are marked
+PASS [en] publishing confirms with a toast
+PASS [en] the article is stored as published, links in the shop's order | [{"kind":"tour","id":"old-town"},{"kind":"gift","id":"p-knife"}]
+PASS [en] the photo block is stored with its caption
+PASS [en] read time is computed on save | 1
+PASS [en] the editor shows Published in German
+PASS [en] C19 in DE lists the published article
+PASS [en] C19 in EN does not list it (its language only)
+PASS [en] C20 shows the tour, then the gift (AC31) | Ein Stück davon mitnehmen ab CHF 89.00 Altstadtspaziergang Luzern 4.7 (6) 2 Stunden Nächster Termin · Mi., 14. Okt. Gravur ab CHF 49.00 Kapellbrücke Taschen
+PASS [en] C20 shows the new photo with its caption
+PASS [en] Unpublish asks first, naming the article
+PASS [en] unpublishing confirms
+PASS [en] the article is a draft again
+PASS [en] C19 in DE no longer lists it
+PASS [en] list and step 12: no horizontal overflow
+PASS [en] list and step 12: no console errors | []
+PASS [en] the sheet stops at 6 of 6
+PASS [en] the sheet shows the limit note
+PASS [en] further Add buttons are off
+PASS [en] the card's add button is off at the limit
+PASS [en] the list flags the unpublished link
+PASS [en] the editor keeps the link with a warning
+PASS [en] C20 hides the unpublished gift
+PASS [en] the EN-only story says the German version is missing
+PASS [en] adding it confirms with a toast
+PASS [en] the editor opens the new DE draft | http://localhost:5251/#/store/content/articles/water-tower-de
+PASS [en] the DE version shares the slug, starts as a draft copy with the role in German | {"name":"Ngọc","role":"Inhaberin, Swiss Keepsakes Luzern"}
+PASS [en] the new draft's editor links back to the English version
+PASS [en] no picks: the newest others show
+PASS [en] the story sheet never offers the story itself
+PASS [en] the story sheet never offers another language or a draft
+PASS [en] three picks reach the limit
+PASS [en] the card's add button is off at 3
+PASS [en] saving a published article confirms
+PASS [en] C20 shows the three picks in order (AC33) | More to discover A morning on the Musegg wall 4 min read The story behind the Lion Monument 6 min read The Water Tower, older than the bridge 3 min read
+PASS [en] limits, versions and picks: no horizontal overflow
+PASS [en] limits, versions and picks: no console errors | []
+PASS [en] New article opens the editor at /articles/new | http://localhost:5251/#/store/content/articles/new
+PASS [en] the new editor asks for the language
+PASS [en] a draft needs a title
+PASS [en] saving the draft confirms
+PASS [en] the draft is stored in the chosen language with a unique id | an-evening-on-the-quay-en
+PASS [en] a refresh keeps the saved data and drops the unsaved edit
+PASS [en] publishing an incomplete article lists its errors | 5
+PASS [en] focus moves to the first field to fix | TEXTAREA
+PASS [en] a malformed YouTube link is flagged
+PASS [en] a youtu.be link parses to the video id
+PASS [en] removing a block with content asks first (shared dialog)
+PASS [en] Cancel keeps the block
+PASS [en] confirming removes the block
+PASS [en] new article: no horizontal overflow
+PASS [en] new article: no console errors | []
+PASS [en] M17: an empty language shows its empty state
+PASS [en] C19 in DE shows the empty state when every DE story is a draft
+PASS [en] the Manager opens the editor too
+PASS [en] "All articles" returns to the list with All selected | http://localhost:5251/#/store/content
+PASS [en] an unknown article shows the not-found state
+PASS [en] empty states and roles: no horizontal overflow
+PASS [en] empty states and roles: no console errors | []
+PASS [en 1280] from 1024px the list is a table
+PASS [en 1280] no horizontal overflow (list)
+PASS [en 1280] no horizontal overflow (editor)
+PASS [en 1280] no console errors at 1280px | []
+PASS [de] Content has Articles, Comments and Reviews tabs with counts | {"articles":9,"comments":43,"reviews":89}
+PASS [de] Articles is selected by default
+PASS [de] All lists every language version, drafts included
+PASS [de] the DE draft shows a Draft chip and "No English version"
+PASS [de] the EN-only story shows Published and "No German version"
+PASS [de] no horizontal overflow on the list
+PASS [de] the German filter keeps ?lang=["de"] in the URL | http://localhost:5251/#/store/content?lang=%5B%22de%22%5D
+PASS [de] German lists only the DE versions
+PASS [de] English lists only the EN versions
+PASS [de] the editor shows the draft state
+PASS [de] publishing with an empty photo block shows the field errors
+PASS [de] the panel sums up the fields to fix
+PASS [de] focus moves to the first field to fix (the photo) | Foto wählen: Foto
+PASS [de] nothing was published
+PASS [de] the photo sheet offers the shop's library
+PASS [de] choosing the photo and a caption clears the errors
+PASS [de] the link sheet lists published gifts and tours only
+PASS [de] the sheet counts the links (2 of 6)
+PASS [de] the tour moved above the gift
+PASS [de] unsaved changes are marked
+PASS [de] publishing confirms with a toast
+PASS [de] the article is stored as published, links in the shop's order | [{"kind":"tour","id":"old-town"},{"kind":"gift","id":"p-knife"}]
+PASS [de] the photo block is stored with its caption
+PASS [de] read time is computed on save | 1
+PASS [de] the editor shows Published in German
+PASS [de] C19 in DE lists the published article
+PASS [de] C19 in EN does not list it (its language only)
+PASS [de] C20 shows the tour, then the gift (AC31) | Ein Stück davon mitnehmen ab CHF 89.00 Altstadtspaziergang Luzern 4.7 (6) 2 Stunden Nächster Termin · Mi., 14. Okt. Gravur ab CHF 49.00 Kapellbrücke Taschen
+PASS [de] C20 shows the new photo with its caption
+PASS [de] Unpublish asks first, naming the article
+PASS [de] unpublishing confirms
+PASS [de] the article is a draft again
+PASS [de] C19 in DE no longer lists it
+PASS [de] list and step 12: no horizontal overflow
+PASS [de] list and step 12: no console errors | []
+PASS [de] the sheet stops at 6 of 6
+PASS [de] the sheet shows the limit note
+PASS [de] further Add buttons are off
+PASS [de] the card's add button is off at the limit
+PASS [de] the list flags the unpublished link
+PASS [de] the editor keeps the link with a warning
+PASS [de] C20 hides the unpublished gift
+PASS [de] the EN-only story says the German version is missing
+PASS [de] adding it confirms with a toast
+PASS [de] the editor opens the new DE draft | http://localhost:5251/#/store/content/articles/water-tower-de
+PASS [de] the DE version shares the slug, starts as a draft copy with the role in German | {"name":"Ngọc","role":"Inhaberin, Swiss Keepsakes Luzern"}
+PASS [de] the new draft's editor links back to the English version
+PASS [de] no picks: the newest others show
+PASS [de] the story sheet never offers the story itself
+PASS [de] the story sheet never offers another language or a draft
+PASS [de] three picks reach the limit
+PASS [de] the card's add button is off at 3
+PASS [de] saving a published article confirms
+PASS [de] C20 shows the three picks in order (AC33) | Mehr entdecken Ein Morgen auf der Museggmauer 4 Min. Lesezeit Die Geschichte hinter dem Löwendenkmal 6 Min. Lesezeit Luzern bei Nacht 3 Min. Lesezeit
+PASS [de] limits, versions and picks: no horizontal overflow
+PASS [de] limits, versions and picks: no console errors | []
+PASS [de] New article opens the editor at /articles/new | http://localhost:5251/#/store/content/articles/new
+PASS [de] the new editor asks for the language
+PASS [de] a draft needs a title
+PASS [de] saving the draft confirms
+PASS [de] the draft is stored in the chosen language with a unique id | ein-abend-am-quai-de
+PASS [de] a refresh keeps the saved data and drops the unsaved edit
+PASS [de] publishing an incomplete article lists its errors | 5
+PASS [de] focus moves to the first field to fix | TEXTAREA
+PASS [de] a malformed YouTube link is flagged
+PASS [de] a youtu.be link parses to the video id
+PASS [de] removing a block with content asks first (shared dialog)
+PASS [de] Cancel keeps the block
+PASS [de] confirming removes the block
+PASS [de] new article: no horizontal overflow
+PASS [de] new article: no console errors | []
+PASS [de] M17: an empty language shows its empty state
+PASS [de] C19 in DE shows the empty state when every DE story is a draft
+PASS [de] the Manager opens the editor too
+PASS [de] "All articles" returns to the list with All selected | http://localhost:5251/#/store/content
+PASS [de] an unknown article shows the not-found state
+PASS [de] empty states and roles: no horizontal overflow
+PASS [de] empty states and roles: no console errors | []
+PASS [de 1280] from 1024px the list is a table
+PASS [de 1280] no horizontal overflow (list)
+PASS [de 1280] no horizontal overflow (editor)
+PASS [de 1280] no console errors at 1280px | []
+
+164 passed, 0 failed

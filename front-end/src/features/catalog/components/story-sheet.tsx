@@ -1,19 +1,23 @@
+import type { RichNode } from "@/lib/rich-text";
+
 import { Drawer } from "@heroui/react";
 
-import { Media } from "@/components/media";
+import { RichText } from "@/components/rich-text";
 
 export interface StoryView {
   /** Small label above the title, e.g. "The story behind it". */
   label: string;
   title: string;
-  chapters: { title: string; body: string; photo?: string }[];
+  /** The rich body in the guest's language, or the other one with `languageNote`. */
+  body: RichNode;
   /** Shown when the story is only in the other language (R02). */
   languageNote?: string;
 }
 
 /**
- * The full story behind a gift, read in a tall bottom sheet (Airbnb "Show more" on
- * About): a title, then illustrated chapters. Shared by gifts and tours.
+ * The full story behind a tour, read in a tall bottom sheet (Airbnb "Show more" on
+ * About): a title, then the rich body the host wrote in M13 (photos, headings,
+ * paragraphs, lists, quotes).
  */
 export function StorySheet({
   story,
@@ -49,24 +53,7 @@ export function StorySheet({
                 <span className="text-xs text-muted">{story.languageNote}</span>
               )}
             </header>
-            {story.chapters.map((chapter, i) => (
-              <section key={chapter.title} className="flex flex-col gap-3">
-                {chapter.photo && (
-                  <Media
-                    alt=""
-                    className="aspect-[4/3] rounded-3xl"
-                    photo={chapter.photo}
-                  />
-                )}
-                <span className="text-label text-muted tabular-nums">
-                  {String(i + 1).padStart(2, "0")}
-                </span>
-                <h3 className="font-serif text-title text-balance">
-                  {chapter.title}
-                </h3>
-                <p className="text-body leading-7">{chapter.body}</p>
-              </section>
-            ))}
+            <RichText doc={story.body} />
           </Drawer.Body>
         </Drawer.Dialog>
       </Drawer.Content>

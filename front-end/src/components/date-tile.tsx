@@ -1,6 +1,6 @@
 /**
  * The ticket's date tile (lab order-card L, 1.12r and 1.13r): weekday, day and month beside a
- * vertical rule. Shared by the gift C14/C15 tickets and the tour C14 rows.
+ * vertical rule. Used by the tour tickets and rows.
  */
 export function DateTile({
   date,

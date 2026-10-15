@@ -13,7 +13,7 @@ interface QuantityStepperProps extends QuantityProps {
   hint?: string;
 }
 
-// One quantity control for C03 and C04 (owner request 13.10.2026): the cart's box.
+// One quantity control (owner request 13.10.2026): the boxed − n +.
 const stepButton =
   "flex size-11 items-center justify-center rounded-lg border-0 bg-transparent outline-none transition-colors hover:bg-default focus-visible:focus-ring active:bg-default-hover disabled:opacity-30";
 
@@ -54,63 +54,6 @@ export function QuantityStepper({
         {hint && <Description className="px-0">{hint}</Description>}
       </div>
       <StepperGroup />
-    </NumberField>
-  );
-}
-
-/**
- * The same boxed − n + without a visible label, for rows that already say what it is
- * (a cart line). `label` is the accessible name, e.g. "Quantity".
- */
-export function QuantityBox({
-  label,
-  value,
-  min = 1,
-  max,
-  onChange,
-}: QuantityProps & { label: string }) {
-  return (
-    <NumberField
-      aria-label={label}
-      className="quantity-stepper w-auto"
-      maxValue={max}
-      minValue={min}
-      value={value}
-      onChange={(v) => onChange(Number.isNaN(v) ? min : v)}
-    >
-      <StepperGroup />
-    </NumberField>
-  );
-}
-
-const largeStepButton =
-  "flex size-16 shrink-0 items-center justify-center rounded-2xl border-0 bg-transparent outline-none transition-colors hover:bg-default focus-visible:focus-ring active:bg-default-hover disabled:opacity-30 [&_svg]:size-6";
-
-/**
- * The same − n + at full width with a large number to type into, for a screen that asks
- * one count at a time (C21). `label` is the accessible name; the screen's heading shows it.
- */
-export function QuantityLarge({
-  label,
-  value,
-  min = 0,
-  max,
-  onChange,
-}: QuantityProps & { label: string }) {
-  return (
-    <NumberField
-      aria-label={label}
-      className="quantity-stepper w-full"
-      maxValue={max}
-      minValue={min}
-      value={value}
-      onChange={(v) => onChange(Number.isNaN(v) ? min : v)}
-    >
-      <NumberField.Group className="flex h-auto w-full items-center rounded-3xl border border-border bg-surface p-2 shadow-none">
-        <NumberField.DecrementButton className={largeStepButton} />
-        <NumberField.Input className="h-16 min-w-0 flex-1 p-0 text-center text-display font-semibold tabular-nums" />
-        <NumberField.IncrementButton className={largeStepButton} />
-      </NumberField.Group>
     </NumberField>
   );
 }

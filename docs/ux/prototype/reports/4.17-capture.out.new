@@ -1,0 +1,48 @@
+PASS [en] C21 sends exactly one email: N16 to the shop | {"at":"2026-10-13T08:00:08.703Z","to":"staff","recipient":"requests@swisskeepsakes.example","language":"en","template":"N16","params":{"requestId":"adv-mv964t8p","email":"guest@example.com","guestLanguage":"en","sentAt":"2026-10-13T08:00:08.703Z","count":7,"q0":"How many adults are travelling?","a0":"1","q1":"How many children are travelling?","a1":"0","q2":"What would you like to see or do?","a2":"History and old town","q3":"When do you arrive in Lucerne?","a3":"20.10.2026","q4":"When do you leave Lucerne?","a4":"20.10.2026","q5":"How do you like to travel?","a5":"Group tour","q6":"Anything else we should know?","a6":"A quiet dinner by the lake, please."},"id":"mail-1"}
+PASS [en] N16 goes to the M19 recipient address, in English (D10)
+PASS [en] N16 keeps every question and answer as sent
+PASS [en] the guest gets no email (A2)
+PASS [en] Mail panel: N16 is the newest staff mail, in EN | N16 / EN · 13.10.2026, 10:00 / New advice request from guest@example.com /  / To: reques
+PASS [en] N16: To the request address
+PASS [en] N16: every question with its answer, in the wording the guest saw
+PASS [en] N16: the guest's email and language
+PASS [en] mail panel: no horizontal overflow
+PASS [en] the N16 link opens the request in M19 as the Owner | http://localhost:5251/#/store/requests/advice/adv-mv964t8p
+PASS [en] …and opening it marks it read
+PASS [en] after a recipient change the next N16 goes to the new address
+PASS [en] C22 sends two N17, to the Owner and the Manager | ["Chị Ngọc (Owner)","Lukas (Store Manager)"]
+PASS [en] each in their interface language: Owner EN, Manager DE
+PASS [en] the guest still gets no email (A2)
+PASS [en] N17 to the Owner, in English: group, dates, interests, guest email | N17 / EN · 13.10.2026, 10:00 / New private tour request: 6 people, 24.10.2026 – 25.10.2026 /  / To: Chị Ngọc (Owner) /  / Hello Chị Ngọc, /  / A guest asked for a private tour on 13.10.2026, 10:00. /  / Group: 6 people /  / Preferred dates: 24.10.2026 – 25.10.2026 /  / Interests: History and a coffee stop. /  / Guest email: group@example.com /  / Guest language: English /  / Reply by email with a tour plan and its price, then mark the request as answered. /  / Open private tour requests
+PASS [en] N17 to the Manager, in German | N17 / DE · 13.10.2026, 10:00 / Neue Anfrage für eine private Tour: 6 Personen, 24.10.2026 – 25.10.2026 /  / To: Lukas (Store Manager) /  / Grüezi Lukas /  / Ein Gast hat am 13.10.2026, 10:00 eine private Tour angefragt. /  / Gruppe: 6 Personen /  / Gewünschte Daten: 24.10.2026 – 25.10.2026 /  / Interessen: History and a coffee stop. /  / E-Mail des Gastes: group@example.com /  / Sprache des Gastes: Englisch /  / Antworten Sie per E-Mail mit einem Tourvorschlag und dem Preis und markieren Sie die Anfrage dann als beantwortet. /  / Anfragen für private Touren öffnen
+PASS [en] the Manager's N17 link opens M20 as the Store Manager | http://localhost:5251/#/store/requests?tab=private
+PASS [en] …where the request is listed first
+PASS [en] the second C22 sends two more N17
+PASS [en] a single day shows one date, 1 person, and no interests line | N17 / EN · 13.10.2026, 10:00 / New private tour request: 1 person, 24.10.2026 /  / To: Chị Ngọc (Owner) /  / Hello Chị Ngọc, /  / A guest asked for a private tour on 13.10.2026, 10:00. /  / Group: 1 person /  / Preferred dates: 24.10.2026 /  / Guest email: solo@example.com /  / Guest language: English /  / Reply by email with a tour plan and its price, then mark the request as answered. /  / Open private tour requests
+PASS [en] the guest tab is unchanged after four requests (A2)
+PASS [en] no console or page errors | []
+PASS [de] C21 sends exactly one email: N16 to the shop | {"at":"2026-10-13T08:00:08.572Z","to":"staff","recipient":"requests@swisskeepsakes.example","language":"en","template":"N16","params":{"requestId":"adv-mv965n0n","email":"guest@example.com","guestLanguage":"de","sentAt":"2026-10-13T08:00:08.572Z","count":7,"q0":"Wie viele Erwachsene reisen mit?","a0":"1","q1":"Wie viele Kinder reisen mit?","a1":"0","q2":"Was möchten Sie sehen oder erleben?","a2":"Geschichte und Altstadt","q3":"Wann kommen Sie in Luzern an?","a3":"20.10.2026","q4":"Wann reisen Sie aus Luzern ab?","a4":"20.10.2026","q5":"Wie reisen Sie am liebsten?","a5":"Geführte Gruppe","q6":"Anything else we should know?","a6":"A quiet dinner by the lake, please."},"id":"mail-1"}
+PASS [de] N16 goes to the M19 recipient address, in English (D10)
+PASS [de] N16 keeps every question and answer as sent
+PASS [de] the guest gets no email (A2)
+PASS [de] Mail panel: N16 is the newest staff mail, in EN | N16 / EN · 13.10.2026, 10:00 / New advice request from guest@example.com /  / To: reques
+PASS [de] N16: To the request address
+PASS [de] N16: every question with its answer, in the wording the guest saw
+PASS [de] N16: the guest's email and language
+PASS [de] mail panel: no horizontal overflow
+PASS [de] the N16 link opens the request in M19 as the Owner | http://localhost:5251/#/store/requests/advice/adv-mv965n0n
+PASS [de] …and opening it marks it read
+PASS [de] after a recipient change the next N16 goes to the new address
+PASS [de] C22 sends two N17, to the Owner and the Manager | ["Chị Ngọc (Owner)","Lukas (Store Manager)"]
+PASS [de] each in their interface language: Owner EN, Manager DE
+PASS [de] the guest still gets no email (A2)
+PASS [de] N17 to the Owner, in English: group, dates, interests, guest email | N17 / EN · 13.10.2026, 10:00 / New private tour request: 6 people, 24.10.2026 – 25.10.2026 /  / To: Chị Ngọc (Owner) /  / Hello Chị Ngọc, /  / A guest asked for a private tour on 13.10.2026, 10:00. /  / Group: 6 people /  / Preferred dates: 24.10.2026 – 25.10.2026 /  / Interests: History and a coffee stop. /  / Guest email: group@example.com /  / Guest language: German /  / Reply by email with a tour plan and its price, then mark the request as answered. /  / Open private tour requests
+PASS [de] N17 to the Manager, in German | N17 / DE · 13.10.2026, 10:00 / Neue Anfrage für eine private Tour: 6 Personen, 24.10.2026 – 25.10.2026 /  / To: Lukas (Store Manager) /  / Grüezi Lukas /  / Ein Gast hat am 13.10.2026, 10:00 eine private Tour angefragt. /  / Gruppe: 6 Personen /  / Gewünschte Daten: 24.10.2026 – 25.10.2026 /  / Interessen: History and a coffee stop. /  / E-Mail des Gastes: group@example.com /  / Sprache des Gastes: Deutsch /  / Antworten Sie per E-Mail mit einem Tourvorschlag und dem Preis und markieren Sie die Anfrage dann als beantwortet. /  / Anfragen für private Touren öffnen
+PASS [de] the Manager's N17 link opens M20 as the Store Manager | http://localhost:5251/#/store/requests?tab=private
+PASS [de] …where the request is listed first
+PASS [de] the second C22 sends two more N17
+PASS [de] a single day shows one date, 1 person, and no interests line | N17 / EN · 13.10.2026, 10:00 / New private tour request: 1 person, 24.10.2026 /  / To: Chị Ngọc (Owner) /  / Hello Chị Ngọc, /  / A guest asked for a private tour on 13.10.2026, 10:00. /  / Group: 1 person /  / Preferred dates: 24.10.2026 /  / Guest email: solo@example.com /  / Guest language: German /  / Reply by email with a tour plan and its price, then mark the request as answered. /  / Open private tour requests
+PASS [de] the guest tab is unchanged after four requests (A2)
+PASS [de] no console or page errors | []
+
+RESULT 46 passed, 0 failed

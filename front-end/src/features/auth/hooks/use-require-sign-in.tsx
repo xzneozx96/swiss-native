@@ -17,7 +17,7 @@ declare module "@tanstack/history" {
  * (default: the current screen) after sign-in.
  *
  *   const { requireSignIn } = useRequireSignIn();
- *   <Button onPress={() => requireSignIn(() => navigate({ to: "/cart/review" }), "/cart/review")} />
+ *   <Button onPress={() => requireSignIn(() => navigate({ to: "/tours/$slug/book/review", params: { slug } }), "/tours")} />
  *
  * `signInSheet` is always null since C05 became a screen (1.6r); callers can drop it.
  */

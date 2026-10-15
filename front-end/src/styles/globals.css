@@ -6,7 +6,7 @@
 @import "./theme.css" layer(theme);
 @import "./components.css" layer(components);
 
-/* Make the Swiss Keepsakes colours available to Tailwind (HeroUI "Adding Custom Colors") */
+/* Make the Swiss Native colours available to Tailwind (HeroUI "Adding Custom Colors") */
 @theme inline {
   --color-info: var(--info);
   --color-info-foreground: var(--info-foreground);
@@ -104,6 +104,20 @@ button {
 
 @utility sheet-tall {
   height: calc(var(--visual-viewport-height, 100dvh) * 0.94);
+}
+
+/*
+ * Hover for clickable list cards (owner, 15.10.2026): the card stays white and lifts to the
+ * overlay shadow. A grey fill blended into the page and hid the grey icon tiles.
+ */
+@utility card-hover {
+  transition: box-shadow 150ms ease-out;
+
+  @media (hover: hover) {
+    &:hover {
+      box-shadow: var(--overlay-shadow);
+    }
+  }
 }
 
 @utility glass {

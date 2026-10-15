@@ -8,7 +8,7 @@ export interface ConfirmOptions {
   title: string;
   /** One sentence saying what happens, with the money consequence if there is one. */
   body: string;
-  /** Names the action, never "OK" or "Yes": "Remove from cart", "Cancel order". */
+  /** Names the action, never "OK" or "Yes": "Remove photo", "Cancel booking". */
   confirmLabel: string;
   /** Defaults to "Cancel" (`confirm.cancel`). */
   cancelLabel?: string;

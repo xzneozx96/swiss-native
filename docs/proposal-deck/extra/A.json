@@ -1,0 +1,198 @@
+{
+  "area": "Guest gift journey and account (agent A)",
+  "coverage": [
+    {"flow": "Discovery home with time-based blocks and rails", "status": "already in deck", "slide": "5 (G01, G01b)"},
+    {"flow": "Gifts list with category filter and earliest pickup", "status": "already in deck", "slide": "5 (G02)"},
+    {"flow": "Search (empty box shows category tiles; typing lists gifts and tours)", "status": "already in deck", "slide": "5 (G03); category tiles described in copy only"},
+    {"flow": "Gift detail page", "status": "already in deck", "slide": "6 (G04)"},
+    {"flow": "Choices sheet: option, quantity, engraving, date", "status": "already in deck", "slide": "6 (G05)"},
+    {"flow": "Choices sheet lower half: pale-day legend and pickup place", "status": "new slide", "slide": "A-cart (A01)"},
+    {"flow": "Add to cart feedback (confirmation, View cart, badge)", "status": "new slide", "slide": "A-cart (A02, taken after the toast faded)"},
+    {"flow": "Cart selection and separate orders", "status": "already in deck", "slide": "7 (G06)"},
+    {"flow": "Cart price breakdown sheet", "status": "new slide", "slide": "A-cart (A03)"},
+    {"flow": "Remove from cart with confirmation", "status": "new slide", "slide": "A-cart (A04)"},
+    {"flow": "Sign-in: Google or email code, code entry, what triggers it", "status": "new slide", "slide": "A-signin (A05, A06)"},
+    {"flow": "Simulated mailbox: sign-in code email", "status": "new slide", "slide": "A-signin (A07)"},
+    {"flow": "Review and send request (order 1, then order 2 with deposit)", "status": "already in deck + new slide", "slide": "7 (G07); A-signin (A08)"},
+    {"flow": "Request sent and optional trip profile", "status": "already in deck", "slide": "7 (G08)"},
+    {"flow": "Accepted email with amount, deadline and auto-cancel warning", "status": "new slide", "slide": "A-pay-outcomes (A09)"},
+    {"flow": "Payment page (simulated provider)", "status": "already in deck", "slide": "7 (G09)"},
+    {"flow": "Payment declined and retry", "status": "new slide", "slide": "A-pay-outcomes (A10)"},
+    {"flow": "Payment processing (no second Pay button)", "status": "new slide", "slide": "A-pay-outcomes (A11)"},
+    {"flow": "Payment success (order becomes Confirmed, being prepared)", "status": "new slide", "slide": "A-order-tabs (A12 shows the deposit-paid result)"},
+    {"flow": "24-hour deadline passes: auto-cancel, email, Request again", "status": "new slide", "slide": "A-overdue (A16, A18, A17)"},
+    {"flow": "Account hub", "status": "already in deck", "slide": "12 (G24)"},
+    {"flow": "Account sub-screens: orders, payments, emails, language", "status": "new slide", "slide": "A-account-language (A23-A26)"},
+    {"flow": "Guest order detail tabs: overview, payments, progress, policy", "status": "new slide", "slide": "A-order-tabs (A12-A15); G25 on slide 12 shows the payment-due state"},
+    {"flow": "Pay the rest after handover", "status": "new slide", "slide": "A-handover-review (A19)"},
+    {"flow": "Write a review only after completion, review published", "status": "new slide", "slide": "A-handover-review (A20-A22)"},
+    {"flow": "Interface in German (one screen)", "status": "new slide", "slide": "A-account-language (A27)"},
+    {"flow": "Edit profile (name, photo)", "status": "skipped (small settings form, covered by the hub)", "slide": "-"},
+    {"flow": "Guest cancels an unpaid order; seller declines; last-item race; sell-out on send; late provider result; missing-translation notice", "status": "skipped (needs prototype controls that are hidden in the client build, or are edge cases)", "slide": "-"}
+  ],
+  "revise": [
+    {
+      "slide": 5,
+      "title": "Discover gifts and tours on a phone",
+      "lead": "Guests browse without an account: the home page suggests gifts and tours by how much time they have, and search finds any item.",
+      "callouts": [
+        ["Ideas by available time", "Blocks such as 'Have 2 hours in Lucerne?' and 'A few days here?' lead into gifts, tours and stories."],
+        ["Earliest pickup on cards", "Each gift card shows its price and the earliest date it can be picked up, so guests can plan early."],
+        ["Browse or search", "Search finds gifts and tours together; with an empty box, category tiles such as Pocket knives open that range."]
+      ],
+      "captions": [
+        ["Home", "Time-based ideas, tours, stories and gift rails"],
+        ["Gifts", "Filter by category; earliest pickup on each card"],
+        ["Search", "Gifts and tours in one list"]
+      ]
+    },
+    {
+      "slide": 6,
+      "title": "Choose a gift and make it personal",
+      "lead": "The gift page tells the story, then a choices sheet collects what the shop needs: size, quantity, engraving, pickup date and pickup place.",
+      "callouts": [
+        ["Size, quantity, engraving", "On the knife, guests pick Small, Medium or Large and may add free engraving of up to 12 characters."],
+        ["Pickup dates that make sense", "Days the shop cannot prepare in time are greyed out with the reason, such as 'Needs 3 working days to engrave'."],
+        ["Reviews from real buyers", "Only guests who completed an order can review, and each review shows its purchase date."]
+      ],
+      "captions": [
+        ["Gift page", "Photos, story, rating and seller"],
+        ["Choices sheet", "Size, quantity, engraving and pickup calendar"]
+      ]
+    },
+    {
+      "slide": 7,
+      "title": "Request your gifts, pay once accepted",
+      "lead": "A request is not a purchase: the guest sends the cart, the shop confirms each order, and only then does the guest pay within 24 hours.",
+      "badge": "The shop confirms first, then the guest pays within 24 hours",
+      "captions": [
+        ["Cart", "Tick what to order; different dates become separate orders"],
+        ["Review", "Per order: pickup, amount due after confirmation, policy"],
+        ["Request sent", "Orders wait for the shop; nothing is charged"],
+        ["Pay", "Payment page opens only after the shop accepts"]
+      ]
+    },
+    {
+      "slide": 12,
+      "title": "Track every order and booking",
+      "lead": "The Account tab is the guest's home for everything bought: orders, tour bookings, payments due and the history of each status change.",
+      "callouts": [
+        ["Status and payment apart", "Each order shows two labels, such as 'Accepted' and 'Payment due', so progress and money never get mixed up."],
+        ["Pay the balance later", "After a deposit, 'Pay CHF 62.30' stays on the order, even after the shop hands the gift over."],
+        ["Review after completion", "The 'Write a review' button appears only once the shop has marked the order completed."]
+      ],
+      "captions": [
+        ["Account", "Orders, bookings, payments and profile"],
+        ["Order", "Status, payment and pickup in one place"],
+        ["Booking", "Tour booking with its own payment status"]
+      ]
+    }
+  ],
+  "new": [
+    {
+      "id": "A-cart",
+      "after": 6,
+      "title": "From pickup choice to a checked cart",
+      "lead": "Guests set a pickup date and place, get instant feedback when a gift is added, and can check the price or remove items safely in the cart.",
+      "layout": "B",
+      "badge": "Pickup dates are requests until the shop confirms",
+      "phones": [
+        ["A01-choices-pickup.png", "Pick date and place", "Pale days show why; Shop Altstadt or Bahnhof pickup point"],
+        ["A02-added-to-cart.png", "Added to cart", "Bottom bar and cart badge confirm the add"],
+        ["A03-price-details.png", "Price details", "Each item and date; total is only for reference"],
+        ["A04-remove-confirm.png", "Remove asks first", "A dialog names the item and its price"]
+      ]
+    },
+    {
+      "id": "A-signin",
+      "after": "A-cart",
+      "title": "Sign in only when sending a request",
+      "lead": "Guests browse and fill a cart without an account; signing in is asked for only when they press Continue, using Google or a code sent by email.",
+      "layout": "B",
+      "badge": "Google and email codes are simulated in this prototype",
+      "phones": [
+        ["A05-signin.png", "Sign in", "No password; the cart stays untouched"],
+        ["A06-signin-code.png", "Enter the code", "Six digits, valid for 10 minutes, resend after 30 seconds"],
+        ["A07-mail-signin-code.png", "Code arrives by email", "The mock mailbox stands in for real email"],
+        ["A08-review-deposit.png", "Review each order", "Second order: 30% deposit due after confirmation"]
+      ]
+    },
+    {
+      "id": "A-pay-outcomes",
+      "after": 7,
+      "title": "After acceptance: pay, retry or wait",
+      "lead": "Once the shop accepts, the guest gets an email with the amount and a 24-hour deadline, and the payment page ends in success, a decline or a wait.",
+      "layout": "A",
+      "phones": [
+        ["A09-mail-accepted.png", "Acceptance email", "Amount, pay-by time and auto-cancel rule"],
+        ["A10-pay-declined.png", "Payment declined", "No money taken; Try again reopens payment"],
+        ["A11-pay-processing.png", "Payment processing", "'Please don't pay again' until the provider answers"]
+      ],
+      "callouts": [
+        ["Email states the deadline", "The acceptance email names the amount, the date and time to pay by, and warns about automatic cancellation."],
+        ["A decline loses nothing", "If the payment is declined, no money is taken and the guest can try again on the same page."],
+        ["No double payments", "While the provider has not answered, the order shows Payment processing and hides the Pay button."]
+      ]
+    },
+    {
+      "id": "A-overdue",
+      "after": "A-pay-outcomes",
+      "title": "Missed the 24 hours? Request again",
+      "lead": "If the first payment is late, the order cancels itself after 24 hours, and the guest can put the gifts back in the cart.",
+      "layout": "A",
+      "phones": [
+        ["A16-overdue-cancelled.png", "Cancelled, payment overdue", "Nothing was charged"],
+        ["A18-mail-cancelled.png", "Cancellation email", "The guest's other orders are not affected"],
+        ["A17-request-again-cart.png", "Request again", "Gifts return to the cart for a new date"]
+      ],
+      "callouts": [
+        ["Automatic cancellation", "The order shows Cancelled, payment overdue, nothing is charged, and the stock held for it is released."],
+        ["Request again", "One tap puts the gifts back in the cart; nothing is sent until the guest picks a date and sends."],
+        ["Dates are re-checked", "The cart flags a date that no longer works and offers the next valid one, such as Mon 19 Oct."]
+      ]
+    },
+    {
+      "id": "A-order-tabs",
+      "after": "A-overdue",
+      "title": "One order, four tabs",
+      "lead": "Each order page keeps the answers a guest needs: where and when to collect, what is paid, what happened so far, and the agreed terms.",
+      "layout": "B",
+      "badge": "Example: gift box with the 30% deposit paid",
+      "phones": [
+        ["A12-order-overview.png", "Overview", "Pickup date, place and opening hours"],
+        ["A13-order-payments.png", "Payments", "Total, paid and still to pay"],
+        ["A14-order-progress.png", "Progress", "Request, acceptance, payment, then next steps"],
+        ["A15-order-policy.png", "Policy", "Terms as at ordering; later changes do not apply"]
+      ]
+    },
+    {
+      "id": "A-handover-review",
+      "after": "A-order-tabs",
+      "title": "Pay the rest, collect, then review",
+      "lead": "After handover a deposit order's balance can still be paid online, and once an order is complete the guest may rate the gift.",
+      "layout": "B",
+      "badge": "Reviews open only after the order is completed",
+      "phones": [
+        ["A19-handed-over-pay-rest.png", "Handed over", "Pay the rest online or at the shop"],
+        ["A20-completed-review.png", "Completed", "Knife order: paid in full, review button"],
+        ["A21-write-review.png", "Write a review", "Stars and a short text"],
+        ["A22-review-published.png", "Review published", "Shown on the gift with its purchase date"]
+      ]
+    },
+    {
+      "id": "A-account-language",
+      "after": 12,
+      "title": "Account screens, plus a German interface",
+      "lead": "The account lists orders, payments due and emails, and the whole interface can switch to German with Swiss dates and CHF amounts.",
+      "layout": "B",
+      "badge": "Same screen in English and German",
+      "phones": [
+        ["A23-account-orders.png", "Your orders", "Coming up and past, with status"],
+        ["A24-account-payments.png", "Payments", "Due now and payment history"],
+        ["A25-account-emails.png", "Emails", "Every email sent to the guest"],
+        ["A26-account-language.png", "Language", "English or Deutsch; emails keep the order's language"],
+        ["A27-order-de.png", "Order in German", "Same order page, labels in German"]
+      ]
+    }
+  ]
+}

@@ -1,7 +1,7 @@
 import type { ComponentProps } from "react";
 
 /**
- * The gift flow's white card, with C06/C07 OrderCard's surface: white, rounded-3xl, the
+ * The white card of the tour screens: white, rounded-3xl, the
  * shared soft shadow, no border (1.13s), blocks divided by fine lines. Used by the tour
  * screens since round 2 (14.10.2026).
  */
@@ -18,8 +18,8 @@ export function SurfaceCard({
 }
 
 /**
- * One block of a SurfaceCard, padded as OrderCard's blocks (C06, C07; tour C10, C11, C13).
- * C16 opts into gift C15's ticket grammar: `compact` pads 16px as the C15 cards, and `dashed`
+ * One block of a SurfaceCard, padded for the tour screens (C10, C11, C13).
+ * C16 opts into the ticket grammar: `compact` pads 16px, and `dashed`
  * makes the rule under this block a dashed tear line (the card draws each rule as the upper
  * block's bottom border).
  */

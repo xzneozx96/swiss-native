@@ -6,10 +6,10 @@ import { useSignIn } from "../hooks/use-sign-in";
 
 import { SignInForm } from "./sign-in-form";
 
-import heroPhoto from "@/assets/photos/lucerne-water-tower.jpg";
+import heroPhoto from "@/assets/photos/susten-pass-1.jpg";
 import { BackIcon } from "@/components/icons";
 import { BrandLogo } from "@/components/layout/brand-logo";
-import { BackButton } from "@/components/layout/cart-button";
+import { BackButton } from "@/components/layout/top-bar-buttons";
 import { useLocale } from "@/contexts/locale-context";
 import { useDemo } from "@/features/demo";
 
@@ -17,7 +17,7 @@ import { useDemo } from "@/features/demo";
 const noop = () => {};
 
 /**
- * C05 sign-in screen (owner review 1.6r). Phones, inside the 430px guest frame: the Lucerne
+ * C05 sign-in screen (owner review 1.6r). Phones, inside the 430px guest frame: the Susten
  * photo on top and the form on a sheet that overlaps it, so the code slots and errors sit on
  * a plain surface. From 1024px: two columns, form on the left, the photo filling the right.
  * Once signed in (or when opened signed in) it replaces itself with `returnTo`.
@@ -31,9 +31,9 @@ export function SignInScreen({ returnTo }: { returnTo: string }) {
   const view = useSignIn(noop);
   const signedIn = state.data.signedInGuestId !== null;
 
-  // Leave sign-in out of history. Opened over its own return screen (C06, C11, Account), step
+  // Leave sign-in out of history. Opened over its own return screen (C11, Account), step
   // back to that entry: replacing would leave a second copy, so Back there seemed to do nothing.
-  // Otherwise (cart → C06, or a direct visit) replace sign-in with the return screen.
+  // Otherwise (a direct visit) replace sign-in with the return screen.
   useEffect(() => {
     if (!signedIn) return;
     if (canGoBack && router.state.location.state.signInOverReturnTo)

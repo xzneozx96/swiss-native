@@ -1,5 +1,5 @@
 import type { Review } from "@/features/catalog/types";
-import type { ReviewableProduct } from "../hooks/use-order-reviews";
+import type { ReviewableProduct } from "../lib/review";
 
 import {
   Button,
@@ -24,17 +24,15 @@ const MAX_TEXT = 1000;
 
 /**
  * C18 Write a review (bottom sheet): the product reviewed, 1–5 stars and text. One overall
- * rating only (decisions.tsv). Opened from a completed order on C15.
+ * rating only (decisions.tsv). Opened from a completed booking.
  */
 export function WriteReviewSheet({
   product,
-  kind = "gift",
   isOpen,
   onOpenChange,
   onSubmit,
 }: {
   product: ReviewableProduct | undefined;
-  kind?: "gift" | "tour";
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
   onSubmit: (rating: Review["rating"], text: string) => void;
@@ -57,7 +55,6 @@ export function WriteReviewSheet({
               // Remounts per product, so a reopened sheet starts empty.
               <ReviewForm
                 key={product.productId}
-                kind={kind}
                 product={product}
                 onSubmit={onSubmit}
               />
@@ -71,11 +68,9 @@ export function WriteReviewSheet({
 
 function ReviewForm({
   product,
-  kind,
   onSubmit,
 }: {
   product: ReviewableProduct;
-  kind: "gift" | "tour";
   onSubmit: (rating: Review["rating"], text: string) => void;
 }) {
   const { t } = useLocale();
@@ -153,25 +148,15 @@ function ReviewForm({
       >
         <Label className="text-heading">{t("review.text.label")}</Label>
         <TextArea rows={5} />
-        <Description>
-          {t(kind === "tour" ? "tourReviews.textHelp" : "review.text.help")}
-        </Description>
-        <FieldError>
-          {t(kind === "tour" ? "tourReviews.textError" : "review.text.error")}
-        </FieldError>
+        <Description>{t("tourReviews.textHelp")}</Description>
+        <FieldError>{t("tourReviews.textError")}</FieldError>
       </TextField>
 
       <div className="flex flex-col gap-2">
         <Button fullWidth size="lg" type="submit">
           {t("review.submit")}
         </Button>
-        <p className="text-sm text-muted">
-          {t(
-            kind === "tour"
-              ? "tourReviews.verifiedNote"
-              : "review.verifiedNote",
-          )}
-        </p>
+        <p className="text-sm text-muted">{t("tourReviews.verifiedNote")}</p>
       </div>
     </Form>
   );

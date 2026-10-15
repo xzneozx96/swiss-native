@@ -1,0 +1,7 @@
+Built-in imagegen, transparent background, reference: user-supplied Alpine ridge banner.
+
+Use case: logo-brand. Input image is the reference for the Alpine mountain ridge silhouette and elegant editorial character. Create one finished horizontal logo for the project named "Swiss Native". Mountain ridge centered above the words "Swiss Native". Preserve the reference distinctive tall central peak, smaller peaks on both sides and sparse hand-drawn ridge strokes, refined into crisp clean dark navy #162b42 line art. Typography: elegant bold readable italic serif like the reference German slogan, exact text "Swiss Native". No slogans, no extra text, no photo scenery, no gradients, no mockup, no border, no shadow. Real transparent background. Wide horizontal tight lockup, ridge and name equally prominent, generous clear space, restrained premium Swiss Alpine travel identity. One logo only, high resolution, ready for website header.
+
+Saved master: web/front-end/src/assets/brand/swiss-native-alpine-logo.png (1912 x 823 RGBA).
+Mobile mountain mark uses a viewport onto the same master. Favicon is a simplified SVG ridge.
+Verification: production build and targeted ESLint passed. Browser checked at 1440px and 375px; no horizontal overflow. Screenshots alongside this file.

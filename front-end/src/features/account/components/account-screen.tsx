@@ -1,7 +1,7 @@
 import { useCanGoBack, useNavigate, useRouter } from "@tanstack/react-router";
 import { useEffect } from "react";
 
-import { BackButton } from "@/components/layout/cart-button";
+import { BackButton } from "@/components/layout/top-bar-buttons";
 import { useLocale } from "@/contexts/locale-context";
 
 /**

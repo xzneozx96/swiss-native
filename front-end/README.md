@@ -1,12 +1,12 @@
-# Swiss Keepsakes prototype
+# Swiss Native prototype
 
-A clickable prototype of Swiss Keepsakes for the client. It has no backend, and all data is mock data held in the browser.
+A clickable prototype of Swiss Native for the client: guided motorbike tours over the Swiss Alpine passes, a stay and an experience with one host. It has no backend, and all data is mock data held in the browser.
 
 ## Stack
 
 - React 19, Vite and TypeScript.
 - HeroUI v3 (`@heroui/react`, `@heroui/styles` 3.2.6) on Tailwind CSS v4. There is no provider, and components are compound (`Card.Header`). Use `onPress`, not `onClick`.
-- TanStack Router with file-based routes in `src/routes/` and hash history. The build is static, so URLs look like `#/merchant/orders`.
+- TanStack Router with file-based routes in `src/routes/` and hash history. The build is static, so URLs look like `#/store/bookings`.
 
 ## Commands
 
@@ -51,7 +51,7 @@ The design system is in `../docs/ux/design-system/project/` (README, tokens and 
   - Sheet and dialog footers stack below 360px.
 - Never pass a raw `href` to a HeroUI component (Tabs, Breadcrumbs, Menu or ListBox items, Pagination). Wrap it with TanStack's `createLink` first, as `RouterLink` does. A raw path skips the hash router and breaks on static hosting.
 - There is one light theme. HeroUI's dark-theme variables are pinned to light values on purpose.
-- Use `font-serif` with `text-display`, `text-title` or `text-card-title` only for places, products and stories. Everything else is Inter.
+- Use `font-serif` with `text-display`, `text-title` or `text-card-title` only for places, tours and stories. Everything else is Inter.
 - Format money and dates with `src/lib/format.ts` (`CHF 1’249.00`, `14.10.2026`). Use `tabular-nums` for figures.
 - For links inside the app, use `RouterLink` (HeroUI Link plus TanStack `createLink`).
 - German copy is Swiss German: "ss", never "ß".

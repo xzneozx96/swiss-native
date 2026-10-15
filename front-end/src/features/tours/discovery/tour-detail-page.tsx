@@ -12,7 +12,7 @@ import {
   PickupIcon,
   TourIcon,
 } from "@/components/icons";
-import { BackButton, CompactBar } from "@/components/layout/cart-button";
+import { BackButton, CompactBar } from "@/components/layout/top-bar-buttons";
 import {
   ListingDetailHeader,
   ListingFavouriteButton,
@@ -21,13 +21,12 @@ import { ListingReviews } from "@/components/listings/listing-reviews";
 import { Media } from "@/components/media";
 import { SellerRow } from "@/features/catalog/components/seller-row";
 import { StorySheet } from "@/features/catalog/components/story-sheet";
-import { useFavourites } from "@/features/catalog/hooks/use-favourites";
+import { useFavourites } from "@/features/tours/hooks/use-favourites";
 import { useProductReviews } from "@/features/catalog/hooks/use-product-reviews";
 import { shop } from "@/features/catalog/seed";
 import { PhotoGallery } from "@/components/photo-gallery";
 import { useLocale } from "@/contexts/locale-context";
 import { zurichDate } from "@/features/catalog/lib/pickup";
-import { useDemo } from "@/features/demo";
 import { useTours } from "@/features/tours/hooks/use-tours";
 import {
   availableSeats,
@@ -35,12 +34,12 @@ import {
 } from "@/features/tours/lib/selectors";
 import { ageBandLabels } from "@/features/tours/discovery/age-bands";
 import { TourSelectionSheet } from "@/features/tours/discovery/tour-selection-sheet";
-import { TripAdviceButton } from "@/features/discovery/components/trip-advice-button";
 import { TourItineraryMap } from "@/features/tours/map/tour-itinerary-map";
 import { useBack } from "@/hooks/use-back";
 import { useScrolledPast } from "@/hooks/use-scrolled-past";
 import { formatMoney, formatShortDate } from "@/lib/format";
 import { pickText } from "@/lib/localized";
+import { firstPhoto, openingText, pickDoc } from "@/lib/rich-text";
 
 export function TourDetailPage({
   slug,
@@ -68,12 +67,9 @@ export function TourDetailPage({
 
 function TourDetail({ tour, isBooking }: { tour: Tour; isBooking: boolean }) {
   const { t, language, intlLocale } = useLocale();
-  const { state } = useDemo();
   const { data, now } = useTours();
-  // The first pickup place is the shop itself, as on C03's seller row.
-  const shopPlace = state.data.pickupPlaces[0];
   const navigate = useNavigate();
-  const reviews = useProductReviews(`tour:${tour.id}`, { kind: "tour" });
+  const reviews = useProductReviews(`tour:${tour.id}`);
   const { isFavourite, toggle } = useFavourites();
   const saved = isFavourite(`tour:${tour.id}`);
   const favourite = {
@@ -91,15 +87,14 @@ function TourDetail({ tour, isBooking }: { tour: Tour; isBooking: boolean }) {
   const name = pickText(tour.name, language);
   const text = (value: Tour["name"]) => pickText(value, language).text;
   const [storyOpen, setStoryOpen] = useState(false);
-  const longStory = tour.longStory && {
-    label: t("detail.story.label"),
-    title: text(tour.longStory.title),
-    chapters: tour.longStory.chapters.map((c) => ({
-      title: text(c.title),
-      body: text(c.body),
-      photo: c.photo,
-    })),
-  };
+  // The page's one language notice (below) covers the story too.
+  const storyBody = tour.longStory && pickDoc(tour.longStory.body, language);
+  const longStory = tour.longStory &&
+    storyBody && {
+      label: t("detail.story.label"),
+      title: text(tour.longStory.title),
+      body: storyBody.doc,
+    };
   const upcoming = upcomingDepartures(data, tour.id, now);
   const bookable = upcoming.filter((d) => availableSeats(data, d.id, now) > 0);
   const next = bookable[0];
@@ -162,12 +157,9 @@ function TourDetail({ tour, isBooking }: { tour: Tour; isBooking: boolean }) {
     tour.name,
     tour.summary,
     tour.description,
-    ...(tour.longStory
-      ? [
-          tour.longStory.title,
-          ...tour.longStory.chapters.flatMap((c) => [c.title, c.body]),
-        ]
-      : []),
+    ...(tour.longStory ? [tour.longStory.title] : []),
+    // The body counts as text in the language it is written in (rich text, not a string).
+    ...(storyBody ? [{ [storyBody.language]: "story" }] : []),
     tour.meetingPoint,
     tour.conditions,
     tour.excluded,
@@ -236,7 +228,7 @@ function TourDetail({ tour, isBooking }: { tour: Tour; isBooking: boolean }) {
         />
         <section className="py-5">
           <SellerRow
-            address={shopPlace.address}
+            address={shop.address}
             contacts={[
               {
                 kind: "call",
@@ -251,10 +243,10 @@ function TourDetail({ tour, isBooking }: { tour: Tour; isBooking: boolean }) {
               {
                 kind: "directions",
                 label: t("detail.seller.directions"),
-                href: `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(shopPlace.address)}`,
+                href: `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(shop.address)}`,
               },
             ]}
-            hours={text(shopPlace.openingHours)}
+            hours={text(shop.openingHours)}
             name={shop.name}
             sub={t("tourDetail.operatorSub")}
             title={t("tourDetail.operatorTitle", { shop: shop.name })}
@@ -315,7 +307,7 @@ function TourDetail({ tour, isBooking }: { tour: Tour; isBooking: boolean }) {
                 <Media
                   alt=""
                   className="aspect-[16/9] w-full rounded-3xl"
-                  photo={longStory.chapters[0]?.photo}
+                  photo={firstPhoto(longStory.body)}
                 />
                 <span className="text-label tracking-wide text-muted uppercase">
                   {longStory.label}
@@ -324,7 +316,7 @@ function TourDetail({ tour, isBooking }: { tour: Tour; isBooking: boolean }) {
                   {longStory.title}
                 </span>
                 <span className="line-clamp-3 text-body text-muted">
-                  {longStory.chapters[0]?.body}
+                  {openingText(longStory.body)}
                 </span>
               </button>
               <Button
@@ -369,9 +361,12 @@ function TourDetail({ tour, isBooking }: { tour: Tour; isBooking: boolean }) {
             empty: t("tourDiscovery.noReviews"),
           }}
         />
-        <section className="flex flex-col gap-4 border-t border-separator py-7">
-          <TourItineraryMap key={tour.id} tour={tour} />
-        </section>
+        {/* A tour added in M13 has no stops yet (no map positions): no itinerary section. */}
+        {tour.itinerary.length > 0 && (
+          <section className="flex flex-col gap-4 border-t border-separator py-7">
+            <TourItineraryMap key={tour.id} tour={tour} />
+          </section>
+        )}
         <section className="flex flex-col gap-3 border-t border-separator py-7">
           <h2 className="font-serif text-title">
             {t("tourDiscovery.included")}
@@ -451,7 +446,6 @@ function TourDetail({ tour, isBooking }: { tour: Tour; isBooking: boolean }) {
           />
         )}
       </div>
-      <TripAdviceButton above="actionBar" />
       <div className="sticky bottom-0 z-30 flex items-center gap-3 border-t border-separator bg-background px-6 pt-3 pb-[calc(env(safe-area-inset-bottom,0px)+12px)]">
         <div className="flex min-w-0 flex-1 flex-col">
           <span className="font-semibold tabular-nums">

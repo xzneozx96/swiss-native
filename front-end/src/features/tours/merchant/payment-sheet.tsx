@@ -1,6 +1,7 @@
 import type { ExternalPaymentInput } from "./lib/transitions";
-import type { TourBooking } from "../types";
+import type { ExternalTourPayment, TourBooking } from "../types";
 import type { ZonedDateTime } from "@internationalized/date";
+import type { MessageKey } from "@/i18n/en";
 
 import {
   Alert,
@@ -26,14 +27,22 @@ import { externalPaymentBlock } from "./lib/transitions";
 import { useBlockText, useTourFormatting } from "./shared";
 
 import { useLocale } from "@/contexts/locale-context";
-import { SheetFrame } from "@/features/merchant/order-detail/components/decision-block";
-import {
-  methodLabelKeys,
-  offlineMethods,
-} from "@/features/merchant/record-payment/hooks/use-record-payment";
-import { formatOrderDate } from "@/features/orders/lib/format";
+import { SheetFrame } from "@/components/sheet-frame";
+import { formatOrderDate } from "@/lib/dates";
 
 const ZURICH = "Europe/Zurich";
+
+const offlineMethods: ExternalTourPayment["method"][] = [
+  "cash",
+  "bank-transfer",
+  "other",
+];
+
+const methodLabelKeys: Record<ExternalTourPayment["method"], MessageKey> = {
+  cash: "merchantOrder.method.cash",
+  "bank-transfer": "merchantOrder.method.bankTransfer",
+  other: "merchantOrder.method.other",
+};
 
 /** Same choice card as M08: ink frame when selected. */
 const choiceCard =

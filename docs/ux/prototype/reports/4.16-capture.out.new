@@ -1,0 +1,23 @@
+PASS [en] ?tab=reviews selects the Reviews tab
+PASS [en] the tab counts all reviews; the filter counts Not replied and Replied
+PASS [en] gift and tour reviews are both listed
+PASS [en] no delete control and no menu anywhere on the tab (AC17) | 0
+PASS [en] the rule says reviews can't be deleted
+PASS [en] Replied lists the seeded replies with their author and date
+PASS [en] a reply in the other language carries the language note
+PASS [en] the sheet starts in the interface language for a review written in both
+PASS [en] an empty reply shows an inline error
+PASS [en] posting confirms
+PASS [en] the reply is stored with its language and author (Ngọc) | {"text":"Thank you, Kenji! The large size comes in red soon too.","language":"en","by":"Ngọc","at":"2026-10-13T08:00:10.667Z"}
+PASS [en] the card now shows the reply and Replied
+PASS [en] a tour review reply is stored in the chosen language | {"text":"Danke, Anna! Schön, dass Ihnen die bemalten Häuser gefallen haben.","language":"de","by":"Ngọc","at":"2026-10-13T08:00:17.731Z"}
+PASS [en] the M23 card notes the other language
+PASS [en] Edit reply opens prefilled
+PASS [en] saving the edit confirms
+PASS [en] the edited reply replaces the old one
+PASS [en] the Replied count grows by the two new replies
+PASS [en] C03 shows the new reply with its author
+PASS [en] C03 shows the edited reply
+PASS [en] C03 notes an English reply in a German interface (AC30)
+PASS [en] a long reply gets "Show more" even under a short review
+PASS [en] the review sheet shows the full reply

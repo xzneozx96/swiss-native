@@ -5,7 +5,7 @@ import { Button, Drawer } from "@heroui/react";
 
 /**
  * The bottom sheet where a guest makes a listing's choices and commits them with one full-width
- * button: C03 "Your gift" (Add to cart · CHF) and C10 departure and group (Review booking · CHF).
+ * button: C10 departure and group (Review booking · CHF).
  */
 export function ChoiceSheet({
   title,

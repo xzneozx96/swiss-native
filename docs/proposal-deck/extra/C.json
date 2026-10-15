@@ -1,0 +1,191 @@
+{
+  "area": "Shop operations (merchant Owner and Manager, desktop /store): Overview, gift orders, tour departures, guest lists, booking detail, payments, completion, overdue balances, shop notifications",
+  "coverage": [
+    {"flow": "Overview: Today tiles, next pickups, still to collect, tour work tiles, next departures", "status": "already in deck", "slide": "13 (S01)"},
+    {"flow": "Overview: all-time earnings and analytics section", "status": "already in deck", "slide": "13 (S02)"},
+    {"flow": "Gift orders list with status tabs (Completed tab shown)", "status": "already in deck", "slide": "14 (S03); C01 shows the Awaiting confirmation tab and is available as a spare"},
+    {"flow": "Order detail awaiting confirmation: Accept / Change date or place / Decline, stock per line", "status": "new slide", "slide": "C-order-decision (C02, C05)"},
+    {"flow": "Change date or place sheet and decline reasons sheet", "status": "new slide", "slide": "C-order-change-decline (C03, C04)"},
+    {"flow": "Order detail: accepted and awaiting payment; preparing; ready for pickup", "status": "new screenshots (C06, C07, C08), spares for slide 14 or the stages slide", "slide": "C-order-handover-complete uses C09; C06/C07/C08 available"},
+    {"flow": "Record payment sheet: cash / bank transfer / other, amount above balance blocked, duplicate warning", "status": "new slide", "slide": "C-order-payments (C13, C12); S05 already shows the default sheet"},
+    {"flow": "Handed over with balance owed (Complete locked) then paid in full (Complete unlocked), completed with log", "status": "new slide", "slide": "C-order-handover-complete (C09, C14); C15 is the completed state spare"},
+    {"flow": "Departure schedule: confirmed seats vs active holds, to collect, items needing attention", "status": "already in deck + new slide with a live hold", "slide": "15 (S06); C-departure-holds (C31, C32)"},
+    {"flow": "Departure guest list with Service delivered / No-show per booking", "status": "already in deck", "slide": "15 (S07)"},
+    {"flow": "Confirmation dialogs for Service delivered and No-show", "status": "new slide", "slide": "C-outcome-confirm (C17, C18)"},
+    {"flow": "Booking detail: price and policy snapshots, payments, commission eligibility, activity history", "status": "already in deck (top) + new slide (lower part)", "slide": "16 (S08); C-booking-complete (C21)"},
+    {"flow": "Record an external payment on a booking and complete the booking", "status": "new slide", "slide": "C-booking-payment-complete (C20, C27); C19, C28 spares"},
+    {"flow": "Overdue balance decision states: cancel by policy after deadline; grace period; merchant decides", "status": "already in deck (merchant decides, S09) + new slide (auto-cancel and grace)", "slide": "16 (S09); C-overdue-policies (C24, C23)"},
+    {"flow": "No-show booking (no commission, no review) and late payment to reconcile", "status": "new slide", "slide": "C-noshow-reconcile (C26, C25)"},
+    {"flow": "Shop-side simulated notifications (staff mail panel)", "status": "new slide", "slide": "C-shop-notifications (C33)"},
+    {"flow": "Manager role differences", "status": "skipped (same screens as Owner for these flows; only the role label under the shop name differs, payment adjustment is Owner-only but not built)", "slide": "-"},
+    {"flow": "Merchant cancel of a booking, refunds, payment adjustment, departure cancel action", "status": "skipped (not built; the app itself says cancelling arrives in a later phase)", "slide": "-"}
+  ],
+  "revise": [
+    {
+      "slide": 13,
+      "title": "Overview: what needs you today",
+      "lead": "The first screen after sign-in lists every request, payment and tour result waiting for the team, so nothing is missed, then shows how the whole business is doing.",
+      "callouts": [
+        ["Today's task tiles", "Counts of gift requests to answer, payments awaited, gifts to prepare or hand over. Each tile opens the matching filtered list."],
+        ["Tour work", "Tours that ended and need a result, overdue balances, bookings delivered but unpaid, and late payments to check."],
+        ["Money still to collect", "Shows what accepted orders and tour bookings still owe, with the next pickups and departures beside it."]
+      ],
+      "captions": ["Today's work", "Earnings and trends"]
+    },
+    {
+      "slide": 14,
+      "title": "Handle gift orders step by step",
+      "lead": "Every gift request starts unpaid. The team confirms it can prepare the gift, and only then is the guest asked to pay.",
+      "callouts": [
+        ["Tabs by order stage", "Awaiting confirmation, awaiting payment, preparing, ready, balance owed, completed and cancelled, each with a live count."],
+        ["Accept, change or decline", "Accepting holds the stock and asks the guest to pay within 24 hours. Changes and declines need a note."],
+        ["Complete only when paid", "An order can be completed only after handover and full payment. Partner commission is then recorded once."]
+      ],
+      "captions": ["Orders by stage", "A request to decide"]
+    },
+    {
+      "slide": 15,
+      "title": "Manage tour departures and guest lists",
+      "lead": "A departure is one dated run of a tour. The schedule shows how full each one is and who still owes money, then opens the guest list.",
+      "callouts": [
+        ["Seats and holds apart", "Confirmed seats and temporary 15-minute holds are counted separately, so a seat is never sold twice."],
+        ["Money to collect", "Each departure shows the unpaid balance of its bookings, and flags overdue balances and late payments."],
+        ["Result per booking", "After the tour ends, mark each booking Service delivered or No-show. Nothing is completed automatically."]
+      ],
+      "captions": ["All departures", "Guest list of one tour"]
+    },
+    {
+      "slide": 16,
+      "title": "Booking detail, payments and completion",
+      "lead": "One page holds everything about a tour booking: what the guest agreed to, money received and owed, and the next step for the team.",
+      "callouts": [
+        ["Terms as booked", "Price, payment rule and cancellation policy are saved at booking, so later tour changes never alter this booking."],
+        ["Overdue balances", "Each departure's saved rule decides: cancel and release seats after the deadline, allow a grace period, or leave it to you."],
+        ["Strict completion", "Completion needs service delivered and full payment. A no-show never earns commission or a review."]
+      ],
+      "captions": ["Booking detail", "Overdue balance"]
+    }
+  ],
+  "new": [
+    {
+      "id": "C-order-decision", "after": 14,
+      "title": "Decide on a new gift request",
+      "lead": "A request shows who asked, what they want, the pickup date and place, and the stock for each item. Nothing is paid until the shop accepts.",
+      "layout": "C",
+      "callouts": [
+        ["Stock checked per item", "Each line shows how many are available against how many are needed. Stock is held only when you accept."],
+        ["Clear confirmation", "Accepting states the pickup date and place and the amount the guest must pay, with a 24-hour deadline."],
+        ["Source and policy visible", "The partner who brought the guest and the payment and cancellation terms from order time sit on the same page."]
+      ],
+      "browsers": [["C02-order-awaiting-decision.png", "Request to decide"], ["C05-accept-confirm.png", "Accept confirmation"]]
+    },
+    {
+      "id": "C-order-change-decline", "after": 14,
+      "title": "Change the date or place, or decline",
+      "lead": "When the requested pickup does not work, the shop can agree a new date or place with the guest, or decline with a reason the guest receives.",
+      "layout": "C",
+      "callouts": [
+        ["Only valid dates offered", "The calendar greys out past days and Sundays, when both pickup places are closed. A note to the guest is required."],
+        ["Still a request", "A changed order stays unconfirmed until the shop accepts it, so the guest never pays for a date nobody confirmed."],
+        ["Decline with a reason", "Pick a reason and add an optional message. The guest gets both by email, and other orders are unaffected."]
+      ],
+      "browsers": [["C03-change-date-place.png", "Change date or place"], ["C04-decline-confirm.png", "Decline with reason"]]
+    },
+    {
+      "id": "C-order-payments", "after": 14,
+      "title": "Record cash and bank payments safely",
+      "lead": "Guests may pay at the shop or by bank transfer. The team records that money here, and the order's balance updates at once.",
+      "layout": "C",
+      "callouts": [
+        ["Cash, bank transfer or other", "Choose how it was paid and when it arrived. The button states the result: Record CHF 62.30 cash, balance CHF 0.00."],
+        ["Duplicate warning", "Recording the same amount again within 10 minutes shows a Possible duplicate warning before anything is saved."],
+        ["No overpayment", "An amount above what is still owed is blocked with a clear message, so balances stay correct."]
+      ],
+      "browsers": [["C13-record-payment-duplicate-warning.png", "Duplicate warning"], ["C12-record-payment-above-balance.png", "Amount above balance"]]
+    },
+    {
+      "id": "C-order-handover-complete", "after": 14,
+      "title": "Hand over, collect the balance, complete",
+      "lead": "Marking a gift handed over does not close the order. Completion unlocks only when the guest has paid in full.",
+      "layout": "C",
+      "callouts": [
+        ["Five visible steps", "A progress bar runs from Accepted through Preparing, Ready and Handed over to Completed, with the next step named."],
+        ["Locked while money is owed", "Complete stays locked with the reason, such as CHF 62.30 still owed on a 30% deposit order."],
+        ["Commission recorded once", "Completing logs who did it and when, records the partner commission once and invites the guest to review."]
+      ],
+      "browsers": [["C09-order-handed-over-owed.png", "Handed over, balance owed"], ["C14-order-paid-complete-unlocked.png", "Paid in full, ready to complete"]]
+    },
+    {
+      "id": "C-departure-holds", "after": 15,
+      "title": "Seats sold versus seats on hold",
+      "lead": "While a guest is paying, their seats are held for 15 minutes. The guest list shows confirmed bookings and held seats side by side.",
+      "layout": "C",
+      "callouts": [
+        ["Booked and holds counted apart", "The schedule reads, for example, 3 of 12 booked, Holds 3, free 6. Held seats cannot be taken by others."],
+        ["Pending guests are marked", "A booking waiting for its first payment shows Seats held for payment until it is paid or the hold expires."],
+        ["Late payments flagged", "If money arrives after a hold expired, the booking stays expired and the departure shows To reconcile."]
+      ],
+      "browsers": [["C31-departures-with-active-hold.png", "Departure schedule"], ["C32-departure-guest-list-hold.png", "Guest list with a hold"]]
+    },
+    {
+      "id": "C-outcome-confirm", "after": 15,
+      "title": "Record who came and who did not",
+      "lead": "After a tour ends, the team marks each booking. A confirmation explains exactly what the choice does to money, commission and reviews.",
+      "layout": "C",
+      "callouts": [
+        ["Only after the tour ends", "Buttons stay disabled, with the end time shown, until the tour is over. Nothing is completed automatically."],
+        ["Service delivered", "Confirms the guest took part. Money stays as it is, and completion still needs full payment."],
+        ["No-show", "Money paid and the balance stay as they are: no refund, no debt waived, no commission and no review."]
+      ],
+      "browsers": [["C18-service-delivered-confirm.png", "Service delivered"], ["C17-no-show-confirm.png", "No-show"]]
+    },
+    {
+      "id": "C-booking-payment-complete", "after": 16,
+      "title": "Collect the balance and complete a booking",
+      "lead": "A guest who took part but still owes money can pay the team directly. Once the balance is zero, the booking can be completed.",
+      "layout": "C",
+      "callouts": [
+        ["External payments only", "The sheet records money already received outside the platform, up to the amount still owed, by cash, bank transfer or other."],
+        ["Complete asks to confirm", "The dialog says commission is recorded once and the guest can review the tour."],
+        ["Full history kept", "Booking history lists each step with who and when, and the commission line changes from estimated to recorded."]
+      ],
+      "browsers": [["C20-booking-record-payment.png", "Record a payment"], ["C21-booking-snapshots-commission-history.png", "Completed with history"]]
+    },
+    {
+      "id": "C-overdue-policies", "after": 16,
+      "title": "What happens when a balance is late",
+      "lead": "Each departure saves its own rule for unpaid balances at booking time. The shop sees the result without chasing each case.",
+      "layout": "C",
+      "callouts": [
+        ["Cancel and release seats", "Under this rule the booking is cancelled at the next check after the deadline, and the seats are free again."],
+        ["Grace period", "Another rule waits a set time, such as 48 hours, and shows the date until which the guest may still pay."],
+        ["Paid money is kept", "Cancellation keeps what was already paid on record. Refunds are not part of this version of the product."]
+      ],
+      "browsers": [["C24-booking-auto-cancelled-overdue.png", "Cancelled by policy"], ["C23-booking-overdue-grace.png", "Grace period"]]
+    },
+    {
+      "id": "C-noshow-reconcile", "after": 16,
+      "title": "No-shows and payments that arrive late",
+      "lead": "Two awkward cases are handled explicitly: a guest who paid but never came, and money that reaches the shop after a hold expired.",
+      "layout": "C",
+      "callouts": [
+        ["No-show keeps the money", "The booking shows No-show and Paid in full. Nothing is refunded automatically and no commission is earned."],
+        ["Expired stays expired", "Late money never revives a booking whose hold ran out. The seats were already released."],
+        ["Flagged for the team", "The booking shows a reconciliation warning, so staff check the payment and arrange a refund by hand."]
+      ],
+      "browsers": [["C26-booking-no-show.png", "No-show, paid in full"], ["C25-booking-payment-to-reconcile.png", "Payment after expiry"]]
+    },
+    {
+      "id": "C-shop-notifications", "after": 16,
+      "title": "Automatic emails keep staff informed",
+      "lead": "The product emails the shop team when something needs attention. In this demo emails are not sent but listed in a mail panel by recipient.",
+      "layout": "A",
+      "callouts": [
+        ["Staff, guest and partner mail", "The panel separates what the team, the guest and the partner each receive, in the recipient's language."],
+        ["Example: auto-cancel", "When a late balance cancels a booking, staff are told which guest, how many seats are free and what was paid."],
+        ["Prototype only", "No real email leaves the demo. The panel shows the planned content so the client can review every message."]
+      ],
+      "browsers": [["C33-shop-mail-staff-notifications.png", "Staff notifications"]]
+    }
+  ]
+}

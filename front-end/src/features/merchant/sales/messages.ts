@@ -1,0 +1,106 @@
+/** M02 Overview › Sales and the Today / Sales pages (owner review 15.10.2026). */
+export const salesOverviewEn = {
+  "overviewPages.label": "Overview pages",
+  "overviewPages.today": "Today",
+  "overviewPages.sales": "Sales",
+
+  "salesOverview.heading": "How sales are going",
+  "salesOverview.period": "Period",
+  "salesOverview.period.today": "Today",
+  "salesOverview.period.yesterday": "Yesterday",
+  "salesOverview.period.7d": "Last 7 days",
+  "salesOverview.period.28d": "Last 4 weeks",
+  "salesOverview.period.month": "This month",
+  "salesOverview.period.3m": "Last 3 months",
+  "salesOverview.period.12m": "Last 12 months",
+  "salesOverview.period.all": "All time",
+  "salesOverview.period.custom": "Custom range",
+  "salesOverview.dates": "Dates",
+  "salesOverview.until": "{range}, until {time}",
+  "salesOverview.comparedWith": "Compared with {range}",
+  "salesOverview.noCompare": "Nothing earlier to compare with",
+  "salesOverview.delta": "{delta} compared with {range}",
+  "salesOverview.deltaNone": "Nothing to compare with in {range}",
+  "salesOverview.bucket.hour": "per hour",
+  "salesOverview.bucket.day": "per day",
+  "salesOverview.bucket.week": "per week",
+  "salesOverview.bucket.month": "per month",
+  "salesOverview.partial": "Not a full week or month",
+  "salesOverview.previous": "Previous period",
+
+  "salesOverview.value": "Total sales",
+  "salesOverview.value.hint":
+    "The total price of bookings placed, without cancelled ones. It is not profit: costs and refunds are not taken off, and part may still be unpaid.",
+  "salesOverview.collected": "Collected",
+  "salesOverview.collected.hint":
+    "Money actually received in the period, online or recorded by the shop, whenever the sale was placed.",
+  "salesOverview.orders": "Total bookings",
+  "salesOverview.orders.hint":
+    "How many bookings were placed, without cancelled ones.",
+  "salesOverview.unpaid": "Unpaid on these sales",
+  "salesOverview.unpaid.hint":
+    "What is still owed today on the bookings placed in the period.",
+  "salesOverview.unpaid.share": "{share} of total sales is still unpaid",
+
+  "salesOverview.top.title": "Top sellers",
+  "salesOverview.top.description": "Tours, by total sales in the period",
+  "salesOverview.top.empty": "Nothing sold in this period.",
+  "salesOverview.top.product": "Tours",
+  "salesOverview.top.sold": "Sold",
+  "salesOverview.top.share": "Share",
+  "salesOverview.top.guests.one": "{count} guest",
+  "salesOverview.top.guests.other": "{count} guests",
+} as const;
+
+export const salesOverviewDe: Record<keyof typeof salesOverviewEn, string> = {
+  "overviewPages.label": "Seiten der Übersicht",
+  "overviewPages.today": "Heute",
+  "overviewPages.sales": "Verkäufe",
+
+  "salesOverview.heading": "So laufen die Verkäufe",
+  "salesOverview.period": "Zeitraum",
+  "salesOverview.period.today": "Heute",
+  "salesOverview.period.yesterday": "Gestern",
+  "salesOverview.period.7d": "Letzte 7 Tage",
+  "salesOverview.period.28d": "Letzte 4 Wochen",
+  "salesOverview.period.month": "Dieser Monat",
+  "salesOverview.period.3m": "Letzte 3 Monate",
+  "salesOverview.period.12m": "Letzte 12 Monate",
+  "salesOverview.period.all": "Gesamter Zeitraum",
+  "salesOverview.period.custom": "Eigener Zeitraum",
+  "salesOverview.dates": "Daten",
+  "salesOverview.until": "{range}, bis {time}",
+  "salesOverview.comparedWith": "Verglichen mit {range}",
+  "salesOverview.noCompare": "Kein früherer Zeitraum zum Vergleich",
+  "salesOverview.delta": "{delta} verglichen mit {range}",
+  "salesOverview.deltaNone": "Kein Vergleich mit {range} möglich",
+  "salesOverview.bucket.hour": "pro Stunde",
+  "salesOverview.bucket.day": "pro Tag",
+  "salesOverview.bucket.week": "pro Woche",
+  "salesOverview.bucket.month": "pro Monat",
+  "salesOverview.partial": "Keine volle Woche bzw. kein voller Monat",
+  "salesOverview.previous": "Vorheriger Zeitraum",
+
+  "salesOverview.value": "Gesamtumsatz",
+  "salesOverview.value.hint":
+    "Der Gesamtpreis der erfassten Buchungen, ohne stornierte. Das ist kein Gewinn: Kosten und Rückerstattungen sind nicht abgezogen, und ein Teil kann noch offen sein.",
+  "salesOverview.collected": "Eingenommen",
+  "salesOverview.collected.hint":
+    "Im Zeitraum tatsächlich erhaltenes Geld, online oder vom Geschäft erfasst, egal wann verkauft wurde.",
+  "salesOverview.orders": "Buchungen gesamt",
+  "salesOverview.orders.hint":
+    "Wie viele Buchungen erfasst wurden, ohne stornierte.",
+  "salesOverview.unpaid": "Offen aus diesen Verkäufen",
+  "salesOverview.unpaid.hint":
+    "Was heute auf den im Zeitraum erfassten Buchungen noch offen ist.",
+  "salesOverview.unpaid.share": "{share} des Gesamtumsatzes ist noch offen",
+
+  "salesOverview.top.title": "Bestseller",
+  "salesOverview.top.description": "Touren, nach Gesamtumsatz im Zeitraum",
+  "salesOverview.top.empty": "In diesem Zeitraum wurde nichts verkauft.",
+  "salesOverview.top.product": "Touren",
+  "salesOverview.top.sold": "Verkauft",
+  "salesOverview.top.share": "Anteil",
+  "salesOverview.top.guests.one": "{count} Gast",
+  "salesOverview.top.guests.other": "{count} Gäste",
+};

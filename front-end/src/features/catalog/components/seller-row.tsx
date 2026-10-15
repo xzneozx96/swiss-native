@@ -16,9 +16,9 @@ import { photoUrl } from "@/lib/photos";
 export interface SellerRowProps {
   /** Shop profile photo slug; until the shop adds one, a store icon stands in. */
   photo?: string;
-  /** Shop name on the row, e.g. "Swiss Keepsakes Luzern". */
+  /** Shop name on the row, e.g. "Swiss Native". */
   name: string;
-  /** Sheet heading, e.g. "Sold by Swiss Keepsakes Luzern". */
+  /** Sheet heading, e.g. "Sold by Swiss Native". */
   title: string;
   /** One muted line under the name, e.g. "Seller · shop in the old town". */
   sub: string;
@@ -32,7 +32,7 @@ export interface SellerRowProps {
     label: string;
     href: string;
   }[];
-  /** "Visit shop": the shop's gifts (one shop in Phase 1, so the gift list). */
+  /** "Visit shop": the shop's tours (one host, so the tour list). */
   visitLabel: string;
 }
 
@@ -124,7 +124,7 @@ export function SellerRow({
                   </a>
                 );
               })}
-              <Link className={`${rowClass} border-b-0`} to="/gifts">
+              <Link className={`${rowClass} border-b-0`} to="/tours">
                 <ShopIcon aria-hidden size={22} />
                 <span className="flex-1 font-medium">{visitLabel}</span>
                 <ChevronRightIcon aria-hidden size={18} />

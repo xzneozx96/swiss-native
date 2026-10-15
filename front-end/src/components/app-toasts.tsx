@@ -13,7 +13,7 @@ export function AppToasts() {
 
   return (
     <Toast.Provider
-      aria-label={t("cartToast.region")}
+      aria-label={t("toast.region")}
       className="bottom-[calc(env(safe-area-inset-bottom,0px)+96px)] w-[min(398px,calc(100vw-2rem))] sm:min-w-0"
       placement="bottom"
     >
@@ -30,7 +30,7 @@ export function AppToasts() {
               )}
               {actionProps?.children && <Toast.ActionButton {...actionProps} />}
             </Toast.Content>
-            <Toast.CloseButton aria-label={t("cartToast.close")} />
+            <Toast.CloseButton aria-label={t("toast.close")} />
           </Toast>
         );
       }}

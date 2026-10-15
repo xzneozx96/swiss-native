@@ -8,12 +8,7 @@ import { useState } from "react";
 
 import { BookingStatusLabels } from "../components/booking-status";
 import { useTours } from "../hooks/use-tours";
-import {
-  balanceOverdue,
-  bookingBalance,
-  bookingCommission,
-  bookingPaid,
-} from "../lib/selectors";
+import { balanceOverdue, bookingBalance, bookingPaid } from "../lib/selectors";
 
 import { AttendanceActions } from "./attendance-actions";
 import { externalPaymentBlock } from "./lib/transitions";
@@ -30,6 +25,7 @@ import {
 import { useOverdueCheck } from "./use-overdue-check";
 
 import { EmptyState } from "@/components/empty-state";
+import { MerchantBackBar } from "@/components/layout/merchant-back-bar";
 import {
   AccountIcon,
   BackIcon,
@@ -38,7 +34,6 @@ import {
   ClockIcon,
   CloseIcon,
   InfoIcon,
-  PartnersIcon,
   PayLaterIcon,
   StatusDangerIcon,
   StatusSuccessIcon,
@@ -47,13 +42,9 @@ import {
 import { StatCard } from "@/components/stat-card";
 import { StatusChip } from "@/components/status-chip";
 import { useLocale } from "@/contexts/locale-context";
-import { useDemo } from "@/features/demo";
 import { ProposalMark } from "@/features/demo/components/proposal-mark";
-import {
-  ActionPanel,
-  DetailCard,
-} from "@/features/merchant/order-detail/components/detail-card";
-import { useIsWide } from "@/features/merchant/order-detail/hooks/use-is-wide";
+import { ActionPanel, DetailCard } from "@/components/detail-card";
+import { useIsWide } from "@/hooks/use-is-wide";
 import { pickText } from "@/lib/localized";
 
 /**
@@ -155,70 +146,6 @@ function SnapshotCard({ booking }: { booking: TourBooking }) {
   );
 }
 
-/** Source and commission in one card, as on M04 (decision 276). */
-function CommissionCard({ booking }: { booking: TourBooking }) {
-  const { t } = useLocale();
-  const { money, date } = useTourFormatting();
-  const commission = bookingCommission(booking);
-  const partners = useDemo().state.data.partners;
-  const partner = partners.find((p) => p.id === booking.partnerId);
-  const tone =
-    commission.state === "recorded"
-      ? "success"
-      : commission.state === "estimated"
-        ? "info"
-        : "neutral";
-  const stateKey: Record<typeof commission.state, MessageKey> = {
-    none: "tourMerchant.commission.none",
-    estimated: "tourMerchant.commission.estimated",
-    recorded: "tourMerchant.commission.recorded",
-    "not-applicable": "tourMerchant.commission.notApplicable",
-  };
-  const rate = `${Math.round(commission.rate * 100)}%`;
-
-  return (
-    <DetailCard icon={PartnersIcon} title={t("tourMerchant.commissionTitle")}>
-      <Facts
-        items={[
-          {
-            label: t("tourMerchant.source"),
-            value: partner?.name ?? t("tourMerchant.sourceDirect"),
-          },
-        ]}
-      />
-      <div>
-        <StatusChip tone={tone}>{t(stateKey[commission.state])}</StatusChip>
-      </div>
-      {partner && (
-        // The M04 partner card's total row.
-        <div className="flex flex-wrap justify-between gap-x-3 border-t border-separator pt-3 font-semibold tabular-nums">
-          <span>{t("tourMerchant.commissionAmount")}</span>
-          <span>
-            {t("tourMerchant.commissionValue", {
-              amount: money(commission.amount),
-              rate,
-              basis: money(commission.basis),
-            })}
-          </span>
-        </div>
-      )}
-      <p className="text-sm text-muted">
-        {commission.state === "recorded" && booking.commissionRecordedAt
-          ? t("tourMerchant.commissionRecordedAt", {
-              date: date(booking.commissionRecordedAt),
-            })
-          : t(
-              commission.state === "none"
-                ? "tourMerchant.commissionNoPartner"
-                : commission.state === "not-applicable"
-                  ? "tourMerchant.commissionNever"
-                  : "tourMerchant.commission",
-            )}
-      </p>
-    </DetailCard>
-  );
-}
-
 const eventIcon: Record<string, IconComponent> = {
   created: BookingsIcon,
   expired: ClockIcon,
@@ -299,7 +226,7 @@ function HistoryCard({ booking }: { booking: TourBooking }) {
 
 /**
  * M07 Merchant booking detail (spec "as M04 for tours"): guest, departure, participants,
- * source, price and policy snapshots, payments, commission and history. Owner and Manager
+ * source, price and policy snapshots, payments, and history. The host
  * record external payments (M08) and outcomes. Adjustments and refunds are Phase 3.
  */
 export function MerchantTourBookingPage({ bookingId }: { bookingId: string }) {
@@ -591,8 +518,14 @@ export function MerchantTourBookingPage({ bookingId }: { bookingId: string }) {
   return (
     <div className="flex min-w-0 flex-col gap-5 lg:gap-6">
       <header className="flex flex-col gap-3">
+        <MerchantBackBar
+          label={t("tourMerchant.manifest")}
+          params={{ departureId: booking.departureId }}
+          title={booking.ref}
+          to="/store/bookings/departures/$departureId"
+        />
         <Link
-          className="flex w-fit items-center gap-1.5 rounded-lg text-sm text-muted outline-none hover:text-foreground focus-visible:focus-ring"
+          className="hidden w-fit items-center gap-1.5 rounded-lg text-sm text-muted outline-none hover:text-foreground focus-visible:focus-ring lg:flex"
           params={{ departureId: booking.departureId }}
           to="/store/bookings/departures/$departureId"
         >
@@ -601,7 +534,7 @@ export function MerchantTourBookingPage({ bookingId }: { bookingId: string }) {
         </Link>
         <div className="flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
           <div className="flex min-w-0 flex-col gap-1">
-            <h1 className="text-title">{booking.ref}</h1>
+            <h1 className="text-title max-lg:sr-only">{booking.ref}</h1>
             <p className="font-medium">
               {pickText(booking.tourName, language).text}
             </p>
@@ -649,7 +582,6 @@ export function MerchantTourBookingPage({ bookingId }: { bookingId: string }) {
             </>
           ) : (
             <>
-              <CommissionCard booking={booking} />
               {contact}
               {departure}
               {snapshotCard}
@@ -663,7 +595,6 @@ export function MerchantTourBookingPage({ bookingId }: { bookingId: string }) {
             {contact}
             {departure}
             {payments}
-            <CommissionCard booking={booking} />
           </div>
         )}
       </div>

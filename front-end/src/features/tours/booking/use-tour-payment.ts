@@ -1,8 +1,5 @@
 import type { TourBooking } from "../types";
-import type {
-  PaymentStep,
-  PaymentView,
-} from "@/features/payment/hooks/use-payment";
+import type { PaymentStep, PaymentView } from "@/features/payment/types";
 
 import { useNavigate } from "@tanstack/react-router";
 import { useRef, useState } from "react";

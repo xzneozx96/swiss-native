@@ -9,8 +9,8 @@ import { MissingBooking, useOwnedBooking } from "./tour-payment-page";
 import { BookingsIcon, StatusSuccessIcon } from "@/components/icons";
 import { SurfaceCard } from "@/components/surface-card";
 import { useLocale } from "@/contexts/locale-context";
-import { TripProfile } from "@/features/checkout/components/trip-profile";
-import { useTripProfile } from "@/features/checkout/hooks/use-trip-profile";
+import { TripProfile } from "@/features/trip/components/trip-profile";
+import { useTripProfile } from "@/features/trip/hooks/use-trip-profile";
 import { bookingBalance } from "@/features/tours/lib/selectors";
 import { pickText } from "@/lib/localized";
 
@@ -19,7 +19,7 @@ export function TourConfirmedPage({ bookingId }: { bookingId: string }) {
   const { t, language } = useLocale();
   const { money, date } = useBookingFormat();
   const navigate = useNavigate();
-  const trip = useTripProfile({ kind: "tour", bookingId });
+  const trip = useTripProfile({ bookingId });
 
   if (!booking) return <MissingBooking />;
   if (booking.status !== "confirmed")
@@ -93,7 +93,6 @@ export function TourConfirmedPage({ bookingId }: { bookingId: string }) {
       </section>
       <TripProfile
         answers={trip.answers}
-        kind="tour"
         status={trip.status}
         onSave={trip.save}
         onSkip={trip.skip}

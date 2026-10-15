@@ -23,10 +23,8 @@ function stable(Base: IconComponent, name: string): IconComponent {
 
 // Guest navigation and header
 export const ExploreIcon = stable(Reicon.Compass, "ExploreIcon");
-export const GiftIcon = stable(Reicon.Gift, "GiftIcon");
 export const TourIcon = stable(Reicon.Ticket, "TourIcon");
 export const AccountIcon = stable(Reicon.User, "AccountIcon");
-export const CartIcon = stable(Reicon.ShoppingBag, "CartIcon");
 
 // Merchant navigation
 export const TodayIcon = stable(Reicon.Home, "TodayIcon");
@@ -35,7 +33,6 @@ export const BookingsIcon = stable(Reicon.Calendar, "BookingsIcon");
 export const ProductsIcon = stable(Reicon.Package, "ProductsIcon");
 export const PartnersIcon = stable(Reicon.Handshake, "PartnersIcon");
 export const ContentIcon = stable(Reicon.Document, "ContentIcon");
-export const RequestsIcon = stable(Reicon.Inbox, "RequestsIcon");
 export const ReportsIcon = stable(Reicon.ChartBar, "ReportsIcon");
 export const SettingsIcon = stable(Reicon.Settings, "SettingsIcon");
 export const MoreIcon = stable(Reicon.MoreH, "MoreIcon");
@@ -77,7 +74,6 @@ export const CloseIcon = stable(Reicon.Xmark, "CloseIcon");
 export const SelectedIcon = stable(Reicon.TickCircle, "SelectedIcon");
 
 // Detail highlights
-export const EngraveIcon = stable(Reicon.PenNib, "EngraveIcon");
 export const PickupIcon = stable(Reicon.Location, "PickupIcon");
 export const PayLaterIcon = stable(Reicon.Wallet, "PayLaterIcon");
 export const PickupDateIcon = stable(Reicon.Calendar, "PickupDateIcon");
@@ -90,13 +86,10 @@ export const DirectionsIcon = stable(Reicon.Routing, "DirectionsIcon");
 export const ShopIcon = stable(Reicon.Shop, "ShopIcon");
 
 // Cart line
-export const TrashIcon = stable(Reicon.Trash, "TrashIcon");
 export const QrIcon = stable(Reicon.Qr, "QrIcon");
 /** Sliders: "adjust what you see" (owner, 14 Oct 2026: clearer than the funnel shape). */
 export const FilterIcon = stable(Reicon.Setting4, "FilterIcon");
 export const ArchiveIcon = stable(Reicon.Archive, "ArchiveIcon");
-export const CartRemoveIcon = stable(Reicon.Trash4, "CartRemoveIcon");
-export const MinusIcon = stable(Reicon.Minus, "MinusIcon");
 export const PlusIcon = stable(Reicon.Plus, "PlusIcon");
 export const ChevronDownIcon = stable(Reicon.ChevronDown, "ChevronDownIcon");
 
@@ -121,3 +114,29 @@ export const ProfileEditIcon = stable(Reicon.UserEdit, "ProfileEditIcon");
 export const SendIcon = stable(Reicon.Send, "SendIcon");
 /** The C21 trip assistant (R19). */
 export const AssistantIcon = stable(Reicon.MagicStar, "AssistantIcon");
+
+// Rich-text toolbar for the long story (M12, M13; owner 15.10.2026)
+export const HeadingIcon = stable(Reicon.Text, "HeadingIcon");
+export const BoldIcon = stable(Reicon.TextBold, "BoldIcon");
+export const ItalicIcon = stable(Reicon.TextItalic, "ItalicIcon");
+export const BulletListIcon = stable(Reicon.UnorderedList, "BulletListIcon");
+export const NumberedListIcon = stable(Reicon.OrderedList, "NumberedListIcon");
+export const QuoteIcon = stable(Reicon.QuoteUp, "QuoteIcon");
+export const LinkIcon = stable(Reicon.Link, "LinkIcon");
+export const PhotoAddIcon = stable(Reicon.GalleryAdd, "PhotoAddIcon");
+export const UploadIcon = stable(Reicon.ImageUp, "UploadIcon");
+export const UndoIcon = stable(Reicon.Undo, "UndoIcon");
+export const RedoIcon = stable(Reicon.Redo, "RedoIcon");
+/** The long story card (M12, M13). */
+export const StoryIcon = stable(Reicon.Book, "StoryIcon");
+/** Product row menu (M11): edit, archive and restore. */
+export const EditIcon = stable(Reicon.Edit2, "EditIcon");
+export const RestoreIcon = stable(Reicon.ArchiveUp, "RestoreIcon");
+
+// Stay amenities
+export const BedIcon = stable(Reicon.Bed, "BedIcon");
+export const BathIcon = stable(Reicon.Bath, "BathIcon");
+export const BreakfastIcon = stable(Reicon.Coffee, "BreakfastIcon");
+export const WifiIcon = stable(Reicon.Wifi, "WifiIcon");
+export const ParkingIcon = stable(Reicon.Parking, "ParkingIcon");
+export const MealIcon = stable(Reicon.ForkKnife, "MealIcon");

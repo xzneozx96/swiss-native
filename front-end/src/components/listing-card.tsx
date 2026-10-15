@@ -8,7 +8,6 @@ import { Media } from "@/components/media";
 import { StatusChip } from "@/components/status-chip";
 
 export interface ListingCardProps {
-  to: "/gifts/$slug" | "/tours/$slug";
   slug: string;
   name: string;
   photo?: string;
@@ -25,9 +24,8 @@ export interface ListingCardProps {
   disabled?: boolean;
 }
 
-/** The shared photo, price, typography and heart treatment for gifts and tours. */
+/** The shared photo, price, typography and heart treatment for tours. */
 export function ListingCard({
-  to,
   slug,
   name,
   photo,
@@ -103,7 +101,7 @@ export function ListingCard({
           {content}
         </div>
       ) : (
-        <Link className={contentClass} params={{ slug }} to={to}>
+        <Link className={contentClass} params={{ slug }} to="/tours/$slug">
           {content}
         </Link>
       )}

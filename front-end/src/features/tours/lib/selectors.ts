@@ -6,7 +6,6 @@ import type {
   TourParticipants,
   TourPaymentPolicy,
 } from "../types";
-import type { CommissionState } from "@/features/orders/lib/selectors";
 
 export function participantSeats(group: TourParticipants): number {
   return group.adults + group.children;
@@ -114,31 +113,6 @@ export function departureSeats(
     ),
     available: availableSeats(data, departureId, now),
     capacity: data.departures.find((d) => d.id === departureId)?.capacity ?? 0,
-  };
-}
-/**
- * Partner commission of a booking, in the gift states (AC09, AC10, O10): recorded once at
- * completion, never for a no-show, cancellation or expired hold, none without a partner.
- */
-export function bookingCommission(booking: TourBooking): {
-  state: CommissionState;
-  amount: number;
-  basis: number;
-  rate: number;
-} {
-  const state: CommissionState = !booking.partnerId
-    ? "none"
-    : booking.status === "completed" && booking.commissionRecordedAt
-      ? "recorded"
-      : ["no_show", "cancelled", "expired"].includes(booking.status)
-        ? "not-applicable"
-        : "estimated";
-
-  return {
-    state,
-    amount: Math.round(booking.total * booking.commissionRate),
-    basis: booking.total,
-    rate: booking.commissionRate,
   };
 }
 export type BalanceOverdue =

@@ -12,11 +12,11 @@ import { ChevronRightIcon, EmailIcon } from "@/components/icons";
 import { useLocale } from "@/contexts/locale-context";
 import { useDemo } from "@/features/demo";
 import { renderMail } from "@/features/notifications/components/render-mail";
-import { formatOrderDateTime } from "@/features/orders/lib/format";
+import { formatOrderDateTime } from "@/lib/dates";
 
 /**
- * Notifications (1.12s): where order updates go, and every email the prototype sent this
- * guest, newest first. Each email about an order opens that order.
+ * Notifications (1.12s): where booking updates go, and every email the prototype sent this
+ * guest, newest first. Each email about a booking opens that booking.
  */
 export function NotificationsPanel({
   guestId,
@@ -56,13 +56,13 @@ export function NotificationsPanel({
               <>
                 <span className="flex min-w-0 flex-1 flex-col">
                   <span className="truncate font-medium" lang={mail.language}>
-                    {renderMail(mail, state.data.pickupPlaces).subject}
+                    {renderMail(mail).subject}
                   </span>
                   <span className="text-sm text-muted tabular-nums">
                     {formatOrderDateTime(mail.at, intlLocale)}
                   </span>
                 </span>
-                {mail.orderId && (
+                {mail.bookingId && (
                   <ChevronRightIcon
                     aria-hidden
                     className="shrink-0 text-muted"
@@ -74,11 +74,11 @@ export function NotificationsPanel({
 
             return (
               <li key={mail.id} className={plainItemClass}>
-                {mail.orderId ? (
+                {mail.bookingId ? (
                   <Link
                     className={rowClass}
-                    params={{ orderId: mail.orderId }}
-                    to="/account/orders/$orderId"
+                    params={{ bookingId: mail.bookingId }}
+                    to="/account/bookings/$bookingId"
                   >
                     {body}
                   </Link>

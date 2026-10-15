@@ -1,0 +1,42 @@
+PASS [en] ?tab=private selects Private tours
+PASS [en] two requests, newest first
+PASS [en] the new request: New, group, dates, interests, language and time | SAT / 24 / Oct / j.morgan@example.com / New / English · 12.10.2026, 21:00 / Group / 6 people / Dates / 24.10.2026 – 25.10.2026 / Interests / A family trip with grandparents in their eighties. A gentle walk through the old town with a coffee stop would be ideal. / Reply by email / Mark answered
+PASS [en] the date tile is the first preferred day | SAT / 24 / Oct / j.morgan@
+PASS [en] the answered request shows Answered and when, and no "Mark answered" | FRI / 16 / Oct / s.baumann@example.com / Answered / German · 06.10.2026, 14:00 / Group / 14 people / Dates / 16.10.2026 – 17.10.2026 / Interests / Ausflug mit unserem Team. Gern Geschichte der Altstadt, zum Schluss ein Apéro. / Reply by email / Answered on 07.10.2026, 09:00
+PASS [en] the reply link is a mailto in each guest's language (D9) | ["mailto:j.morgan@example.com?subject=Your%20private%20tour%20in%20Lucerne","mailto:s.baumann@example.com?subject=Ihre%20private%20Tour%20in%20Luzern"]
+PASS [en] inbox: no horizontal overflow
+PASS [en] "Mark answered" saves when, shows a toast and the Answered state
+PASS [en] Undo makes it new again
+PASS [en] marked again, it stays answered after a refresh
+PASS [en] after the refresh the card reads Answered on …
+PASS [en] C22 sent | http://localhost:5251/#/tours/private-tour/sent?request=pt-mv96hav0
+PASS [en] the new request tops M20 as New | SAT / 24 / Oct / group@example.com / New / English · 13.10.2026, 10:00 / Group / 4 people / Dates / 24.10.2026 / Interests / None given / Reply by email / Mark answered
+PASS [en] a single day shows one date; no interests reads "None given" | SAT / 24 / Oct / group@example.com / New / English · 13.10.2026, 10:00 / Group / 4 people / Dates / 24.10.2026 / Interests / None given / Reply by email / Mark answered
+PASS [en] the Store Manager sees the inbox and can mark answered
+PASS [en] empty: one sentence, count 0
+PASS [en] no console or page errors | []
+PASS [de] ?tab=private selects Private tours
+PASS [de] two requests, newest first
+PASS [de] the new request: New, group, dates, interests, language and time | SA / 24 / Okt / j.morgan@example.com / Neu / Englisch · 12.10.2026, 21:00 / Gruppe / 6 Personen / Daten / 24.10.2026 – 25.10.2026 / Interessen / A family trip with grandparents in their eighties. A gentle walk through the old town with a coffee stop would be ideal. / Per E-Mail antworten / Als beantwortet markieren
+PASS [de] the date tile is the first preferred day | SA / 24 / Okt / j.morgan@e
+PASS [de] the answered request shows Answered and when, and no "Mark answered" | FR / 16 / Okt / s.baumann@example.com / Beantwortet / Deutsch · 06.10.2026, 14:00 / Gruppe / 14 Personen / Daten / 16.10.2026 – 17.10.2026 / Interessen / Ausflug mit unserem Team. Gern Geschichte der Altstadt, zum Schluss ein Apéro. / Per E-Mail antworten / Beantwortet am 07.10.2026, 09:00
+PASS [de] the reply link is a mailto in each guest's language (D9) | ["mailto:j.morgan@example.com?subject=Your%20private%20tour%20in%20Lucerne","mailto:s.baumann@example.com?subject=Ihre%20private%20Tour%20in%20Luzern"]
+PASS [de] inbox: no horizontal overflow
+PASS [de] "Mark answered" saves when, shows a toast and the Answered state
+PASS [de] Undo makes it new again
+PASS [de] marked again, it stays answered after a refresh
+PASS [de] after the refresh the card reads Answered on …
+PASS [de] C22 sent | http://localhost:5251/#/tours/private-tour/sent?request=pt-mv96ho5o
+PASS [de] the new request tops M20 as New | SA / 24 / Okt / group@example.com / Neu / Deutsch · 13.10.2026, 10:00 / Gruppe / 4 Personen / Daten / 24.10.2026 / Interessen / Keine Angaben / Per E-Mail antworten / Als beantwortet markieren
+PASS [de] a single day shows one date; no interests reads "Keine Angaben" | SA / 24 / Okt / group@example.com / Neu / Deutsch · 13.10.2026, 10:00 / Gruppe / 4 Personen / Daten / 24.10.2026 / Interessen / Keine Angaben / Per E-Mail antworten / Als beantwortet markieren
+PASS [de] the Store Manager sees the inbox and can mark answered
+PASS [de] empty: one sentence, count 0
+PASS [de] no console or page errors | []
+PASS [desktop] the inbox is a table with 2 rows
+PASS [desktop] the row shows group and dates, interests and New
+PASS [desktop] the email is the reply link
+PASS [desktop] Mark answered in the table
+PASS [desktop] no horizontal overflow
+PASS [desktop] no console or page errors | []
+
+RESULT 40 passed, 0 failed

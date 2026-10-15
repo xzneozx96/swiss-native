@@ -4,7 +4,7 @@ import { useLocale } from "@/contexts/locale-context";
 import { useDemo } from "@/features/demo";
 import { demoNow } from "@/features/demo/clock";
 import { sendMail } from "@/features/notifications/mail";
-import { demoGuest } from "@/features/orders/seed";
+import { demoGuest } from "@/features/account/seed";
 
 /** Spec §4.5 and §6 N01: a code works for 10 minutes; resend unlocks after 30 seconds. */
 export const CODE_LENGTH = 6;

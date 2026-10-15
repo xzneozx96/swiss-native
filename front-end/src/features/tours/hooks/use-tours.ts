@@ -5,7 +5,7 @@ import type {
   TourDraft,
 } from "../types";
 import type { DemoState } from "@/features/demo/types";
-import type { Outcome } from "@/features/payment/hooks/use-payment";
+import type { Outcome } from "@/features/payment/types";
 import type {
   ExternalPaymentInput,
   StaffContext,
@@ -40,7 +40,6 @@ import {
 import { useLocale } from "@/contexts/locale-context";
 import { useDemo } from "@/features/demo";
 import { demoNow } from "@/features/demo/clock";
-import { attributedPartnerId } from "@/features/partners/referral";
 
 const fallback = createTourSeed();
 
@@ -118,7 +117,6 @@ export function useTourActions() {
       departure,
       draft,
       guestId,
-      partnerId: attributedPartnerId(state.data.referralVisits, now()),
       language,
       now: now(),
     });

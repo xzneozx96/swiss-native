@@ -3,7 +3,7 @@ import type { Tour } from "../types";
 import { ListingCard } from "@/components/listing-card";
 import { StatusChip } from "@/components/status-chip";
 import { useLocale } from "@/contexts/locale-context";
-import { useFavourites } from "@/features/catalog/hooks/use-favourites";
+import { useFavourites } from "@/features/tours/hooks/use-favourites";
 import { useProductReviews } from "@/features/catalog/hooks/use-product-reviews";
 import { zurichDate } from "@/features/catalog/lib/pickup";
 import { useTours } from "@/features/tours/hooks/use-tours";
@@ -45,8 +45,8 @@ export function TourCard({
         name.isFallback
           ? t(
               name.language === "en"
-                ? "gifts.textInEnglish"
-                : "gifts.textInGerman",
+                ? "listing.textInEnglish"
+                : "listing.textInGerman",
             )
           : undefined
       }
@@ -92,7 +92,6 @@ export function TourCard({
           </div>
         )
       }
-      to="/tours/$slug"
     />
   );
 }

@@ -1,10 +1,10 @@
 import { Link } from "@tanstack/react-router";
 import { forwardRef } from "react";
 
-import heroPhoto from "@/assets/photos/lucerne-kapellbruecke-1200.jpg";
+import heroPhoto from "@/assets/photos/furka-pass-4.jpg";
 import { SearchIcon } from "@/components/icons";
 import { BrandLogo } from "@/components/layout/brand-logo";
-import { CartButton, SearchButton } from "@/components/layout/cart-button";
+import { SearchButton } from "@/components/layout/top-bar-buttons";
 
 interface HeroProps {
   appName: string;
@@ -19,7 +19,7 @@ interface HeroProps {
 
 /**
  * Discovery hero (Lab round 3, F3 "Sky fade", chosen 13.10.2026): app top row and a
- * greeting on the sky, the Lucerne skyline fading in below, and a big search box on
+ * greeting on the sky, the Furka Pass road fading in below, and a big search box on
  * the water that opens global search, like the search icon in the top row.
  * The forwarded ref marks the hero's bottom edge for the collapsing header.
  */
@@ -36,7 +36,6 @@ export const Hero = forwardRef<HTMLDivElement, HeroProps>(function Hero(
               <BrandLogo label={appName} />
             </div>
             <SearchButton label={searchLabel} to="/search" />
-            <CartButton />
           </div>
           <div className="flex flex-col gap-0.5 pt-1">
             <p className="text-sm text-muted">{hello}</p>
@@ -45,10 +44,10 @@ export const Hero = forwardRef<HTMLDivElement, HeroProps>(function Hero(
             </h1>
           </div>
         </div>
-        {/* Crop keeps the Water Tower and Pilatus; the shop sign on the left stays out. */}
+        {/* Crop keeps the sky and the road winding into the valley. */}
         <img
           alt={photoAlt}
-          className="-mt-6 h-[220px] w-full object-cover object-[62%_60%] [mask-image:linear-gradient(to_bottom,transparent,black_45%)]"
+          className="-mt-6 h-[220px] w-full object-cover object-[50%_45%] [mask-image:linear-gradient(to_bottom,transparent,black_45%)]"
           height={799}
           src={heroPhoto}
           width={1200}

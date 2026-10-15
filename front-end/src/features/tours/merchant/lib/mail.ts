@@ -53,7 +53,7 @@ export function mailTourGuest(
   });
 }
 
-/** The same for Owner and Manager, in the staff UI language (spec §6: N11, N22). */
+/** The same for the host, in the staff UI language (spec §6: N11, N22). */
 export function mailTourStaff(
   state: DemoState,
   booking: TourBooking,

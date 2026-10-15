@@ -1,5 +1,5 @@
 import type { Review } from "@/features/catalog/types";
-import type { ReviewableProduct } from "@/features/reviews/hooks/use-order-reviews";
+import type { ReviewableProduct } from "@/features/reviews/lib/review";
 import type { TourBooking } from "../types";
 
 import { Button, toast } from "@heroui/react";
@@ -18,7 +18,7 @@ import { WriteReviewSheet } from "@/features/reviews/components/write-review-she
 import { reviewId, reviewerName } from "@/features/reviews/lib/review";
 import { pickText } from "@/lib/localized";
 
-/** A completed, settled tour booking opens the same review sheet as a gift order. */
+/** A completed, settled tour booking opens the review sheet. */
 export function TourBookingReview({ booking }: { booking: TourBooking }) {
   const { state, update } = useDemo();
   const { t, language } = useLocale();
@@ -30,7 +30,7 @@ export function TourBookingReview({ booking }: { booking: TourBooking }) {
   const tour = state.data.tours?.tours.find(
     (item) => item.id === booking.tourId,
   );
-  const review = useProductReviews(productId, { kind: "tour" }).items.find(
+  const review = useProductReviews(productId).items.find(
     (item) => item.id === id,
   );
   const product: ReviewableProduct = {
@@ -145,7 +145,6 @@ export function TourBookingReview({ booking }: { booking: TourBooking }) {
       )}
       <WriteReviewSheet
         isOpen={isOpen}
-        kind="tour"
         product={product}
         onOpenChange={setOpen}
         onSubmit={submit}

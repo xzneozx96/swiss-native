@@ -29,7 +29,7 @@ export const openPayment = (booking: TourBooking) =>
   booking.payments.find((payment) => payment.status === "processing");
 
 /**
- * A new booking with its prices, policies, referral source and hold deadline snapshotted at
+ * A new booking with its prices, policies and hold deadline snapshotted at
  * creation (AC11, AC15).
  */
 export function newBooking({
@@ -38,7 +38,6 @@ export function newBooking({
   departure,
   draft,
   guestId,
-  partnerId,
   language,
   now,
 }: {
@@ -51,7 +50,6 @@ export function newBooking({
       "contactName" | "phone" | "childName" | "participantAnswers"
     >;
   guestId: string;
-  partnerId: string | null;
   language: Language;
   now: Date;
 }): TourBooking {
@@ -91,12 +89,9 @@ export function newBooking({
     policy: departure.policy,
     balanceDueAt: departure.balanceDueAt,
     overduePolicy: structuredClone(departure.overduePolicy),
-    partnerId,
-    commissionRate: tour.commissionRate,
     createdAt: at,
     payments: [],
     activity: [{ at, event: "created", actor: "guest" }],
-    commissionRecordedAt: null,
   };
 
   return departure.policy === "later"
@@ -313,7 +308,6 @@ export function competingHold(
         childName: "",
       },
       guestId: "g-tom",
-      partnerId: null,
       language: "de",
       now,
     }),

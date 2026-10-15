@@ -19,7 +19,6 @@ export function MailPanel() {
   const mail = state.data.mail;
   const guestMail = mail.filter((m) => m.to === "guest").reverse();
   const staffMail = mail.filter((m) => m.to === "staff").reverse();
-  const partnerMail = mail.filter((m) => m.to === "partner").reverse();
 
   return (
     <Drawer isOpen={open} onOpenChange={setOpen}>
@@ -61,10 +60,6 @@ export function MailPanel() {
                       Staff ({staffMail.length})
                       <Tabs.Indicator />
                     </Tabs.Tab>
-                    <Tabs.Tab id="partner">
-                      Partner ({partnerMail.length})
-                      <Tabs.Indicator />
-                    </Tabs.Tab>
                   </Tabs.List>
                 </Tabs.ListContainer>
                 <Tabs.Panel className="pt-3" id="guest">
@@ -72,9 +67,6 @@ export function MailPanel() {
                 </Tabs.Panel>
                 <Tabs.Panel className="pt-3" id="staff">
                   <MailList items={staffMail} />
-                </Tabs.Panel>
-                <Tabs.Panel className="pt-3" id="partner">
-                  <MailList items={partnerMail} />
                 </Tabs.Panel>
               </Tabs>
             </Drawer.Body>
@@ -97,19 +89,15 @@ function MailList({ items }: { items: Mail[] }) {
   return (
     <ul className="flex flex-col gap-2">
       {items.map((mail, i) => {
-        const { subject, body } = renderMail(mail, state.data.pickupPlaces);
+        const { subject, body } = renderMail(mail);
         const guest = state.data.guests.find((g) => g.id === mail.guestId);
-        const partner = state.data.partners.find(
-          (p) => p.id === mail.partnerId,
-        );
-        const to =
-          mail.to === "staff"
-            ? "Shop staff (Chị Ngọc, Lukas)"
-            : partner
-              ? `${partner.name} <${partner.email}>`
-              : guest
-                ? `${guest.name} <${String(mail.params.email ?? guest.email)}>`
-                : "Guest";
+        const to = mail.recipient
+          ? mail.recipient
+          : mail.to === "staff"
+            ? "Host (Erich Haldi)"
+            : guest
+              ? `${guest.name} <${String(mail.params.email ?? guest.email)}>`
+              : "Guest";
 
         return (
           <li key={mail.id}>

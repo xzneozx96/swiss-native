@@ -19,7 +19,7 @@ import {
   TravelGroupIcon,
 } from "@/components/icons";
 import { InfoNote } from "@/components/info-note";
-import { BackButton } from "@/components/layout/cart-button";
+import { BackButton } from "@/components/layout/top-bar-buttons";
 import { Media } from "@/components/media";
 import {
   SurfaceCard,
@@ -171,7 +171,7 @@ export function TourReviewPage({ slug }: { slug: string }) {
                   <Media
                     alt={text(tour.name).text}
                     className="size-16 shrink-0 rounded-xl"
-                    photo={tour.photos[0] ?? "lucerne-old-town"}
+                    photo={tour.photos[0] ?? "furka-pass-1"}
                   />
                   <h2
                     className="min-w-0 leading-snug font-semibold text-balance"

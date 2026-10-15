@@ -7,9 +7,6 @@ import {
 } from "@tanstack/react-router";
 
 import { useLocale } from "@/contexts/locale-context";
-import { useProductCard } from "@/features/catalog/hooks/use-product-card";
-import { categories } from "@/features/catalog/seed";
-import { publishedArticles } from "@/features/content/lib/articles";
 import { useDemo } from "@/features/demo";
 import { GlobalSearch } from "@/features/search/components/global-search";
 import { formatMoney } from "@/lib/format";
@@ -28,7 +25,6 @@ function SearchPage() {
   const { q = "" } = Route.useSearch();
   const navigate = useNavigate({ from: "/search" });
   const router = useRouter();
-  const toCard = useProductCard();
 
   const query = q.trim().toLocaleLowerCase(intlLocale);
   const matches = (...texts: (string | undefined)[]) =>
@@ -37,14 +33,6 @@ function SearchPage() {
   const groups: SearchResultGroup[] = [];
 
   if (query) {
-    const gifts = state.data.products
-      .filter((p) =>
-        matches(
-          pickText(p.name, language).text,
-          pickText(p.story, language).text,
-        ),
-      )
-      .map(toCard);
     const tours = (state.data.tours?.tours ?? []).filter(
       (tour) =>
         tour.published &&
@@ -53,21 +41,7 @@ function SearchPage() {
           pickText(tour.summary, language).text,
         ),
     );
-    const stories = publishedArticles(state.data.articles, language).filter(
-      (story) => matches(story.title, story.excerpt),
-    );
 
-    if (gifts.length)
-      groups.push({
-        title: t("search.group.gifts"),
-        rows: gifts.map((c) => ({
-          key: c.slug,
-          title: c.name,
-          meta: `${c.fromLabel} ${c.price}`,
-          photo: c.photo,
-          link: { to: "/gifts/$slug", params: { slug: c.slug } },
-        })),
-      });
     if (tours.length)
       groups.push({
         title: t("search.group.tours"),
@@ -79,33 +53,11 @@ function SearchPage() {
           link: { to: "/tours/$slug", params: { slug: tour.slug } },
         })),
       });
-    if (stories.length)
-      groups.push({
-        title: t("search.group.stories"),
-        rows: stories.map((story) => ({
-          key: story.id,
-          title: story.title,
-          meta: t("home.stories.read", { minutes: story.readMinutes }),
-          photo: story.photo,
-          link: { to: "/stories/$slug", params: { slug: story.slug } },
-        })),
-      });
   }
 
   return (
     <GlobalSearch
       backLabel={t("search.back")}
-      browse={{
-        title: t("search.browse"),
-        items: categories.map((c) => ({
-          id: c.id,
-          name: pickText(c.name, language).text,
-          photo: c.photo,
-          link: c.comingSoon
-            ? { to: "/tours" }
-            : { to: "/gifts", search: { category: c.id } },
-        })),
-      }}
       groups={groups}
       label={t("search.label")}
       noResults={

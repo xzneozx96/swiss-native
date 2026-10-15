@@ -53,8 +53,6 @@ export function actorKey(actor: string): MessageKey {
   switch (actor) {
     case "owner":
       return "tourMerchant.actorOwner";
-    case "manager":
-      return "tourMerchant.actorManager";
     case "guest":
       return "tourMerchant.actorGuest";
     case "provider":

@@ -1,0 +1,5 @@
+Built-in imagegen with transparent background. Reference: user supplied Erich Haldi signature banner.
+
+Create a clean transparent logo extracted/recreated from the supplied reference. Exact main text "Erich Haldi" in the same expressive flowing dark navy handwritten signature lettering as reference. Underneath, small red Swiss flag square with white cross followed by uppercase widely spaced navy sans-serif tagline "SWITZERLAND ON TWO WHEELS". Faithfully retain this composition and lettering character. Remove all photo/background scenery, no mountains, no extra words, no Swiss Native text. Actual transparent background. Tight horizontal logo composition, minimal surrounding transparent padding, high resolution crisp edges. One finished logo only, suitable for website header.
+
+Saved to web/front-end/src/assets/brand/erich-haldi-logo.png (2172 x 724).

@@ -55,10 +55,9 @@ function reviewDate(at: Date, now: Date, locale: string): string {
   }).format(at);
 }
 
-/** A product's verified-purchase reviews, newest first, formatted for display. */
+/** A tour's verified-booking reviews, newest first, formatted for display. */
 export function useProductReviews(
   productId: string | undefined,
-  options: { kind: "gift" | "tour" } = { kind: "gift" },
 ): ProductReviews {
   const { t, language, intlLocale } = useLocale();
   const { state } = useDemo();
@@ -95,20 +94,15 @@ export function useProductReviews(
         id: r.id,
         guestName: r.guestName,
         avatar: avatarUrl(r.guestName),
-        // The latest completed order of this gift by the reviewer (AC17: reviews only
-        // after completion), which says more than "verified purchase".
-        verifiedLabel: t(
-          options.kind === "tour"
-            ? "tours.reviews.attended"
-            : "detail.reviews.purchased",
-          {
-            date: formatShortDate(
-              zurichDate(new Date(r.purchasedAt)),
-              zurichDate(now),
-              intlLocale,
-            ),
-          },
-        ),
+        // The day the reviewer took the tour (AC17: reviews only after completion), which
+        // says more than "verified purchase".
+        verifiedLabel: t("tours.reviews.attended", {
+          date: formatShortDate(
+            zurichDate(new Date(r.purchasedAt)),
+            zurichDate(now),
+            intlLocale,
+          ),
+        }),
         rating: r.rating,
         ratingLabel: t("detail.reviews.stars", { rating: r.rating }),
         date: reviewDate(new Date(r.createdAt), now, intlLocale),
@@ -116,8 +110,8 @@ export function useProductReviews(
         languageNote: text.isFallback
           ? t(
               text.language === "en"
-                ? "gifts.textInEnglish"
-                : "gifts.textInGerman",
+                ? "listing.textInEnglish"
+                : "listing.textInGerman",
             )
           : undefined,
         photos: r.photos?.length
@@ -130,6 +124,23 @@ export function useProductReviews(
                 next: t("gallery.next"),
                 close: t("gallery.close"),
               },
+            }
+          : undefined,
+        // The shop's reply from M23, in the language it was written in (AC30 note otherwise).
+        reply: r.reply
+          ? {
+              title: t("reviewReply.from", { name: r.reply.by }),
+              date: reviewDate(new Date(r.reply.at), now, intlLocale),
+              text: r.reply.text,
+              lang: r.reply.language,
+              languageNote:
+                r.reply.language === language
+                  ? undefined
+                  : t(
+                      r.reply.language === "en"
+                        ? "listing.textInEnglish"
+                        : "listing.textInGerman",
+                    ),
             }
           : undefined,
       };

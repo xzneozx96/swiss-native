@@ -1,7 +1,7 @@
 import type { Language } from "@/contexts/locale-context";
 import type { LocalizedText, ProductStory } from "@/features/catalog/types";
-import type { TripRecord } from "@/features/checkout/types";
-import type { Payment, PaymentMethod } from "@/features/orders/types";
+import type { TripRecord } from "@/features/trip/types";
+import type { Payment, PaymentMethod } from "@/features/payment/types";
 
 export type TourPaymentPolicy = "full" | "deposit" | "later";
 /**
@@ -38,8 +38,14 @@ export interface Tour {
   excluded: LocalizedText;
   conditions: LocalizedText;
   cancellationPolicy: LocalizedText;
+  /** Set when archived in M11: unpublished, off C08 and M11's active list until restored as a draft. */
+  archivedAt?: string;
   published: boolean;
-  commissionRate: number;
+  /**
+   * Created in M13 and never published yet: hidden from C08 until its first publish. A
+   * draft without it (the seeded Pilatus) shows on C08 as "Coming soon".
+   */
+  unannounced?: boolean;
   itinerary: TourStop[];
   ageBands: TourAgeBands;
   participantFields: TourParticipantField[];
@@ -113,8 +119,6 @@ interface BookingRecord extends TourParticipants {
   balanceDueAt: string;
   /** Snapshot of the departure's overdue policy at booking time; absent = merchant decides. */
   overduePolicy?: TourOverduePolicy;
-  partnerId: string | null;
-  commissionRate: number;
   createdAt: string;
   /** Optional trip answers for this booking (R09, 2.17). */
   trip?: TripRecord;
@@ -132,7 +136,6 @@ interface BookingRecord extends TourParticipants {
     receivedAt: string;
   }[];
   activity: { at: string; event: string; actor: string }[];
-  commissionRecordedAt: string | null;
 }
 export type TourBooking = BookingRecord &
   (

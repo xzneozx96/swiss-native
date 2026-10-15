@@ -15,7 +15,6 @@ import { SignInPrompt } from "@/features/auth/components/account-profile";
 import { useRequireSignIn } from "@/features/auth/hooks/use-require-sign-in";
 import { useDemo } from "@/features/demo";
 import { TourBookingList } from "@/features/tours/booking";
-import { TransactionList } from "@/features/transactions/components/transaction-list";
 
 // Account tab: signed-out prompt opens C05 (step 1.6); signed in, the settings-style hub (1.12s)
 // whose rows drill into sub-screens kept in `?tab=`. The 1.12r tab values are sub-screens now,
@@ -34,7 +33,6 @@ export const Route = createFileRoute("/_guest/account")({
 });
 
 const sectionTitle: Record<AccountSection, MessageKey> = {
-  orders: "account.section.orders",
   bookings: "account.section.bookings",
   payments: "account.section.payments",
   profile: "account.section.profile",
@@ -72,7 +70,6 @@ function AccountPage() {
 
   return (
     <AccountScreen title={t(sectionTitle[tab])}>
-      {tab === "orders" && <TransactionList />}
       {tab === "bookings" && <TourBookingList />}
       {tab === "payments" && <PaymentsPanel />}
       {tab === "profile" && <ProfilePanel />}

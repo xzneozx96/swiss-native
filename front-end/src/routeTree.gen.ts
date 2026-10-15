@@ -14,52 +14,28 @@ import { Route as SignInRouteImport } from './routes/sign-in'
 import { Route as StoreRouteImport } from './routes/store'
 import { Route as GuestIndexRouteImport } from './routes/_guest/index'
 import { Route as GuestAccountRouteImport } from './routes/_guest/account'
-import { Route as GuestCartRouteImport } from './routes/_guest/cart'
 import { Route as GuestCreditsRouteImport } from './routes/_guest/credits'
 import { Route as GuestExperiencesRouteImport } from './routes/_guest/experiences'
-import { Route as GuestPlanRouteImport } from './routes/_guest/plan'
 import { Route as GuestSearchRouteImport } from './routes/_guest/search'
-import { Route as GuestStaysRouteImport } from './routes/_guest/stays'
 import { Route as GuestToursRouteImport } from './routes/_guest/tours'
-import { Route as LabIndexRouteImport } from './routes/lab.index'
-import { Route as LabAdviceRouteImport } from './routes/lab.advice'
-import { Route as LabCardsRouteImport } from './routes/lab.cards'
-import { Route as LabCartLineRouteImport } from './routes/lab.cart-line'
-import { Route as LabHeroRouteImport } from './routes/lab.hero'
-import { Route as LabOrderCardsRouteImport } from './routes/lab.order-cards'
-import { Route as LabQuantityRouteImport } from './routes/lab.quantity'
-import { Route as LabReviewRouteImport } from './routes/lab.review'
-import { Route as LabSellerRouteImport } from './routes/lab.seller'
-import { Route as PartnerIndexRouteImport } from './routes/partner/index'
-import { Route as PartnerTokenRouteImport } from './routes/partner/$token'
-import { Route as RCodeRouteImport } from './routes/r.$code'
 import { Route as StoreIndexRouteImport } from './routes/store/index'
 import { Route as StoreSectionRouteImport } from './routes/store/$section'
 import { Route as StoreBookingsRouteImport } from './routes/store/bookings'
-import { Route as GuestCartReviewRouteImport } from './routes/_guest/cart_.review'
-import { Route as GuestCartSentRouteImport } from './routes/_guest/cart_.sent'
-import { Route as GuestGiftsIndexRouteImport } from './routes/_guest/gifts/index'
-import { Route as GuestGiftsSlugRouteImport } from './routes/_guest/gifts/$slug'
-import { Route as GuestPlanSentRouteImport } from './routes/_guest/plan_.sent'
-import { Route as GuestStoriesIndexRouteImport } from './routes/_guest/stories/index'
-import { Route as GuestStoriesSlugRouteImport } from './routes/_guest/stories/$slug'
+import { Route as StoreSalesRouteImport } from './routes/store/sales'
 import { Route as GuestToursIndexRouteImport } from './routes/_guest/tours/index'
 import { Route as GuestToursSlugRouteImport } from './routes/_guest/tours/$slug'
+import { Route as GuestToursPrivateTourRouteImport } from './routes/_guest/tours/private-tour'
 import { Route as StoreBookingsIndexRouteImport } from './routes/store/bookings/index'
 import { Route as StoreBookingsBookingIdRouteImport } from './routes/store/bookings/$bookingId'
-import { Route as StoreOrdersIndexRouteImport } from './routes/store/orders/index'
-import { Route as StoreOrdersOrderIdRouteImport } from './routes/store/orders/$orderId'
-import { Route as StorePartnersIndexRouteImport } from './routes/store/partners/index'
-import { Route as StorePartnersPartnerIdRouteImport } from './routes/store/partners/$partnerId'
-import { Route as StoreReportsIndexRouteImport } from './routes/store/reports/index'
-import { Route as StoreReportsCostsRouteImport } from './routes/store/reports/costs'
+import { Route as StoreProductsIndexRouteImport } from './routes/store/products/index'
 import { Route as GuestAccountBookingsBookingIdRouteImport } from './routes/_guest/account_.bookings.$bookingId'
-import { Route as GuestAccountOrdersOrderIdRouteImport } from './routes/_guest/account_.orders.$orderId'
 import { Route as GuestToursSlugBookRouteImport } from './routes/_guest/tours/$slug_.book'
+import { Route as GuestToursPrivateTourSentRouteImport } from './routes/_guest/tours/private-tour_.sent'
 import { Route as StoreBookingsDeparturesDepartureIdRouteImport } from './routes/store/bookings/departures/$departureId'
+import { Route as StoreProductsToursTourIdRouteImport } from './routes/store/products/tours/$tourId'
+import { Route as StoreProductsToursNewRouteImport } from './routes/store/products/tours/new'
 import { Route as GuestAccountBookingsBookingIdConfirmedRouteImport } from './routes/_guest/account_.bookings.$bookingId_.confirmed'
 import { Route as GuestAccountBookingsBookingIdPayRouteImport } from './routes/_guest/account_.bookings.$bookingId_.pay'
-import { Route as GuestAccountOrdersOrderIdPayRouteImport } from './routes/_guest/account_.orders.$orderId_.pay'
 import { Route as GuestToursSlugBookReviewRouteImport } from './routes/_guest/tours/$slug_.book_.review'
 
 const GuestRoute = GuestRouteImport.update({
@@ -86,11 +62,6 @@ const GuestAccountRoute = GuestAccountRouteImport.update({
   path: '/account',
   getParentRoute: () => GuestRoute,
 } as any)
-const GuestCartRoute = GuestCartRouteImport.update({
-  id: '/cart',
-  path: '/cart',
-  getParentRoute: () => GuestRoute,
-} as any)
 const GuestCreditsRoute = GuestCreditsRouteImport.update({
   id: '/credits',
   path: '/credits',
@@ -101,85 +72,15 @@ const GuestExperiencesRoute = GuestExperiencesRouteImport.update({
   path: '/experiences',
   getParentRoute: () => GuestRoute,
 } as any)
-const GuestPlanRoute = GuestPlanRouteImport.update({
-  id: '/plan',
-  path: '/plan',
-  getParentRoute: () => GuestRoute,
-} as any)
 const GuestSearchRoute = GuestSearchRouteImport.update({
   id: '/search',
   path: '/search',
-  getParentRoute: () => GuestRoute,
-} as any)
-const GuestStaysRoute = GuestStaysRouteImport.update({
-  id: '/stays',
-  path: '/stays',
   getParentRoute: () => GuestRoute,
 } as any)
 const GuestToursRoute = GuestToursRouteImport.update({
   id: '/tours',
   path: '/tours',
   getParentRoute: () => GuestRoute,
-} as any)
-const LabIndexRoute = LabIndexRouteImport.update({
-  id: '/lab/',
-  path: '/lab/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const LabAdviceRoute = LabAdviceRouteImport.update({
-  id: '/lab/advice',
-  path: '/lab/advice',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const LabCardsRoute = LabCardsRouteImport.update({
-  id: '/lab/cards',
-  path: '/lab/cards',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const LabCartLineRoute = LabCartLineRouteImport.update({
-  id: '/lab/cart-line',
-  path: '/lab/cart-line',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const LabHeroRoute = LabHeroRouteImport.update({
-  id: '/lab/hero',
-  path: '/lab/hero',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const LabOrderCardsRoute = LabOrderCardsRouteImport.update({
-  id: '/lab/order-cards',
-  path: '/lab/order-cards',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const LabQuantityRoute = LabQuantityRouteImport.update({
-  id: '/lab/quantity',
-  path: '/lab/quantity',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const LabReviewRoute = LabReviewRouteImport.update({
-  id: '/lab/review',
-  path: '/lab/review',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const LabSellerRoute = LabSellerRouteImport.update({
-  id: '/lab/seller',
-  path: '/lab/seller',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PartnerIndexRoute = PartnerIndexRouteImport.update({
-  id: '/partner/',
-  path: '/partner/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PartnerTokenRoute = PartnerTokenRouteImport.update({
-  id: '/partner/$token',
-  path: '/partner/$token',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const RCodeRoute = RCodeRouteImport.update({
-  id: '/r/$code',
-  path: '/r/$code',
-  getParentRoute: () => rootRouteImport,
 } as any)
 const StoreIndexRoute = StoreIndexRouteImport.update({
   id: '/',
@@ -196,40 +97,10 @@ const StoreBookingsRoute = StoreBookingsRouteImport.update({
   path: '/bookings',
   getParentRoute: () => StoreRoute,
 } as any)
-const GuestCartReviewRoute = GuestCartReviewRouteImport.update({
-  id: '/cart_/review',
-  path: '/cart/review',
-  getParentRoute: () => GuestRoute,
-} as any)
-const GuestCartSentRoute = GuestCartSentRouteImport.update({
-  id: '/cart_/sent',
-  path: '/cart/sent',
-  getParentRoute: () => GuestRoute,
-} as any)
-const GuestGiftsIndexRoute = GuestGiftsIndexRouteImport.update({
-  id: '/gifts/',
-  path: '/gifts/',
-  getParentRoute: () => GuestRoute,
-} as any)
-const GuestGiftsSlugRoute = GuestGiftsSlugRouteImport.update({
-  id: '/gifts/$slug',
-  path: '/gifts/$slug',
-  getParentRoute: () => GuestRoute,
-} as any)
-const GuestPlanSentRoute = GuestPlanSentRouteImport.update({
-  id: '/plan_/sent',
-  path: '/plan/sent',
-  getParentRoute: () => GuestRoute,
-} as any)
-const GuestStoriesIndexRoute = GuestStoriesIndexRouteImport.update({
-  id: '/stories/',
-  path: '/stories/',
-  getParentRoute: () => GuestRoute,
-} as any)
-const GuestStoriesSlugRoute = GuestStoriesSlugRouteImport.update({
-  id: '/stories/$slug',
-  path: '/stories/$slug',
-  getParentRoute: () => GuestRoute,
+const StoreSalesRoute = StoreSalesRouteImport.update({
+  id: '/sales',
+  path: '/sales',
+  getParentRoute: () => StoreRoute,
 } as any)
 const GuestToursIndexRoute = GuestToursIndexRouteImport.update({
   id: '/',
@@ -239,6 +110,11 @@ const GuestToursIndexRoute = GuestToursIndexRouteImport.update({
 const GuestToursSlugRoute = GuestToursSlugRouteImport.update({
   id: '/$slug',
   path: '/$slug',
+  getParentRoute: () => GuestToursRoute,
+} as any)
+const GuestToursPrivateTourRoute = GuestToursPrivateTourRouteImport.update({
+  id: '/private-tour',
+  path: '/private-tour',
   getParentRoute: () => GuestToursRoute,
 } as any)
 const StoreBookingsIndexRoute = StoreBookingsIndexRouteImport.update({
@@ -251,34 +127,9 @@ const StoreBookingsBookingIdRoute = StoreBookingsBookingIdRouteImport.update({
   path: '/$bookingId',
   getParentRoute: () => StoreBookingsRoute,
 } as any)
-const StoreOrdersIndexRoute = StoreOrdersIndexRouteImport.update({
-  id: '/orders/',
-  path: '/orders/',
-  getParentRoute: () => StoreRoute,
-} as any)
-const StoreOrdersOrderIdRoute = StoreOrdersOrderIdRouteImport.update({
-  id: '/orders/$orderId',
-  path: '/orders/$orderId',
-  getParentRoute: () => StoreRoute,
-} as any)
-const StorePartnersIndexRoute = StorePartnersIndexRouteImport.update({
-  id: '/partners/',
-  path: '/partners/',
-  getParentRoute: () => StoreRoute,
-} as any)
-const StorePartnersPartnerIdRoute = StorePartnersPartnerIdRouteImport.update({
-  id: '/partners/$partnerId',
-  path: '/partners/$partnerId',
-  getParentRoute: () => StoreRoute,
-} as any)
-const StoreReportsIndexRoute = StoreReportsIndexRouteImport.update({
-  id: '/reports/',
-  path: '/reports/',
-  getParentRoute: () => StoreRoute,
-} as any)
-const StoreReportsCostsRoute = StoreReportsCostsRouteImport.update({
-  id: '/reports/costs',
-  path: '/reports/costs',
+const StoreProductsIndexRoute = StoreProductsIndexRouteImport.update({
+  id: '/products/',
+  path: '/products/',
   getParentRoute: () => StoreRoute,
 } as any)
 const GuestAccountBookingsBookingIdRoute =
@@ -287,23 +138,34 @@ const GuestAccountBookingsBookingIdRoute =
     path: '/account/bookings/$bookingId',
     getParentRoute: () => GuestRoute,
   } as any)
-const GuestAccountOrdersOrderIdRoute =
-  GuestAccountOrdersOrderIdRouteImport.update({
-    id: '/account_/orders/$orderId',
-    path: '/account/orders/$orderId',
-    getParentRoute: () => GuestRoute,
-  } as any)
 const GuestToursSlugBookRoute = GuestToursSlugBookRouteImport.update({
   id: '/$slug_/book',
   path: '/$slug/book',
   getParentRoute: () => GuestToursRoute,
 } as any)
+const GuestToursPrivateTourSentRoute =
+  GuestToursPrivateTourSentRouteImport.update({
+    id: '/private-tour_/sent',
+    path: '/private-tour/sent',
+    getParentRoute: () => GuestToursRoute,
+  } as any)
 const StoreBookingsDeparturesDepartureIdRoute =
   StoreBookingsDeparturesDepartureIdRouteImport.update({
     id: '/departures/$departureId',
     path: '/departures/$departureId',
     getParentRoute: () => StoreBookingsRoute,
   } as any)
+const StoreProductsToursTourIdRoute =
+  StoreProductsToursTourIdRouteImport.update({
+    id: '/products/tours/$tourId',
+    path: '/products/tours/$tourId',
+    getParentRoute: () => StoreRoute,
+  } as any)
+const StoreProductsToursNewRoute = StoreProductsToursNewRouteImport.update({
+  id: '/products/tours/new',
+  path: '/products/tours/new',
+  getParentRoute: () => StoreRoute,
+} as any)
 const GuestAccountBookingsBookingIdConfirmedRoute =
   GuestAccountBookingsBookingIdConfirmedRouteImport.update({
     id: '/account_/bookings/$bookingId_/confirmed',
@@ -314,12 +176,6 @@ const GuestAccountBookingsBookingIdPayRoute =
   GuestAccountBookingsBookingIdPayRouteImport.update({
     id: '/account_/bookings/$bookingId_/pay',
     path: '/account/bookings/$bookingId/pay',
-    getParentRoute: () => GuestRoute,
-  } as any)
-const GuestAccountOrdersOrderIdPayRoute =
-  GuestAccountOrdersOrderIdPayRouteImport.update({
-    id: '/account_/orders/$orderId_/pay',
-    path: '/account/orders/$orderId/pay',
     getParentRoute: () => GuestRoute,
   } as any)
 const GuestToursSlugBookReviewRoute =
@@ -334,102 +190,54 @@ export interface FileRoutesByFullPath {
   '/sign-in': typeof SignInRoute
   '/store': typeof StoreRouteWithChildren
   '/account': typeof GuestAccountRoute
-  '/cart': typeof GuestCartRoute
   '/credits': typeof GuestCreditsRoute
   '/experiences': typeof GuestExperiencesRoute
-  '/plan': typeof GuestPlanRoute
   '/search': typeof GuestSearchRoute
-  '/stays': typeof GuestStaysRoute
   '/tours': typeof GuestToursRouteWithChildren
-  '/lab/advice': typeof LabAdviceRoute
-  '/lab/cards': typeof LabCardsRoute
-  '/lab/cart-line': typeof LabCartLineRoute
-  '/lab/hero': typeof LabHeroRoute
-  '/lab/order-cards': typeof LabOrderCardsRoute
-  '/lab/quantity': typeof LabQuantityRoute
-  '/lab/review': typeof LabReviewRoute
-  '/lab/seller': typeof LabSellerRoute
-  '/partner/$token': typeof PartnerTokenRoute
-  '/r/$code': typeof RCodeRoute
   '/store/$section': typeof StoreSectionRoute
   '/store/bookings': typeof StoreBookingsRouteWithChildren
-  '/lab/': typeof LabIndexRoute
-  '/partner/': typeof PartnerIndexRoute
+  '/store/sales': typeof StoreSalesRoute
   '/store/': typeof StoreIndexRoute
-  '/cart/review': typeof GuestCartReviewRoute
-  '/cart/sent': typeof GuestCartSentRoute
-  '/gifts/$slug': typeof GuestGiftsSlugRoute
-  '/plan/sent': typeof GuestPlanSentRoute
-  '/stories/$slug': typeof GuestStoriesSlugRoute
   '/tours/$slug': typeof GuestToursSlugRoute
+  '/tours/private-tour': typeof GuestToursPrivateTourRoute
   '/store/bookings/$bookingId': typeof StoreBookingsBookingIdRoute
-  '/store/orders/$orderId': typeof StoreOrdersOrderIdRoute
-  '/store/partners/$partnerId': typeof StorePartnersPartnerIdRoute
-  '/store/reports/costs': typeof StoreReportsCostsRoute
-  '/gifts/': typeof GuestGiftsIndexRoute
-  '/stories/': typeof GuestStoriesIndexRoute
   '/tours/': typeof GuestToursIndexRoute
   '/store/bookings/': typeof StoreBookingsIndexRoute
-  '/store/orders/': typeof StoreOrdersIndexRoute
-  '/store/partners/': typeof StorePartnersIndexRoute
-  '/store/reports/': typeof StoreReportsIndexRoute
+  '/store/products/': typeof StoreProductsIndexRoute
   '/account/bookings/$bookingId': typeof GuestAccountBookingsBookingIdRoute
-  '/account/orders/$orderId': typeof GuestAccountOrdersOrderIdRoute
   '/tours/$slug/book': typeof GuestToursSlugBookRoute
+  '/tours/private-tour/sent': typeof GuestToursPrivateTourSentRoute
   '/store/bookings/departures/$departureId': typeof StoreBookingsDeparturesDepartureIdRoute
+  '/store/products/tours/$tourId': typeof StoreProductsToursTourIdRoute
+  '/store/products/tours/new': typeof StoreProductsToursNewRoute
   '/account/bookings/$bookingId/confirmed': typeof GuestAccountBookingsBookingIdConfirmedRoute
   '/account/bookings/$bookingId/pay': typeof GuestAccountBookingsBookingIdPayRoute
-  '/account/orders/$orderId/pay': typeof GuestAccountOrdersOrderIdPayRoute
   '/tours/$slug/book/review': typeof GuestToursSlugBookReviewRoute
 }
 export interface FileRoutesByTo {
   '/sign-in': typeof SignInRoute
   '/account': typeof GuestAccountRoute
-  '/cart': typeof GuestCartRoute
   '/credits': typeof GuestCreditsRoute
   '/experiences': typeof GuestExperiencesRoute
-  '/plan': typeof GuestPlanRoute
   '/search': typeof GuestSearchRoute
-  '/stays': typeof GuestStaysRoute
-  '/lab/advice': typeof LabAdviceRoute
-  '/lab/cards': typeof LabCardsRoute
-  '/lab/cart-line': typeof LabCartLineRoute
-  '/lab/hero': typeof LabHeroRoute
-  '/lab/order-cards': typeof LabOrderCardsRoute
-  '/lab/quantity': typeof LabQuantityRoute
-  '/lab/review': typeof LabReviewRoute
-  '/lab/seller': typeof LabSellerRoute
-  '/partner/$token': typeof PartnerTokenRoute
-  '/r/$code': typeof RCodeRoute
   '/store/$section': typeof StoreSectionRoute
+  '/store/sales': typeof StoreSalesRoute
   '/': typeof GuestIndexRoute
-  '/lab': typeof LabIndexRoute
-  '/partner': typeof PartnerIndexRoute
   '/store': typeof StoreIndexRoute
-  '/cart/review': typeof GuestCartReviewRoute
-  '/cart/sent': typeof GuestCartSentRoute
-  '/gifts/$slug': typeof GuestGiftsSlugRoute
-  '/plan/sent': typeof GuestPlanSentRoute
-  '/stories/$slug': typeof GuestStoriesSlugRoute
   '/tours/$slug': typeof GuestToursSlugRoute
+  '/tours/private-tour': typeof GuestToursPrivateTourRoute
   '/store/bookings/$bookingId': typeof StoreBookingsBookingIdRoute
-  '/store/orders/$orderId': typeof StoreOrdersOrderIdRoute
-  '/store/partners/$partnerId': typeof StorePartnersPartnerIdRoute
-  '/store/reports/costs': typeof StoreReportsCostsRoute
-  '/gifts': typeof GuestGiftsIndexRoute
-  '/stories': typeof GuestStoriesIndexRoute
   '/tours': typeof GuestToursIndexRoute
   '/store/bookings': typeof StoreBookingsIndexRoute
-  '/store/orders': typeof StoreOrdersIndexRoute
-  '/store/partners': typeof StorePartnersIndexRoute
-  '/store/reports': typeof StoreReportsIndexRoute
+  '/store/products': typeof StoreProductsIndexRoute
   '/account/bookings/$bookingId': typeof GuestAccountBookingsBookingIdRoute
-  '/account/orders/$orderId': typeof GuestAccountOrdersOrderIdRoute
   '/tours/$slug/book': typeof GuestToursSlugBookRoute
+  '/tours/private-tour/sent': typeof GuestToursPrivateTourSentRoute
   '/store/bookings/departures/$departureId': typeof StoreBookingsDeparturesDepartureIdRoute
+  '/store/products/tours/$tourId': typeof StoreProductsToursTourIdRoute
+  '/store/products/tours/new': typeof StoreProductsToursNewRoute
   '/account/bookings/$bookingId/confirmed': typeof GuestAccountBookingsBookingIdConfirmedRoute
   '/account/bookings/$bookingId/pay': typeof GuestAccountBookingsBookingIdPayRoute
-  '/account/orders/$orderId/pay': typeof GuestAccountOrdersOrderIdPayRoute
   '/tours/$slug/book/review': typeof GuestToursSlugBookReviewRoute
 }
 export interface FileRoutesById {
@@ -438,53 +246,29 @@ export interface FileRoutesById {
   '/sign-in': typeof SignInRoute
   '/store': typeof StoreRouteWithChildren
   '/_guest/account': typeof GuestAccountRoute
-  '/_guest/cart': typeof GuestCartRoute
   '/_guest/credits': typeof GuestCreditsRoute
   '/_guest/experiences': typeof GuestExperiencesRoute
-  '/_guest/plan': typeof GuestPlanRoute
   '/_guest/search': typeof GuestSearchRoute
-  '/_guest/stays': typeof GuestStaysRoute
   '/_guest/tours': typeof GuestToursRouteWithChildren
-  '/lab/advice': typeof LabAdviceRoute
-  '/lab/cards': typeof LabCardsRoute
-  '/lab/cart-line': typeof LabCartLineRoute
-  '/lab/hero': typeof LabHeroRoute
-  '/lab/order-cards': typeof LabOrderCardsRoute
-  '/lab/quantity': typeof LabQuantityRoute
-  '/lab/review': typeof LabReviewRoute
-  '/lab/seller': typeof LabSellerRoute
-  '/partner/$token': typeof PartnerTokenRoute
-  '/r/$code': typeof RCodeRoute
   '/store/$section': typeof StoreSectionRoute
   '/store/bookings': typeof StoreBookingsRouteWithChildren
+  '/store/sales': typeof StoreSalesRoute
   '/_guest/': typeof GuestIndexRoute
-  '/lab/': typeof LabIndexRoute
-  '/partner/': typeof PartnerIndexRoute
   '/store/': typeof StoreIndexRoute
-  '/_guest/cart_/review': typeof GuestCartReviewRoute
-  '/_guest/cart_/sent': typeof GuestCartSentRoute
-  '/_guest/gifts/$slug': typeof GuestGiftsSlugRoute
-  '/_guest/plan_/sent': typeof GuestPlanSentRoute
-  '/_guest/stories/$slug': typeof GuestStoriesSlugRoute
   '/_guest/tours/$slug': typeof GuestToursSlugRoute
+  '/_guest/tours/private-tour': typeof GuestToursPrivateTourRoute
   '/store/bookings/$bookingId': typeof StoreBookingsBookingIdRoute
-  '/store/orders/$orderId': typeof StoreOrdersOrderIdRoute
-  '/store/partners/$partnerId': typeof StorePartnersPartnerIdRoute
-  '/store/reports/costs': typeof StoreReportsCostsRoute
-  '/_guest/gifts/': typeof GuestGiftsIndexRoute
-  '/_guest/stories/': typeof GuestStoriesIndexRoute
   '/_guest/tours/': typeof GuestToursIndexRoute
   '/store/bookings/': typeof StoreBookingsIndexRoute
-  '/store/orders/': typeof StoreOrdersIndexRoute
-  '/store/partners/': typeof StorePartnersIndexRoute
-  '/store/reports/': typeof StoreReportsIndexRoute
+  '/store/products/': typeof StoreProductsIndexRoute
   '/_guest/account_/bookings/$bookingId': typeof GuestAccountBookingsBookingIdRoute
-  '/_guest/account_/orders/$orderId': typeof GuestAccountOrdersOrderIdRoute
   '/_guest/tours/$slug_/book': typeof GuestToursSlugBookRoute
+  '/_guest/tours/private-tour_/sent': typeof GuestToursPrivateTourSentRoute
   '/store/bookings/departures/$departureId': typeof StoreBookingsDeparturesDepartureIdRoute
+  '/store/products/tours/$tourId': typeof StoreProductsToursTourIdRoute
+  '/store/products/tours/new': typeof StoreProductsToursNewRoute
   '/_guest/account_/bookings/$bookingId_/confirmed': typeof GuestAccountBookingsBookingIdConfirmedRoute
   '/_guest/account_/bookings/$bookingId_/pay': typeof GuestAccountBookingsBookingIdPayRoute
-  '/_guest/account_/orders/$orderId_/pay': typeof GuestAccountOrdersOrderIdPayRoute
   '/_guest/tours/$slug_/book_/review': typeof GuestToursSlugBookReviewRoute
 }
 export interface FileRouteTypes {
@@ -494,102 +278,54 @@ export interface FileRouteTypes {
     | '/sign-in'
     | '/store'
     | '/account'
-    | '/cart'
     | '/credits'
     | '/experiences'
-    | '/plan'
     | '/search'
-    | '/stays'
     | '/tours'
-    | '/lab/advice'
-    | '/lab/cards'
-    | '/lab/cart-line'
-    | '/lab/hero'
-    | '/lab/order-cards'
-    | '/lab/quantity'
-    | '/lab/review'
-    | '/lab/seller'
-    | '/partner/$token'
-    | '/r/$code'
     | '/store/$section'
     | '/store/bookings'
-    | '/lab/'
-    | '/partner/'
+    | '/store/sales'
     | '/store/'
-    | '/cart/review'
-    | '/cart/sent'
-    | '/gifts/$slug'
-    | '/plan/sent'
-    | '/stories/$slug'
     | '/tours/$slug'
+    | '/tours/private-tour'
     | '/store/bookings/$bookingId'
-    | '/store/orders/$orderId'
-    | '/store/partners/$partnerId'
-    | '/store/reports/costs'
-    | '/gifts/'
-    | '/stories/'
     | '/tours/'
     | '/store/bookings/'
-    | '/store/orders/'
-    | '/store/partners/'
-    | '/store/reports/'
+    | '/store/products/'
     | '/account/bookings/$bookingId'
-    | '/account/orders/$orderId'
     | '/tours/$slug/book'
+    | '/tours/private-tour/sent'
     | '/store/bookings/departures/$departureId'
+    | '/store/products/tours/$tourId'
+    | '/store/products/tours/new'
     | '/account/bookings/$bookingId/confirmed'
     | '/account/bookings/$bookingId/pay'
-    | '/account/orders/$orderId/pay'
     | '/tours/$slug/book/review'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/sign-in'
     | '/account'
-    | '/cart'
     | '/credits'
     | '/experiences'
-    | '/plan'
     | '/search'
-    | '/stays'
-    | '/lab/advice'
-    | '/lab/cards'
-    | '/lab/cart-line'
-    | '/lab/hero'
-    | '/lab/order-cards'
-    | '/lab/quantity'
-    | '/lab/review'
-    | '/lab/seller'
-    | '/partner/$token'
-    | '/r/$code'
     | '/store/$section'
+    | '/store/sales'
     | '/'
-    | '/lab'
-    | '/partner'
     | '/store'
-    | '/cart/review'
-    | '/cart/sent'
-    | '/gifts/$slug'
-    | '/plan/sent'
-    | '/stories/$slug'
     | '/tours/$slug'
+    | '/tours/private-tour'
     | '/store/bookings/$bookingId'
-    | '/store/orders/$orderId'
-    | '/store/partners/$partnerId'
-    | '/store/reports/costs'
-    | '/gifts'
-    | '/stories'
     | '/tours'
     | '/store/bookings'
-    | '/store/orders'
-    | '/store/partners'
-    | '/store/reports'
+    | '/store/products'
     | '/account/bookings/$bookingId'
-    | '/account/orders/$orderId'
     | '/tours/$slug/book'
+    | '/tours/private-tour/sent'
     | '/store/bookings/departures/$departureId'
+    | '/store/products/tours/$tourId'
+    | '/store/products/tours/new'
     | '/account/bookings/$bookingId/confirmed'
     | '/account/bookings/$bookingId/pay'
-    | '/account/orders/$orderId/pay'
     | '/tours/$slug/book/review'
   id:
     | '__root__'
@@ -597,53 +333,29 @@ export interface FileRouteTypes {
     | '/sign-in'
     | '/store'
     | '/_guest/account'
-    | '/_guest/cart'
     | '/_guest/credits'
     | '/_guest/experiences'
-    | '/_guest/plan'
     | '/_guest/search'
-    | '/_guest/stays'
     | '/_guest/tours'
-    | '/lab/advice'
-    | '/lab/cards'
-    | '/lab/cart-line'
-    | '/lab/hero'
-    | '/lab/order-cards'
-    | '/lab/quantity'
-    | '/lab/review'
-    | '/lab/seller'
-    | '/partner/$token'
-    | '/r/$code'
     | '/store/$section'
     | '/store/bookings'
+    | '/store/sales'
     | '/_guest/'
-    | '/lab/'
-    | '/partner/'
     | '/store/'
-    | '/_guest/cart_/review'
-    | '/_guest/cart_/sent'
-    | '/_guest/gifts/$slug'
-    | '/_guest/plan_/sent'
-    | '/_guest/stories/$slug'
     | '/_guest/tours/$slug'
+    | '/_guest/tours/private-tour'
     | '/store/bookings/$bookingId'
-    | '/store/orders/$orderId'
-    | '/store/partners/$partnerId'
-    | '/store/reports/costs'
-    | '/_guest/gifts/'
-    | '/_guest/stories/'
     | '/_guest/tours/'
     | '/store/bookings/'
-    | '/store/orders/'
-    | '/store/partners/'
-    | '/store/reports/'
+    | '/store/products/'
     | '/_guest/account_/bookings/$bookingId'
-    | '/_guest/account_/orders/$orderId'
     | '/_guest/tours/$slug_/book'
+    | '/_guest/tours/private-tour_/sent'
     | '/store/bookings/departures/$departureId'
+    | '/store/products/tours/$tourId'
+    | '/store/products/tours/new'
     | '/_guest/account_/bookings/$bookingId_/confirmed'
     | '/_guest/account_/bookings/$bookingId_/pay'
-    | '/_guest/account_/orders/$orderId_/pay'
     | '/_guest/tours/$slug_/book_/review'
   fileRoutesById: FileRoutesById
 }
@@ -651,18 +363,6 @@ export interface RootRouteChildren {
   GuestRoute: typeof GuestRouteWithChildren
   SignInRoute: typeof SignInRoute
   StoreRoute: typeof StoreRouteWithChildren
-  LabAdviceRoute: typeof LabAdviceRoute
-  LabCardsRoute: typeof LabCardsRoute
-  LabCartLineRoute: typeof LabCartLineRoute
-  LabHeroRoute: typeof LabHeroRoute
-  LabOrderCardsRoute: typeof LabOrderCardsRoute
-  LabQuantityRoute: typeof LabQuantityRoute
-  LabReviewRoute: typeof LabReviewRoute
-  LabSellerRoute: typeof LabSellerRoute
-  PartnerTokenRoute: typeof PartnerTokenRoute
-  RCodeRoute: typeof RCodeRoute
-  LabIndexRoute: typeof LabIndexRoute
-  PartnerIndexRoute: typeof PartnerIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -702,13 +402,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof GuestAccountRouteImport
       parentRoute: typeof GuestRoute
     }
-    '/_guest/cart': {
-      id: '/_guest/cart'
-      path: '/cart'
-      fullPath: '/cart'
-      preLoaderRoute: typeof GuestCartRouteImport
-      parentRoute: typeof GuestRoute
-    }
     '/_guest/credits': {
       id: '/_guest/credits'
       path: '/credits'
@@ -723,25 +416,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof GuestExperiencesRouteImport
       parentRoute: typeof GuestRoute
     }
-    '/_guest/plan': {
-      id: '/_guest/plan'
-      path: '/plan'
-      fullPath: '/plan'
-      preLoaderRoute: typeof GuestPlanRouteImport
-      parentRoute: typeof GuestRoute
-    }
     '/_guest/search': {
       id: '/_guest/search'
       path: '/search'
       fullPath: '/search'
       preLoaderRoute: typeof GuestSearchRouteImport
-      parentRoute: typeof GuestRoute
-    }
-    '/_guest/stays': {
-      id: '/_guest/stays'
-      path: '/stays'
-      fullPath: '/stays'
-      preLoaderRoute: typeof GuestStaysRouteImport
       parentRoute: typeof GuestRoute
     }
     '/_guest/tours': {
@@ -750,90 +429,6 @@ declare module '@tanstack/react-router' {
       fullPath: '/tours'
       preLoaderRoute: typeof GuestToursRouteImport
       parentRoute: typeof GuestRoute
-    }
-    '/lab/': {
-      id: '/lab/'
-      path: '/lab'
-      fullPath: '/lab/'
-      preLoaderRoute: typeof LabIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/lab/advice': {
-      id: '/lab/advice'
-      path: '/lab/advice'
-      fullPath: '/lab/advice'
-      preLoaderRoute: typeof LabAdviceRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/lab/cards': {
-      id: '/lab/cards'
-      path: '/lab/cards'
-      fullPath: '/lab/cards'
-      preLoaderRoute: typeof LabCardsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/lab/cart-line': {
-      id: '/lab/cart-line'
-      path: '/lab/cart-line'
-      fullPath: '/lab/cart-line'
-      preLoaderRoute: typeof LabCartLineRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/lab/hero': {
-      id: '/lab/hero'
-      path: '/lab/hero'
-      fullPath: '/lab/hero'
-      preLoaderRoute: typeof LabHeroRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/lab/order-cards': {
-      id: '/lab/order-cards'
-      path: '/lab/order-cards'
-      fullPath: '/lab/order-cards'
-      preLoaderRoute: typeof LabOrderCardsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/lab/quantity': {
-      id: '/lab/quantity'
-      path: '/lab/quantity'
-      fullPath: '/lab/quantity'
-      preLoaderRoute: typeof LabQuantityRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/lab/review': {
-      id: '/lab/review'
-      path: '/lab/review'
-      fullPath: '/lab/review'
-      preLoaderRoute: typeof LabReviewRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/lab/seller': {
-      id: '/lab/seller'
-      path: '/lab/seller'
-      fullPath: '/lab/seller'
-      preLoaderRoute: typeof LabSellerRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/partner/': {
-      id: '/partner/'
-      path: '/partner'
-      fullPath: '/partner/'
-      preLoaderRoute: typeof PartnerIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/partner/$token': {
-      id: '/partner/$token'
-      path: '/partner/$token'
-      fullPath: '/partner/$token'
-      preLoaderRoute: typeof PartnerTokenRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/r/$code': {
-      id: '/r/$code'
-      path: '/r/$code'
-      fullPath: '/r/$code'
-      preLoaderRoute: typeof RCodeRouteImport
-      parentRoute: typeof rootRouteImport
     }
     '/store/': {
       id: '/store/'
@@ -856,54 +451,12 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof StoreBookingsRouteImport
       parentRoute: typeof StoreRoute
     }
-    '/_guest/cart_/review': {
-      id: '/_guest/cart_/review'
-      path: '/cart/review'
-      fullPath: '/cart/review'
-      preLoaderRoute: typeof GuestCartReviewRouteImport
-      parentRoute: typeof GuestRoute
-    }
-    '/_guest/cart_/sent': {
-      id: '/_guest/cart_/sent'
-      path: '/cart/sent'
-      fullPath: '/cart/sent'
-      preLoaderRoute: typeof GuestCartSentRouteImport
-      parentRoute: typeof GuestRoute
-    }
-    '/_guest/gifts/': {
-      id: '/_guest/gifts/'
-      path: '/gifts'
-      fullPath: '/gifts/'
-      preLoaderRoute: typeof GuestGiftsIndexRouteImport
-      parentRoute: typeof GuestRoute
-    }
-    '/_guest/gifts/$slug': {
-      id: '/_guest/gifts/$slug'
-      path: '/gifts/$slug'
-      fullPath: '/gifts/$slug'
-      preLoaderRoute: typeof GuestGiftsSlugRouteImport
-      parentRoute: typeof GuestRoute
-    }
-    '/_guest/plan_/sent': {
-      id: '/_guest/plan_/sent'
-      path: '/plan/sent'
-      fullPath: '/plan/sent'
-      preLoaderRoute: typeof GuestPlanSentRouteImport
-      parentRoute: typeof GuestRoute
-    }
-    '/_guest/stories/': {
-      id: '/_guest/stories/'
-      path: '/stories'
-      fullPath: '/stories/'
-      preLoaderRoute: typeof GuestStoriesIndexRouteImport
-      parentRoute: typeof GuestRoute
-    }
-    '/_guest/stories/$slug': {
-      id: '/_guest/stories/$slug'
-      path: '/stories/$slug'
-      fullPath: '/stories/$slug'
-      preLoaderRoute: typeof GuestStoriesSlugRouteImport
-      parentRoute: typeof GuestRoute
+    '/store/sales': {
+      id: '/store/sales'
+      path: '/sales'
+      fullPath: '/store/sales'
+      preLoaderRoute: typeof StoreSalesRouteImport
+      parentRoute: typeof StoreRoute
     }
     '/_guest/tours/': {
       id: '/_guest/tours/'
@@ -917,6 +470,13 @@ declare module '@tanstack/react-router' {
       path: '/$slug'
       fullPath: '/tours/$slug'
       preLoaderRoute: typeof GuestToursSlugRouteImport
+      parentRoute: typeof GuestToursRoute
+    }
+    '/_guest/tours/private-tour': {
+      id: '/_guest/tours/private-tour'
+      path: '/private-tour'
+      fullPath: '/tours/private-tour'
+      preLoaderRoute: typeof GuestToursPrivateTourRouteImport
       parentRoute: typeof GuestToursRoute
     }
     '/store/bookings/': {
@@ -933,46 +493,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof StoreBookingsBookingIdRouteImport
       parentRoute: typeof StoreBookingsRoute
     }
-    '/store/orders/': {
-      id: '/store/orders/'
-      path: '/orders'
-      fullPath: '/store/orders/'
-      preLoaderRoute: typeof StoreOrdersIndexRouteImport
-      parentRoute: typeof StoreRoute
-    }
-    '/store/orders/$orderId': {
-      id: '/store/orders/$orderId'
-      path: '/orders/$orderId'
-      fullPath: '/store/orders/$orderId'
-      preLoaderRoute: typeof StoreOrdersOrderIdRouteImport
-      parentRoute: typeof StoreRoute
-    }
-    '/store/partners/': {
-      id: '/store/partners/'
-      path: '/partners'
-      fullPath: '/store/partners/'
-      preLoaderRoute: typeof StorePartnersIndexRouteImport
-      parentRoute: typeof StoreRoute
-    }
-    '/store/partners/$partnerId': {
-      id: '/store/partners/$partnerId'
-      path: '/partners/$partnerId'
-      fullPath: '/store/partners/$partnerId'
-      preLoaderRoute: typeof StorePartnersPartnerIdRouteImport
-      parentRoute: typeof StoreRoute
-    }
-    '/store/reports/': {
-      id: '/store/reports/'
-      path: '/reports'
-      fullPath: '/store/reports/'
-      preLoaderRoute: typeof StoreReportsIndexRouteImport
-      parentRoute: typeof StoreRoute
-    }
-    '/store/reports/costs': {
-      id: '/store/reports/costs'
-      path: '/reports/costs'
-      fullPath: '/store/reports/costs'
-      preLoaderRoute: typeof StoreReportsCostsRouteImport
+    '/store/products/': {
+      id: '/store/products/'
+      path: '/products'
+      fullPath: '/store/products/'
+      preLoaderRoute: typeof StoreProductsIndexRouteImport
       parentRoute: typeof StoreRoute
     }
     '/_guest/account_/bookings/$bookingId': {
@@ -982,18 +507,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof GuestAccountBookingsBookingIdRouteImport
       parentRoute: typeof GuestRoute
     }
-    '/_guest/account_/orders/$orderId': {
-      id: '/_guest/account_/orders/$orderId'
-      path: '/account/orders/$orderId'
-      fullPath: '/account/orders/$orderId'
-      preLoaderRoute: typeof GuestAccountOrdersOrderIdRouteImport
-      parentRoute: typeof GuestRoute
-    }
     '/_guest/tours/$slug_/book': {
       id: '/_guest/tours/$slug_/book'
       path: '/$slug/book'
       fullPath: '/tours/$slug/book'
       preLoaderRoute: typeof GuestToursSlugBookRouteImport
+      parentRoute: typeof GuestToursRoute
+    }
+    '/_guest/tours/private-tour_/sent': {
+      id: '/_guest/tours/private-tour_/sent'
+      path: '/private-tour/sent'
+      fullPath: '/tours/private-tour/sent'
+      preLoaderRoute: typeof GuestToursPrivateTourSentRouteImport
       parentRoute: typeof GuestToursRoute
     }
     '/store/bookings/departures/$departureId': {
@@ -1002,6 +527,20 @@ declare module '@tanstack/react-router' {
       fullPath: '/store/bookings/departures/$departureId'
       preLoaderRoute: typeof StoreBookingsDeparturesDepartureIdRouteImport
       parentRoute: typeof StoreBookingsRoute
+    }
+    '/store/products/tours/$tourId': {
+      id: '/store/products/tours/$tourId'
+      path: '/products/tours/$tourId'
+      fullPath: '/store/products/tours/$tourId'
+      preLoaderRoute: typeof StoreProductsToursTourIdRouteImport
+      parentRoute: typeof StoreRoute
+    }
+    '/store/products/tours/new': {
+      id: '/store/products/tours/new'
+      path: '/products/tours/new'
+      fullPath: '/store/products/tours/new'
+      preLoaderRoute: typeof StoreProductsToursNewRouteImport
+      parentRoute: typeof StoreRoute
     }
     '/_guest/account_/bookings/$bookingId_/confirmed': {
       id: '/_guest/account_/bookings/$bookingId_/confirmed'
@@ -1017,13 +556,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof GuestAccountBookingsBookingIdPayRouteImport
       parentRoute: typeof GuestRoute
     }
-    '/_guest/account_/orders/$orderId_/pay': {
-      id: '/_guest/account_/orders/$orderId_/pay'
-      path: '/account/orders/$orderId/pay'
-      fullPath: '/account/orders/$orderId/pay'
-      preLoaderRoute: typeof GuestAccountOrdersOrderIdPayRouteImport
-      parentRoute: typeof GuestRoute
-    }
     '/_guest/tours/$slug_/book_/review': {
       id: '/_guest/tours/$slug_/book_/review'
       path: '/$slug/book/review'
@@ -1036,15 +568,19 @@ declare module '@tanstack/react-router' {
 
 interface GuestToursRouteChildren {
   GuestToursSlugRoute: typeof GuestToursSlugRoute
+  GuestToursPrivateTourRoute: typeof GuestToursPrivateTourRoute
   GuestToursIndexRoute: typeof GuestToursIndexRoute
   GuestToursSlugBookRoute: typeof GuestToursSlugBookRoute
+  GuestToursPrivateTourSentRoute: typeof GuestToursPrivateTourSentRoute
   GuestToursSlugBookReviewRoute: typeof GuestToursSlugBookReviewRoute
 }
 
 const GuestToursRouteChildren: GuestToursRouteChildren = {
   GuestToursSlugRoute: GuestToursSlugRoute,
+  GuestToursPrivateTourRoute: GuestToursPrivateTourRoute,
   GuestToursIndexRoute: GuestToursIndexRoute,
   GuestToursSlugBookRoute: GuestToursSlugBookRoute,
+  GuestToursPrivateTourSentRoute: GuestToursPrivateTourSentRoute,
   GuestToursSlugBookReviewRoute: GuestToursSlugBookReviewRoute,
 }
 
@@ -1054,51 +590,27 @@ const GuestToursRouteWithChildren = GuestToursRoute._addFileChildren(
 
 interface GuestRouteChildren {
   GuestAccountRoute: typeof GuestAccountRoute
-  GuestCartRoute: typeof GuestCartRoute
   GuestCreditsRoute: typeof GuestCreditsRoute
   GuestExperiencesRoute: typeof GuestExperiencesRoute
-  GuestPlanRoute: typeof GuestPlanRoute
   GuestSearchRoute: typeof GuestSearchRoute
-  GuestStaysRoute: typeof GuestStaysRoute
   GuestToursRoute: typeof GuestToursRouteWithChildren
   GuestIndexRoute: typeof GuestIndexRoute
-  GuestCartReviewRoute: typeof GuestCartReviewRoute
-  GuestCartSentRoute: typeof GuestCartSentRoute
-  GuestGiftsSlugRoute: typeof GuestGiftsSlugRoute
-  GuestPlanSentRoute: typeof GuestPlanSentRoute
-  GuestStoriesSlugRoute: typeof GuestStoriesSlugRoute
-  GuestGiftsIndexRoute: typeof GuestGiftsIndexRoute
-  GuestStoriesIndexRoute: typeof GuestStoriesIndexRoute
   GuestAccountBookingsBookingIdRoute: typeof GuestAccountBookingsBookingIdRoute
-  GuestAccountOrdersOrderIdRoute: typeof GuestAccountOrdersOrderIdRoute
   GuestAccountBookingsBookingIdConfirmedRoute: typeof GuestAccountBookingsBookingIdConfirmedRoute
   GuestAccountBookingsBookingIdPayRoute: typeof GuestAccountBookingsBookingIdPayRoute
-  GuestAccountOrdersOrderIdPayRoute: typeof GuestAccountOrdersOrderIdPayRoute
 }
 
 const GuestRouteChildren: GuestRouteChildren = {
   GuestAccountRoute: GuestAccountRoute,
-  GuestCartRoute: GuestCartRoute,
   GuestCreditsRoute: GuestCreditsRoute,
   GuestExperiencesRoute: GuestExperiencesRoute,
-  GuestPlanRoute: GuestPlanRoute,
   GuestSearchRoute: GuestSearchRoute,
-  GuestStaysRoute: GuestStaysRoute,
   GuestToursRoute: GuestToursRouteWithChildren,
   GuestIndexRoute: GuestIndexRoute,
-  GuestCartReviewRoute: GuestCartReviewRoute,
-  GuestCartSentRoute: GuestCartSentRoute,
-  GuestGiftsSlugRoute: GuestGiftsSlugRoute,
-  GuestPlanSentRoute: GuestPlanSentRoute,
-  GuestStoriesSlugRoute: GuestStoriesSlugRoute,
-  GuestGiftsIndexRoute: GuestGiftsIndexRoute,
-  GuestStoriesIndexRoute: GuestStoriesIndexRoute,
   GuestAccountBookingsBookingIdRoute: GuestAccountBookingsBookingIdRoute,
-  GuestAccountOrdersOrderIdRoute: GuestAccountOrdersOrderIdRoute,
   GuestAccountBookingsBookingIdConfirmedRoute:
     GuestAccountBookingsBookingIdConfirmedRoute,
   GuestAccountBookingsBookingIdPayRoute: GuestAccountBookingsBookingIdPayRoute,
-  GuestAccountOrdersOrderIdPayRoute: GuestAccountOrdersOrderIdPayRoute,
 }
 
 const GuestRouteWithChildren = GuestRoute._addFileChildren(GuestRouteChildren)
@@ -1123,25 +635,21 @@ const StoreBookingsRouteWithChildren = StoreBookingsRoute._addFileChildren(
 interface StoreRouteChildren {
   StoreSectionRoute: typeof StoreSectionRoute
   StoreBookingsRoute: typeof StoreBookingsRouteWithChildren
+  StoreSalesRoute: typeof StoreSalesRoute
   StoreIndexRoute: typeof StoreIndexRoute
-  StoreOrdersOrderIdRoute: typeof StoreOrdersOrderIdRoute
-  StorePartnersPartnerIdRoute: typeof StorePartnersPartnerIdRoute
-  StoreReportsCostsRoute: typeof StoreReportsCostsRoute
-  StoreOrdersIndexRoute: typeof StoreOrdersIndexRoute
-  StorePartnersIndexRoute: typeof StorePartnersIndexRoute
-  StoreReportsIndexRoute: typeof StoreReportsIndexRoute
+  StoreProductsIndexRoute: typeof StoreProductsIndexRoute
+  StoreProductsToursTourIdRoute: typeof StoreProductsToursTourIdRoute
+  StoreProductsToursNewRoute: typeof StoreProductsToursNewRoute
 }
 
 const StoreRouteChildren: StoreRouteChildren = {
   StoreSectionRoute: StoreSectionRoute,
   StoreBookingsRoute: StoreBookingsRouteWithChildren,
+  StoreSalesRoute: StoreSalesRoute,
   StoreIndexRoute: StoreIndexRoute,
-  StoreOrdersOrderIdRoute: StoreOrdersOrderIdRoute,
-  StorePartnersPartnerIdRoute: StorePartnersPartnerIdRoute,
-  StoreReportsCostsRoute: StoreReportsCostsRoute,
-  StoreOrdersIndexRoute: StoreOrdersIndexRoute,
-  StorePartnersIndexRoute: StorePartnersIndexRoute,
-  StoreReportsIndexRoute: StoreReportsIndexRoute,
+  StoreProductsIndexRoute: StoreProductsIndexRoute,
+  StoreProductsToursTourIdRoute: StoreProductsToursTourIdRoute,
+  StoreProductsToursNewRoute: StoreProductsToursNewRoute,
 }
 
 const StoreRouteWithChildren = StoreRoute._addFileChildren(StoreRouteChildren)
@@ -1150,18 +658,6 @@ const rootRouteChildren: RootRouteChildren = {
   GuestRoute: GuestRouteWithChildren,
   SignInRoute: SignInRoute,
   StoreRoute: StoreRouteWithChildren,
-  LabAdviceRoute: LabAdviceRoute,
-  LabCardsRoute: LabCardsRoute,
-  LabCartLineRoute: LabCartLineRoute,
-  LabHeroRoute: LabHeroRoute,
-  LabOrderCardsRoute: LabOrderCardsRoute,
-  LabQuantityRoute: LabQuantityRoute,
-  LabReviewRoute: LabReviewRoute,
-  LabSellerRoute: LabSellerRoute,
-  PartnerTokenRoute: PartnerTokenRoute,
-  RCodeRoute: RCodeRoute,
-  LabIndexRoute: LabIndexRoute,
-  PartnerIndexRoute: PartnerIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

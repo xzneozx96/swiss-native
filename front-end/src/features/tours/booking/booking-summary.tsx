@@ -83,7 +83,7 @@ export function useTourPhoto(booking: TourBooking) {
 
   return (
     tours.find((item) => item.id === booking.tourId)?.photos[0] ??
-    "lucerne-old-town"
+    "furka-pass-1"
   );
 }
 

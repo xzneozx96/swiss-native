@@ -1,4 +1,5 @@
 import type { Language } from "@/contexts/locale-context";
+import type { LocalizedRich } from "@/lib/rich-text";
 
 /** Text written by the merchant. A language may be missing (R02: publish in one language). */
 export type LocalizedText = Partial<Record<Language, string>>;
@@ -6,96 +7,14 @@ export type LocalizedText = Partial<Record<Language, string>>;
 /** Money in Rappen (1 CHF = 100) so sums never drift. */
 export type Rappen = number;
 
-export type CategoryId =
-  | "pocket-knives"
-  | "gift-boxes"
-  | "chocolate"
-  | "prints"
-  | "small-gifts"
-  | "tours";
-
-export interface Category {
-  id: CategoryId;
-  name: LocalizedText;
-  /** Tours are sold from Phase 2; the tile shows "coming soon" until then. */
-  comingSoon?: boolean;
-  /** Photo slug for the category tile and the gifts-list banner. */
-  photo?: string;
-  /** One line under the category name in the banner. */
-  tagline?: LocalizedText;
-}
-
-/** How preparation days are counted (PRD §7.2). Mon–Fri does not skip public holidays. */
-export type DayMode = "working-days" | "calendar-days";
-
-export type PaymentPolicy =
-  | { kind: "full"; firstDueHours: number }
-  | {
-      kind: "deposit";
-      depositPercent: number;
-      firstDueHours: number;
-      balanceDueDaysAfterPickup: number;
-    }
-  | { kind: "later"; dueDaysAfterPickup: number };
-
-export interface Variant {
-  id: string;
-  label: LocalizedText;
-  price: Rappen;
-  /**
-   * Units on hand. Holds are not subtracted here: an order holds its units from
-   * acceptance until handover or cancellation (O05), so available = stock − held units.
-   */
-  stock: number;
-  /** The merchant has stopped selling this variant for now (spec C03 "variant not sold"). */
-  notForSale?: boolean;
-}
-
-/** One chapter of a product's long story (C03 "About this gift"). */
-export interface StoryChapter {
-  title: LocalizedText;
-  body: LocalizedText;
-  /** Photo slug shown above the chapter. */
-  photo?: string;
-}
-
 /**
- * The story behind a gift or tour (business plan: "a keepsake with a story"). Optional.
+ * The story behind a tour. Optional.
+ * The body is rich text per language (Tiptap JSON), edited in M13 since 15.10.2026;
+ * stored stories in the older chapter shape are converted on load (demo/upgrade.ts).
  */
 export interface ProductStory {
   title: LocalizedText;
-  chapters: StoryChapter[];
-}
-
-export interface Product {
-  id: string;
-  slug: string;
-  categoryId: CategoryId;
-  name: LocalizedText;
-  story: LocalizedText;
-  cancellationPolicy: LocalizedText;
-  variants: Variant[];
-  preparationDays: number;
-  dayMode: DayMode;
-  paymentPolicy: PaymentPolicy;
-  /** Commission rate for referral partners, e.g. 0.1 = 10%. Snapshotted on each order line. */
-  commissionRate: number;
-  engraving?: { maxLength: number };
-  /** Photo slug in src/assets/photos (see lib/photos.ts); missing photos fall back to the hero gradient. */
-  photo?: string;
-  /** More photo slugs for the detail gallery, after `photo` (sample shots until the shop's own). */
-  photos?: string[];
-  longStory?: ProductStory;
-  /** Missing counts as published, so stored products from before Phase 4 stay visible. */
-  published?: boolean;
-}
-
-export interface PickupPlace {
-  id: string;
-  name: LocalizedText;
-  address: string;
-  openingHours: LocalizedText;
-  instructions: LocalizedText;
+  body: LocalizedRich;
 }
 
 export interface Review {
@@ -105,7 +24,7 @@ export interface Review {
   rating: 1 | 2 | 3 | 4 | 5;
   text: LocalizedText;
   createdAt: string;
-  /** When the reviewer's latest order of this gift was completed (handed over). */
+  /** When the reviewer's booking was completed. */
   purchasedAt: string;
   /** Photos the guest added (slugs in src/assets/photos; sample shots in the prototype). */
   photos?: string[];
@@ -120,4 +39,7 @@ export interface Shop {
   email: string;
   /** Shop phone for guests (C03 seller card); sample number in the prototype. */
   phone: string;
+  /** Where guests find the shop (the seller sheet's Directions). */
+  address: string;
+  openingHours: LocalizedText;
 }

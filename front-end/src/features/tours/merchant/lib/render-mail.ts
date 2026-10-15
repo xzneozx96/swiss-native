@@ -4,7 +4,7 @@ import type { Mail, MailParams } from "@/features/notifications/types";
 import type { MessageKey } from "@/i18n/en";
 
 import { shop } from "@/features/catalog/seed";
-import { formatOrderDateTime } from "@/features/orders/lib/format";
+import { formatOrderDateTime } from "@/lib/dates";
 import { de } from "@/i18n/de";
 import { en } from "@/i18n/en";
 import { formatMoney } from "@/lib/format";

@@ -1,0 +1,175 @@
+{
+  "area": "Guest tour journey (tour list to booking, payment, confirmation, booking detail, after-tour states and review)",
+  "coverage": [
+    {"flow": "Tour list: cards, duration, from-price, next departure", "status": "already in deck", "slide": "8 (G10)"},
+    {"flow": "Tour list: Sold out and Coming soon states", "status": "new slide", "slide": "B-detail (B01)"},
+    {"flow": "Tour detail: inclusions, exclusions, age-group prices", "status": "new slide", "slide": "B-detail (B02)"},
+    {"flow": "Tour detail: meeting point, participation conditions, payment and cancellation policy", "status": "new slide", "slide": "B-detail (B03)"},
+    {"flow": "3D itinerary map with stop cards", "status": "already in deck", "slide": "8 (G12; G11 exists but unused)"},
+    {"flow": "Departure sheet: all departures, seats left, sold-out date, payment rule per date", "status": "new slide", "slide": "B-sheet (B04)"},
+    {"flow": "Participants: adult, child, infant counters, seat rule, capacity limit", "status": "new slide", "slide": "B-sheet (B05); G13 on slide 8 also shows counters"},
+    {"flow": "Another guest takes the seats: group no longer fits", "status": "new slide", "slide": "B-sheet (B06)"},
+    {"flow": "Booking review: contact details, totals, due today, balance, deadline", "status": "already in deck + new slide", "slide": "9 (G14), B-review (B07, B09)"},
+    {"flow": "Sign-in in the middle of booking, details kept", "status": "new slide", "slide": "B-review (B07, B08)"},
+    {"flow": "First payment with 15-minute hold countdown (deposit)", "status": "already in deck", "slide": "9 (G15)"},
+    {"flow": "First payment variants: full payment, pay later", "status": "new slide", "slide": "B-confirmed (B13, B14); full payment shown on review text only"},
+    {"flow": "Payment failed, retry inside the same deadline", "status": "new slide", "slide": "B-holds (B10)"},
+    {"flow": "Hold expired, seats released, rebook", "status": "new slide", "slide": "B-holds (B11, B12); rebooking reuses the departure sheet (B04)"},
+    {"flow": "Booking confirmed: deposit", "status": "already in deck", "slide": "9 (G16), B-confirmed"},
+    {"flow": "Booking confirmed: pay later and fully paid", "status": "new slide", "slide": "B-confirmed (B13, B14)"},
+    {"flow": "Add to calendar and optional trip profile", "status": "new slide", "slide": "B-confirmed (B15)"},
+    {"flow": "Guest booking detail: overview, status chips, balance banner", "status": "already in deck", "slide": "12 (G26)"},
+    {"flow": "Booking detail tabs: payments, progress timeline, policy", "status": "new slide", "slide": "B-manage (B17, B18, B19)"},
+    {"flow": "Pay outstanding balance with no new hold", "status": "new slide", "slide": "B-manage (B16)"},
+    {"flow": "Delivered with balance still due, no-show", "status": "new slide", "slide": "B-after (B20, B21)"},
+    {"flow": "Completed booking and review opened only after completion", "status": "new slide", "slide": "B-after (B22, B23)"},
+    {"flow": "Payment still processing, then hold expires; late payment shown for reconciliation", "status": "skipped (edge case; only the guest list label 'Payment received after expiry' is visible in B12)", "slide": "-"},
+    {"flow": "German tour 'Text in German' badge, private-tour request", "status": "skipped (private-tour request not built or still in progress)", "slide": "-"}
+  ],
+  "revise": [
+    {
+      "slide": 8,
+      "title": "Explore a tour on the map",
+      "lead": "Guests compare tours, follow the itinerary on a 3D map of Lucerne, and see which departure dates still have seats before they choose one.",
+      "callouts": [
+        ["3D route map", "Tapping a numbered stop opens a card with what the guide shows there, so guests see the route before booking."],
+        ["Tours at a glance", "Each card shows the duration, the lowest price and the next departure date, or says Sold out or Coming soon."],
+        ["Seats left per date", "Every departure date lists how many seats remain, and a sold-out date is greyed out and cannot be selected."]
+      ],
+      "captions": ["Tour list", "Route and stops", "Dates and seats"]
+    },
+    {
+      "slide": 9,
+      "title": "Book a tour, hold seats for 15 minutes",
+      "lead": "The guest confirms contact details and pays the amount due today, and the seats stay held for 15 minutes while the payment is completed.",
+      "callouts": [
+        ["15-minute seat hold", "The clock starts when the guest continues to payment, keeps running after a reload and is not restarted by a failed attempt."],
+        ["Payment rule per departure", "Each date is set to full payment, a 30% deposit with the balance later, or booking now and paying later."],
+        ["Booked is not paid", "The confirmation shows booking status and payment status separately, with the amount still owed and its due date."]
+      ],
+      "captions": ["Review details", "Pay within the hold", "Places confirmed"]
+    }
+  ],
+  "new": [
+    {
+      "id": "B-detail",
+      "after": 8,
+      "title": "Know what is included before booking",
+      "lead": "The tour page tells guests what is and is not included, what each age group pays, and the payment and cancellation rules, before they choose a date.",
+      "layout": "A",
+      "phones": [
+        ["B01-tours-sold-out.png", "Sold out, coming soon", "Tours without open seats or dates stay visible but cannot be booked."],
+        ["B02-tour-detail-prices.png", "Included and prices", "Inclusions, exclusions and the price for each age group."],
+        ["B03-tour-detail-policies.png", "Rules in plain words", "Meeting point, conditions, payment terms, cancellation."]
+      ],
+      "browsers": [],
+      "callouts": [
+        ["Inclusions and exclusions", "Lists what the price covers, such as a local guide, and what it does not, such as food, drinks and transport."],
+        ["Prices by age group", "Adults (16+) pay CHF 89, children (6–15) CHF 45, and infants (0–5) are free and take no seat."],
+        ["Policies in plain words", "Meeting point, participation conditions, payment terms per date and cancellation rules open as short sections below the prices."]
+      ]
+    },
+    {
+      "id": "B-sheet",
+      "after": 8,
+      "title": "Choose a date and your group",
+      "lead": "A bottom sheet lists every departure with its seats left and payment rule, then guests set how many adults, children and infants join.",
+      "layout": "A",
+      "phones": [
+        ["B04-departure-sheet.png", "Pick a departure", "Seats left and payment rule for each date."],
+        ["B05-group-capacity.png", "Set the group", "Counters stop at the seats left."],
+        ["B06-seats-taken.png", "Seats taken meanwhile", "Another guest booked first, so the group no longer fits."]
+      ],
+      "browsers": [],
+      "callouts": [
+        ["Seats left per departure", "Each date shows its seats left, and fully booked dates show Sold out and cannot be selected."],
+        ["Who needs a seat", "Adults and children each use one seat, infants use none, and at least one adult must join the group."],
+        ["Checked again at booking", "Choosing a date reserves nothing; if another guest takes the seats first, the sheet warns that the group no longer fits."]
+      ]
+    },
+    {
+      "id": "B-review",
+      "after": 8,
+      "title": "Review the booking, sign in on the way",
+      "lead": "Guests check the price, their contact details and the amount due today before signing in, and nothing they typed is lost afterwards.",
+      "layout": "A",
+      "phones": [
+        ["B07-review-signed-out.png", "Review before sign-in", "Contact name and mobile are required; a child's name is optional."],
+        ["B08-sign-in.png", "Sign in", "Google or an emailed code, no password."],
+        ["B09-review-totals.png", "Totals and deadline", "Due now, remaining balance and cancellation policy."]
+      ],
+      "browsers": [],
+      "callouts": [
+        ["Sign in only at the end", "Guests see the full review first; signing in with Google or an emailed code returns them to the same booking."],
+        ["Amount due today", "The review separates the booking total, what is paid now (a 30% deposit here, CHF 66.90) and the remaining balance."],
+        ["Deadline and policy up front", "The balance due date (here Thu 15 Oct, 18:00) and the cancellation policy are shown before any payment."]
+      ]
+    },
+    {
+      "id": "B-holds",
+      "after": 9,
+      "title": "Failed payment and expired holds",
+      "lead": "A declined payment can be retried until the 15 minutes run out; after that the seats go back on sale and the guest rebooks.",
+      "layout": "A",
+      "phones": [
+        ["B10-payment-declined.png", "Payment declined", "No money taken; the same countdown keeps running."],
+        ["B11-reservation-expired.png", "Reservation expired", "Seats released; a button checks availability again."],
+        ["B12-bookings-past.png", "Kept in the account", "Expired bookings stay listed as No payment taken."]
+      ],
+      "browsers": [],
+      "callouts": [
+        ["Retry in the same window", "A declined payment takes no money and the guest may try again, but the original deadline keeps running."],
+        ["Expiry releases the seats", "When the hold ends the booking becomes Expired, its seats are released once, and the payment can no longer be made."],
+        ["Rebook from the same page", "Check availability again reopens the departure sheet with the group kept, and seats and prices are re-checked."]
+      ]
+    },
+    {
+      "id": "B-confirmed",
+      "after": 9,
+      "title": "Confirmation depends on how the guest paid",
+      "lead": "Every confirmed booking shows what was paid and what is still due, then offers a calendar file and an optional short trip profile.",
+      "layout": "B",
+      "badge": "Three ways to pay",
+      "phones": [
+        ["G16-booking-confirmed.png", "30% deposit", "Confirmed; balance due before departure."],
+        ["B13-confirmed-pay-later.png", "Pay later", "Nothing charged; full amount due by the deadline."],
+        ["B14-confirmed-paid-full.png", "Paid in full", "No balance, nothing further to pay."],
+        ["B15-confirmed-calendar-profile.png", "Calendar and trip profile", "Add the date; three optional questions."]
+      ],
+      "browsers": [],
+      "callouts": []
+    },
+    {
+      "id": "B-manage",
+      "after": 9,
+      "title": "Pay the balance later, without a new hold",
+      "lead": "From the account, a guest opens the booking, pays the remaining balance online, and keeps a record of payments, progress and the agreed terms.",
+      "layout": "B",
+      "badge": "After booking",
+      "phones": [
+        ["B16-pay-balance.png", "Pay the balance", "No countdown: seats are already confirmed."],
+        ["B17-booking-payments.png", "Payments tab", "Each payment with its amount and date."],
+        ["B18-booking-progress.png", "Progress tab", "Timeline: booking created, each payment received."],
+        ["B19-booking-policy.png", "Policy tab", "Payment and cancellation terms, organiser contact."]
+      ],
+      "browsers": [],
+      "callouts": []
+    },
+    {
+      "id": "B-after",
+      "after": 9,
+      "title": "After the tour: delivered, no-show, reviews",
+      "lead": "The shop records what happened on the day, the guest's booking reflects it, and only a completed booking can be reviewed.",
+      "layout": "B",
+      "badge": "Shop records, guest sees",
+      "phones": [
+        ["B20-detail-delivered.png", "Delivered, balance due", "Tour done; the unpaid balance can still be paid."],
+        ["B21-detail-no-show.png", "No-show", "Payments stay visible; no completion or review."],
+        ["B22-detail-completed.png", "Completed", "Paid in full; Write a review appears."],
+        ["B23-review-sheet.png", "Write a review", "Rating and comment, shown on the tour page."]
+      ],
+      "browsers": [],
+      "callouts": []
+    }
+  ]
+}

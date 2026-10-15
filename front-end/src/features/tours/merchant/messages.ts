@@ -14,7 +14,6 @@ export const tourMerchantEn = {
   "tourMerchant.eventUpdated": "Booking updated",
   "tourMerchant.actorGuest": "Guest",
   "tourMerchant.actorOwner": "Owner",
-  "tourMerchant.actorManager": "Manager",
   "tourMerchant.actorSystem": "System",
   "tourMerchant.actorProvider": "Payment provider",
   "tourMerchant.departures": "Tour departures",
@@ -71,10 +70,10 @@ export const tourMerchantEn = {
     "Booking {ref}: the guest took part in the tour. Money stays as it is; completion still needs full payment.",
   "tourMerchant.confirmNoShowTitle": "Record {name} as a no-show?",
   "tourMerchant.noShowBody":
-    "Booking {ref}: the guest did not take part. Money paid and the balance stay as they are: no refund, no debt waived. No completion, commission or review.",
+    "Booking {ref}: the guest did not take part. Money paid and the balance stay as they are: no refund, no debt waived. No completion or review.",
   "tourMerchant.confirmCompleteTitle": "Complete booking {ref}?",
   "tourMerchant.confirmCompleteBody":
-    "Service delivered and paid in full. Commission is recorded once and the guest can review the tour.",
+    "Service delivered and paid in full. The guest can review the tour.",
   "tourMerchant.lock.notDelivered": "Record service delivered first",
   "tourMerchant.lock.owed": "{balance} still owed",
   "tourMerchant.done.completed": "Completed on {date}.",
@@ -150,23 +149,6 @@ export const tourMerchantEn = {
   "tourMerchant.overdue.cancel": "Cancelled automatically, seats released",
   "tourMerchant.overdue.grace": "{hours} hours’ grace, then you decide",
   "tourMerchant.cancellationPolicy": "Cancellation policy",
-  "tourMerchant.commissionTitle": "Partner commission",
-  "tourMerchant.source": "Source",
-  "tourMerchant.sourceDirect": "Direct, no partner",
-  "tourMerchant.commissionNoPartner":
-    "Booked without a partner source, so no commission is due.",
-  "tourMerchant.commissionAmount": "Commission",
-  "tourMerchant.commissionValue": "{amount} ({rate} of {basis})",
-  "tourMerchant.commission.none": "No commission",
-  "tourMerchant.commission.estimated": "Estimated, not recorded",
-  "tourMerchant.commission.recorded": "Recorded",
-  "tourMerchant.commission.notApplicable": "No commission: not completed",
-  "tourMerchant.commission":
-    "Commission is recorded once when this booking is completed.",
-  "tourMerchant.commissionRecordedAt":
-    "Recorded once on {date}, when the booking was completed.",
-  "tourMerchant.commissionNever":
-    "No-shows and cancelled bookings never earn commission.",
   "tourMerchant.participants":
     "Adults {adults} · Children {children} · Infants {infants}",
   "tourMerchant.infantsNote": "Infants do not use a seat.",
@@ -174,6 +156,14 @@ export const tourMerchantEn = {
   "tourMerchant.reportGroup": "Tours",
   "tourMerchant.todayIntro": "Departures and bookings that need you",
   "tourMerchant.todayCollect": "Tour balances to collect",
+  "tourMerchant.collect.hint": "Owed on confirmed and delivered bookings",
+  "tourMerchant.collect.none": "Nothing to collect on tour bookings.",
+  "tourMerchant.collect.upcoming": "Due before the tour",
+  "tourMerchant.collect.overdue": "Overdue",
+  "tourMerchant.collect.owing": "Delivered, still owed",
+  "tourMerchant.collect.bookings.one": "{count} booking",
+  "tourMerchant.collect.bookings.other": "{count} bookings",
+  "tourMerchant.collect.next": "Next balance due {date}: {amount}",
   "tourMerchant.todayEmpty": "No upcoming departures.",
   "tourMerchant.nextDepartures": "Next departures",
   "tourMerchant.taskLabel": "{title}, {count}",
@@ -259,7 +249,6 @@ export const tourMerchantDe: Record<keyof typeof tourMerchantEn, string> = {
   "tourMerchant.eventUpdated": "Buchung aktualisiert",
   "tourMerchant.actorGuest": "Gast",
   "tourMerchant.actorOwner": "Inhaber",
-  "tourMerchant.actorManager": "Manager",
   "tourMerchant.actorSystem": "System",
   "tourMerchant.actorProvider": "Zahlungsanbieter",
   "tourMerchant.departures": "Tourtermine",
@@ -320,10 +309,10 @@ export const tourMerchantDe: Record<keyof typeof tourMerchantEn, string> = {
     "Buchung {ref}: Der Gast hat an der Tour teilgenommen. Zahlungen bleiben unverändert; abschliessen erst nach vollständiger Zahlung.",
   "tourMerchant.confirmNoShowTitle": "{name} als nicht erschienen erfassen?",
   "tourMerchant.noShowBody":
-    "Buchung {ref}: Der Gast hat nicht teilgenommen. Bezahltes Geld und Restbetrag bleiben unverändert: keine Rückzahlung, kein Erlass. Kein Abschluss, keine Provision, keine Bewertung.",
+    "Buchung {ref}: Der Gast hat nicht teilgenommen. Bezahltes Geld und Restbetrag bleiben unverändert: keine Rückzahlung, kein Erlass. Kein Abschluss, keine Bewertung.",
   "tourMerchant.confirmCompleteTitle": "Buchung {ref} abschliessen?",
   "tourMerchant.confirmCompleteBody":
-    "Leistung erbracht und vollständig bezahlt. Die Provision wird einmalig erfasst und der Gast kann die Tour bewerten.",
+    "Leistung erbracht und vollständig bezahlt. Der Gast kann die Tour bewerten.",
   "tourMerchant.lock.notDelivered": "Zuerst erbrachte Leistung erfassen",
   "tourMerchant.lock.owed": "{balance} noch offen",
   "tourMerchant.done.completed": "Abgeschlossen am {date}.",
@@ -407,24 +396,6 @@ export const tourMerchantDe: Record<keyof typeof tourMerchantEn, string> = {
   "tourMerchant.overdue.grace":
     "{hours} Stunden Nachfrist, danach entscheiden Sie",
   "tourMerchant.cancellationPolicy": "Stornierungsregel",
-  "tourMerchant.commissionTitle": "Partnerprovision",
-  "tourMerchant.source": "Quelle",
-  "tourMerchant.sourceDirect": "Direkt, kein Partner",
-  "tourMerchant.commissionNoPartner":
-    "Ohne Partnerquelle gebucht, daher fällt keine Provision an.",
-  "tourMerchant.commissionAmount": "Provision",
-  "tourMerchant.commissionValue": "{amount} ({rate} von {basis})",
-  "tourMerchant.commission.none": "Keine Provision",
-  "tourMerchant.commission.estimated": "Geschätzt, nicht erfasst",
-  "tourMerchant.commission.recorded": "Erfasst",
-  "tourMerchant.commission.notApplicable":
-    "Keine Provision: nicht abgeschlossen",
-  "tourMerchant.commission":
-    "Die Provision wird beim Abschluss dieser Buchung einmalig erfasst.",
-  "tourMerchant.commissionRecordedAt":
-    "Einmalig am {date} beim Abschluss erfasst.",
-  "tourMerchant.commissionNever":
-    "Nicht erschienene und stornierte Buchungen erhalten nie Provision.",
   "tourMerchant.participants":
     "Erwachsene {adults} · Kinder {children} · Kleinkinder {infants}",
   "tourMerchant.infantsNote": "Kleinkinder belegen keinen Sitzplatz.",
@@ -432,6 +403,14 @@ export const tourMerchantDe: Record<keyof typeof tourMerchantEn, string> = {
   "tourMerchant.reportGroup": "Touren",
   "tourMerchant.todayIntro": "Termine und Buchungen, die Sie erledigen sollten",
   "tourMerchant.todayCollect": "Offene Tour-Restbeträge",
+  "tourMerchant.collect.hint": "Offen auf bestätigten und erbrachten Buchungen",
+  "tourMerchant.collect.none": "Auf Tour-Buchungen ist nichts offen.",
+  "tourMerchant.collect.upcoming": "Fällig vor der Tour",
+  "tourMerchant.collect.overdue": "Überfällig",
+  "tourMerchant.collect.owing": "Erbracht, noch offen",
+  "tourMerchant.collect.bookings.one": "{count} Buchung",
+  "tourMerchant.collect.bookings.other": "{count} Buchungen",
+  "tourMerchant.collect.next": "Nächster Restbetrag fällig am {date}: {amount}",
   "tourMerchant.todayEmpty": "Keine bevorstehenden Termine.",
   "tourMerchant.nextDepartures": "Nächste Termine",
   "tourMerchant.taskLabel": "{title}, {count}",

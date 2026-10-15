@@ -21,8 +21,7 @@ export interface ReviewsSheetProps {
 /**
  * All reviews of a listing in a tall bottom sheet (Airbnb, owner references): the
  * laurel score and badge, an "Overall rating" bar per star, then every review in full.
- * No search: there are few reviews per gift (owner, 13.10.2026). Shared by gifts and,
- * later, tours.
+ * No search: there are few reviews per tour (owner, 13.10.2026).
  */
 export function ReviewsSheet({
   isOpen,

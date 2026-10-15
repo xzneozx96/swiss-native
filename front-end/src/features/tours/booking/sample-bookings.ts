@@ -24,7 +24,9 @@ export function addSampleTourBookings(
   const future = data.departures.find((item) => item.id === "walk-20");
 
   if (!tour || !past || !future) return data;
-  const created = new Date("2026-10-12T10:00:00+02:00");
+  const created = new Date("2026-10-10T10:00:00+02:00");
+  const price = tour.adultPrice;
+  const first = Math.round(price * 0.3);
   const base = (
     id: string,
     departure: typeof past,
@@ -43,7 +45,6 @@ export function addSampleTourBookings(
         childName: "",
       },
       guestId,
-      partnerId: null,
       language,
       now: when,
     });
@@ -71,12 +72,12 @@ export function addSampleTourBookings(
       status: "expired",
       holdUntil: null,
       payments: [
-        online("expired", 2670, "failed", "2026-10-12T10:05:00+02:00"),
+        online("expired", first, "failed", "2026-10-10T10:05:00+02:00"),
       ],
       activity: events(
-        ["2026-10-12T10:00:00+02:00", "created", "guest"],
-        ["2026-10-12T10:05:00+02:00", "payment-failed", "guest"],
-        ["2026-10-12T10:15:00+02:00", "expired", "system"],
+        ["2026-10-10T10:00:00+02:00", "created", "guest"],
+        ["2026-10-10T10:05:00+02:00", "payment-failed", "guest"],
+        ["2026-10-10T10:15:00+02:00", "expired", "system"],
       ),
     },
     {
@@ -85,21 +86,21 @@ export function addSampleTourBookings(
       status: "expired",
       holdUntil: null,
       payments: [
-        online("late", 2670, "succeeded", "2026-10-12T10:14:00+02:00"),
+        online("late", first, "succeeded", "2026-10-10T10:14:00+02:00"),
       ],
       lateResults: [
         {
           paymentId: `${PREFIX}pay-late`,
-          paidAt: at("2026-10-12T10:14:00+02:00"),
-          receivedAt: at("2026-10-12T10:22:00+02:00"),
+          paidAt: at("2026-10-10T10:14:00+02:00"),
+          receivedAt: at("2026-10-10T10:22:00+02:00"),
         },
       ],
       activity: events(
-        ["2026-10-12T10:00:00+02:00", "created", "guest"],
-        ["2026-10-12T10:13:00+02:00", "payment-processing", "guest"],
-        ["2026-10-12T10:15:00+02:00", "expired", "system"],
-        ["2026-10-12T10:15:00+02:00", "session-closed", "system"],
-        ["2026-10-12T10:22:00+02:00", "payment-late-succeeded", "provider"],
+        ["2026-10-10T10:00:00+02:00", "created", "guest"],
+        ["2026-10-10T10:13:00+02:00", "payment-processing", "guest"],
+        ["2026-10-10T10:15:00+02:00", "expired", "system"],
+        ["2026-10-10T10:15:00+02:00", "session-closed", "system"],
+        ["2026-10-10T10:22:00+02:00", "payment-late-succeeded", "provider"],
       ),
     },
     {
@@ -108,12 +109,12 @@ export function addSampleTourBookings(
       status: "delivered",
       holdUntil: null,
       payments: [
-        online("delivered", 2670, "succeeded", "2026-10-12T10:03:00+02:00"),
+        online("delivered", first, "succeeded", "2026-10-10T10:03:00+02:00"),
       ],
       activity: events(
-        ["2026-10-12T10:00:00+02:00", "created", "guest"],
-        ["2026-10-12T10:03:00+02:00", "payment-succeeded", "guest"],
-        ["2026-10-13T09:30:00+02:00", "delivered", "manager"],
+        ["2026-10-10T10:00:00+02:00", "created", "guest"],
+        ["2026-10-10T10:03:00+02:00", "payment-succeeded", "guest"],
+        ["2026-10-13T09:30:00+02:00", "delivered", "owner"],
       ),
     },
     {
@@ -121,17 +122,21 @@ export function addSampleTourBookings(
       ref: ref("05"),
       status: "completed",
       holdUntil: null,
-      commissionRecordedAt: at("2026-10-13T09:40:00+02:00"),
       payments: [
-        online("completed-1", 2670, "succeeded", "2026-10-12T10:03:00+02:00"),
-        online("completed-2", 6230, "succeeded", "2026-10-12T18:00:00+02:00"),
+        online("completed-1", first, "succeeded", "2026-10-10T10:03:00+02:00"),
+        online(
+          "completed-2",
+          price - first,
+          "succeeded",
+          "2026-10-11T18:00:00+02:00",
+        ),
       ],
       activity: events(
-        ["2026-10-12T10:00:00+02:00", "created", "guest"],
-        ["2026-10-12T10:03:00+02:00", "payment-succeeded", "guest"],
-        ["2026-10-12T18:00:00+02:00", "payment-succeeded", "guest"],
-        ["2026-10-13T09:30:00+02:00", "delivered", "manager"],
-        ["2026-10-13T09:40:00+02:00", "completed", "manager"],
+        ["2026-10-10T10:00:00+02:00", "created", "guest"],
+        ["2026-10-10T10:03:00+02:00", "payment-succeeded", "guest"],
+        ["2026-10-11T18:00:00+02:00", "payment-succeeded", "guest"],
+        ["2026-10-13T09:30:00+02:00", "delivered", "owner"],
+        ["2026-10-13T09:40:00+02:00", "completed", "owner"],
       ),
     },
     {
@@ -140,11 +145,11 @@ export function addSampleTourBookings(
       status: "no_show",
       holdUntil: null,
       payments: [
-        online("no-show", 8900, "succeeded", "2026-10-12T10:03:00+02:00"),
+        online("no-show", price, "succeeded", "2026-10-10T10:03:00+02:00"),
       ],
       activity: events(
-        ["2026-10-12T10:00:00+02:00", "created", "guest"],
-        ["2026-10-12T10:03:00+02:00", "payment-succeeded", "guest"],
+        ["2026-10-10T10:00:00+02:00", "created", "guest"],
+        ["2026-10-10T10:03:00+02:00", "payment-succeeded", "guest"],
         ["2026-10-13T09:30:00+02:00", "no_show", "owner"],
       ),
     },

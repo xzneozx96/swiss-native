@@ -22,7 +22,7 @@ interface PhotoGalleryProps {
   photos: string[];
   labels: PhotoGalleryLabels;
   className?: string;
-  /** Overlays on the top of the gallery (back, heart, cart); positioned by the caller. */
+  /** Overlays on the top of the gallery (back, heart); positioned by the caller. */
   children?: React.ReactNode;
 }
 
@@ -34,7 +34,7 @@ const slideIndex = (el: HTMLElement) =>
   Math.round(el.scrollLeft / Math.max(1, el.clientWidth));
 
 /**
- * Detail-page photo gallery for every kind of listing (gifts, tours, stays): swipe
+ * Detail-page photo gallery for every kind of listing (tours, stays): swipe
  * between photos (native scroll snap) with an "n / N" counter, and tap a photo to
  * view all of them fullscreen (Airbnb pattern). Arrow buttons serve mouse and keyboard.
  */

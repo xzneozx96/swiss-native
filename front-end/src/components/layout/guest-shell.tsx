@@ -2,25 +2,19 @@ import type { IconComponent } from "@/components/icons";
 
 import { Link, useMatches } from "@tanstack/react-router";
 
-import {
-  AccountIcon,
-  ExploreIcon,
-  GiftIcon,
-  TourIcon,
-} from "@/components/icons";
+import { AccountIcon, ExploreIcon, TourIcon } from "@/components/icons";
 import { useLocale } from "@/contexts/locale-context";
 import { GuestAvatar } from "@/features/account/components/guest-avatar";
 import { useDemo } from "@/features/demo";
 
-type GuestNavTarget = "/" | "/gifts" | "/tours" | "/account";
+type GuestNavTarget = "/" | "/tours" | "/account";
 
 const navItems: {
   to: GuestNavTarget;
-  label: "nav.explore" | "nav.gifts" | "nav.tours" | "nav.account";
+  label: "nav.explore" | "nav.tours" | "nav.account";
   icon: IconComponent;
 }[] = [
   { to: "/", label: "nav.explore", icon: ExploreIcon },
-  { to: "/gifts", label: "nav.gifts", icon: GiftIcon },
   { to: "/tours", label: "nav.tours", icon: TourIcon },
   { to: "/account", label: "nav.account", icon: AccountIcon },
 ];
@@ -28,7 +22,7 @@ const navItems: {
 /**
  * Guest app frame (UX spec §3.1), built to feel like a native app (owner request):
  * a phone-width column (max 430px; centred like a phone on larger screens), no website
- * header (each screen owns its top area), and a translucent tab bar with four tabs.
+ * header (each screen owns its top area), and a translucent tab bar with three tabs.
  * Detail screens (route staticData `hideTabBar`) hide the tab bar for their own action bar.
  */
 export function GuestShell({ children }: { children: React.ReactNode }) {
@@ -63,7 +57,7 @@ export function GuestShell({ children }: { children: React.ReactNode }) {
             aria-label={t("nav.guest.label")}
             className="fixed bottom-0 z-30 w-full max-w-[430px] border-t border-separator/70 bg-surface/85 pb-[env(safe-area-inset-bottom,0px)] backdrop-blur-xl"
           >
-            <ul className="grid grid-cols-4">
+            <ul className="grid grid-cols-3">
               {navItems.map(({ to, label, icon: Icon }) => (
                 <li key={to}>
                   <Link

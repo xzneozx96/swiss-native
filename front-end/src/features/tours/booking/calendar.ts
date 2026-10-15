@@ -18,9 +18,9 @@ export function calendarHref(
   const lines = [
     "BEGIN:VCALENDAR",
     "VERSION:2.0",
-    "PRODID:-//Swiss Keepsakes//Tour booking//EN",
+    "PRODID:-//Erich Haldi//Tour booking//EN",
     "BEGIN:VEVENT",
-    `UID:${booking.id}@swisskeepsakes.example`,
+    `UID:${booking.id}@swissnative.example`,
     `DTSTAMP:${stamp(booking.createdAt)}`,
     `DTSTART:${stamp(booking.startsAt)}`,
     `DTEND:${stamp(booking.endsAt)}`,

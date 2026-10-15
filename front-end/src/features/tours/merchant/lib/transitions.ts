@@ -51,7 +51,7 @@ export type TourBlock =
 
 export type TourOutcome = "delivered" | "no_show" | "completed";
 
-const isStaff = (role: Role) => role === "owner" || role === "manager";
+const isStaff = (role: Role) => role === "owner";
 
 function tourData(state: DemoState): TourData {
   return state.data.tours ?? createTourSeed();
@@ -126,7 +126,7 @@ export function recordExternalPayment(
     status: "succeeded",
     note: input.note.trim() || undefined,
     at: input.at,
-    recordedBy: ctx.role === "owner" ? "owner" : "manager",
+    recordedBy: "owner",
   } as const;
   const paid: TourBooking = {
     ...booking,
@@ -177,7 +177,7 @@ export function outcomeBlock(
 
 /**
  * Records one booking's outcome. Money is untouched: a no-show keeps what was paid and
- * what is owed (O10). Completion records commission once (AC10) and invites a review (N15).
+ * what is owed (O10). Completion invites a review (N15).
  */
 export function recordOutcome(
   state: DemoState,
@@ -194,10 +194,6 @@ export function recordOutcome(
     ...booking,
     status: result,
     holdUntil: null,
-    commissionRecordedAt:
-      result === "completed"
-        ? (booking.commissionRecordedAt ?? at)
-        : booking.commissionRecordedAt,
     activity: [...booking.activity, { at, event: result, actor: ctx.role }],
   };
   const saved = setBooking(state, next);

@@ -1,0 +1,137 @@
+PASS [en] #/store/requests shows Requests, not the placeholder
+PASS [en] tabs Advice, Private tours, Questions with counts 2, 2, 7 | ["Advice\n2","Private tours\n2","Questions\n7"]
+PASS [en] Advice is selected by default
+PASS [en] two advice cards, newest first
+PASS [en] the unopened request is New, the opened one Read
+PASS [en] the card shows language, time and the questions as sent (German wording) | m.huber@example.com / New / German · 12.10.2026, 19:00 / Wie viele Erwachsene reisen mit? / 2 / Wie viele Kinder reisen mit? / 0 / Was möchten Sie sehen oder erleben? / Berge, Essen und Schokolade /  / +4 more answers
+PASS [en] the card's questions carry their language
+PASS [en] advice inbox: no horizontal overflow
+PASS [en] a card opens #/store/requests/advice/adv-2 | http://localhost:5251/#/store/requests/advice/adv-2
+PASS [en] detail: h1
+PASS [en] detail: all 7 questions and answers
+PASS [en] detail: the untranslated question is marked as asked in English
+PASS [en] detail: the reply link is a mailto in the guest's language | mailto:m.huber@example.com?subject=Ihre%20Reise%20nach%20Luzern
+PASS [en] opening the request marks it read
+PASS [en] detail: no horizontal overflow
+PASS [en] back on the list, the opened request reads Read
+PASS [en] the older request keeps its old wording (AC18)
+PASS [en] the Questions tab is kept in ?tab=questions | http://localhost:5251/#/store/requests?tab=questions
+PASS [en] the note says changes reach new requests only
+PASS [en] 7 questions in the set order
+PASS [en] missing translation: the warning and the "DE missing" chip on question 7
+PASS [en] rows show type and required
+PASS [en] the first row cannot move up, the last cannot move down
+PASS [en] questions: no horizontal overflow
+PASS [en] the edit sheet opens with the missing-German note
+PASS [en] the sheet keeps the EN text
+PASS [en] the DE text is saved
+PASS [en] saving shows a toast and stamps the set
+PASS [en] the warning and the chip are gone
+PASS [en] move up swaps two questions | ["adults","children","interests","arrival","style","departure","notes"]
+PASS [en] the list follows the new order
+PASS [en] the children question is now optional, still a number
+PASS [en] its row says Optional
+PASS [en] a malformed recipient shows an error and is not saved
+PASS [en] the recipient is saved
+PASS [en] add: saving an empty question shows the text error
+PASS [en] a choice type starts with two empty options
+PASS [en] empty options show their error
+PASS [en] one option is not enough
+PASS [en] an option without DE says so
+PASS [en] the new question is saved last: required single choice with 2 options | {"id":"q-mv96e5ki4","text":{"en":"Is this your first visit to Lucerne?","de":"Ist das Ihr erster Besuch in Luzern?"},"type":"single","required":true,"options":[{"id":"o-mv96e4li0","label":{"en":"Yes","de":"Ja"}},{"id":"o-mv96e5cm2","label":{"en":"No"}}]}
+PASS [en] the new question has a fresh id
+PASS [en] an option missing DE brings the warning back
+PASS [en] filling the option's DE clears it
+PASS [en] a text type shows no options
+PASS [en] the type change is saved and the options dropped
+PASS [en] delete asks first, naming the question
+PASS [en] the question is deleted
+PASS [en] the Questions count follows (7)
+PASS [en] editor after the edits: no horizontal overflow
+PASS [en] C21: an optional count offers Send (as shown) and Skip
+PASS [en] C21: the changed type asks with a text box
+PASS [en] C21: the new single choice offers its 2 options
+PASS [en] C21 asks the edited set in its new order | [true,true,true,true,true,true,true]
+PASS [en] C21 sends with the edited set
+PASS [en] the saved request has the new wording and no deleted question | ["How many adults are travelling?","How many children are travelling?","What would you like to see or do?","How do you like to travel?","When do you leave Lucerne?","Anything else we should know?","Is this your first visit to Lucerne?"]
+PASS [en] the added DE text is used for German guests
+PASS [en] the open conversation keeps its wording after the shop's edit
+PASS [en] the open request is saved with the wording it started with
+PASS [en] the next conversation uses the new wording
+PASS [en] the newest C21 request tops the inbox as New
+PASS [en] the Store Manager sees the same inbox
+PASS [en] empty inbox: one sentence and an action
+PASS [en] an unknown request shows "not found" with a way back
+PASS [en] no console or page errors | []
+PASS [de] #/store/requests shows Requests, not the placeholder
+PASS [de] tabs Advice, Private tours, Questions with counts 2, 2, 7 | ["Beratung\n2","Private Touren\n2","Fragen\n7"]
+PASS [de] Advice is selected by default
+PASS [de] two advice cards, newest first
+PASS [de] the unopened request is New, the opened one Read
+PASS [de] the card shows language, time and the questions as sent (German wording) | m.huber@example.com / Neu / Deutsch · 12.10.2026, 19:00 / Wie viele Erwachsene reisen mit? / 2 / Wie viele Kinder reisen mit? / 0 / Was möchten Sie sehen oder erleben? / Berge, Essen und Schokolade /  / +4 weitere Antworten
+PASS [de] the card's questions carry their language
+PASS [de] advice inbox: no horizontal overflow
+PASS [de] a card opens #/store/requests/advice/adv-2 | http://localhost:5251/#/store/requests/advice/adv-2
+PASS [de] detail: h1
+PASS [de] detail: all 7 questions and answers
+PASS [de] detail: the untranslated question is marked as asked in English
+PASS [de] detail: the reply link is a mailto in the guest's language | mailto:m.huber@example.com?subject=Ihre%20Reise%20nach%20Luzern
+PASS [de] opening the request marks it read
+PASS [de] detail: no horizontal overflow
+PASS [de] back on the list, the opened request reads Read
+PASS [de] the older request keeps its old wording (AC18)
+PASS [de] the Questions tab is kept in ?tab=questions | http://localhost:5251/#/store/requests?tab=questions
+PASS [de] the note says changes reach new requests only
+PASS [de] 7 questions in the set order
+PASS [de] missing translation: the warning and the "DE missing" chip on question 7
+PASS [de] rows show type and required
+PASS [de] the first row cannot move up, the last cannot move down
+PASS [de] questions: no horizontal overflow
+PASS [de] the edit sheet opens with the missing-German note
+PASS [de] the sheet keeps the EN text
+PASS [de] the DE text is saved
+PASS [de] saving shows a toast and stamps the set
+PASS [de] the warning and the chip are gone
+PASS [de] move up swaps two questions | ["adults","children","interests","arrival","style","departure","notes"]
+PASS [de] the list follows the new order
+PASS [de] the children question is now optional, still a number
+PASS [de] its row says Optional
+PASS [de] a malformed recipient shows an error and is not saved
+PASS [de] the recipient is saved
+PASS [de] add: saving an empty question shows the text error
+PASS [de] a choice type starts with two empty options
+PASS [de] empty options show their error
+PASS [de] one option is not enough
+PASS [de] an option without DE says so
+PASS [de] the new question is saved last: required single choice with 2 options | {"id":"q-mv96fru24","text":{"en":"Is this your first visit to Lucerne?","de":"Ist das Ihr erster Besuch in Luzern?"},"type":"single","required":true,"options":[{"id":"o-mv96fquq0","label":{"en":"Yes","de":"Ja"}},{"id":"o-mv96frlp2","label":{"en":"No"}}]}
+PASS [de] the new question has a fresh id
+PASS [de] an option missing DE brings the warning back
+PASS [de] filling the option's DE clears it
+PASS [de] a text type shows no options
+PASS [de] the type change is saved and the options dropped
+PASS [de] delete asks first, naming the question
+PASS [de] the question is deleted
+PASS [de] the Questions count follows (7)
+PASS [de] editor after the edits: no horizontal overflow
+PASS [de] C21: an optional count offers Send (as shown) and Skip
+PASS [de] C21: the changed type asks with a text box
+PASS [de] C21: the new single choice offers its 2 options
+PASS [de] C21 asks the edited set in its new order | [true,true,true,true,true,true,true]
+PASS [de] C21 sends with the edited set
+PASS [de] the saved request has the new wording and no deleted question | ["Wie viele Erwachsene reisen mit?","Wie viele Kinder reisen mit?","Was möchten Sie sehen oder erleben?","Wie reisen Sie am liebsten?","Wann reisen Sie aus Luzern ab?","Möchten Sie uns sonst noch etwas sagen?","Ist das Ihr erster Besuch in Luzern?"]
+PASS [de] the added DE text is used for German guests
+PASS [de] the open conversation keeps its wording after the shop's edit
+PASS [de] the open request is saved with the wording it started with
+PASS [de] the next conversation uses the new wording
+PASS [de] the newest C21 request tops the inbox as New
+PASS [de] the Store Manager sees the same inbox
+PASS [de] empty inbox: one sentence and an action
+PASS [de] an unknown request shows "not found" with a way back
+PASS [de] no console or page errors | []
+PASS [desktop] the advice inbox is a table with 2 rows
+PASS [desktop] a table row opens the request | http://localhost:5251/#/store/requests/advice/adv-2
+PASS [desktop] detail: the guest card sits in a 300px column on the right | {"answersRight":924,"guestLeft":948,"guestWidth":300}
+PASS [desktop] no horizontal overflow
+PASS [desktop] no console or page errors | []
+
+RESULT 135 passed, 0 failed

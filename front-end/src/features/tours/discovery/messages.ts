@@ -1,5 +1,5 @@
 export const tourDiscoveryEn = {
-  "tourDiscovery.title": "Tours around Lucerne",
+  "tourDiscovery.title": "Motorbike tours over the passes",
   "tourDiscovery.intro": "A little time here. A story to take home.",
   "tourDiscovery.from": "From",
   "tourDiscovery.duration": "{hours} hours",
@@ -11,7 +11,7 @@ export const tourDiscoveryEn = {
   "tourDiscovery.noDatesBody":
     "This tour has no upcoming departures yet. Explore our other tours, or ask the organiser about new dates.",
   "tourDiscovery.empty":
-    "New tours are on their way. Come back soon to discover Lucerne with us.",
+    "New tours are on their way. Come back soon to discover Switzerland with us.",
   "tourDiscovery.notFound":
     "This tour is unavailable. Choose another tour to continue.",
   "tourDiscovery.browse": "Explore other tours",
@@ -25,7 +25,7 @@ export const tourDiscoveryEn = {
   "tourDiscovery.durationLabel": "Duration",
   "tourDiscovery.startingPrice": "Adult price",
   "tourDiscovery.about": "About this experience",
-  "tourDiscovery.itinerary": "Your route through Lucerne",
+  "tourDiscovery.itinerary": "Your route",
   "tourDiscovery.included": "What is included",
   "tourDiscovery.excluded": "Not included",
   "tourDiscovery.meeting": "Where we meet",
@@ -82,7 +82,7 @@ export const tourDiscoveryEn = {
 };
 
 export const tourDiscoveryDe: Record<keyof typeof tourDiscoveryEn, string> = {
-  "tourDiscovery.title": "Touren rund um Luzern",
+  "tourDiscovery.title": "Motorradtouren über die Pässe",
   "tourDiscovery.intro": "Ein wenig Zeit hier. Eine Geschichte für zu Hause.",
   "tourDiscovery.from": "Ab",
   "tourDiscovery.duration": "{hours} Stunden",
@@ -94,7 +94,7 @@ export const tourDiscoveryDe: Record<keyof typeof tourDiscoveryEn, string> = {
   "tourDiscovery.noDatesBody":
     "Für diese Tour gibt es noch keine kommenden Termine. Entdecken Sie unsere anderen Touren oder fragen Sie den Veranstalter nach neuen Terminen.",
   "tourDiscovery.empty":
-    "Neue Touren folgen bald. Entdecken Sie Luzern bald wieder mit uns.",
+    "Neue Touren folgen bald. Entdecken Sie die Schweiz bald wieder mit uns.",
   "tourDiscovery.notFound":
     "Diese Tour ist nicht verfügbar. Wählen Sie eine andere Tour, um fortzufahren.",
   "tourDiscovery.browse": "Weitere Touren entdecken",
@@ -108,7 +108,7 @@ export const tourDiscoveryDe: Record<keyof typeof tourDiscoveryEn, string> = {
   "tourDiscovery.durationLabel": "Dauer",
   "tourDiscovery.startingPrice": "Preis Erwachsene",
   "tourDiscovery.about": "Über dieses Erlebnis",
-  "tourDiscovery.itinerary": "Ihr Weg durch Luzern",
+  "tourDiscovery.itinerary": "Ihre Route",
   "tourDiscovery.included": "Das ist inklusive",
   "tourDiscovery.excluded": "Nicht inklusive",
   "tourDiscovery.meeting": "Hier treffen wir uns",

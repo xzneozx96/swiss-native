@@ -10,7 +10,7 @@ export const pastRowClass =
 
 /**
  * C14's two groups (1.12r): open items as tickets under "Coming up", then closed items as quiet
- * rows in one white box under "Past" (owner, round 3). Gift orders and tour bookings share it.
+ * rows in one white box under "Past" (owner, round 3).
  */
 export function TicketGroups({
   id,

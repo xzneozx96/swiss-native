@@ -4,7 +4,6 @@
  * on the same content. No `tab` is the hub itself.
  */
 export const accountSections = [
-  "orders",
   "bookings",
   "payments",
   "profile",

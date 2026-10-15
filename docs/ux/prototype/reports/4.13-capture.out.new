@@ -1,0 +1,82 @@
+PASS [en] ?tab=comments selects the Comments tab
+PASS [en] the tab counts all comments; the filter counts Not replied and Hidden
+PASS [en] each card names the comment's article and language
+PASS [en] a reply says whom it answers
+PASS [en] Hidden lists the seeded hidden comment with its chip
+PASS [en] the reply sheet quotes the comment
+PASS [en] the sheet names how the reply shows (Ngọc, Shop)
+PASS [en] an empty reply shows an inline error
+PASS [en] posting confirms
+PASS [en] the reply is stored as the shop (Ngọc) under Tom's comment
+PASS [en] Tom's comment now shows Shop replied
+PASS [en] the reply card carries the Shop label
+PASS [en] a reply cannot be replied to (one level)
+PASS [en] hiding confirms
+PASS [en] the hidden comment shows the Hidden chip
+PASS [en] its reply shows it is hidden with the comment
+PASS [en] Delete asks first with the shared dialog
+PASS [en] Cancel keeps the comment
+PASS [en] deleting confirms
+PASS [en] the comment is gone from M18 and from the data
+PASS [en] deleting a comment with a reply names the reply
+PASS [en] the reply goes with its comment (none is left without it)
+PASS [en] C20 counts only what it shows | Comments4 vs 4
+PASS [en] C20 shows the shop reply under Tom's comment
+PASS [en] C20 no longer shows the hidden thread
+PASS [en] C20 does not show the seeded hidden comment
+PASS [en] C20 no longer shows the deleted spam
+PASS [en] showing again confirms
+PASS [en] with nothing hidden, Hidden shows its empty state
+PASS [en] C20 shows the thread again
+PASS [en] no comments: the empty state
+PASS [en] owner: no horizontal overflow
+PASS [en] owner: no console errors | []
+PASS [en] the sheet names Lukas for the Manager
+PASS [en] the Manager's reply is stored as Lukas
+PASS [en] manager: no horizontal overflow
+PASS [en] manager: no console errors | []
+PASS [en 1280] from 1024px the comments are a table
+PASS [en 1280] 1280: no horizontal overflow
+PASS [en 1280] 1280: no console errors | []
+PASS [de] ?tab=comments selects the Comments tab
+PASS [de] the tab counts all comments; the filter counts Not replied and Hidden
+PASS [de] each card names the comment's article and language
+PASS [de] a reply says whom it answers
+PASS [de] Hidden lists the seeded hidden comment with its chip
+PASS [de] the reply sheet quotes the comment
+PASS [de] the sheet names how the reply shows (Ngọc, Shop)
+PASS [de] an empty reply shows an inline error
+PASS [de] posting confirms
+PASS [de] the reply is stored as the shop (Ngọc) under Tom's comment
+PASS [de] Tom's comment now shows Shop replied
+PASS [de] the reply card carries the Shop label
+PASS [de] a reply cannot be replied to (one level)
+PASS [de] hiding confirms
+PASS [de] the hidden comment shows the Hidden chip
+PASS [de] its reply shows it is hidden with the comment
+PASS [de] Delete asks first with the shared dialog
+PASS [de] Cancel keeps the comment
+PASS [de] deleting confirms
+PASS [de] the comment is gone from M18 and from the data
+PASS [de] deleting a comment with a reply names the reply
+PASS [de] the reply goes with its comment (none is left without it)
+PASS [de] C20 counts only what it shows | Comments4 vs 4
+PASS [de] C20 shows the shop reply under Tom's comment
+PASS [de] C20 no longer shows the hidden thread
+PASS [de] C20 does not show the seeded hidden comment
+PASS [de] C20 no longer shows the deleted spam
+PASS [de] showing again confirms
+PASS [de] with nothing hidden, Hidden shows its empty state
+PASS [de] C20 shows the thread again
+PASS [de] no comments: the empty state
+PASS [de] owner: no horizontal overflow
+PASS [de] owner: no console errors | []
+PASS [de] the sheet names Lukas for the Manager
+PASS [de] the Manager's reply is stored as Lukas
+PASS [de] manager: no horizontal overflow
+PASS [de] manager: no console errors | []
+PASS [de 1280] from 1024px the comments are a table
+PASS [de 1280] 1280: no horizontal overflow
+PASS [de 1280] 1280: no console errors | []
+
+80 passed, 0 failed

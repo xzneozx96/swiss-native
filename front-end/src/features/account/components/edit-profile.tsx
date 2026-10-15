@@ -1,5 +1,5 @@
 import type { AvatarPickError } from "../lib/avatar";
-import type { Guest } from "@/features/orders/types";
+import type { Guest } from "@/features/account/types";
 
 import { Button, FieldError, Input, Label, TextField } from "@heroui/react";
 import { useCanGoBack, useNavigate, useRouter } from "@tanstack/react-router";

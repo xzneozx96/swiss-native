@@ -23,13 +23,13 @@ import {
   PickupIcon,
   TourIcon,
 } from "@/components/icons";
-import { BackButton } from "@/components/layout/cart-button";
+import { BackButton } from "@/components/layout/top-bar-buttons";
 import { StateHeadline } from "@/components/state-headline";
 import { StatusChip } from "@/components/status-chip";
 import { SurfaceCard, SurfaceCardBlock } from "@/components/surface-card";
 import { TimelineSteps } from "@/components/timeline-steps";
 import { useLocale } from "@/contexts/locale-context";
-import { TripCard } from "@/features/checkout/components/trip-card";
+import { TripCard } from "@/features/trip/components/trip-card";
 import { useBack } from "@/hooks/use-back";
 import { shop } from "@/features/catalog/seed";
 import { BookingStatusLabels } from "@/features/tours/components/booking-status";
@@ -212,10 +212,7 @@ function OverviewPanel({ booking, now }: { booking: TourBooking; now: Date }) {
         <h2 className="text-heading" id="booking-trip">
           {t("tripCard.title")}
         </h2>
-        <TripCard
-          kind="tour"
-          target={{ kind: "tour", bookingId: booking.id }}
-        />
+        <TripCard target={{ bookingId: booking.id }} />
       </section>
     </div>
   );

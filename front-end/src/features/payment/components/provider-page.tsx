@@ -1,4 +1,4 @@
-import type { Outcome, PaymentView } from "../hooks/use-payment";
+import type { Outcome, PaymentView } from "../types";
 import type { MessageKey } from "@/i18n/en";
 
 import { useEffect, useRef } from "react";
@@ -107,25 +107,6 @@ export function ProviderPage({ view }: { view: PaymentView }) {
         >
           {t("payment.back")}
         </button>
-      </div>
-    </ProviderFrame>
-  );
-}
-
-/** Loading state in the provider's own look (spec §5.5: never a full-page spinner). */
-export function ProviderLoading() {
-  const { t } = useLocale();
-
-  return (
-    <ProviderFrame>
-      <div
-        aria-busy
-        className="flex flex-col gap-3 rounded-sm border border-[#cfd4da] bg-white p-4"
-      >
-        <p className="text-sm text-[#52606d]">{t("payment.loading")}</p>
-        {[0, 1, 2, 3].map((i) => (
-          <div key={i} className="h-10 animate-pulse rounded-sm bg-[#e4e7eb]" />
-        ))}
       </div>
     </ProviderFrame>
   );

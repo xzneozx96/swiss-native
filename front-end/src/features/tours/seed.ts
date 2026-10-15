@@ -10,521 +10,980 @@ import type {
 import { firstPaymentAmount, tourTotal } from "./lib/selectors";
 import { operationsFixtures } from "./merchant/lib/fixtures";
 
+import { storyFromChapters } from "@/lib/rich-text";
+
 const cancellationPolicy = {
   en: "Sample policy: contact the organiser at least 48 hours before departure. Refunds and rescheduling need merchant approval.",
   de: "Beispielregel: mindestens 48 Stunden vor Beginn den Veranstalter kontaktieren. Rückerstattungen und Umbuchungen brauchen die Zustimmung des Händlers.",
 };
-const walkingItinerary: Tour["itinerary"] = [
-  {
-    id: "chapel",
-    name: { en: "Chapel Bridge", de: "Kapellbrücke" },
-    description: {
-      en: "Meet your guide by the river and begin with the stories behind Lucerne's wooden bridge.",
-      de: "Treffen Sie Ihre Führung am Fluss und beginnen Sie mit den Geschichten hinter Luzerns Holzbrücke.",
-    },
-    minutesFromStart: 0,
-    coordinates: [8.30762, 47.05167],
-    photo: "lucerne-kapellbruecke-1200",
-    note: {
-      en: "Look for the guide with the red umbrella at the north entrance, on the old-town side.",
-      de: "Die Führung wartet mit einem roten Schirm am Nordeingang, auf der Altstadtseite.",
-    },
-  },
-  {
-    id: "old-town",
-    name: { en: "Old-town squares", de: "Altstadtplätze" },
-    description: {
-      en: "Explore the painted façades around Hirschenplatz, with time to pause and take photographs.",
-      de: "Entdecken Sie die bemalten Fassaden rund um den Hirschenplatz, mit Zeit für Pausen und Fotos.",
-    },
-    minutesFromStart: 25,
-    coordinates: [8.30576, 47.05216],
-    photo: "lucerne-old-town",
-  },
-  {
-    id: "musegg",
-    name: { en: "Musegg Wall", de: "Museggmauer" },
-    description: {
-      en: "See the city's historic fortifications and enjoy a different view of the old town.",
-      de: "Entdecken Sie die historische Stadtbefestigung und einen anderen Blick auf die Altstadt.",
-    },
-    minutesFromStart: 65,
-    coordinates: [8.30525, 47.05506],
-    photo: "musegg-wall",
-    note: {
-      en: "Steep steps lead up to the wall. Ask your guide for the step-free route along the street.",
-      de: "Steile Stufen führen zur Mauer hinauf. Fragen Sie Ihre Führung nach dem stufenfreien Weg entlang der Strasse.",
-    },
-  },
-  {
-    id: "lake",
-    name: { en: "Finish by the lake", de: "Abschluss am See" },
-    description: {
-      en: "Return to the waterfront for local tips and your final questions.",
-      de: "Kehren Sie ans Seeufer zurück, mit lokalen Tipps und Zeit für letzte Fragen.",
-    },
-    minutesFromStart: 110,
-    coordinates: [8.30969, 47.05303],
-    photo: "lake-steamboat",
-  },
-];
 
 export const tourSeed: Tour[] = [
   {
     id: "old-town",
-    longStory: {
+    longStory: storyFromChapters({
       title: {
-        en: "Two hours on the oldest streets",
-        de: "Zwei Stunden auf den ältesten Gassen",
+        en: "The pass where the ice left",
+        de: "Der Pass, von dem das Eis gegangen ist",
       },
       chapters: [
         {
-          photo: "lucerne-kapellbruecke-1200",
+          photo: "furka-pass-2",
           title: {
-            en: "Where the river leaves the lake",
-            de: "Wo der Fluss den See verlässt",
+            en: "A glacier you can measure",
+            de: "Ein Gletscher, den man messen kann",
           },
           body: {
-            en: "The walk starts on the Chapel Bridge, a covered wooden bridge across the Reuss, right where the river leaves the lake. Beside it stands the octagonal Water Tower, about 34 metres high. Both were part of the town’s defences before they became its postcard.",
-            de: "Der Spaziergang beginnt auf der Kapellbrücke, einem gedeckten Holzsteg über die Reuss, genau dort, wo der Fluss den See verlässt. Daneben steht der achteckige Wasserturm, rund 34 Meter hoch. Beide gehörten zur Stadtbefestigung, bevor sie zum Postkartenmotiv wurden.",
+            en: "In the early 1800s the Rhone Glacier still reached down to Gletsch, the hamlet at the foot of the pass. Because it is so easy to reach, it has been measured since 1879, when it was about 9.1 km long. By 2016 it was 7.65 km, and since 1850 it has lost roughly 60 percent of its volume. Today white blankets cover about two hectares of the ice to slow the melt. From the road you see a pale-green lake where the tongue used to be.",
+            de: "Anfang des 19. Jahrhunderts reichte der Rhonegletscher noch bis nach Gletsch hinunter, dem Weiler am Fuss des Passes. Weil er so leicht erreichbar ist, wird er seit 1879 vermessen, damals war er rund 9,1 km lang. 2016 waren es noch 7,65 km, und seit 1850 hat er etwa 60 Prozent seines Volumens verloren. Heute decken weisse Vliese rund zwei Hektar Eis ab, um die Schmelze zu bremsen. Von der Strasse aus sieht man dort einen blassgrünen See, wo früher die Gletscherzunge lag.",
           },
         },
         {
-          photo: "lucerne-old-town",
+          photo: "furka-pass-3",
           title: {
-            en: "The squares that were a market and a courtroom",
-            de: "Die Plätze, die Markt und Gericht waren",
+            en: "A road, a hotel, a view that moved away",
+            de: "Eine Strasse, ein Hotel, eine Aussicht, die davonzog",
           },
           body: {
-            en: "From the river the route climbs into the old town’s squares, where façades were painted to tell passers-by who lived behind them. On the Weinmarkt the citizens swore their alliance in 1332, and a fountain has stood there since 1481.",
-            de: "Vom Fluss führt der Weg in die Plätze der Altstadt, wo Fassaden bemalt wurden, um Vorbeigehenden zu zeigen, wer dahinter wohnte. Auf dem Weinmarkt schworen die Bürger 1332 ihren Bund, und seit 1481 steht dort ein Brunnen.",
+            en: "The carriage road over the Furka was built between 1864 and 1866, and the federal government paid two thirds of it for military reasons. In 1882 Josef Seiler put a lodge into one of its hairpins, the beginning of the Hotel Belvédère. It grew into a Belle Époque landmark with the glacier a few hundred metres away. Since then the ice has pulled back by more than a kilometre, and the hotel has been closed since 2015. You come here to look, not to sleep.",
+            de: "Die Kutschenstrasse über die Furka entstand 1864 bis 1866, zwei Drittel der Kosten übernahm aus militärischen Gründen der Bund. 1882 baute Josef Seiler in eine Kehre eine Herberge, der Anfang des Hotels Belvédère. Es wurde zum Wahrzeichen der Belle Époque, der Gletscher lag nur einige hundert Meter entfernt. Seither ist das Eis um mehr als einen Kilometer zurückgewichen, und das Hotel ist seit 2015 geschlossen. Man kommt hierher zum Schauen, nicht zum Übernachten.",
           },
         },
         {
-          photo: "musegg-wall",
+          photo: "furka-pass-1",
           title: {
-            en: "A town that built its walls and kept them",
-            de: "Eine Stadt, die ihre Mauern behielt",
+            en: "Bond, bends and thin air",
+            de: "Bond, Kehren und dünne Luft",
           },
           body: {
-            en: "We pass below the Musegg Wall, nine towers on a ridge above the town, before the route ends by the lake. Many medieval towns pulled their walls down. Lucerne kept this one, and you can still see why: from up there, you see the whole lake coming.",
-            de: "Wir kommen an der Museggmauer vorbei, neun Türme auf einem Grat über der Stadt, bevor die Route am See endet. Viele mittelalterliche Städte rissen ihre Mauern ab. Luzern behielt diese, und man sieht noch, warum: Von dort oben sieht man den ganzen See kommen.",
+            en: "In 1964 the crew of Goldfinger came to the Furka: the sniper scene with Tilly Masterson was shot on the pass, the car chase on the curving roads near Realp. One bend is now signed as a James Bond Strasse, with a lookout. For riders the pass is a steady string of hairpins and sweepers, with gradients of up to about 10 to 11 percent. At 2,429 m a sunny valley morning can turn cold and windy at the top, so dress for the summit, not for Realp.",
+            de: "1964 kam das Team von Goldfinger auf die Furka: Die Szene mit Tilly Masterson als Scharfschützin wurde auf dem Pass gedreht, die Verfolgungsjagd auf den kurvigen Strassen bei Realp. Eine Kurve ist heute als «James Bond Strasse» beschildert, mit Aussichtspunkt. Für Motorradfahrer ist der Pass eine stetige Folge von Kehren und weiten Bögen mit Steigungen von bis zu rund 10 bis 11 Prozent. Auf 2429 m kann aus einem sonnigen Talmorgen oben ein kalter, windiger Tag werden, also kleide dich für den Gipfel, nicht für Realp.",
           },
         },
       ],
+    }),
+    slug: "furka-pass",
+    name: {
+      en: "Furka Pass by motorbike",
+      de: "Furkapass mit dem Motorrad",
     },
-    slug: "lucerne-old-town-walk",
-    name: { en: "Lucerne old-town walk", de: "Altstadtspaziergang Luzern" },
     summary: {
-      en: "A small-group walk through the old town",
-      de: "Ein Spaziergang in kleiner Gruppe durch die Altstadt",
+      en: "Hairpins above a glacier that is walking away",
+      de: "Kehren über einem Gletscher, der sich zurückzieht",
     },
     description: {
-      en: "Follow the river into the old town, pause at the painted façades and hear the stories behind Chapel Bridge. An unhurried walk with time for questions and photographs.",
-      de: "Folgen Sie dem Fluss in die Altstadt, entdecken Sie bemalte Fassaden und hören Sie die Geschichten hinter der Kapellbrücke. Ein entspannter Spaziergang mit Zeit für Fragen und Fotos.",
+      en: "A 2,429 m crossing from the Urseren valley in Uri to the Goms in Valais, with the Rhone Glacier right beside the road. It is the pass of 1960s film glamour, old grand hotels and a glacier you can watch shrinking.",
+      de: "Eine Überfahrt auf 2429 m vom Urserntal im Kanton Uri ins Goms im Wallis, mit dem Rhonegletscher direkt neben der Strasse. Der Pass der Filmkulisse der 1960er, der alten Grandhotels und eines Gletschers, dem man beim Schrumpfen zusehen kann.",
     },
-    photos: ["lucerne-old-town", "lucerne-kapellbruecke-1200", "musegg-wall"],
-    durationMinutes: 120,
-    adultPrice: 8900,
-    childPrice: 4500,
+    photos: [
+      "furka-pass-1",
+      "furka-pass-2",
+      "furka-pass-3",
+      "furka-pass-4",
+      "furka-pass-5",
+      "furka-pass-6",
+    ],
+    durationMinutes: 450,
+    adultPrice: 24000,
+    childPrice: 12000,
     infantPrice: 0,
     meetingPoint: {
-      en: "Chapel Bridge · north entrance",
-      de: "Kapellbrücke · Nordeingang",
+      en: "Confirmed with Erich after booking",
+      de: "Wird nach der Buchung mit Erich bestätigt",
     },
     included: [
       {
-        en: "Local guide in English or German",
-        de: "Lokale Führung auf Englisch oder Deutsch",
+        en: "Guided ride over the Furka Pass with a local host",
+        de: "Geführte Fahrt über den Furkapass mit einem lokalen Gastgeber",
       },
       {
-        en: "Two-hour guided city walk",
-        de: "Zweistündiger geführter Stadtspaziergang",
+        en: "Planned stops with the story behind each place",
+        de: "Geplante Stopps mit der Geschichte hinter jedem Ort",
       },
     ],
     excluded: {
-      en: "Food, drinks, transport and attraction entry fees.",
-      de: "Essen, Getränke, Transport und Eintrittspreise.",
+      en: "Fuel, meals and accommodation. Motorcycle and riding gear are arranged separately: ask before booking.",
+      de: "Treibstoff, Essen und Unterkunft. Motorrad und Fahrerausrüstung werden separat geklärt: bitte vor der Buchung fragen.",
     },
     conditions: {
-      en: "Around 2 km on cobbled streets. Comfortable shoes recommended. Children must be accompanied by an adult. Ask the organiser about step-free access before booking.",
-      de: "Rund 2 km über Kopfsteinpflaster. Bequeme Schuhe empfohlen. Kinder müssen von einer erwachsenen Person begleitet werden. Bitte den stufenfreien Zugang vor der Buchung klären.",
+      en: "A valid motorcycle licence is required; riders from 18. The pass is usually open from about June to October, and snow or weather can change or cancel a day. Check the road status before riding.",
+      de: "Ein gültiger Motorradführerschein ist nötig; Fahrer ab 18 Jahren. Der Pass ist meist von etwa Juni bis Oktober offen, Schnee oder Wetter können einen Tag verändern oder absagen. Vor der Fahrt den Strassenzustand prüfen.",
     },
     cancellationPolicy,
     published: true,
-    commissionRate: 0.1,
-    itinerary: walkingItinerary,
-    ageBands: { childFrom: 6, adultFrom: 16 },
+    itinerary: [
+      {
+        id: "realp",
+        name: {
+          en: "Realp",
+          de: "Realp",
+        },
+        description: {
+          en: "The last village of the Urseren valley in Uri, at about 1,540 m, where the climb to the Furka begins. The Goldfinger car chase was filmed on the curving roads nearby.",
+          de: "Das letzte Dorf im Urserntal im Kanton Uri auf rund 1540 m, wo der Aufstieg zur Furka beginnt. Die Verfolgungsjagd aus Goldfinger wurde auf den kurvigen Strassen in der Nähe gedreht.",
+        },
+        minutesFromStart: 0,
+        coordinates: [8.5021, 46.5988],
+        photo: "furka-pass-4",
+        note: {
+          en: "The Furka steam railway (Dampfbahn Furka-Bergstrecke) starts here, on the old mountain line.",
+          de: "Hier beginnt die Dampfbahn Furka-Bergstrecke auf der alten Bergstrecke.",
+        },
+      },
+      {
+        id: "furka-summit",
+        name: {
+          en: "Furka summit",
+          de: "Furka-Passhöhe",
+        },
+        description: {
+          en: "The border between Uri and Valais at 2,429 m, and the European watershed between the Reuss (Rhine, North Sea) and the Rhone (Mediterranean).",
+          de: "Die Grenze zwischen Uri und Wallis auf 2429 m und die europäische Wasserscheide zwischen Reuss (Rhein, Nordsee) und Rhone (Mittelmeer).",
+        },
+        minutesFromStart: 110,
+        coordinates: [8.415, 46.5725],
+        photo: "furka-pass-5",
+        note: {
+          en: "The sign at the top still reads 2,436 m, the old map value; the current official height is 2,429 m.",
+          de: "Das Schild oben nennt noch 2436 m, den Wert der alten Siegfriedkarte; die aktuelle amtliche Höhe beträgt 2429 m.",
+        },
+      },
+      {
+        id: "belvedere",
+        name: {
+          en: "Hotel Belvédère and Rhone Glacier",
+          de: "Hotel Belvédère und Rhonegletscher",
+        },
+        description: {
+          en: "The 1882 hotel sits in a hairpin at about 2,270 m, facing the Rhone Glacier. It has been closed since 2015, but the building and the view are still worth a stop.",
+          de: "Das Hotel von 1882 steht in einer Kehre auf rund 2270 m, mit Blick auf den Rhonegletscher. Es ist seit 2015 geschlossen, doch Gebäude und Aussicht sind weiterhin einen Halt wert.",
+        },
+        minutesFromStart: 190,
+        coordinates: [8.3884, 46.57668],
+        photo: "furka-pass-3",
+        note: {
+          en: "Park only in the marked areas; the road here is narrow and busy in summer.",
+          de: "Nur auf den markierten Plätzen parkieren; die Strasse ist hier schmal und im Sommer stark befahren.",
+        },
+      },
+      {
+        id: "gletsch",
+        name: {
+          en: "Gletsch",
+          de: "Gletsch",
+        },
+        description: {
+          en: "A hamlet at 1,757 m where the Furka and Grimsel roads meet, once right next to the glacier's mouth. Furka steam trains stop at its station.",
+          de: "Ein Weiler auf 1757 m, wo sich Furka- und Grimselstrasse treffen, einst direkt an der Gletscherzunge. Die Dampfzüge der Furka halten an seinem Bahnhof.",
+        },
+        minutesFromStart: 290,
+        coordinates: [8.3615, 46.5622],
+        photo: "furka-pass-6",
+      },
+      {
+        id: "oberwald",
+        name: {
+          en: "Oberwald",
+          de: "Oberwald",
+        },
+        description: {
+          en: "The first village of the Goms at 1,377 m, at the head of the upper Rhone valley. A calm place to end the crossing.",
+          de: "Das erste Dorf im Goms auf 1377 m, am Anfang des oberen Rhonetals. Ein ruhiger Ort, um die Überfahrt zu beenden.",
+        },
+        minutesFromStart: 370,
+        coordinates: [8.3521, 46.5329],
+        photo: "furka-pass-7",
+        note: {
+          en: "From here a car shuttle runs year-round through the Furka base tunnel to Realp.",
+          de: "Von hier verkehrt ganzjährig ein Autoverlad durch den Furka-Basistunnel nach Realp.",
+        },
+      },
+    ],
+    ageBands: { childFrom: 12, adultFrom: 18 },
     participantFields: [
       {
-        id: "childName",
-        label: { en: "Child’s name", de: "Name des Kindes" },
+        id: "licence",
+        label: {
+          en: "Motorcycle licence category",
+          de: "Führerscheinkategorie",
+        },
+        required: true,
+      },
+      {
+        id: "bike",
+        label: {
+          en: "Your motorcycle (make and model)",
+          de: "Ihr Motorrad (Marke und Modell)",
+        },
         required: false,
       },
     ],
   },
   {
     id: "lake",
-    longStory: {
+    longStory: storyFromChapters({
       title: {
-        en: "Where the steamers still run",
-        de: "Wo die Dampfschiffe noch fahren",
+        en: "A trade route that became a power station",
+        de: "Eine Handelsroute, die zum Kraftwerk wurde",
       },
       chapters: [
         {
-          photo: "lake-steamboat",
+          photo: "grimsel-pass-3",
           title: {
-            en: "A lake with five paddle steamers",
-            de: "Ein See mit fünf Raddampfern",
+            en: "The mule track",
+            de: "Der Saumpfad",
           },
           body: {
-            en: "Lake Lucerne still runs a fleet of historic paddle steamers: the Uri from 1901, then Unterwalden, Schiller, Gallia, and the Stadt Luzern of 1928, the last steamboat built for a Swiss lake. They are not museum pieces. They carry passengers every summer. Your journey crosses the same water.",
-            de: "Auf dem Vierwaldstättersee fährt noch immer eine Flotte historischer Raddampfer: die Uri von 1901, dann Unterwalden, Schiller, Gallia und die Stadt Luzern von 1928, der letzte für einen Schweizer See gebaute Dampfer. Sie sind keine Museumsstücke. Jeden Sommer befördern sie Passagiere. Ihre Fahrt führt über dasselbe Wasser.",
+            en: "Long before roads, the Grimsel was a mule track. In 1397 Hasli, Goms and Pomat, together with the cities of Interlaken, Thun and Bern, agreed on free and safe trade over it. With the Nufenen and Gries passes it linked the Haslital to Domodossola and the Lombardy plain: cheese and cattle went south, wine, rice, corn and olive oil came north. A hospice on the pass is mentioned in 1400. The trade ended when the Gotthard railway opened in 1882.",
+            de: "Lange vor den Strassen war der Grimsel ein Saumpfad. 1397 vereinbarten Hasli, Goms und Pomat gemeinsam mit den Städten Interlaken, Thun und Bern freien und sicheren Handel über den Pass. Zusammen mit Nufenen und Griespass verband er das Haslital mit Domodossola und der Lombardischen Ebene: Käse und Vieh gingen nach Süden, Wein, Reis, Mais und Olivenöl kamen nach Norden. 1400 wird erstmals ein Hospiz auf dem Pass erwähnt. Der Handel endete mit der Eröffnung der Gotthardbahn 1882.",
           },
         },
         {
-          photo: "lucerne-old-town",
+          photo: "grimsel-pass-1",
           title: {
-            en: "A shoreline full of stories",
-            de: "Ein Ufer voller Geschichten",
+            en: "Water instead of mules",
+            de: "Wasser statt Maultiere",
           },
           body: {
-            en: "The lake touches the heart of Swiss history. Lucerne joined the alliance with Uri, Schwyz and Unterwalden in 1332. Your guide points out the shores as they pass and tells the stories behind them.",
-            de: "Der See liegt im Herzen der Schweizer Geschichte. Luzern schloss 1332 den Bund mit Uri, Schwyz und Unterwalden. Ihre Führung zeigt Ihnen die Ufer beim Vorbeifahren und erzählt die Geschichten dazu.",
+            en: "The track was only paved as a road in 1894. Between the 1920s and the 1950s the Kraftwerke Oberhasli built power stations around the pass, and the road was widened and rerouted around the new lakes. The Grimselsee holds about 100 million cubic metres behind two dam walls finished in 1932, the arch dam Spitallamm (114 m) and the Seeuferegg. Work on a new wall in front of the Spitallamm began in 2019, and the old one stays in the lake.",
+            de: "Erst 1894 wurde der Saumpfad zur befestigten Strasse ausgebaut. Zwischen den 1920er- und 1950er-Jahren bauten die Kraftwerke Oberhasli rund um den Pass Kraftwerke, und die Strasse wurde verbreitert und um die neuen Seen herum verlegt. Der Grimselsee fasst hinter zwei 1932 fertiggestellten Staumauern, der Bogenmauer Spitallamm (114 m) und der Seeuferegg, rund 100 Millionen Kubikmeter. 2019 begannen die Arbeiten an einer neuen Mauer vor der Spitallamm, die alte bleibt im See stehen.",
           },
         },
         {
-          photo: "pilatus",
+          photo: "grimsel-pass-2",
           title: {
-            en: "The mountain that watches",
-            de: "Der Berg, der zuschaut",
+            en: "Hairpins, cold and a hospice",
+            de: "Kehren, Kälte und ein Hospiz",
           },
           body: {
-            en: "Mount Pilatus follows you across the water. Legend says Pontius Pilate lay in a mountain lake, and that dragons lived in its caves. Seen from the deck on a day with low cloud, you can almost believe it.",
-            de: "Der Pilatus begleitet Sie über das Wasser. Die Sage erzählt, Pontius Pilatus liege in einem Bergsee, und in den Höhlen hausten Drachen. Vom Deck aus, an einem Tag mit tiefen Wolken, glaubt man es fast.",
+            en: "From Handeck the road climbs through hairpins and a tunnel to the Räterichsbodensee, then up to the Grimselsee and the Grimsel Hospiz at 1,980 m, which sits between the two dam walls. The last stretch winds up to the summit and the Totensee. Weather matters: at the Hospiz the mean daily high in July is only about 13 degrees, and it can snow in any month. Pack warm layers and keep a margin on fuel and time.",
+            de: "Ab Handeck steigt die Strasse durch Kehren und einen Tunnel zum Räterichsbodensee, dann weiter zum Grimselsee und zum Grimsel Hospiz auf 1980 m, das zwischen den beiden Staumauern liegt. Das letzte Stück windet sich zur Passhöhe und zum Totensee hinauf. Das Wetter spielt eine Rolle: Beim Hospiz liegt das mittlere Tagesmaximum im Juli nur bei etwa 13 Grad, und Schnee ist in jedem Monat möglich. Warme Schichten einpacken und bei Treibstoff und Zeit einen Puffer lassen.",
           },
         },
       ],
+    }),
+    slug: "grimsel-pass",
+    name: {
+      en: "Grimsel Pass by motorbike",
+      de: "Grimselpass mit dem Motorrad",
     },
-    slug: "lake-lucerne-stories",
-    name: { en: "Across Lake Lucerne", de: "Über den Vierwaldstättersee" },
     summary: {
-      en: "Lake views and stories from the shore",
-      de: "Seeblicke und Geschichten vom Ufer",
+      en: "From mule track to hydropower, above the reservoirs",
+      de: "Vom Saumpfad zur Wasserkraft, hoch über den Stauseen",
     },
     description: {
-      en: "A lake experience with time to take in the landscape. Illustrative tour content for review.",
-      de: "Ein Seeerlebnis mit Zeit für die Landschaft. Beispielinhalt zur Prüfung.",
+      en: "A 2,164 m crossing from the Haslital in the Bernese Oberland to the Goms in Valais. The road passes two reservoirs, the Grimsel Hospiz and the Totensee on its way over an old trade route.",
+      de: "Eine Überfahrt auf 2164 m vom Haslital im Berner Oberland ins Goms im Wallis. Die Strasse führt an zwei Stauseen, dem Grimsel Hospiz und dem Totensee vorbei über eine alte Handelsroute.",
     },
-    photos: ["lake-steamboat", "lucerne-old-town"],
-    durationMinutes: 180,
-    adultPrice: 12900,
-    childPrice: 6500,
+    photos: [
+      "grimsel-pass-1",
+      "grimsel-pass-2",
+      "grimsel-pass-3",
+      "grimsel-pass-4",
+      "grimsel-pass-5",
+    ],
+    durationMinutes: 390,
+    adultPrice: 22000,
+    childPrice: 12000,
     infantPrice: 0,
     meetingPoint: {
-      en: "Lucerne pier · meeting point 1",
-      de: "Schiffsteg Luzern · Treffpunkt 1",
+      en: "Confirmed with Erich after booking",
+      de: "Wird nach der Buchung mit Erich bestätigt",
     },
     included: [
-      { en: "Local guide and lake journey", de: "Lokale Führung und Seefahrt" },
+      {
+        en: "Guided ride over the Grimsel Pass with a local host",
+        de: "Geführte Fahrt über den Grimselpass mit einem lokalen Gastgeber",
+      },
+      {
+        en: "Planned stops with the story behind each place",
+        de: "Geplante Stopps mit der Geschichte hinter jedem Ort",
+      },
     ],
     excluded: {
-      en: "Meals and personal expenses.",
-      de: "Mahlzeiten und persönliche Ausgaben.",
+      en: "Fuel, meals and accommodation. Motorcycle and riding gear are arranged separately: ask before booking.",
+      de: "Treibstoff, Essen und Unterkunft. Motorrad und Fahrerausrüstung werden separat geklärt: bitte vor der Buchung fragen.",
     },
     conditions: {
-      en: "Please arrive 15 minutes early. Ask about accessibility before booking.",
-      de: "Bitte 15 Minuten früher da sein. Zugänglichkeit vor der Buchung klären.",
+      en: "A valid motorcycle licence is required; riders from 18. The pass is usually open from about June to October, and snow or weather can change or cancel a day. Check the road status before riding.",
+      de: "Ein gültiger Motorradführerschein ist nötig; Fahrer ab 18 Jahren. Der Pass ist meist von etwa Juni bis Oktober offen, Schnee oder Wetter können einen Tag verändern oder absagen. Vor der Fahrt den Strassenzustand prüfen.",
     },
     cancellationPolicy,
     published: true,
-    commissionRate: 0.1,
     itinerary: [
       {
-        id: "pier",
-        name: { en: "Lucerne pier", de: "Schiffsteg Luzern" },
+        id: "handeck",
+        photo: "grimsel-pass-2",
+        name: {
+          en: "Handeck",
+          de: "Handeck",
+        },
         description: {
-          en: "Meet your guide at the waterfront before boarding.",
-          de: "Treffen Sie Ihre Führung vor dem Einsteigen am Seeufer.",
+          en: "A hamlet at about 1,380 m beyond Guttannen, where the road follows the Aare through short tunnels. It is the lower station of the Gelmerbahn, the steepest funicular in Switzerland.",
+          de: "Ein Weiler auf rund 1380 m hinter Guttannen, wo die Strasse der Aare durch kurze Tunnel folgt. Hier liegt die Talstation der Gelmerbahn, der steilsten Standseilbahn der Schweiz.",
         },
         minutesFromStart: 0,
-        coordinates: [8.30971, 47.05033],
-        photo: "lake-steamboat",
+        coordinates: [8.3071, 46.6124],
+        note: {
+          en: "The ride up from Innertkirchen (625 m, where the Susten road branches off) and Guttannen is the warm-up.",
+          de: "Die Fahrt von Innertkirchen (625 m, wo die Sustenstrasse abzweigt) über Guttannen hierher dient zum Einfahren.",
+        },
       },
       {
-        id: "waterfront",
-        name: { en: "Lakeside stories", de: "Geschichten am See" },
+        id: "raeterichsboden",
+        name: {
+          en: "Räterichsbodensee",
+          de: "Räterichsbodensee",
+        },
         description: {
-          en: "Take in the lake views and the stories of the shore.",
-          de: "Geniessen Sie die Seeblicke und die Geschichten des Ufers.",
+          en: "The first reservoir, reached after hairpin bends and a tunnel of about 850 m. A good place to look down on the road you just climbed.",
+          de: "Der erste Stausee, erreicht nach Kehren und einem rund 850 m langen Tunnel. Ein guter Ort, um auf die eben gefahrene Strasse hinunterzuschauen.",
         },
         minutesFromStart: 90,
-        coordinates: [8.315, 47.0558],
-        photo: "lucerne-old-town",
+        coordinates: [8.3284, 46.5841],
+        photo: "grimsel-pass-1",
+      },
+      {
+        id: "hospiz",
+        name: {
+          en: "Grimsel Hospiz",
+          de: "Grimsel Hospiz",
+        },
+        description: {
+          en: "A stone hotel on a rocky spur between the two dam walls of the Grimselsee, at 1,980 m. A hospice on the pass is documented as early as 1400.",
+          de: "Ein steinernes Hotel auf einem Felssporn zwischen den beiden Staumauern des Grimselsees auf 1980 m. Ein Hospiz auf dem Pass ist schon 1400 belegt.",
+        },
+        minutesFromStart: 170,
+        coordinates: [8.3323, 46.5715],
+        photo: "grimsel-pass-2",
+      },
+      {
+        id: "grimsel-summit",
+        name: {
+          en: "Summit and Totensee",
+          de: "Passhöhe und Totensee",
+        },
+        description: {
+          en: "The summit lies on the border between Bern and Valais, beside the Totensee at about 2,160 m. This natural lake was raised by 16 m with a dam, and an aqueduct feeds its water to the Grimselsee.",
+          de: "Die Passhöhe liegt auf der Grenze zwischen Bern und Wallis, neben dem Totensee auf rund 2160 m. Der natürliche See wurde mit einer Staumauer um 16 m angehoben, und ein Stollen leitet sein Wasser in den Grimselsee.",
+        },
+        minutesFromStart: 250,
+        coordinates: [8.3397, 46.5603],
+        photo: "grimsel-pass-3",
+        note: {
+          en: "The Totensee is also written Totesee on maps. The summit is high and exposed, with cold wind likely.",
+          de: "Der Totensee steht auf Karten auch als Totesee. Die Passhöhe ist hoch und exponiert, kalter Wind ist wahrscheinlich.",
+        },
+      },
+      {
+        id: "gletsch",
+        name: {
+          en: "Gletsch",
+          de: "Gletsch",
+        },
+        description: {
+          en: "The descent through hairpins ends at Gletsch (about 1,760 m), the crossroads with the Furka road in the upper Rhone valley.",
+          de: "Die Abfahrt durch Kehren endet in Gletsch (rund 1760 m), der Kreuzung mit der Furkastrasse im oberen Rhonetal.",
+        },
+        minutesFromStart: 330,
+        coordinates: [8.3615, 46.5622],
+        photo: "grimsel-pass-5",
       },
     ],
-    ageBands: { childFrom: 4, adultFrom: 16 },
+    ageBands: { childFrom: 12, adultFrom: 18 },
     participantFields: [
       {
-        id: "access",
+        id: "licence",
         label: {
-          en: "Accessibility needs on board",
-          de: "Bedürfnisse zur Barrierefreiheit an Bord",
+          en: "Motorcycle licence category",
+          de: "Führerscheinkategorie",
+        },
+        required: true,
+      },
+      {
+        id: "bike",
+        label: {
+          en: "Your motorcycle (make and model)",
+          de: "Ihr Motorrad (Marke und Modell)",
         },
         required: false,
       },
     ],
   },
-  // Published by the merchant in German only (R02, AC30): every merchant text is German.
   {
     id: "night",
-    longStory: {
+    longStory: storyFromChapters({
       title: {
-        de: "Wenn die Stadt ihre Geschichten erzählt",
+        en: "A road that was drawn, not just built",
+        de: "Eine Strasse, die gezeichnet wurde",
       },
       chapters: [
         {
-          photo: "lucerne-water-tower",
+          photo: "susten-pass-2",
           title: {
-            de: "Der Turm, der stehen blieb",
+            en: "Late, and on purpose",
+            de: "Spät, und mit Absicht",
           },
           body: {
-            de: "Wir treffen uns am Wasserturm, achteckig und rund 34 Meter hoch. Als die Kapellbrücke am 18. August 1993 abbrannte, überstand er das Feuer. Bei Laternenlicht sieht man gut, wie die Brücke und der Turm zusammengehören.",
+            en: "People first tried to turn the old mule track into a carriage road after 1811, but the work stalled and Bern stopped in 1823. Only the federal Alpine roads decree of 1935 made it possible: tourism, jobs in the mountains and defence all pulled the same way. The road was built from 1939 to 1946. Because it came so late, it has long sweeping bends rather than the tight switchbacks of older passes.",
+            de: "Schon nach 1811 wollte man den alten Saumpfad zur Fahrstrasse ausbauen, doch die Arbeiten gerieten ins Stocken, und Bern stellte den Bau 1823 ein. Erst der Bundesbeschluss über die Alpenstrassen von 1935 machte es möglich: Tourismus, Arbeit im Berggebiet und Landesverteidigung zogen am selben Strang. Gebaut wurde von 1939 bis 1946. Weil sie so spät entstand, hat die Strasse weite Schwünge statt der engen Kehren älterer Pässe.",
           },
         },
         {
-          photo: "lucerne-night",
+          photo: "susten-pass-3",
           title: {
-            de: "Gassen, die still werden",
+            en: "Handwork you can still read",
+            de: "Handwerk, das man noch lesen kann",
           },
           body: {
-            de: "Wenn die Tagesgäste weg sind, gehört die Altstadt wieder den Luzernern. Die Laterne wirft warmes Licht auf bemalte Fassaden und alte Brunnen, und die Gassen sind so still, dass man die Reuss hört. Hier erzählen wir, was tagsüber niemand hört.",
+            en: "The Historical Dictionary of Switzerland describes the building as an aesthetic programme: as much hand labour as possible, local materials and granite facing, so the road would have the character of a crafted object. You see it from the saddle: stone-faced walls, granite posts, bridges and tunnels placed like strokes in one drawing. On a motorbike it feels like a line you follow, and one that someone has to look after every year.",
+            de: "Das Historische Lexikon der Schweiz beschreibt den Bau als ästhetisches Programm: möglichst viel Handarbeit, lokale Materialien und Granitverkleidung, damit die Strasse kunsthandwerklichen Charakter erhält. Vom Sattel aus sieht man es: verkleidete Mauern, Granitpfosten, Brücken und Tunnel, gesetzt wie Striche in einer einzigen Zeichnung. Auf dem Motorrad fühlt sie sich an wie eine Linie, der man folgt, und um die sich jedes Jahr jemand kümmern muss.",
           },
         },
         {
-          photo: "lion-monument",
+          photo: "susten-pass-4",
           title: {
-            de: "Der sterbende Löwe",
+            en: "The Stein Glacier and its lake",
+            de: "Der Steingletscher und sein See",
           },
           body: {
-            de: "Am Ende steht das Löwendenkmal. 1792 fielen Schweizer Gardisten beim Sturm auf die Tuilerien in Paris. Der Entwurf stammt von Bertel Thorvaldsen, der Fels wurde 1820 und 1821 von Lukas Ahorn gehauen. Der Löwe stirbt still, den Speer im Rücken. Zum Abschluss gibt es heissen Tee.",
+            en: "On the Bernese side the Stein Glacier hangs above the road. Around the middle of the 19th century it was about a kilometre longer than today, and its tongue now ends near 2,000 m. The little Steinsee at 1,934 m only appeared after 1940, on the ground the ice gave up. The glacier advanced again in 1912–1921 and 1969–1981, then melted strongly. The road and the lake are almost the same age.",
+            de: "Auf der Berner Seite hängt der Steingletscher über der Strasse. Um die Mitte des 19. Jahrhunderts war er rund einen Kilometer länger als heute, seine Zunge endet jetzt auf etwa 2000 m. Der kleine Steinsee auf 1934 m entstand erst nach 1940, auf dem Boden, den das Eis freigab. Zwischen 1912 und 1921 sowie 1969 und 1981 stiess der Gletscher nochmals vor, seither schmilzt er stark. Strasse und See sind fast gleich alt.",
           },
         },
       ],
+    }),
+    slug: "susten-pass",
+    name: {
+      en: "Susten Pass by motorbike",
+      de: "Sustenpass mit dem Motorrad",
     },
-    slug: "luzern-bei-nacht",
-    name: { de: "Luzern bei Nacht" },
-    summary: { de: "Mit der Laterne durch die beleuchtete Altstadt" },
-    description: {
-      de: "Wenn es dunkel wird, zeigt sich Luzern von einer anderen Seite. Mit der Laterne geht es vom Wasserturm durch stille Gassen bis zum Löwendenkmal. Die Führung findet auf Deutsch statt.",
-    },
-    photos: ["lucerne-night", "lucerne-water-tower", "lion-monument"],
-    durationMinutes: 120,
-    adultPrice: 4900,
-    childPrice: 2500,
-    infantPrice: 0,
-    meetingPoint: { de: "Wasserturm · Seite Rathausquai" },
-    included: [
-      { de: "Laternenführung auf Deutsch" },
-      { de: "Heisser Tee zum Abschluss" },
-    ],
-    excluded: { de: "Abendessen und Getränke." },
-    conditions: {
-      de: "Rund 1,5 km, teilweise über Kopfsteinpflaster und Treppen. Warme Kleidung empfohlen. Kinder nur in Begleitung einer erwachsenen Person.",
-    },
-    cancellationPolicy: {
-      de: "Beispielregel: Absage bis 24 Stunden vor Beginn beim Veranstalter. Rückerstattungen brauchen die Zustimmung des Händlers.",
-    },
-    published: true,
-    commissionRate: 0.1,
-    itinerary: [
-      {
-        id: "tower",
-        name: { de: "Wasserturm" },
-        description: {
-          de: "Treffpunkt am Wasserturm. Die Laternen werden verteilt, dann geht es los.",
-        },
-        minutesFromStart: 0,
-        coordinates: [8.30835, 47.05155],
-        photo: "lucerne-water-tower",
-      },
-      {
-        id: "weinmarkt",
-        name: { de: "Weinmarkt" },
-        description: {
-          de: "Geschichten von Zünften, Märkten und Nachtwächtern auf dem stillen Platz.",
-        },
-        minutesFromStart: 35,
-        coordinates: [8.30455, 47.05208],
-        photo: "lucerne-night",
-      },
-      {
-        id: "lion",
-        name: { de: "Löwendenkmal" },
-        description: {
-          de: "Zum Abschluss das beleuchtete Löwendenkmal und ein heisser Tee.",
-        },
-        minutesFromStart: 95,
-        coordinates: [8.31061, 47.05847],
-        photo: "lion-monument",
-      },
-    ],
-    ageBands: { childFrom: 6, adultFrom: 16 },
-    participantFields: [
-      {
-        id: "names",
-        label: { de: "Namen aller Teilnehmenden" },
-        required: true,
-      },
-    ],
-  },
-  // Sold out: its only departure is fully booked by seeded bookings.
-  {
-    id: "workshop",
-    longStory: {
-      title: {
-        en: "Learning to cut a line",
-        de: "Eine Linie schneiden lernen",
-      },
-      chapters: [
-        {
-          photo: "artisan-workshop",
-          title: {
-            en: "The bench at the back",
-            de: "Die Werkbank im hinteren Teil",
-          },
-          body: {
-            en: "The workshop is at the back of the old-town shop, a short walk from the bridge. The bench is a working one, with the tools laid out the way engravers have laid them out for generations.",
-            de: "Die Werkstatt liegt im hinteren Teil des Ladens in der Altstadt, nur ein paar Schritte von der Brücke. Die Werkbank ist eine echte Arbeitsbank, die Werkzeuge liegen so, wie Gravierer sie seit Generationen auslegen.",
-          },
-        },
-        {
-          photo: "engraving",
-          title: {
-            en: "One line, then the next",
-            de: "Eine Linie, dann die nächste",
-          },
-          body: {
-            en: "Hand engraving is slow and forgiving if you stay calm. You start with straight lines on a practice piece, then move to letters. By the end of the afternoon, most people cut a name or a small motif that is clearly their own.",
-            de: "Handgravur ist langsam und verzeiht viel, wenn man ruhig bleibt. Sie beginnen mit geraden Linien auf einem Übungsstück und gehen dann zu Buchstaben über. Am Ende des Nachmittags gravieren die meisten einen Namen oder ein kleines Motiv, das klar ihr eigenes ist.",
-          },
-        },
-        {
-          photo: "pocket-knife",
-          title: {
-            en: "A knife with your hand in it",
-            de: "Ein Messer mit Ihrer Handschrift",
-          },
-          body: {
-            en: "You leave with a pocket knife you have engraved yourself. It will never be as clean as a machine-cut name, and that is why it matters. Every time you open it, you see your own hand.",
-            de: "Sie gehen mit einem Taschenmesser nach Hause, das Sie selbst graviert haben. Es wird nie so sauber sein wie ein maschinell geschnittener Name, und gerade deshalb zählt es. Jedes Mal, wenn Sie es öffnen, sehen Sie Ihre eigene Hand.",
-          },
-        },
-      ],
-    },
-    slug: "engraving-workshop",
-    name: { en: "Engraving workshop", de: "Gravurkurs im Laden" },
     summary: {
-      en: "Engrave your own pocket knife at our workbench",
-      de: "Gravieren Sie Ihr eigenes Taschenmesser an unserer Werkbank",
+      en: "A road drawn like a line across the Urner Alps",
+      de: "Eine Strasse wie mit dem Lineal durch die Urner Alpen gezogen",
     },
     description: {
-      en: "Spend an afternoon at the workbench in our old-town shop. Learn the basics of hand engraving, then engrave a name or a small motif on a pocket knife to take home.",
-      de: "Verbringen Sie einen Nachmittag an der Werkbank in unserem Laden in der Altstadt. Lernen Sie die Grundlagen der Handgravur und gravieren Sie dann einen Namen oder ein kleines Motiv auf ein Taschenmesser zum Mitnehmen.",
+      en: "The Susten road climbs from Innertkirchen in the Bernese Oberland to Wassen in Uri, through wide sweeping bends, stone-faced bridges and a summit tunnel at 2,224 m, past the retreating Stein Glacier.",
+      de: "Die Sustenstrasse führt von Innertkirchen im Berner Oberland nach Wassen im Kanton Uri: in weiten Schwüngen, über steinverkleidete Brücken und durch den Scheiteltunnel auf 2224 m, vorbei am zurückweichenden Steingletscher.",
     },
-    photos: ["artisan-workshop", "engraving", "pocket-knife"],
-    durationMinutes: 180,
-    adultPrice: 11900,
-    childPrice: 7900,
+    photos: [
+      "susten-pass-1",
+      "susten-pass-2",
+      "susten-pass-3",
+      "susten-pass-4",
+      "susten-pass-5",
+      "susten-pass-6",
+    ],
+    durationMinutes: 390,
+    adultPrice: 22000,
+    childPrice: 12000,
     infantPrice: 0,
     meetingPoint: {
-      en: "Shop Altstadt · workshop at the back",
-      de: "Laden Altstadt · Werkstatt im hinteren Teil",
+      en: "Confirmed with Erich after booking",
+      de: "Wird nach der Buchung mit Erich bestätigt",
     },
     included: [
       {
-        en: "A pocket knife to engrave and keep",
-        de: "Ein Taschenmesser zum Gravieren und Mitnehmen",
+        en: "Guided ride over the Susten Pass with a local host",
+        de: "Geführte Fahrt über den Sustenpass mit einem lokalen Gastgeber",
       },
       {
-        en: "Tools, guidance and coffee",
-        de: "Werkzeug, Anleitung und Kaffee",
+        en: "Planned stops with the story behind each place",
+        de: "Geplante Stopps mit der Geschichte hinter jedem Ort",
       },
     ],
     excluded: {
-      en: "Additional knives and gift wrapping.",
-      de: "Weitere Messer und Geschenkverpackung.",
+      en: "Fuel, meals and accommodation. Motorcycle and riding gear are arranged separately: ask before booking.",
+      de: "Treibstoff, Essen und Unterkunft. Motorrad und Fahrerausrüstung werden separat geklärt: bitte vor der Buchung fragen.",
     },
     conditions: {
-      en: "Suitable from age 8. Children under 16 take part with an adult. Up to 6 people per workshop.",
-      de: "Geeignet ab 8 Jahren. Kinder unter 16 nehmen mit einer erwachsenen Person teil. Höchstens 6 Personen pro Kurs.",
+      en: "A valid motorcycle licence is required; riders from 18. The pass is usually open from about June to October, and snow or weather can change or cancel a day. Check the road status before riding.",
+      de: "Ein gültiger Motorradführerschein ist nötig; Fahrer ab 18 Jahren. Der Pass ist meist von etwa Juni bis Oktober offen, Schnee oder Wetter können einen Tag verändern oder absagen. Vor der Fahrt den Strassenzustand prüfen.",
     },
     cancellationPolicy,
     published: true,
-    commissionRate: 0.1,
     itinerary: [
       {
-        id: "welcome",
-        name: { en: "Welcome at the shop", de: "Begrüssung im Laden" },
+        id: "innertkirchen",
+        name: {
+          en: "Innertkirchen",
+          de: "Innertkirchen",
+        },
         description: {
-          en: "Meet the craftsman, choose your knife and sketch your design.",
-          de: "Lernen Sie den Handwerker kennen, wählen Sie Ihr Messer und skizzieren Sie Ihr Motiv.",
+          en: "The start of the ride in the Haslital, where the Aare valley opens and the Susten road branches off towards the Gadmer valley.",
+          de: "Startpunkt im Haslital, wo sich das Aaretal öffnet und die Sustenstrasse ins Gadmertal abzweigt.",
         },
         minutesFromStart: 0,
-        coordinates: [8.30598, 47.05182],
-        photo: "artisan-workshop",
+        coordinates: [8.2286, 46.7054],
+        photo: "susten-pass-7",
       },
       {
-        id: "workbench",
-        name: { en: "At the workbench", de: "An der Werkbank" },
-        description: {
-          en: "Engrave your knife step by step, with help whenever you need it.",
-          de: "Gravieren Sie Ihr Messer Schritt für Schritt, mit Hilfe, wann immer Sie sie brauchen.",
+        id: "gadmen",
+        name: {
+          en: "Gadmen",
+          de: "Gadmen",
         },
-        minutesFromStart: 30,
-        coordinates: [8.30606, 47.05186],
-        photo: "engraving",
+        description: {
+          en: "A quiet village in the Gadmer valley with the road running straight through its centre, a good moment to settle in before the climb gets serious.",
+          de: "Ein ruhiges Dorf im Gadmertal, die Strasse führt mitten durch. Ein guter Moment, bevor der Aufstieg ernst wird.",
+        },
+        minutesFromStart: 75,
+        coordinates: [8.3527, 46.7381],
+        photo: "susten-pass-5",
+      },
+      {
+        id: "steingletscher",
+        name: {
+          en: "Steingletscher",
+          de: "Steingletscher",
+        },
+        description: {
+          en: "The stop below the Stein Glacier and the Steinsee, the best place to look at what the retreating ice left behind.",
+          de: "Der Halt unterhalb von Steingletscher und Steinsee, der beste Ort, um zu sehen, was das zurückweichende Eis hinterlassen hat.",
+        },
+        minutesFromStart: 160,
+        coordinates: [8.433, 46.7125],
+        photo: "susten-pass-4",
+        note: {
+          en: "It is noticeably cooler here than in the valley; keep a warm layer within reach.",
+          de: "Hier ist es spürbar kühler als im Tal; eine warme Schicht griffbereit halten.",
+        },
+      },
+      {
+        id: "summit",
+        name: {
+          en: "Summit tunnel (2,224 m)",
+          de: "Scheiteltunnel (2224 m)",
+        },
+        description: {
+          en: "The road crosses the watershed in a tunnel of roughly 300 metres at 2,224 m, the highest point of the road itself.",
+          de: "Die Strasse quert die Wasserscheide in einem rund 300 Meter langen Tunnel auf 2224 m, dem höchsten Punkt der Strasse selbst.",
+        },
+        minutesFromStart: 215,
+        coordinates: [8.449, 46.73],
+        photo: "susten-pass-8",
+        note: {
+          en: "Expect cold air and wet tarmac at the tunnel mouths even on a sunny day.",
+          de: "An den Tunnelportalen ist auch an sonnigen Tagen mit kalter Luft und nassem Belag zu rechnen.",
+        },
+      },
+      {
+        id: "wassen",
+        name: {
+          en: "Wassen",
+          de: "Wassen",
+        },
+        description: {
+          en: "The Uri end of the pass, where the Susten road meets the Gotthard axis. The village is known for its church above the Reuss valley.",
+          de: "Das Urner Ende des Passes, wo die Sustenstrasse auf die Gotthardachse trifft. Das Dorf ist bekannt für seine Kirche über dem Reusstal.",
+        },
+        minutesFromStart: 310,
+        coordinates: [8.5996, 46.7068],
+        photo: "susten-pass-6",
       },
     ],
-    ageBands: { childFrom: 8, adultFrom: 16 },
+    ageBands: { childFrom: 12, adultFrom: 18 },
     participantFields: [
       {
-        id: "engraving",
+        id: "licence",
         label: {
-          en: "Name or motif to engrave",
-          de: "Name oder Motiv für die Gravur",
+          en: "Motorcycle licence category",
+          de: "Führerscheinkategorie",
         },
         required: true,
+      },
+      {
+        id: "bike",
+        label: {
+          en: "Your motorcycle (make and model)",
+          de: "Ihr Motorrad (Marke und Modell)",
+        },
+        required: false,
+      },
+    ],
+  },
+  {
+    id: "workshop",
+    longStory: storyFromChapters({
+      title: {
+        en: "The king of mountain passes",
+        de: "Der König der Pässe",
+      },
+      chapters: [
+        {
+          photo: "gotthard-pass-2",
+          title: {
+            en: "A bridge over the gorge",
+            de: "Eine Brücke über die Schlucht",
+          },
+          body: {
+            en: "For a long time the Reuss in the narrow Schöllenen gorge blocked the way. Around 1220 the first wooden bridge opened the pass, and its importance grew quickly; The opening of the gorge was an important factor in the rise of the early Swiss Confederacy. The Devil's Bridge legend is much younger than the bridge: it is first written down in the early 18th century. The current concrete span from the 1950s stands above the stone bridge of 1830.",
+            de: "Lange versperrte die Reuss in der engen Schöllenenschlucht den Weg. Um 1220 öffnete die erste Holzbrücke den Pass, und seine Bedeutung wuchs rasch; Die Öffnung der Schlucht war ein wichtiger Faktor bei der Entstehung der frühen Eidgenossenschaft. Die Teufelsbrücken-Sage ist viel jünger als die Brücke: Aufgeschrieben wurde sie erst im frühen 18. Jahrhundert. Die heutige Betonbrücke aus den 1950er-Jahren steht über der Steinbrücke von 1830.",
+          },
+        },
+        {
+          photo: "gotthard-pass-3",
+          title: {
+            en: "Twenty-four bends of granite",
+            de: "Vierundzwanzig Kehren aus Granit",
+          },
+          body: {
+            en: "The Tremola is the old road from the hospice down to Airolo, built between 1827 and 1832 as part of the widening of the Basel–Chiasso route. On its steepest four kilometres it gains about 300 metres in 24 hairpin bends. It is listed in the federal inventory of historic Swiss roads, and its supporting walls and much of the granite paving are still there. On a bike you ride over cobbles that carried the stagecoach.",
+            de: "Die Tremola ist die alte Strasse vom Hospiz hinunter nach Airolo, gebaut zwischen 1827 und 1832 im Zuge des Ausbaus der Route Basel–Chiasso. Auf den steilsten vier Kilometern gewinnt sie rund 300 Höhenmeter in 24 Kehren. Sie steht im Bundesinventar der historischen Verkehrswege der Schweiz, die Stützmauern und ein grosser Teil des Granitpflasters sind erhalten. Auf dem Motorrad fährt man über Pflaster, das schon die Postkutsche getragen hat.",
+          },
+        },
+        {
+          photo: "gotthard-pass-4",
+          title: {
+            en: "Over the top, and under it",
+            de: "Obendrüber und untendurch",
+          },
+          body: {
+            en: "At the summit, lakes, the hospice and a museum sit at about 2,100 metres. Beneath you three tunnels have each been the longest of their kind: the 15 km rail tunnel of 1882, the 17 km road tunnel of 1980 and the 57 km Gotthard Base Tunnel of 2016. Since the road tunnel opened, the pass itself carries little through traffic, which is part of why riding it today feels like a choice rather than a necessity.",
+            de: "Auf der Passhöhe liegen auf etwa 2100 Metern mehrere Seen, das Hospiz und ein Museum. Unter dir waren drei Tunnel jeweils die längsten ihrer Art: der 15 km lange Eisenbahntunnel von 1882, der 17 km lange Strassentunnel von 1980 und der 57 km lange Gotthard-Basistunnel von 2016. Seit der Strassentunnel offen ist, trägt der Pass kaum noch Durchgangsverkehr, weshalb sich die Fahrt heute wie eine Wahl anfühlt und nicht wie eine Notwendigkeit.",
+          },
+        },
+      ],
+    }),
+    slug: "gotthard-pass",
+    name: {
+      en: "Gotthard Pass by motorbike",
+      de: "Gotthardpass mit dem Motorrad",
+    },
+    summary: {
+      en: "The road that held a country together",
+      de: "Die Strasse, die ein Land zusammenhielt",
+    },
+    description: {
+      en: "From the Schöllenen gorge and the Devil's Bridge over Andermatt to the hospice at 2,106 m, then down the granite-cobbled hairpins of the Tremola into Airolo: the old crossing between north and south.",
+      de: "Von der Schöllenenschlucht und der Teufelsbrücke über Andermatt zum Hospiz auf 2106 m und dann über die granitgepflasterten Kehren der Tremola nach Airolo: der alte Übergang zwischen Nord und Süd.",
+    },
+    photos: [
+      "gotthard-pass-1",
+      "gotthard-pass-2",
+      "gotthard-pass-3",
+      "gotthard-pass-4",
+      "gotthard-pass-5",
+      "gotthard-pass-6",
+    ],
+    durationMinutes: 390,
+    adultPrice: 24000,
+    childPrice: 12000,
+    infantPrice: 0,
+    meetingPoint: {
+      en: "Confirmed with Erich after booking",
+      de: "Wird nach der Buchung mit Erich bestätigt",
+    },
+    included: [
+      {
+        en: "Guided ride over the Gotthard Pass with a local host",
+        de: "Geführte Fahrt über den Gotthardpass mit einem lokalen Gastgeber",
+      },
+      {
+        en: "Planned stops with the story behind each place",
+        de: "Geplante Stopps mit der Geschichte hinter jedem Ort",
+      },
+    ],
+    excluded: {
+      en: "Fuel, meals and accommodation. Motorcycle and riding gear are arranged separately: ask before booking.",
+      de: "Treibstoff, Essen und Unterkunft. Motorrad und Fahrerausrüstung werden separat geklärt: bitte vor der Buchung fragen.",
+    },
+    conditions: {
+      en: "A valid motorcycle licence is required; riders from 18. The pass is usually open from about June to October, and snow or weather can change or cancel a day. Check the road status before riding.",
+      de: "Ein gültiger Motorradführerschein ist nötig; Fahrer ab 18 Jahren. Der Pass ist meist von etwa Juni bis Oktober offen, Schnee oder Wetter können einen Tag verändern oder absagen. Vor der Fahrt den Strassenzustand prüfen.",
+    },
+    cancellationPolicy,
+    published: true,
+    itinerary: [
+      {
+        id: "schoellenen",
+        name: {
+          en: "Schöllenen gorge and Devil's Bridge",
+          de: "Schöllenenschlucht und Teufelsbrücke",
+        },
+        description: {
+          en: "The narrow gorge of the Reuss above Göschenen, where the road, an old stone bridge and the modern bridge hang over each other.",
+          de: "Die enge Reussschlucht oberhalb von Göschenen, wo Strasse, alte Steinbrücke und moderne Brücke übereinander hängen.",
+        },
+        minutesFromStart: 0,
+        coordinates: [8.5903, 46.6474],
+        photo: "gotthard-pass-6",
+        note: {
+          en: "Narrow, busy road with tight bends; take it slowly and look at the bridges from the parking area.",
+          de: "Enge, belebte Strasse mit engen Kurven; langsam fahren und die Brücken vom Parkplatz aus ansehen.",
+        },
+      },
+      {
+        id: "andermatt",
+        name: {
+          en: "Andermatt",
+          de: "Andermatt",
+        },
+        description: {
+          en: "The village in the Urseren valley at the foot of the Gotthard, Furka and Oberalp routes, a natural place for a break before the climb.",
+          de: "Das Dorf im Urserental am Fuss von Gotthard-, Furka- und Oberalproute, ein natürlicher Ort für eine Pause vor dem Aufstieg.",
+        },
+        minutesFromStart: 55,
+        coordinates: [8.5948, 46.634],
+        photo: "gotthard-pass-5",
+      },
+      {
+        id: "hospice",
+        name: {
+          en: "Hospice and summit lakes (2,106 m)",
+          de: "Hospiz und Passseen (2106 m)",
+        },
+        description: {
+          en: "The summit area with the small lakes, the old hospice and the museum. The official summit sits in Ticino, a couple of kilometres south of the border with Uri.",
+          de: "Das Gipfelareal mit den kleinen Seen, dem alten Hospiz und dem Museum. Der offizielle Scheitelpunkt liegt im Tessin, einige Kilometer südlich der Grenze zu Uri.",
+        },
+        minutesFromStart: 160,
+        coordinates: [8.5679, 46.5554],
+        photo: "gotthard-pass-4",
+        note: {
+          en: "At this altitude it can be cold and windy even in summer.",
+          de: "Auf dieser Höhe kann es selbst im Sommer kalt und windig sein.",
+        },
+      },
+      {
+        id: "tremola",
+        name: {
+          en: "Tremola",
+          de: "Tremola",
+        },
+        description: {
+          en: "The old road down the Val Tremola: 24 hairpins and granite cobbles on the southern side.",
+          de: "Die alte Strasse durch das Val Tremola: 24 Kehren und Granitpflaster auf der Südseite.",
+        },
+        minutesFromStart: 235,
+        coordinates: [8.5815, 46.5435],
+        photo: "gotthard-pass-3",
+        note: {
+          en: "Cobbles are slippery when wet, and the hairpins are tight; stay in a low gear and ride deliberately.",
+          de: "Das Pflaster ist nass rutschig, die Kehren sind eng; im kleinen Gang und überlegt fahren.",
+        },
+      },
+      {
+        id: "airolo",
+        name: {
+          en: "Airolo",
+          de: "Airolo",
+        },
+        description: {
+          en: "The first town in Ticino on the southern foot of the Gotthard, at the head of the Leventina valley.",
+          de: "Der erste Ort im Tessin am Südfuss des Gotthards, am Anfang der Leventina.",
+        },
+        minutesFromStart: 320,
+        coordinates: [8.6086, 46.529],
+        photo: "gotthard-pass-7",
+      },
+    ],
+    ageBands: { childFrom: 12, adultFrom: 18 },
+    participantFields: [
+      {
+        id: "licence",
+        label: {
+          en: "Motorcycle licence category",
+          de: "Führerscheinkategorie",
+        },
+        required: true,
+      },
+      {
+        id: "bike",
+        label: {
+          en: "Your motorcycle (make and model)",
+          de: "Ihr Motorrad (Marke und Modell)",
+        },
+        required: false,
       },
     ],
   },
   {
     id: "pilatus",
-    slug: "pilatus-above-the-clouds",
-    name: { en: "A day above the clouds", de: "Ein Tag über den Wolken" },
+    longStory: storyFromChapters({
+      title: {
+        en: "Up where the road finally arrived",
+        de: "Hinauf, wo die Strasse endlich ankam",
+      },
+      chapters: [
+        {
+          photo: "nufenen-pass-1",
+          title: {
+            en: "The highest wholly in Switzerland",
+            de: "Die höchste, ganz in der Schweiz",
+          },
+          body: {
+            en: "The Nufenen road was built from the mid-1960s and opened on 5 September 1969. At 2,478 m it is the highest pass road lying completely within Switzerland. The Umbrail road is higher, at 2,501 m, but it crosses into Italy just below its summit. Until the road was built, the Nufenen was only a footpath.",
+            de: "Die Nufenenstrasse wurde ab Mitte der 1960er-Jahre gebaut und am 5. September 1969 eröffnet. Mit 2478 m ist sie die höchstgelegene Passstrasse, die vollständig in der Schweiz liegt. Die Umbrailstrasse ist mit 2501 m höher, überschreitet aber knapp unterhalb ihrer Passhöhe die Grenze nach Italien. Bis zum Bau der Strasse war der Nufenen nur ein Fussweg.",
+          },
+        },
+        {
+          photo: "nufenen-pass-2",
+          title: {
+            en: "Glacier, Gries and an older way over",
+            de: "Gletscher, Gries und ein älterer Weg",
+          },
+          body: {
+            en: "From the top you look south-west to the Gries Glacier and north to the Bernese Alps with the Finsteraarhorn. The old trade way did not use this saddle. It ran over the nearby Gries Pass at 2,487 m, a mule path from Ulrichen to the Formazza valley, known since the Bronze Age and developed as a trading route from 1397. Walser settlers also used it in the 13th century. The railway killed that trade in 1882; the road came almost ninety years later.",
+            de: "Von der Passhöhe blickt man nach Südwesten zum Griesgletscher und nach Norden zu den Berner Alpen mit dem Finsteraarhorn. Der alte Handelsweg benutzte diesen Sattel nicht. Er führte über den nahen Griespass auf 2487 m, einen Saumpfad von Ulrichen ins Val Formazza, seit der Bronzezeit bekannt und ab 1397 als Handelsweg ausgebaut. Auch Walser Siedler zogen im 13. Jahrhundert darüber. Die Eisenbahn beendete 1882 diesen Handel; die Strasse kam fast neunzig Jahre später.",
+          },
+        },
+        {
+          photo: "nufenen-pass-3",
+          title: {
+            en: "Down the Val Bedretto",
+            de: "Hinunter durchs Bedrettotal",
+          },
+          body: {
+            en: "The Ticino river rises just east of the summit, and the road crosses it seven times on the way down. The Ticino side is longer and gentler than the Valais side: about 24 km at an average gradient of 5.4 percent, against 13 km at 8.6 percent on the Ulrichen side, with maximum gradients of 10 and 13 percent. The true low point between the valleys lies 500 m south of the road, at 2,439 m, but it is hard to reach from the west, so the road runs higher on the northern flank.",
+            de: "Der Tessin entspringt östlich der Passhöhe, und die Strasse überquert ihn auf dem Weg nach unten siebenmal. Die Tessiner Seite ist länger und sanfter als die Walliser: rund 24 km bei durchschnittlich 5,4 Prozent Steigung, gegenüber 13 km mit 8,6 Prozent auf der Seite von Ulrichen, mit maximalen Steigungen von 10 und 13 Prozent. Der tiefste Punkt zwischen den Tälern liegt 500 m südlich der Strasse auf 2439 m, ist von Westen aber schwer zu erreichen, weshalb die Strasse höher an der nördlichen Talflanke verläuft.",
+          },
+        },
+      ],
+    }),
+    slug: "nufenen-pass",
+    name: {
+      en: "Nufenen Pass by motorbike",
+      de: "Nufenenpass mit dem Motorrad",
+    },
     summary: {
-      en: "Mountain views from Pilatus",
-      de: "Bergblicke vom Pilatus",
+      en: "The highest pass road entirely in Switzerland",
+      de: "Die höchste Passstrasse, die ganz in der Schweiz liegt",
     },
     description: {
-      en: "New departure dates are on their way.",
-      de: "Neue Abfahrtsdaten folgen bald.",
+      en: "At 2,478 m the Nufenen road links Ulrichen in the Goms (Valais) with the Val Bedretto and Airolo (Ticino), past the Gries Glacier and the source of the Ticino river.",
+      de: "Auf 2478 m verbindet die Nufenenstrasse Ulrichen im Goms (Wallis) mit dem Bedrettotal und Airolo (Tessin), vorbei am Griesgletscher und an der Quelle des Tessins.",
     },
-    photos: ["pilatus"],
-    durationMinutes: 300,
-    adultPrice: 15900,
-    childPrice: 7900,
+    photos: [
+      "nufenen-pass-1",
+      "nufenen-pass-2",
+      "nufenen-pass-3",
+      "nufenen-pass-4",
+      "nufenen-pass-5",
+      "nufenen-pass-6",
+    ],
+    durationMinutes: 390,
+    adultPrice: 26000,
+    childPrice: 12000,
     infantPrice: 0,
-    meetingPoint: { en: "To be confirmed", de: "Noch zu bestätigen" },
-    included: [],
-    excluded: { en: "To be confirmed", de: "Noch zu bestätigen" },
-    conditions: { en: "Not yet open for bookings.", de: "Noch nicht buchbar." },
+    meetingPoint: {
+      en: "Confirmed with Erich after booking",
+      de: "Wird nach der Buchung mit Erich bestätigt",
+    },
+    included: [
+      {
+        en: "Guided ride over the Nufenen Pass with a local host",
+        de: "Geführte Fahrt über den Nufenenpass mit einem lokalen Gastgeber",
+      },
+      {
+        en: "Planned stops with the story behind each place",
+        de: "Geplante Stopps mit der Geschichte hinter jedem Ort",
+      },
+    ],
+    excluded: {
+      en: "Fuel, meals and accommodation. Motorcycle and riding gear are arranged separately: ask before booking.",
+      de: "Treibstoff, Essen und Unterkunft. Motorrad und Fahrerausrüstung werden separat geklärt: bitte vor der Buchung fragen.",
+    },
+    conditions: {
+      en: "A valid motorcycle licence is required; riders from 18. The pass is usually open from about June to October, and snow or weather can change or cancel a day. Check the road status before riding.",
+      de: "Ein gültiger Motorradführerschein ist nötig; Fahrer ab 18 Jahren. Der Pass ist meist von etwa Juni bis Oktober offen, Schnee oder Wetter können einen Tag verändern oder absagen. Vor der Fahrt den Strassenzustand prüfen.",
+    },
     cancellationPolicy,
-    published: false,
-    commissionRate: 0.1,
-    itinerary: [],
-    ageBands: { childFrom: 6, adultFrom: 16 },
-    participantFields: [],
+    published: true,
+    itinerary: [
+      {
+        id: "ulrichen",
+        name: {
+          en: "Ulrichen",
+          de: "Ulrichen",
+        },
+        description: {
+          en: "The upper Goms village in the Rhône valley where the Nufenen road branches off and starts to climb.",
+          de: "Das Dorf im Obergoms im Rhonetal, wo die Nufenenstrasse abzweigt und zu steigen beginnt.",
+        },
+        minutesFromStart: 0,
+        coordinates: [8.305, 46.5066],
+        photo: "nufenen-pass-5",
+      },
+      {
+        id: "summit",
+        name: {
+          en: "Nufenen summit (2,478 m)",
+          de: "Nufenen-Passhöhe (2478 m)",
+        },
+        description: {
+          en: "The cantonal border between Valais and Ticino, with a restaurant, a small lake and views to the Bernese Alps and the Gries Glacier.",
+          de: "Die Kantonsgrenze zwischen Wallis und Tessin, mit Restaurant, kleinem See und Aussicht auf die Berner Alpen und den Griesgletscher.",
+        },
+        minutesFromStart: 110,
+        coordinates: [8.3931, 46.4781],
+        photo: "nufenen-pass-1",
+        note: {
+          en: "At nearly 2,500 m it is often cold, windy and cloudy, even in summer; carry a warm layer.",
+          de: "Auf fast 2500 m ist es oft kalt, windig und neblig, auch im Sommer; eine warme Schicht mitnehmen.",
+        },
+      },
+      {
+        id: "allacqua",
+        name: {
+          en: "All'Acqua",
+          de: "All'Acqua",
+        },
+        description: {
+          en: "The first hamlet on the Ticino side, at the head of the Val Bedretto, just below the descent from the pass.",
+          de: "Der erste Weiler auf der Tessiner Seite am Beginn des Bedrettotals, gleich unterhalb der Passabfahrt.",
+        },
+        minutesFromStart: 185,
+        coordinates: [8.4757, 46.4869],
+        photo: "nufenen-pass-7",
+      },
+      {
+        id: "bedretto",
+        name: {
+          en: "Val Bedretto (Ossasco)",
+          de: "Bedrettotal (Ossasco)",
+        },
+        description: {
+          en: "A long green valley of stone houses and meadows, with the young Ticino river beside the road.",
+          de: "Ein langes grünes Tal mit Steinhäusern und Wiesen, der junge Tessin fliesst neben der Strasse.",
+        },
+        minutesFromStart: 250,
+        coordinates: [8.5389, 46.5127],
+        photo: "nufenen-pass-6",
+      },
+      {
+        id: "airolo",
+        photo: "nufenen-pass-6",
+        name: {
+          en: "Airolo",
+          de: "Airolo",
+        },
+        description: {
+          en: "The end of the Nufenen road in the Leventina valley, at the southern foot of the Gotthard.",
+          de: "Das Ende der Nufenenstrasse in der Leventina, am Südfuss des Gotthards.",
+        },
+        minutesFromStart: 330,
+        coordinates: [8.6086, 46.529],
+      },
+    ],
+    ageBands: { childFrom: 12, adultFrom: 18 },
+    participantFields: [
+      {
+        id: "licence",
+        label: {
+          en: "Motorcycle licence category",
+          de: "Führerscheinkategorie",
+        },
+        required: true,
+      },
+      {
+        id: "bike",
+        label: {
+          en: "Your motorcycle (make and model)",
+          de: "Ihr Motorrad (Marke und Modell)",
+        },
+        required: false,
+      },
+    ],
   },
 ];
 export function emptyTourDraft(): TourDraft {
@@ -541,7 +1000,7 @@ export function emptyTourDraft(): TourDraft {
 }
 type BookingContact = Pick<
   TourBooking,
-  "id" | "ref" | "guestId" | "contactName" | "phone" | "partnerId"
+  "id" | "ref" | "guestId" | "contactName" | "phone"
 >;
 
 /** A confirmed sample booking with its first payment made, priced from the tour and departure. */
@@ -576,9 +1035,7 @@ function seededBooking(
     cancellationPolicy: structuredClone(tour.cancellationPolicy),
     policy: departure.policy,
     balanceDueAt: departure.balanceDueAt,
-    commissionRate: tour.commissionRate,
     createdAt,
-    commissionRecordedAt: null,
     activity: [],
     status: "confirmed",
     holdUntil: null,
@@ -602,16 +1059,16 @@ export function createTourSeed(): TourData {
     {
       id: "walk-13",
       tourId: "old-town",
-      startsAt: "2026-10-13T07:00:00+02:00",
+      startsAt: "2026-10-12T08:00:00+02:00",
       capacity: 12,
       policy: "deposit",
-      balanceDueAt: "2026-10-12T18:00:00+02:00",
+      balanceDueAt: "2026-10-11T18:00:00+02:00",
       closed: true,
     },
     {
       id: "walk-16",
       tourId: "old-town",
-      startsAt: "2026-10-16T10:00:00+02:00",
+      startsAt: "2026-10-16T08:00:00+02:00",
       capacity: 12,
       policy: "deposit",
       balanceDueAt: "2026-10-15T18:00:00+02:00",
@@ -620,25 +1077,25 @@ export function createTourSeed(): TourData {
     {
       id: "walk-18",
       tourId: "old-town",
-      startsAt: "2026-10-18T14:00:00+02:00",
+      startsAt: "2026-10-18T08:00:00+02:00",
       capacity: 12,
       policy: "full",
-      balanceDueAt: "2026-10-18T14:00:00+02:00",
+      balanceDueAt: "2026-10-18T08:00:00+02:00",
       closed: false,
     },
     {
       id: "walk-20",
       tourId: "old-town",
-      startsAt: "2026-10-20T10:00:00+02:00",
+      startsAt: "2026-10-20T08:00:00+02:00",
       capacity: 12,
       policy: "full",
-      balanceDueAt: "2026-10-20T10:00:00+02:00",
+      balanceDueAt: "2026-10-20T08:00:00+02:00",
       closed: false,
     },
     {
       id: "lake-17",
       tourId: "lake",
-      startsAt: "2026-10-17T10:00:00+02:00",
+      startsAt: "2026-10-17T08:00:00+02:00",
       capacity: 16,
       policy: "later",
       balanceDueAt: "2026-10-16T18:00:00+02:00",
@@ -648,7 +1105,7 @@ export function createTourSeed(): TourData {
     {
       id: "walk-23",
       tourId: "old-town",
-      startsAt: "2026-10-23T10:00:00+02:00",
+      startsAt: "2026-10-23T08:00:00+02:00",
       capacity: 12,
       policy: "deposit",
       balanceDueAt: "2026-10-22T18:00:00+02:00",
@@ -657,28 +1114,37 @@ export function createTourSeed(): TourData {
     {
       id: "night-15",
       tourId: "night",
-      startsAt: "2026-10-15T19:30:00+02:00",
+      startsAt: "2026-10-15T08:00:00+02:00",
       capacity: 10,
       policy: "full",
-      balanceDueAt: "2026-10-15T19:30:00+02:00",
+      balanceDueAt: "2026-10-15T08:00:00+02:00",
       closed: false,
     },
     {
       id: "night-22",
       tourId: "night",
-      startsAt: "2026-10-22T19:30:00+02:00",
+      startsAt: "2026-10-22T08:00:00+02:00",
       capacity: 10,
       policy: "full",
-      balanceDueAt: "2026-10-22T19:30:00+02:00",
+      balanceDueAt: "2026-10-22T08:00:00+02:00",
+      closed: false,
+    },
+    {
+      id: "nufenen-21",
+      tourId: "pilatus",
+      startsAt: "2026-10-21T08:00:00+02:00",
+      capacity: 8,
+      policy: "deposit",
+      balanceDueAt: "2026-10-20T18:00:00+02:00",
       closed: false,
     },
     {
       id: "workshop-17",
       tourId: "workshop",
-      startsAt: "2026-10-17T14:00:00+02:00",
+      startsAt: "2026-10-17T08:00:00+02:00",
       capacity: 6,
       policy: "full",
-      balanceDueAt: "2026-10-17T14:00:00+02:00",
+      balanceDueAt: "2026-10-17T08:00:00+02:00",
       closed: false,
     },
   ] satisfies TourData["departures"];
@@ -689,40 +1155,39 @@ export function createTourSeed(): TourData {
     departureId: "walk-13",
     tourName: tour.name,
     meetingPoint: tour.meetingPoint,
-    startsAt: "2026-10-13T07:00:00+02:00",
-    endsAt: "2026-10-13T09:00:00+02:00",
+    startsAt: "2026-10-12T08:00:00+02:00",
+    endsAt: new Date(
+      Date.parse("2026-10-12T08:00:00+02:00") + tour.durationMinutes * 60_000,
+    ).toISOString(),
     adults: 2,
     children: 1,
     infants: 0,
     childName: "Alex",
-    total: 22300,
-    firstAmount: 6690,
+    total: tour.adultPrice * 2 + tour.childPrice,
+    firstAmount: Math.round((tour.adultPrice * 2 + tour.childPrice) * 0.3),
     adultPrice: tour.adultPrice,
     childPrice: tour.childPrice,
     infantPrice: tour.infantPrice,
     cancellationPolicy: structuredClone(tour.cancellationPolicy),
     policy: "deposit",
-    balanceDueAt: "2026-10-12T18:00:00+02:00",
-    partnerId: null,
-    commissionRate: 0.1,
-    createdAt: "2026-10-12T10:00:00+02:00",
-    commissionRecordedAt: null,
+    balanceDueAt: "2026-10-11T18:00:00+02:00",
+    createdAt: "2026-10-10T10:00:00+02:00",
     activity: [],
   } satisfies Partial<TourBooking>;
   const bookings: TourBooking[] = [
     {
       ...record,
-      id: "tour-anna",
+      id: "tour-erich",
       ref: "SK-T1042",
-      guestId: "g-anna",
-      contactName: "Anna Keller",
+      guestId: "g-erich",
+      contactName: "Erich Haldi",
       phone: "+41 79 123 45 67",
       status: "confirmed",
       holdUntil: null,
       payments: [
         {
           id: "tp-1",
-          amount: 6690,
+          amount: record.firstAmount,
           method: "online",
           status: "succeeded",
           at: record.createdAt,
@@ -741,7 +1206,7 @@ export function createTourSeed(): TourData {
       payments: [
         {
           id: "tp-2",
-          amount: 22300,
+          amount: record.total,
           method: "online",
           status: "succeeded",
           at: record.createdAt,
@@ -767,15 +1232,17 @@ export function createTourSeed(): TourData {
       contactName: "Tom Becker",
       phone: "+49 151 555 0143",
       departureId: "walk-16",
-      startsAt: "2026-10-16T10:00:00+02:00",
-      endsAt: "2026-10-16T12:00:00+02:00",
+      startsAt: "2026-10-16T08:00:00+02:00",
+      endsAt: new Date(
+        Date.parse("2026-10-16T08:00:00+02:00") + tour.durationMinutes * 60_000,
+      ).toISOString(),
       balanceDueAt: "2026-10-15T18:00:00+02:00",
       status: "confirmed",
       holdUntil: null,
       payments: [
         {
           id: "tp-3",
-          amount: 6690,
+          amount: record.firstAmount,
           method: "online",
           status: "succeeded",
           at: record.createdAt,
@@ -793,7 +1260,6 @@ export function createTourSeed(): TourData {
         guestId: "g-yuki",
         contactName: "Yuki Tanaka",
         phone: "+41 79 555 01 46",
-        partnerId: null,
       },
       { adults: 2, children: 2, infants: 0 },
     ],
@@ -805,7 +1271,6 @@ export function createTourSeed(): TourData {
         guestId: "g-sofia",
         contactName: "Sofia Rossi",
         phone: "+39 333 555 0147",
-        partnerId: null,
       },
       { adults: 4, children: 0, infants: 0 },
     ],
@@ -817,7 +1282,6 @@ export function createTourSeed(): TourData {
         guestId: "g-daniel",
         contactName: "Daniel Meier",
         phone: "+41 76 555 01 48",
-        partnerId: null,
       },
       { adults: 2, children: 2, infants: 1 },
     ],
@@ -829,7 +1293,6 @@ export function createTourSeed(): TourData {
         guestId: "g-lars",
         contactName: "Lars Jensen",
         phone: "+45 20 55 01 49",
-        partnerId: "hotel-am-see",
       },
       { adults: 3, children: 2, infants: 0 },
     ],
@@ -841,7 +1304,6 @@ export function createTourSeed(): TourData {
         guestId: "g-peter",
         contactName: "Peter Schmid",
         phone: "+41 79 555 01 50",
-        partnerId: null,
       },
       { adults: 4, children: 0, infants: 0 },
     ],
@@ -853,7 +1315,6 @@ export function createTourSeed(): TourData {
         guestId: "g-marie",
         contactName: "Marie Dubois",
         phone: "+41 79 555 01 45",
-        partnerId: null,
       },
       { adults: 2, children: 1, infants: 0 },
     ],
@@ -865,7 +1326,6 @@ export function createTourSeed(): TourData {
         guestId: "g-elena",
         contactName: "Elena Novak",
         phone: "+41 78 555 01 44",
-        partnerId: null,
       },
       { adults: 3, children: 0, infants: 0 },
     ],

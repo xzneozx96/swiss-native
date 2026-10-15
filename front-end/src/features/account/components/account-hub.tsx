@@ -1,4 +1,4 @@
-import type { Guest } from "@/features/orders/types";
+import type { Guest } from "@/features/account/types";
 
 import { buttonVariants } from "@heroui/react";
 import { Link } from "@tanstack/react-router";
@@ -18,7 +18,6 @@ import {
   LanguageIcon,
   LogoutIcon,
   NotificationIcon,
-  OrdersIcon,
   PayLaterIcon,
   ProfileEditIcon,
   TourIcon,
@@ -62,13 +61,6 @@ export function AccountHub({
       </header>
 
       <SettingsGroup id="hub-activity" title={t("account.hub.activity")}>
-        <SectionRow
-          description={hub.orders}
-          icon={OrdersIcon}
-          section="orders"
-          title={t("account.section.orders")}
-          value={hub.orderCount || undefined}
-        />
         <SectionRow
           description={hub.bookings}
           icon={TourIcon}

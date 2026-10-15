@@ -1,5 +1,6 @@
 import type { IconComponent } from "@/components/icons";
-import type { Order, Payment } from "@/features/orders/types";
+import type { Payment } from "@/features/payment/types";
+import type { TourBooking } from "@/features/tours/types";
 
 import { buttonVariants } from "@heroui/react";
 import { Link } from "@tanstack/react-router";
@@ -18,10 +19,13 @@ import {
 import { Media } from "@/components/media";
 import { StatusChip } from "@/components/status-chip";
 import { useLocale } from "@/contexts/locale-context";
-import { amountDueNow } from "@/features/orders/lib/selectors";
-import { startOnlinePaymentBlock } from "@/features/orders/lib/transitions";
-import { useTransactionRow } from "@/features/transactions/hooks/use-transaction-row";
-import { formatMoney } from "@/lib/format";
+import {
+  useBookingFormat,
+  useTourPhoto,
+} from "@/features/tours/booking/booking-summary";
+import { useBookingLabels } from "@/features/tours/components/booking-status";
+import { bookingAmountDue } from "@/features/tours/lib/selectors";
+import { pickText } from "@/lib/localized";
 
 const methodIcon: Record<Payment["method"], IconComponent> = {
   online: CardIcon,
@@ -47,8 +51,8 @@ export function PaymentsPanel() {
             {t("account.payments.due.title")}
           </h2>
           <ul className="flex flex-col gap-3">
-            {due.map((order) => (
-              <DueCard key={order.id} order={order} />
+            {due.map((booking) => (
+              <DueCard key={booking.id} booking={booking} />
             ))}
           </ul>
         </section>
@@ -75,16 +79,15 @@ export function PaymentsPanel() {
                     <li key={p.id} className={itemClass}>
                       <Link
                         className={rowClass}
-                        params={{ orderId: p.orderId }}
-                        search={{ tab: "payments" }}
-                        to="/account/orders/$orderId"
+                        params={{ bookingId: p.bookingId }}
+                        to="/account/bookings/$bookingId"
                       >
                         <RowIcon icon={methodIcon[p.method]} />
                         <span className="flex min-w-0 flex-1 flex-col items-start gap-1.5">
                           <span className="flex w-full flex-col">
                             <span className="flex w-full items-baseline gap-3">
                               <span className="flex-1 truncate font-medium">
-                                {p.gift}
+                                {p.tour}
                               </span>
                               <span className="shrink-0 font-semibold tabular-nums">
                                 {p.amount}
@@ -128,30 +131,28 @@ export function PaymentsPanel() {
   );
 }
 
-/** An open order with money due now: the gift, what is due, its payment label, and Pay. */
-function DueCard({ order }: { order: Order }) {
-  const { t, intlLocale } = useLocale();
-  const row = useTransactionRow(order);
-  const due = formatMoney(amountDueNow(order) / 100, intlLocale);
-  const canPay = !startOnlinePaymentBlock(order);
+/** An open booking with money due now: the tour, what is due, its payment label, and Pay. */
+function DueCard({ booking }: { booking: TourBooking }) {
+  const { t, language } = useLocale();
+  const { money } = useBookingFormat();
+  const { payment } = useBookingLabels(booking);
+  const photo = useTourPhoto(booking);
+  const due = money(bookingAmountDue(booking));
+  const canPay = !booking.payments.some((p) => p.status === "processing");
 
   return (
     <li className="flex flex-col gap-4 rounded-2xl bg-surface p-4 shadow-surface">
       <Link
         className="-m-2 flex items-center gap-3 rounded-xl p-2 outline-none focus-visible:focus-ring"
-        params={{ orderId: row.id }}
-        to="/account/orders/$orderId"
+        params={{ bookingId: booking.id }}
+        to="/account/bookings/$bookingId"
       >
-        <Media
-          alt=""
-          className="size-14 shrink-0 rounded-xl"
-          photo={row.photo}
-        />
+        <Media alt="" className="size-14 shrink-0 rounded-xl" photo={photo} />
         <span className="flex min-w-0 flex-1 flex-col items-start gap-1">
           <span className="line-clamp-1 font-serif text-card-title">
-            {row.title}
+            {pickText(booking.tourName, language).text}
           </span>
-          <span className="text-sm text-muted tabular-nums">{row.ref}</span>
+          <span className="text-sm text-muted tabular-nums">{booking.ref}</span>
         </span>
         <ChevronRightIcon
           aria-hidden
@@ -168,13 +169,13 @@ function DueCard({ order }: { order: Order }) {
             {due}
           </span>
         </span>
-        <StatusChip tone={row.payment.tone}>{row.payment.text}</StatusChip>
+        <StatusChip tone={payment.tone}>{payment.text}</StatusChip>
       </div>
       {canPay && (
         <Link
           className={`${buttonVariants({ variant: "primary", fullWidth: true })} transition-transform active:scale-[0.98]`}
-          params={{ orderId: order.id }}
-          to="/account/orders/$orderId/pay"
+          params={{ bookingId: booking.id }}
+          to="/account/bookings/$bookingId/pay"
         >
           {t("guestOrder.action.pay", { amount: due })}
         </Link>
