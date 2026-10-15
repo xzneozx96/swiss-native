@@ -2,6 +2,7 @@ import type { Tour } from "@/features/tours/types";
 
 import { Skeleton } from "@heroui/react";
 
+import { AdviceBanner } from "./advice-banner";
 import { ExperienceFlight } from "./experience-flight";
 import { Hero } from "./hero";
 import { Rail, Section } from "./section";
@@ -90,6 +91,7 @@ export function DiscoveryHome({
 
         <StayKey />
         <ExperienceFlight />
+        <AdviceBanner />
       </div>
     </>
   );
