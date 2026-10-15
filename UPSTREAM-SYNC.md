@@ -6,8 +6,8 @@ This repo is a long-lived fork of `swiss-keepsakes`. Upstream is the git remote 
 | | |
 |---|---|
 | Fork point | `c7850da` (upstream, 14 Oct 2026) |
-| Last synced | `81d5843` (upstream `main`, merge of PR #1: Lucerne tours and dashboards) |
-| Synced on | 15 Oct 2026, tag `upstream-synced-81d5843` |
+| Last synced | `391b282` (upstream `main`: aerial tour map) |
+| Synced on | 15 Oct 2026, tag `upstream-synced-391b282` |
 
 ## Every sync
 
@@ -50,6 +50,10 @@ trip advice, the manager and partner roles, the dashboard Requests section, the 
 upstream's 11 Lucerne tours (`features/tours/lucerne`) and their photos.
 
 ## Sync log
+
+- **391b282** (15 Oct 2026): took the aerial tour route map (swisstopo SWISSIMAGE photo with
+  terrain, labels on top, tiles of the next stop loaded before the camera flies there). Dropped
+  its lab pages (`routes/lab.map*.tsx`, `features/lab`).
 
 - **81d5843** (15 Oct 2026): took the dashboard shell (sidebar with brand block and profile,
   `RouteTabs`, `RowActions`, `FilterBar`, skeletons, sheet exit animation), the products
