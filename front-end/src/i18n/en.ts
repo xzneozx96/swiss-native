@@ -73,6 +73,7 @@ export const en = {
   "search.placeholder": "Tours",
   "search.back": "Back",
   "search.group.tours": "Tours",
+  "search.group.stays": "Stay and experience",
   "search.group.suggested": "Suggested for you",
   "search.noResults": "Nothing found for «{query}». Try a shorter word.",
   "card.save": "Save {name}",

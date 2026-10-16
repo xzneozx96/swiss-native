@@ -12,7 +12,8 @@ export interface SearchResultRow {
   title: string;
   meta: string;
   photo?: string;
-  link: LinkProps;
+  link?: LinkProps;
+  onSelect?: () => void;
 }
 
 export interface SearchResultGroup {
@@ -77,28 +78,54 @@ export function GlobalSearch({
             <ul className="flex flex-col">
               {group.rows.map((row) => (
                 <li key={row.key}>
-                  <Link
-                    {...row.link}
-                    className="flex items-center gap-3 rounded-2xl py-2 outline-none transition-transform focus-visible:focus-ring active:scale-[0.99]"
-                  >
-                    <Media
-                      alt=""
-                      className="size-14 shrink-0 rounded-xl"
-                      photo={row.photo}
-                    />
-                    <span className="flex min-w-0 flex-1 flex-col">
-                      <span className="truncate font-serif text-card-title">
-                        {row.title}
+                  {row.onSelect ? (
+                    <button
+                      className="flex w-full items-center gap-3 rounded-2xl py-2 text-left outline-none transition-transform focus-visible:focus-ring active:scale-[0.99]"
+                      type="button"
+                      onClick={row.onSelect}
+                    >
+                      <Media
+                        alt=""
+                        className="size-14 shrink-0 rounded-xl"
+                        photo={row.photo}
+                      />
+                      <span className="flex min-w-0 flex-1 flex-col">
+                        <span className="truncate font-serif text-card-title">
+                          {row.title}
+                        </span>
+                        <span className="truncate text-label text-muted">
+                          {row.meta}
+                        </span>
                       </span>
-                      <span className="truncate text-label text-muted">
-                        {row.meta}
+                      <ChevronRightIcon
+                        className="shrink-0 text-muted"
+                        size={18}
+                      />
+                    </button>
+                  ) : (
+                    <Link
+                      {...row.link}
+                      className="flex w-full items-center gap-3 rounded-2xl py-2 text-left outline-none transition-transform focus-visible:focus-ring active:scale-[0.99]"
+                    >
+                      <Media
+                        alt=""
+                        className="size-14 shrink-0 rounded-xl"
+                        photo={row.photo}
+                      />
+                      <span className="flex min-w-0 flex-1 flex-col">
+                        <span className="truncate font-serif text-card-title">
+                          {row.title}
+                        </span>
+                        <span className="truncate text-label text-muted">
+                          {row.meta}
+                        </span>
                       </span>
-                    </span>
-                    <ChevronRightIcon
-                      className="shrink-0 text-muted"
-                      size={18}
-                    />
-                  </Link>
+                      <ChevronRightIcon
+                        className="shrink-0 text-muted"
+                        size={18}
+                      />
+                    </Link>
+                  )}
                 </li>
               ))}
             </ul>
