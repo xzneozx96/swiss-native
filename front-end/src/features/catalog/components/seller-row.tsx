@@ -1,7 +1,6 @@
 import type { IconComponent } from "@/components/icons";
 
 import { Drawer } from "@heroui/react";
-import { Link } from "@tanstack/react-router";
 import { useState } from "react";
 
 import {
@@ -32,8 +31,6 @@ export interface SellerRowProps {
     label: string;
     href: string;
   }[];
-  /** "Visit shop": the shop's tours (one host, so the tour list). */
-  visitLabel: string;
 }
 
 const contactIcon: Record<
@@ -51,8 +48,8 @@ const rowClass =
 /**
  * Seller as the Airbnb host row (owner choice 13.10.2026, Lab option B): shop photo (a
  * store icon until there is one), name and
- * one muted line with a chevron. Tapping opens a small sheet with Call, Email,
- * Directions and Visit shop, each with its own label.
+ * one muted line with a chevron. Tapping opens a small sheet with Call and Email,
+ * each with its own label.
  */
 export function SellerRow({
   photo,
@@ -62,7 +59,6 @@ export function SellerRow({
   address,
   hours,
   contacts,
-  visitLabel,
 }: SellerRowProps) {
   const [open, setOpen] = useState(false);
 
@@ -124,11 +120,6 @@ export function SellerRow({
                   </a>
                 );
               })}
-              <Link className={`${rowClass} border-b-0`} to="/tours">
-                <ShopIcon aria-hidden size={22} />
-                <span className="flex-1 font-medium">{visitLabel}</span>
-                <ChevronRightIcon aria-hidden size={18} />
-              </Link>
             </Drawer.Body>
           </Drawer.Dialog>
         </Drawer.Content>

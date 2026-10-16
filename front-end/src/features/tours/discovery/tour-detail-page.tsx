@@ -239,17 +239,11 @@ function TourDetail({ tour, isBooking }: { tour: Tour; isBooking: boolean }) {
                 label: t("detail.seller.email"),
                 href: `mailto:${shop.email}?subject=${encodeURIComponent(t("detail.seller.emailSubject", { name: name.text }))}`,
               },
-              {
-                kind: "directions",
-                label: t("detail.seller.directions"),
-                href: `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(shop.address)}`,
-              },
             ]}
             hours={text(shop.openingHours)}
             name={shop.name}
             sub={t("tourDetail.operatorSub")}
             title={t("tourDetail.operatorTitle", { shop: shop.name })}
-            visitLabel={t("detail.seller.visit")}
           />
         </section>
         <ul className="flex flex-col gap-5 border-t border-separator py-7">
