@@ -33,20 +33,21 @@ function SearchPage() {
 
   const groups: SearchResultGroup[] = [];
 
-  if (query) {
+  {
     const tours = (state.data.tours?.tours ?? []).filter(
       (tour) =>
         isTour(tour) &&
         tour.published &&
-        matches(
-          pickText(tour.name, language).text,
-          pickText(tour.summary, language).text,
-        ),
+        (!query ||
+          matches(
+            pickText(tour.name, language).text,
+            pickText(tour.summary, language).text,
+          )),
     );
 
     if (tours.length)
       groups.push({
-        title: t("search.group.tours"),
+        title: t(query ? "search.group.tours" : "search.group.suggested"),
         rows: tours.map((tour) => ({
           key: tour.id,
           title: pickText(tour.name, language).text,

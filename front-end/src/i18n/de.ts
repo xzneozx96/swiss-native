@@ -76,6 +76,7 @@ export const de: Record<MessageKey, string> = {
   "search.placeholder": "Touren",
   "search.back": "Zurück",
   "search.group.tours": "Touren",
+  "search.group.suggested": "Für Sie ausgewählt",
   "search.noResults":
     "Nichts gefunden für «{query}». Versuchen Sie ein kürzeres Wort.",
   "card.save": "{name} merken",
