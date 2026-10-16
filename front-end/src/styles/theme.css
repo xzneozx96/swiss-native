@@ -103,6 +103,9 @@
     --charcoal: #4a4a48;
     --hero-sky: #cfe4f5;
     --hero-cream: #fbf6e8;
+    /* Brand navy from the client's banner: line icons, small labels, handwriting ink.
+       About 11:1 on the page ground, on white and on the postcard paper. */
+    --navy: #1e3a5f;
 
     /*
      * Dashboard charts (owner review 1.9t): one red-based theme for M02 and P02. Primary

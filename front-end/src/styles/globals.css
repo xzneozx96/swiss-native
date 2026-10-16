@@ -20,6 +20,7 @@
   --color-charcoal: var(--charcoal);
   --color-hero-sky: var(--hero-sky);
   --color-hero-cream: var(--hero-cream);
+  --color-navy: var(--navy);
 }
 
 /*
@@ -29,6 +30,8 @@
 @theme {
   --font-sans: "Inter", system-ui, sans-serif;
   --font-serif: "Source Serif 4", Georgia, serif;
+  /* Handwriting (Caveat, self-hosted from @fontsource-variable/caveat), for the quote only. */
+  --font-script: "Caveat Variable", "Caveat", cursive;
 
   --text-display: 34px;
   --text-display--line-height: 39px;
@@ -164,4 +167,45 @@ button {
     0 4px 8px rgb(0 0 0 / 0.1);
   -webkit-backdrop-filter: blur(32px);
   backdrop-filter: blur(32px);
+}
+
+/*
+ * First-view motion for the home-page brand blocks (useReveal sets data-shown once).
+ * .reveal fades and lifts an element in; .reveal-word does the same per word, one after
+ * another by its --i. Reduced motion shows everything at once.
+ */
+@layer components {
+  .reveal {
+    opacity: 0;
+    translate: 0 10px;
+    transition:
+      opacity 600ms cubic-bezier(0.2, 0.8, 0.2, 1),
+      translate 600ms cubic-bezier(0.2, 0.8, 0.2, 1);
+    transition-delay: var(--reveal-delay, 0ms);
+  }
+
+  .reveal-word {
+    display: inline-block;
+    opacity: 0;
+    translate: 0 3px;
+    transition:
+      opacity 280ms ease-out,
+      translate 280ms ease-out;
+    transition-delay: calc(var(--i, 0) * 85ms + 150ms);
+  }
+
+  .reveal[data-shown],
+  [data-shown] .reveal-word {
+    opacity: 1;
+    translate: 0 0;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .reveal,
+    .reveal-word {
+      opacity: 1;
+      translate: none;
+      transition: none;
+    }
+  }
 }

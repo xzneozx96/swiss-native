@@ -5,8 +5,10 @@ import { Skeleton } from "@heroui/react";
 import { AdviceBanner } from "./advice-banner";
 import { ExperienceFlight } from "./experience-flight";
 import { Hero } from "./hero";
+import { QuoteAirmail } from "./quote-airmail";
 import { Rail, Section } from "./section";
 import { StayKey } from "./stay-key";
+import { UspRoad } from "./usp-road";
 
 import { BrandLogo } from "@/components/layout/brand-logo";
 import { CompactBar, SearchButton } from "@/components/layout/top-bar-buttons";
@@ -45,8 +47,9 @@ function RailSkeleton() {
 }
 
 /**
- * C01 Discovery home: hero with search, then the host's three services in order, each
- * introduced in its own section: tours, the stay, the experience.
+ * C01 Discovery home: hero with search and the road of three selling points, then the
+ * host's three services in order, each introduced in its own section: tours, the stay,
+ * the experience, with Erich's handwritten line between the stay and the experience.
  */
 export function DiscoveryHome({
   view,
@@ -68,7 +71,11 @@ export function DiscoveryHome({
         <SearchButton label={hero.searchLabel} to="/search" tone="bar" />
       </CompactBar>
       <div className="flex flex-col gap-9 px-4 pb-4">
-        <Hero ref={heroEnd} {...hero} />
+        {/* No gap: the road starts under the search box's bottom edge. */}
+        <div className="flex flex-col">
+          <Hero ref={heroEnd} {...hero} />
+          <UspRoad />
+        </div>
 
         <Section
           id="tours"
@@ -90,6 +97,7 @@ export function DiscoveryHome({
         </Section>
 
         <StayKey />
+        <QuoteAirmail />
         <ExperienceFlight />
         <AdviceBanner />
       </div>

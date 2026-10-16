@@ -1,0 +1,52 @@
+/* Lab only, round 2: first-view motion for the postcard and road-line variations. */
+
+/* Quote 10: the handwriting appears word by word. */
+.lab-word {
+  display: inline-block;
+  opacity: 0;
+  translate: 0 3px;
+  transition:
+    opacity 280ms ease-out,
+    translate 280ms ease-out;
+  transition-delay: calc(var(--i, 0) * 85ms + 150ms);
+}
+
+[data-shown] .lab-word {
+  opacity: 1;
+  translate: 0 0;
+}
+
+/* Strip 7: the road draws itself while the red dot rides along it. */
+.lab-draw {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  transition: stroke-dashoffset 2400ms cubic-bezier(0.25, 0.7, 0.3, 1);
+}
+
+[data-shown] .lab-draw {
+  stroke-dashoffset: 0;
+}
+
+.lab-late {
+  opacity: 0;
+  transition: opacity 500ms ease-out;
+  transition-delay: var(--lab-delay, 1800ms);
+}
+
+[data-shown] .lab-late {
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lab-word,
+  .lab-late {
+    opacity: 1;
+    translate: none;
+    transition: none;
+  }
+
+  .lab-draw {
+    stroke-dashoffset: 0;
+    transition: none;
+  }
+}

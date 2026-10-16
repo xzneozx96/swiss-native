@@ -12,6 +12,7 @@
     "build:artifact": "npm run build && node scripts/artifact-page.mjs"
   },
   "dependencies": {
+    "@fontsource-variable/caveat": "^5.3.0",
     "@fullcalendar/react": "^7.1.2",
     "@heroui/react": "3.2.6",
     "@heroui/styles": "3.2.6",

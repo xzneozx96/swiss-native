@@ -9,6 +9,7 @@ import ReactDOM from "react-dom/client";
 import { LocaleProvider } from "@/contexts/locale-context";
 import { DemoProvider } from "@/features/demo";
 import { routeTree } from "@/routeTree.gen";
+import "@fontsource-variable/caveat";
 import "@/styles/globals.css";
 
 // Hash history: the prototype is served as static files with no server rewrites,
