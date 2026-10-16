@@ -88,8 +88,8 @@ export const tourSeed: Tour[] = [
     childPrice: 12000,
     infantPrice: 0,
     meetingPoint: {
-      en: "Confirmed with Erich after booking",
-      de: "Wird nach der Buchung mit Erich bestätigt",
+      en: "Andermatt (the hotel is confirmed with Erich after booking)",
+      de: "Andermatt (das Hotel wird nach der Buchung mit Erich bestätigt)",
     },
     included: [
       {
@@ -113,6 +113,24 @@ export const tourSeed: Tour[] = [
     published: true,
     itinerary: [
       {
+        id: "base-andermatt",
+        name: {
+          en: "Andermatt, the base",
+          de: "Andermatt, der Standort",
+        },
+        description: {
+          en: "Day one starts here: meet the host and the group, check the bikes and the weather, and plan the ride-out days. The tour rides out from Andermatt and returns each evening; hotels are booked separately.",
+          de: "Der erste Tag beginnt hier: Gastgeber und Gruppe treffen, Motorräder und Wetter prüfen, die Ausfahrten planen. Die Tour startet in Andermatt und kehrt jeden Abend dorthin zurück; Hotels werden separat gebucht.",
+        },
+        minutesFromStart: 0,
+        coordinates: [8.5955, 46.6335],
+        photo: "gotthard-pass-2",
+        note: {
+          en: "The ride-out day is the second day; the other days are free rides from the base, shaped with the host.",
+          de: "Der Ausfahrtstag ist der zweite Tag; die übrigen Tage sind freie Fahrten ab dem Standort, mit dem Gastgeber abgestimmt.",
+        },
+      },
+      {
         id: "realp",
         name: {
           en: "Realp",
@@ -122,7 +140,7 @@ export const tourSeed: Tour[] = [
           en: "The last village of the Urseren valley in Uri, at about 1,540 m, where the climb to the Furka begins. The Goldfinger car chase was filmed on the curving roads nearby.",
           de: "Das letzte Dorf im Urserntal im Kanton Uri auf rund 1540 m, wo der Aufstieg zur Furka beginnt. Die Verfolgungsjagd aus Goldfinger wurde auf den kurvigen Strassen in der Nähe gedreht.",
         },
-        minutesFromStart: 0,
+        minutesFromStart: 1440,
         coordinates: [8.5021, 46.5988],
         photo: "furka-pass-4",
         note: {
@@ -140,7 +158,7 @@ export const tourSeed: Tour[] = [
           en: "The border between Uri and Valais at 2,429 m, and the European watershed between the Reuss (Rhine, North Sea) and the Rhone (Mediterranean).",
           de: "Die Grenze zwischen Uri und Wallis auf 2429 m und die europäische Wasserscheide zwischen Reuss (Rhein, Nordsee) und Rhone (Mittelmeer).",
         },
-        minutesFromStart: 110,
+        minutesFromStart: 1550,
         coordinates: [8.415, 46.5725],
         photo: "furka-pass-5",
         note: {
@@ -158,7 +176,7 @@ export const tourSeed: Tour[] = [
           en: "The 1882 hotel sits in a hairpin at about 2,270 m, facing the Rhone Glacier. It has been closed since 2015, but the building and the view are still worth a stop.",
           de: "Das Hotel von 1882 steht in einer Kehre auf rund 2270 m, mit Blick auf den Rhonegletscher. Es ist seit 2015 geschlossen, doch Gebäude und Aussicht sind weiterhin einen Halt wert.",
         },
-        minutesFromStart: 190,
+        minutesFromStart: 1630,
         coordinates: [8.3884, 46.57668],
         photo: "furka-pass-3",
         note: {
@@ -176,7 +194,7 @@ export const tourSeed: Tour[] = [
           en: "A hamlet at 1,757 m where the Furka and Grimsel roads meet, once right next to the glacier's mouth. Furka steam trains stop at its station.",
           de: "Ein Weiler auf 1757 m, wo sich Furka- und Grimselstrasse treffen, einst direkt an der Gletscherzunge. Die Dampfzüge der Furka halten an seinem Bahnhof.",
         },
-        minutesFromStart: 290,
+        minutesFromStart: 1730,
         coordinates: [8.3615, 46.5622],
         photo: "furka-pass-6",
       },
@@ -190,7 +208,7 @@ export const tourSeed: Tour[] = [
           en: "The first village of the Goms at 1,377 m, at the head of the upper Rhone valley. A calm place to end the crossing.",
           de: "Das erste Dorf im Goms auf 1377 m, am Anfang des oberen Rhonetals. Ein ruhiger Ort, um die Überfahrt zu beenden.",
         },
-        minutesFromStart: 370,
+        minutesFromStart: 1810,
         coordinates: [8.3521, 46.5329],
         photo: "furka-pass-7",
         note: {
@@ -288,8 +306,8 @@ export const tourSeed: Tour[] = [
     childPrice: 12000,
     infantPrice: 0,
     meetingPoint: {
-      en: "Confirmed with Erich after booking",
-      de: "Wird nach der Buchung mit Erich bestätigt",
+      en: "Andermatt (the hotel is confirmed with Erich after booking)",
+      de: "Andermatt (das Hotel wird nach der Buchung mit Erich bestätigt)",
     },
     included: [
       {
@@ -313,6 +331,24 @@ export const tourSeed: Tour[] = [
     published: true,
     itinerary: [
       {
+        id: "base-andermatt",
+        name: {
+          en: "Andermatt, the base",
+          de: "Andermatt, der Standort",
+        },
+        description: {
+          en: "Day one starts here: meet the host and the group, check the bikes and the weather, and plan the ride-out days. The tour rides out from Andermatt and returns each evening; hotels are booked separately.",
+          de: "Der erste Tag beginnt hier: Gastgeber und Gruppe treffen, Motorräder und Wetter prüfen, die Ausfahrten planen. Die Tour startet in Andermatt und kehrt jeden Abend dorthin zurück; Hotels werden separat gebucht.",
+        },
+        minutesFromStart: 0,
+        coordinates: [8.5955, 46.6335],
+        photo: "gotthard-pass-2",
+        note: {
+          en: "The ride-out day is the second day; the other days are free rides from the base, shaped with the host.",
+          de: "Der Ausfahrtstag ist der zweite Tag; die übrigen Tage sind freie Fahrten ab dem Standort, mit dem Gastgeber abgestimmt.",
+        },
+      },
+      {
         id: "handeck",
         photo: "grimsel-pass-2",
         name: {
@@ -323,7 +359,7 @@ export const tourSeed: Tour[] = [
           en: "A hamlet at about 1,380 m beyond Guttannen, where the road follows the Aare through short tunnels. It is the lower station of the Gelmerbahn, the steepest funicular in Switzerland.",
           de: "Ein Weiler auf rund 1380 m hinter Guttannen, wo die Strasse der Aare durch kurze Tunnel folgt. Hier liegt die Talstation der Gelmerbahn, der steilsten Standseilbahn der Schweiz.",
         },
-        minutesFromStart: 0,
+        minutesFromStart: 1440,
         coordinates: [8.3071, 46.6124],
         note: {
           en: "The ride up from Innertkirchen (625 m, where the Susten road branches off) and Guttannen is the warm-up.",
@@ -340,7 +376,7 @@ export const tourSeed: Tour[] = [
           en: "The first reservoir, reached after hairpin bends and a tunnel of about 850 m. A good place to look down on the road you just climbed.",
           de: "Der erste Stausee, erreicht nach Kehren und einem rund 850 m langen Tunnel. Ein guter Ort, um auf die eben gefahrene Strasse hinunterzuschauen.",
         },
-        minutesFromStart: 90,
+        minutesFromStart: 1530,
         coordinates: [8.3284, 46.5841],
         photo: "grimsel-pass-1",
       },
@@ -354,7 +390,7 @@ export const tourSeed: Tour[] = [
           en: "A stone hotel on a rocky spur between the two dam walls of the Grimselsee, at 1,980 m. A hospice on the pass is documented as early as 1400.",
           de: "Ein steinernes Hotel auf einem Felssporn zwischen den beiden Staumauern des Grimselsees auf 1980 m. Ein Hospiz auf dem Pass ist schon 1400 belegt.",
         },
-        minutesFromStart: 170,
+        minutesFromStart: 1610,
         coordinates: [8.3323, 46.5715],
         photo: "grimsel-pass-2",
       },
@@ -368,7 +404,7 @@ export const tourSeed: Tour[] = [
           en: "The summit lies on the border between Bern and Valais, beside the Totensee at about 2,160 m. This natural lake was raised by 16 m with a dam, and an aqueduct feeds its water to the Grimselsee.",
           de: "Die Passhöhe liegt auf der Grenze zwischen Bern und Wallis, neben dem Totensee auf rund 2160 m. Der natürliche See wurde mit einer Staumauer um 16 m angehoben, und ein Stollen leitet sein Wasser in den Grimselsee.",
         },
-        minutesFromStart: 250,
+        minutesFromStart: 1690,
         coordinates: [8.3397, 46.5603],
         photo: "grimsel-pass-3",
         note: {
@@ -386,7 +422,7 @@ export const tourSeed: Tour[] = [
           en: "The descent through hairpins ends at Gletsch (about 1,760 m), the crossroads with the Furka road in the upper Rhone valley.",
           de: "Die Abfahrt durch Kehren endet in Gletsch (rund 1760 m), der Kreuzung mit der Furkastrasse im oberen Rhonetal.",
         },
-        minutesFromStart: 330,
+        minutesFromStart: 1770,
         coordinates: [8.3615, 46.5622],
         photo: "grimsel-pass-5",
       },
@@ -481,8 +517,8 @@ export const tourSeed: Tour[] = [
     childPrice: 12000,
     infantPrice: 0,
     meetingPoint: {
-      en: "Confirmed with Erich after booking",
-      de: "Wird nach der Buchung mit Erich bestätigt",
+      en: "Andermatt (the hotel is confirmed with Erich after booking)",
+      de: "Andermatt (das Hotel wird nach der Buchung mit Erich bestätigt)",
     },
     included: [
       {
@@ -506,6 +542,24 @@ export const tourSeed: Tour[] = [
     published: true,
     itinerary: [
       {
+        id: "base-andermatt",
+        name: {
+          en: "Andermatt, the base",
+          de: "Andermatt, der Standort",
+        },
+        description: {
+          en: "Day one starts here: meet the host and the group, check the bikes and the weather, and plan the ride-out days. The tour rides out from Andermatt and returns each evening; hotels are booked separately.",
+          de: "Der erste Tag beginnt hier: Gastgeber und Gruppe treffen, Motorräder und Wetter prüfen, die Ausfahrten planen. Die Tour startet in Andermatt und kehrt jeden Abend dorthin zurück; Hotels werden separat gebucht.",
+        },
+        minutesFromStart: 0,
+        coordinates: [8.5955, 46.6335],
+        photo: "gotthard-pass-2",
+        note: {
+          en: "The ride-out day is the second day; the other days are free rides from the base, shaped with the host.",
+          de: "Der Ausfahrtstag ist der zweite Tag; die übrigen Tage sind freie Fahrten ab dem Standort, mit dem Gastgeber abgestimmt.",
+        },
+      },
+      {
         id: "innertkirchen",
         name: {
           en: "Innertkirchen",
@@ -515,7 +569,7 @@ export const tourSeed: Tour[] = [
           en: "The start of the ride in the Haslital, where the Aare valley opens and the Susten road branches off towards the Gadmer valley.",
           de: "Startpunkt im Haslital, wo sich das Aaretal öffnet und die Sustenstrasse ins Gadmertal abzweigt.",
         },
-        minutesFromStart: 0,
+        minutesFromStart: 1440,
         coordinates: [8.2286, 46.7054],
         photo: "susten-pass-7",
       },
@@ -529,7 +583,7 @@ export const tourSeed: Tour[] = [
           en: "A quiet village in the Gadmer valley with the road running straight through its centre, a good moment to settle in before the climb gets serious.",
           de: "Ein ruhiges Dorf im Gadmertal, die Strasse führt mitten durch. Ein guter Moment, bevor der Aufstieg ernst wird.",
         },
-        minutesFromStart: 75,
+        minutesFromStart: 1515,
         coordinates: [8.3527, 46.7381],
         photo: "susten-pass-5",
       },
@@ -543,7 +597,7 @@ export const tourSeed: Tour[] = [
           en: "The stop below the Stein Glacier and the Steinsee, the best place to look at what the retreating ice left behind.",
           de: "Der Halt unterhalb von Steingletscher und Steinsee, der beste Ort, um zu sehen, was das zurückweichende Eis hinterlassen hat.",
         },
-        minutesFromStart: 160,
+        minutesFromStart: 1600,
         coordinates: [8.433, 46.7125],
         photo: "susten-pass-4",
         note: {
@@ -561,7 +615,7 @@ export const tourSeed: Tour[] = [
           en: "The road crosses the watershed in a tunnel of roughly 300 metres at 2,224 m, the highest point of the road itself.",
           de: "Die Strasse quert die Wasserscheide in einem rund 300 Meter langen Tunnel auf 2224 m, dem höchsten Punkt der Strasse selbst.",
         },
-        minutesFromStart: 215,
+        minutesFromStart: 1655,
         coordinates: [8.449, 46.73],
         photo: "susten-pass-8",
         note: {
@@ -579,7 +633,7 @@ export const tourSeed: Tour[] = [
           en: "The Uri end of the pass, where the Susten road meets the Gotthard axis. The village is known for its church above the Reuss valley.",
           de: "Das Urner Ende des Passes, wo die Sustenstrasse auf die Gotthardachse trifft. Das Dorf ist bekannt für seine Kirche über dem Reusstal.",
         },
-        minutesFromStart: 310,
+        minutesFromStart: 1750,
         coordinates: [8.5996, 46.7068],
         photo: "susten-pass-6",
       },
@@ -674,8 +728,8 @@ export const tourSeed: Tour[] = [
     childPrice: 12000,
     infantPrice: 0,
     meetingPoint: {
-      en: "Confirmed with Erich after booking",
-      de: "Wird nach der Buchung mit Erich bestätigt",
+      en: "Andermatt (the hotel is confirmed with Erich after booking)",
+      de: "Andermatt (das Hotel wird nach der Buchung mit Erich bestätigt)",
     },
     included: [
       {
@@ -699,6 +753,24 @@ export const tourSeed: Tour[] = [
     published: true,
     itinerary: [
       {
+        id: "base-andermatt",
+        name: {
+          en: "Andermatt, the base",
+          de: "Andermatt, der Standort",
+        },
+        description: {
+          en: "Day one starts here: meet the host and the group, check the bikes and the weather, and plan the ride-out days. The tour rides out from Andermatt and returns each evening; hotels are booked separately.",
+          de: "Der erste Tag beginnt hier: Gastgeber und Gruppe treffen, Motorräder und Wetter prüfen, die Ausfahrten planen. Die Tour startet in Andermatt und kehrt jeden Abend dorthin zurück; Hotels werden separat gebucht.",
+        },
+        minutesFromStart: 0,
+        coordinates: [8.5955, 46.6335],
+        photo: "gotthard-pass-2",
+        note: {
+          en: "The ride-out day is the second day; the other days are free rides from the base, shaped with the host.",
+          de: "Der Ausfahrtstag ist der zweite Tag; die übrigen Tage sind freie Fahrten ab dem Standort, mit dem Gastgeber abgestimmt.",
+        },
+      },
+      {
         id: "schoellenen",
         name: {
           en: "Schöllenen gorge and Devil's Bridge",
@@ -708,7 +780,7 @@ export const tourSeed: Tour[] = [
           en: "The narrow gorge of the Reuss above Göschenen, where the road, an old stone bridge and the modern bridge hang over each other.",
           de: "Die enge Reussschlucht oberhalb von Göschenen, wo Strasse, alte Steinbrücke und moderne Brücke übereinander hängen.",
         },
-        minutesFromStart: 0,
+        minutesFromStart: 1440,
         coordinates: [8.5903, 46.6474],
         photo: "gotthard-pass-6",
         note: {
@@ -726,7 +798,7 @@ export const tourSeed: Tour[] = [
           en: "The village in the Urseren valley at the foot of the Gotthard, Furka and Oberalp routes, a natural place for a break before the climb.",
           de: "Das Dorf im Urserental am Fuss von Gotthard-, Furka- und Oberalproute, ein natürlicher Ort für eine Pause vor dem Aufstieg.",
         },
-        minutesFromStart: 55,
+        minutesFromStart: 1495,
         coordinates: [8.5948, 46.634],
         photo: "gotthard-pass-5",
       },
@@ -740,7 +812,7 @@ export const tourSeed: Tour[] = [
           en: "The summit area with the small lakes, the old hospice and the museum. The official summit sits in Ticino, a couple of kilometres south of the border with Uri.",
           de: "Das Gipfelareal mit den kleinen Seen, dem alten Hospiz und dem Museum. Der offizielle Scheitelpunkt liegt im Tessin, einige Kilometer südlich der Grenze zu Uri.",
         },
-        minutesFromStart: 160,
+        minutesFromStart: 1600,
         coordinates: [8.5679, 46.5554],
         photo: "gotthard-pass-4",
         note: {
@@ -758,7 +830,7 @@ export const tourSeed: Tour[] = [
           en: "The old road down the Val Tremola: 24 hairpins and granite cobbles on the southern side.",
           de: "Die alte Strasse durch das Val Tremola: 24 Kehren und Granitpflaster auf der Südseite.",
         },
-        minutesFromStart: 235,
+        minutesFromStart: 1675,
         coordinates: [8.5815, 46.5435],
         photo: "gotthard-pass-3",
         note: {
@@ -776,7 +848,7 @@ export const tourSeed: Tour[] = [
           en: "The first town in Ticino on the southern foot of the Gotthard, at the head of the Leventina valley.",
           de: "Der erste Ort im Tessin am Südfuss des Gotthards, am Anfang der Leventina.",
         },
-        minutesFromStart: 320,
+        minutesFromStart: 1760,
         coordinates: [8.6086, 46.529],
         photo: "gotthard-pass-7",
       },
@@ -871,8 +943,8 @@ export const tourSeed: Tour[] = [
     childPrice: 12000,
     infantPrice: 0,
     meetingPoint: {
-      en: "Confirmed with Erich after booking",
-      de: "Wird nach der Buchung mit Erich bestätigt",
+      en: "Andermatt (the hotel is confirmed with Erich after booking)",
+      de: "Andermatt (das Hotel wird nach der Buchung mit Erich bestätigt)",
     },
     included: [
       {
@@ -896,6 +968,24 @@ export const tourSeed: Tour[] = [
     published: true,
     itinerary: [
       {
+        id: "base-andermatt",
+        name: {
+          en: "Andermatt, the base",
+          de: "Andermatt, der Standort",
+        },
+        description: {
+          en: "Day one starts here: meet the host and the group, check the bikes and the weather, and plan the ride-out days. The tour rides out from Andermatt and returns each evening; hotels are booked separately.",
+          de: "Der erste Tag beginnt hier: Gastgeber und Gruppe treffen, Motorräder und Wetter prüfen, die Ausfahrten planen. Die Tour startet in Andermatt und kehrt jeden Abend dorthin zurück; Hotels werden separat gebucht.",
+        },
+        minutesFromStart: 0,
+        coordinates: [8.5955, 46.6335],
+        photo: "gotthard-pass-2",
+        note: {
+          en: "The ride-out day is the second day; the other days are free rides from the base, shaped with the host.",
+          de: "Der Ausfahrtstag ist der zweite Tag; die übrigen Tage sind freie Fahrten ab dem Standort, mit dem Gastgeber abgestimmt.",
+        },
+      },
+      {
         id: "ulrichen",
         name: {
           en: "Ulrichen",
@@ -905,7 +995,7 @@ export const tourSeed: Tour[] = [
           en: "The upper Goms village in the Rhône valley where the Nufenen road branches off and starts to climb.",
           de: "Das Dorf im Obergoms im Rhonetal, wo die Nufenenstrasse abzweigt und zu steigen beginnt.",
         },
-        minutesFromStart: 0,
+        minutesFromStart: 1440,
         coordinates: [8.305, 46.5066],
         photo: "nufenen-pass-5",
       },
@@ -919,7 +1009,7 @@ export const tourSeed: Tour[] = [
           en: "The cantonal border between Valais and Ticino, with a restaurant, a small lake and views to the Bernese Alps and the Gries Glacier.",
           de: "Die Kantonsgrenze zwischen Wallis und Tessin, mit Restaurant, kleinem See und Aussicht auf die Berner Alpen und den Griesgletscher.",
         },
-        minutesFromStart: 110,
+        minutesFromStart: 1550,
         coordinates: [8.3931, 46.4781],
         photo: "nufenen-pass-1",
         note: {
@@ -937,7 +1027,7 @@ export const tourSeed: Tour[] = [
           en: "The first hamlet on the Ticino side, at the head of the Val Bedretto, just below the descent from the pass.",
           de: "Der erste Weiler auf der Tessiner Seite am Beginn des Bedrettotals, gleich unterhalb der Passabfahrt.",
         },
-        minutesFromStart: 185,
+        minutesFromStart: 1625,
         coordinates: [8.4757, 46.4869],
         photo: "nufenen-pass-7",
       },
@@ -951,7 +1041,7 @@ export const tourSeed: Tour[] = [
           en: "A long green valley of stone houses and meadows, with the young Ticino river beside the road.",
           de: "Ein langes grünes Tal mit Steinhäusern und Wiesen, der junge Tessin fliesst neben der Strasse.",
         },
-        minutesFromStart: 250,
+        minutesFromStart: 1690,
         coordinates: [8.5389, 46.5127],
         photo: "nufenen-pass-6",
       },
@@ -966,7 +1056,7 @@ export const tourSeed: Tour[] = [
           en: "The end of the Nufenen road in the Leventina valley, at the southern foot of the Gotthard.",
           de: "Das Ende der Nufenenstrasse in der Leventina, am Südfuss des Gotthards.",
         },
-        minutesFromStart: 330,
+        minutesFromStart: 1770,
         coordinates: [8.6086, 46.529],
       },
     ],

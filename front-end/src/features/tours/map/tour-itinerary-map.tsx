@@ -61,7 +61,14 @@ export function TourItineraryMap({ tour }: { tour: Tour }) {
   const translationsRef = useRef({ t, language });
   const text = (value: Tour["name"]) => pickText(value, language).text;
   const when = (minutes: number) =>
-    minutes === 0 ? t("tourMap.start") : t("tourMap.minute", { minutes });
+    minutes === 0
+      ? t("tourMap.start")
+      : minutes >= 1440
+        ? t("tourMap.dayMinute", {
+            day: Math.floor(minutes / 1440) + 1,
+            minutes: minutes % 1440,
+          })
+        : t("tourMap.minute", { minutes });
   // Keep the selected pin clear of the controls above and the card below it.
   const padding = () => ({
     top: 72,

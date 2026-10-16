@@ -61,9 +61,14 @@ export function StopCard({
   const when =
     stop.minutesFromStart === 0
       ? t("products.itinerary.stop.start")
-      : t("products.itinerary.stop.minuteShort", {
-          minutes: stop.minutesFromStart,
-        });
+      : stop.minutesFromStart >= 1440
+        ? t("products.itinerary.stop.dayShort", {
+            day: Math.floor(stop.minutesFromStart / 1440) + 1,
+            minutes: stop.minutesFromStart % 1440,
+          })
+        : t("products.itinerary.stop.minuteShort", {
+            minutes: stop.minutesFromStart,
+          });
 
   return (
     <li className="group flex gap-3" data-stop={stop.id}>

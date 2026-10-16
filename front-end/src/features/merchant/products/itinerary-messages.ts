@@ -38,6 +38,7 @@ export const itineraryEn = {
   "products.itinerary.stop.minutes": "Minutes from the start",
   "products.itinerary.stop.start": "Start",
   "products.itinerary.stop.minuteShort": "{minutes} min",
+  "products.itinerary.stop.dayShort": "Day {day} · {minutes} min",
   "products.itinerary.stop.note": "Practical tip (optional)",
   "products.itinerary.stop.photo": "Stop photo",
   "products.itinerary.stop.photoHelp":
@@ -100,6 +101,7 @@ export const itineraryDe: Record<keyof typeof itineraryEn, string> = {
   "products.itinerary.stop.minutes": "Minuten ab Start",
   "products.itinerary.stop.start": "Start",
   "products.itinerary.stop.minuteShort": "{minutes} Min.",
+  "products.itinerary.stop.dayShort": "Tag {day} · {minutes} Min.",
   "products.itinerary.stop.note": "Praktischer Tipp (optional)",
   "products.itinerary.stop.photo": "Foto der Station",
   "products.itinerary.stop.photoHelp":
