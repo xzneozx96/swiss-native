@@ -270,3 +270,101 @@ button {
     }
   }
 }
+
+/* The dot on a chapter connector rides its road once when the connector is first seen. */
+@keyframes road-ride {
+  from {
+    offset-distance: 0%;
+    opacity: 1;
+  }
+  to {
+    offset-distance: 100%;
+    opacity: 1;
+  }
+}
+
+@layer components {
+  .road-dot {
+    offset-path: path("M60 0 C60 14 20 14 20 28 S100 42 100 56 S60 70 60 88");
+    offset-rotate: 0deg;
+    offset-distance: 0%;
+    opacity: 0;
+    translate: -6px -6px;
+  }
+
+  [data-shown] .road-dot {
+    animation: road-ride 2.4s cubic-bezier(0.45, 0, 0.25, 1) 0.3s forwards;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .road-dot,
+    [data-shown] .road-dot {
+      animation: none;
+      offset-distance: 100%;
+      opacity: 1;
+    }
+  }
+}
+
+/* Luggage tags on the home page (and lab idea A): they swing once from their string when first seen. */
+@keyframes lv-swing {
+  0% {
+    rotate: calc(var(--tilt) + 14deg);
+  }
+  22% {
+    rotate: calc(var(--tilt) - 9deg);
+  }
+  44% {
+    rotate: calc(var(--tilt) + 5deg);
+  }
+  66% {
+    rotate: calc(var(--tilt) - 2deg);
+  }
+  100% {
+    rotate: var(--tilt);
+  }
+}
+
+@layer components {
+  /* A. Luggage tags */
+  .lv-rail {
+    background: linear-gradient(180deg, #d9b56a, #9c7631 70%, #7d5c22);
+    box-shadow: 0 2px 4px rgb(60 40 10 / 0.25);
+  }
+
+  .lv-hang {
+    transform-origin: 50% 0;
+    rotate: var(--tilt);
+  }
+
+  [data-shown] .lv-hang {
+    animation: lv-swing 2.4s cubic-bezier(0.3, 0.7, 0.4, 1) var(--d) both;
+  }
+
+  .lv-string {
+    background: #6b5236;
+  }
+
+  .lv-tag {
+    clip-path: polygon(22% 0, 78% 0, 100% 9%, 100% 100%, 0 100%, 0 9%);
+    border-radius: 0 0 8px 8px;
+    background:
+      radial-gradient(circle at 30% 20%, rgb(255 255 255 / 0.18), transparent 60%),
+      linear-gradient(170deg, #dcbf8f, #c9a571);
+    filter: drop-shadow(0 6px 10px rgb(70 45 15 / 0.18));
+  }
+
+  .lv-eyelet {
+    background: #fbfbfa;
+    box-shadow:
+      0 0 0 3px #b08a52,
+      inset 0 1px 2px rgb(0 0 0 / 0.3);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .lv-hang,
+    [data-shown] .lv-hang {
+      animation: none;
+    }
+  }
+}

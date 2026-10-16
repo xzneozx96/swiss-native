@@ -5,16 +5,16 @@
  * text is written from Erich's stories, not quoted, so `voiceNote` is always shown with
  * it (PRD §11). The bees are a plan for 2027.
  */
-export type StoryChapterId = "tours" | "bees" | "stay";
+export type StoryChapterId = "tours" | "stay" | "bees";
 
-export const STORY_CHAPTERS: StoryChapterId[] = ["tours", "bees", "stay"];
+export const STORY_CHAPTERS: StoryChapterId[] = ["tours", "stay", "bees"];
 
 /** The reel's pictures: Erich, then the image that sums up each offer. */
 export const REEL_PHOTOS: Record<StoryChapterId | "erich", string> = {
   erich: "erich-haldi-1",
   tours: "furka-pass-4",
-  bees: "finsterwald-6",
   stay: "stay-1",
+  bees: "finsterwald-6",
 };
 
 /**
@@ -23,8 +23,8 @@ export const REEL_PHOTOS: Record<StoryChapterId | "erich", string> = {
  */
 export const COVER_PHOTOS: Record<StoryChapterId, string> = {
   tours: "furka-pass-4",
-  bees: "finsterwald-1",
   stay: "stay-1",
+  bees: "finsterwald-1",
 };
 
 export const EPILOGUE_PHOTO = "finsterwald-2";
@@ -61,6 +61,16 @@ export interface StoryCopy {
   lede: string;
   body: string;
   voiceNote: string;
+  connectors: Record<
+    "tags" | "tours" | "stay" | "bees" | "epilogue",
+    { kicker: string; line: string }
+  >;
+  /** Three luggage tags from the road: one short story each, with a destination line. */
+  tags: {
+    kicker: string;
+    title: string;
+    items: { no: string; word: string; story: string; detail: string }[];
+  };
   chapters: Record<StoryChapterId, Chapter>;
   passLines: Record<StoryPass, string>;
   passes: { title: string; subtitle: string };
@@ -88,6 +98,55 @@ export const storyCopy: Record<"en" | "de", StoryCopy> = {
     lede: "When people hear Switzerland, they think of snowy peaks, blue lakes and trains that are never late. My home is more than a pretty picture.",
     body: "It is roads cut by hand through the rock, herders who read the weather in the wind, and beekeepers who can guess the honey from the flowers of the season. Let me show you, slower than the postcards.",
     voiceNote: "Told in Erich's voice, written from his stories.",
+    connectors: {
+      tags: {
+        kicker: "Before we ride",
+        line: "Let me open my saddlebag and show you what I carry.",
+      },
+      tours: {
+        kicker: "Ready to go",
+        line: "Bags packed, engine warm. The first pass is waiting.",
+      },
+      stay: {
+        kicker: "Next stop · Finsterwald",
+        line: "After the passes, a bed is waiting where the story starts.",
+      },
+      bees: {
+        kicker: "Same village · 2027",
+        line: "And close by, a house is waiting for its bees.",
+      },
+      epilogue: {
+        kicker: "The road ahead",
+        line: "That is my corner of Switzerland. Let's ride it together.",
+      },
+    },
+    tags: {
+      kicker: "Tags from the road",
+      title: "Three things I carry on every ride",
+      items: [
+        {
+          no: "No. 1",
+          word: "Motors",
+          story:
+            "Every morning starts the same: mirrors wiped, tyres checked, the engine warming in the cold air. Then the first bend comes, and the day belongs to the road.",
+          detail: "Nufenen · 2,478 m",
+        },
+        {
+          no: "No. 2",
+          word: "Travel",
+          story:
+            "I never rush a tour. We stop where the light is good: coffee on a village square, lunch above the clouds, a bend where everyone reaches for their phone.",
+          detail: "5 to 7 days · no rush",
+        },
+        {
+          no: "No. 3",
+          word: "Homeland",
+          story:
+            "Behind every pass lies a village, a dish and a story older than the road. Past the postcards, this is the Switzerland I want you to know.",
+          detail: "Finsterwald · 1,060 m",
+        },
+      ],
+    },
     chapters: {
       tours: {
         kicker: "Chapter I",
@@ -97,21 +156,21 @@ export const storyCopy: Record<"en" | "de", StoryCopy> = {
         body: "Before cars, people crossed the Alps on foot and with mule trains carrying salt, wine and letters. Every bend is a piece of that history, not just a photo spot. We ride Furka, Grimsel, Susten, Gotthard and Nufenen together.",
         photoAlt: "The Furka Pass road winding into the valley",
       },
-      bees: {
-        kicker: "Chapter II",
-        label: "The bee house",
-        when: "From 2027",
-        title: "In Finsterwald, a bee house waits for its bees",
-        body: "Finsterwald lies in the Entlebuch, a UNESCO Biosphere of forest, meadow and moor. The beauty here is quiet: light through the leaves, the smell of grass after rain. I have a bee house here and plan to keep bees from 2027. Before the first jar of honey comes the preparation.",
-        photoAlt: "A wooden bee house with painted flight boards",
-      },
       stay: {
-        kicker: "Chapter III",
+        kicker: "Chapter II",
         label: "Stay in Finsterwald",
         when: "Ask for dates",
         title: "Come back to Finsterwald for the night",
         body: "After a day on the passes, sleep where the story starts: a quiet village about 1,060 m up, an easy drive from the start of every pass ride.",
         photoAlt: "A farmhouse in the Entlebuch",
+      },
+      bees: {
+        kicker: "Chapter III",
+        label: "The bee house",
+        when: "From 2027",
+        title: "In Finsterwald, a bee house waits for its bees",
+        body: "Finsterwald lies in the Entlebuch, a UNESCO Biosphere of forest, meadow and moor. The beauty here is quiet: light through the leaves, the smell of grass after rain. I have a bee house here and plan to keep bees from 2027. Before the first jar of honey comes the preparation.",
+        photoAlt: "A wooden bee house with painted flight boards",
       },
     },
     passLines: {
@@ -149,6 +208,55 @@ export const storyCopy: Record<"en" | "de", StoryCopy> = {
     lede: "Wer Schweiz hört, denkt an Schneegipfel, blaue Seen und Züge, die nie zu spät sind. Meine Heimat ist mehr als ein schönes Bild.",
     body: "Sie ist Strassen, von Hand in den Fels geschlagen, Hirten, die das Wetter im Wind lesen, und Imker, die am Blühen der Saison den Honig erraten. Ich zeige sie Ihnen, langsamer als die Postkarten.",
     voiceNote: "In Erichs Stimme erzählt, nach seinen Geschichten geschrieben.",
+    connectors: {
+      tags: {
+        kicker: "Bevor wir fahren",
+        line: "Ich öffne meine Satteltasche und zeige Ihnen, was ich dabeihabe.",
+      },
+      tours: {
+        kicker: "Startklar",
+        line: "Gepäck verstaut, Motor warm. Der erste Pass wartet.",
+      },
+      stay: {
+        kicker: "Nächster Halt · Finsterwald",
+        line: "Nach den Pässen wartet ein Bett dort, wo die Geschichte beginnt.",
+      },
+      bees: {
+        kicker: "Im selben Dorf · 2027",
+        line: "Und ganz in der Nähe wartet ein Haus auf seine Bienen.",
+      },
+      epilogue: {
+        kicker: "Der Weg voraus",
+        line: "Das ist meine Ecke der Schweiz. Fahren wir sie zusammen.",
+      },
+    },
+    tags: {
+      kicker: "Anhänger von unterwegs",
+      title: "Drei Dinge, die ich auf jeder Fahrt dabeihabe",
+      items: [
+        {
+          no: "Nr. 1",
+          word: "Motoren",
+          story:
+            "Jeder Morgen beginnt gleich: Spiegel geputzt, Reifen geprüft, der Motor warm in der kühlen Luft. Dann kommt die erste Kurve, und der Tag gehört der Strasse.",
+          detail: "Nufenen · 2478 m",
+        },
+        {
+          no: "Nr. 2",
+          word: "Reisen",
+          story:
+            "Eine Tour hetze ich nie. Wir halten, wo das Licht schön ist: Kaffee auf dem Dorfplatz, Mittagessen über den Wolken, eine Kurve, in der alle zum Handy greifen.",
+          detail: "5 bis 7 Tage · ohne Eile",
+        },
+        {
+          no: "Nr. 3",
+          word: "Heimat",
+          story:
+            "Hinter jedem Pass liegt ein Dorf, ein Gericht und eine Geschichte, älter als die Strasse. Hinter den Postkarten: Das ist die Schweiz, die ich Ihnen zeigen will.",
+          detail: "Finsterwald · 1060 m",
+        },
+      ],
+    },
     chapters: {
       tours: {
         kicker: "Kapitel I",
@@ -158,21 +266,21 @@ export const storyCopy: Record<"en" | "de", StoryCopy> = {
         body: "Vor dem Auto querte man die Alpen zu Fuss und mit Saumzügen voller Salz, Wein und Briefe. Jede Kurve ist ein Stück dieser Geschichte, nicht nur ein Fotomotiv. Wir fahren Furka, Grimsel, Susten, Gotthard und Nufenen zusammen.",
         photoAlt: "Die Furkapassstrasse windet sich ins Tal",
       },
-      bees: {
-        kicker: "Kapitel II",
-        label: "Das Bienenhaus",
-        when: "Ab 2027",
-        title: "In Finsterwald wartet ein Bienenhaus auf seine Bienen",
-        body: "Finsterwald liegt im Entlebuch, einer UNESCO Biosphäre aus Wald, Wiese und Moor. Die Schönheit hier ist leise: Licht durch die Blätter, der Duft von Gras nach dem Regen. Ich habe hier ein Bienenhaus und will ab 2027 Bienen halten. Vor dem ersten Glas Honig kommt die Vorbereitung.",
-        photoAlt: "Ein hölzernes Bienenhaus mit bemalten Flugbrettern",
-      },
       stay: {
-        kicker: "Kapitel III",
+        kicker: "Kapitel II",
         label: "Übernachten in Finsterwald",
         when: "Daten anfragen",
         title: "Zurück nach Finsterwald für die Nacht",
         body: "Nach einem Tag auf den Pässen schlafen Sie dort, wo die Geschichte beginnt: in einem ruhigen Dorf auf etwa 1060 m, nicht weit vom Start jeder Passfahrt.",
         photoAlt: "Ein Bauernhaus im Entlebuch",
+      },
+      bees: {
+        kicker: "Kapitel III",
+        label: "Das Bienenhaus",
+        when: "Ab 2027",
+        title: "In Finsterwald wartet ein Bienenhaus auf seine Bienen",
+        body: "Finsterwald liegt im Entlebuch, einer UNESCO Biosphäre aus Wald, Wiese und Moor. Die Schönheit hier ist leise: Licht durch die Blätter, der Duft von Gras nach dem Regen. Ich habe hier ein Bienenhaus und will ab 2027 Bienen halten. Vor dem ersten Glas Honig kommt die Vorbereitung.",
+        photoAlt: "Ein hölzernes Bienenhaus mit bemalten Flugbrettern",
       },
     },
     passLines: {

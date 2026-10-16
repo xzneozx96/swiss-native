@@ -1,7 +1,7 @@
 /**
  * The home page's opening (C01 B4 "Story reel", approved 16.10.2026): four pictures that
- * play like phone stories. Erich first, then one per offer: tours, the bee house, the
- * stay. Bars at the top fill as each plays; tapping the left third steps back, the rest
+ * play like phone stories. Erich first, then one per offer: tours, the stay, the bee house.
+ * Bars at the top fill as each plays; tapping the left third steps back, the rest
  * steps on; the button pauses; each offer picture has a button down to its chapter.
  *
  * It pauses while scrolled out of view, and starts paused under reduced motion (the

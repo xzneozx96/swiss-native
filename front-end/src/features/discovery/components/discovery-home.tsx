@@ -4,6 +4,8 @@ import { Skeleton } from "@heroui/react";
 
 import { storyCopy } from "../story-copy";
 
+import { ChapterConnector } from "./chapter-connector";
+import { ErichTags } from "./erich-tags";
 import { ExperienceFlight } from "./experience-flight";
 import { Rail, Section } from "./section";
 import { StayKey } from "./stay-key";
@@ -51,7 +53,7 @@ function RailSkeleton() {
 /**
  * C01 Discovery home as Erich's story (B4 "Story reel", approved 16.10.2026): a reel of
  * four pictures (Erich, then his three offers), his introduction in his voice, then
- * one chapter per offer: tours, the bee house, the stay. Each chapter opens on a photo
+ * one chapter per offer: tours, the stay, the bee house. Each chapter opens on a photo
  * and keeps its approved blocks, run full width. It ends on a dark epilogue scene with
  * his handwritten line and Ask Erich.
  * Search sits in the reel and in the collapsing header.
@@ -94,6 +96,12 @@ export function DiscoveryHome({
           <p className="text-xs leading-4 text-muted italic">{c.voiceNote}</p>
         </div>
 
+        <ChapterConnector from="#fbfbfa" to="#fbfbfa" {...c.connectors.tags} />
+
+        <ErichTags c={c} />
+
+        <ChapterConnector from="#fbfbfa" to="#fbfbfa" {...c.connectors.tours} />
+
         <StoryChapter c={c} id="tours">
           <div className="flex flex-col gap-9 pt-2">
             <Section
@@ -126,13 +134,24 @@ export function DiscoveryHome({
           </div>
         </StoryChapter>
 
-        <StoryChapter c={c} id="bees">
-          <ExperienceFlight />
-        </StoryChapter>
+        <ChapterConnector from="#fbfbfa" to="#fbfbfa" {...c.connectors.stay} />
 
         <StoryChapter c={c} id="stay">
           <StayKey />
         </StoryChapter>
+
+        <ChapterConnector from="#ECE3D2" to="#fbfbfa" {...c.connectors.bees} />
+
+        <StoryChapter c={c} id="bees">
+          <ExperienceFlight />
+        </StoryChapter>
+
+        <ChapterConnector
+          dark
+          from="#17241C"
+          to="#0d0f12"
+          {...c.connectors.epilogue}
+        />
 
         <StoryEpilogue c={c} />
       </div>
