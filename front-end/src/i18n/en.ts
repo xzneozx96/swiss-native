@@ -8,6 +8,7 @@ import { tourMapEn } from "@/features/tours/map/messages";
 import { requestsEn } from "@/features/requests/messages";
 import { productsEn } from "@/features/merchant/products/messages";
 import { salesOverviewEn } from "@/features/merchant/sales/messages";
+import { musicEn } from "@/components/background-music-messages";
 
 /** English copy. Keys are the source of truth; de.ts must provide every key. */
 export const en = {
@@ -21,6 +22,7 @@ export const en = {
   ...requestsEn,
   ...productsEn,
   ...salesOverviewEn,
+  ...musicEn,
 
   "app.name": "Erich Haldi",
 

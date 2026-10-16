@@ -15,7 +15,9 @@ git rm -rq --ignore-unmatch --cached -- \
   "$S/routes/store/reports" "$S/routes/store/requests" \
   "$S/routes/store/products/gifts" "$S/routes/store/products/categories.tsx" \
   "$S/routes/store/products/pickup.tsx" "$S/routes/partner" "$S/routes/r.\$code.tsx" \
-  "$S/features/Brienz" "$S/features/Lucerne" 2>/dev/null || true
+  "$S/features/Brienz" "$S/features/Lucerne" \
+  "$S/assets/audio/background-swiss-keepsakes.mp3" \
+  "$S/assets/audio/background-swiss-keepsakes-cover.jpg" docs/background-music 2>/dev/null || true
 
 # Remove the same paths from the working tree.
 rm -rf \
@@ -27,7 +29,9 @@ rm -rf \
   "$S/routes/store/reports" "$S/routes/store/requests" \
   "$S/routes/store/products/gifts" "$S/routes/store/products/categories.tsx" \
   "$S/routes/store/products/pickup.tsx" "$S/routes/partner" "$S/routes/r.\$code.tsx" \
-  "$S/features/Brienz" "$S/features/Lucerne"
+  "$S/features/Brienz" "$S/features/Lucerne" \
+  "$S/assets/audio/background-swiss-keepsakes.mp3" \
+  "$S/assets/audio/background-swiss-keepsakes-cover.jpg" docs/background-music
 rm -f "$S"/routes/lab.*.tsx
 
 # Upstream's lab pages. Our own design lab (features/lab/brand, routes/_guest/lab.*) stays.

@@ -10,6 +10,7 @@ import { tourMapDe } from "@/features/tours/map/messages";
 import { requestsDe } from "@/features/requests/messages";
 import { productsDe } from "@/features/merchant/products/messages";
 import { salesOverviewDe } from "@/features/merchant/sales/messages";
+import { musicDe } from "@/components/background-music-messages";
 
 /** German copy as used in Switzerland: "ss", never "ß". A missing key fails type-checking. */
 export const de: Record<MessageKey, string> = {
@@ -23,6 +24,7 @@ export const de: Record<MessageKey, string> = {
   ...requestsDe,
   ...productsDe,
   ...salesOverviewDe,
+  ...musicDe,
 
   "app.name": "Erich Haldi",
 

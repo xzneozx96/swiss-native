@@ -6,8 +6,8 @@ This repo is a long-lived fork of `swiss-keepsakes`. Upstream is the git remote 
 | | |
 |---|---|
 | Fork point | `c7850da` (upstream, 14 Oct 2026) |
-| Last synced | `6049868` (upstream `main`: merchant calendar, tour editor layout) |
-| Synced on | 16 Oct 2026, tag `upstream-synced-6049868` |
+| Last synced | `4934b13` (upstream `main`: guest background music player) |
+| Synced on | 16 Oct 2026, tag `upstream-synced-4934b13` |
 
 ## Every sync
 
@@ -44,6 +44,13 @@ next time.
 - **Dashboard sidebar** (`components/layout/merchant-shell.tsx`): follow upstream's structure,
   order and labels (groups that fold open, "Dashboard", "Operations", the phone bar), but list
   only our sections. Do not add upstream items for features we do not ship.
+- **Background music**: the track and its cover are ours, not upstream's
+  (`assets/audio/background-swiss-native.mp3` and `-cover.jpg`, "Wo der Wind zu Hause ist", see
+  `assets/audio/CREDITS.txt`). If upstream adds, renames or replaces its track
+  (`background-swiss-keepsakes*`), delete theirs again and keep ours wired in
+  `background-music.tsx` and `music-sheet.tsx`. The sheet and the media session show
+  `app.name`, never a song or artist name. The launcher floats alone above our tab bar; upstream
+  stacks it on the trip assistant button, which we do not ship.
 - **Guest departure picker**: ours is `features/tours/discovery/listing-picker` (tours, stays and
   experiences). Upstream's `departure-picker` is a port of it without stays; it is pruned.
 
@@ -51,11 +58,24 @@ next time.
 
 Keepsake shop (gifts, cart, checkout, orders, pickup points, categories), partners and
 referral (`/partner`, `/r/$code`, commission), local stories and content, reports and costs,
-trip advice, the manager and partner roles, the dashboard Requests section, the lab pages,
+trip advice and the trip assistant (including upstream's tab bar with the raised assistant
+button and its sparkle animation), the manager and partner roles, the dashboard Requests section, the lab pages,
 upstream's 11 Lucerne tours (`features/tours/lucerne`) and their photos. Our own design lab
 (`features/lab/brand`, `routes/_guest/lab.*`) is kept; the prune script removes only upstream's.
 
 ## Sync log
+
+- **4934b13** (16 Oct 2026): took the guest background music player as built (launcher, player
+  sheet with cover, seek, skip 10 s and volume, remembered play/pause and volume, autoplay after
+  the first gesture, pausing for other media and hidden tabs, media session controls). Swapped
+  in our track and its embedded cover art (remuxed without re-encoding, tags and cover
+  stripped). The launcher sits alone above the tab bar's right end on tab-bar screens; screens
+  with `hideTabBar` have none, the dashboard has none. Guest pages get 48px more bottom padding
+  so content scrolls clear of it. Messages moved into `i18n/en.ts` and `de.ts` (upstream put
+  them in `features/content`, which we prune). Skipped: the tab bar redesign (raised gradient
+  assistant button in a notch, sparkle animation, `nav.assistant`), the launcher stacked on
+  `TripAdviceButton`, upstream's track, cover and credit, and `docs/background-music`
+  (screenshots of their keepsake screens).
 
 - **6049868** (16 Oct 2026): took the merchant Calendar (day, week and month on FullCalendar,
   `@fullcalendar/react` and `temporal-polyfill`), adapted to our listings: tour departures as

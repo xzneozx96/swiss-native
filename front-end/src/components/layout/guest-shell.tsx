@@ -2,6 +2,7 @@ import type { IconComponent } from "@/components/icons";
 
 import { Link, useMatches } from "@tanstack/react-router";
 
+import { BackgroundMusic } from "@/components/background-music";
 import {
   AccountIcon,
   BookingsIcon,
@@ -38,6 +39,8 @@ const hostItem = {
  * a phone-width column (max 430px; centred like a phone on larger screens), no website
  * header (each screen owns its top area), and a translucent tab bar with four tabs: the third is "Bookings" for a guest and "Dashboard" for the host.
  * Detail screens (route staticData `hideTabBar`) hide the tab bar for their own action bar.
+ * The background music launcher floats above the tab bar's right end; those detail screens
+ * hide it too, and the music keeps playing.
  */
 export function GuestShell({ children }: { children: React.ReactNode }) {
   const { t } = useLocale();
@@ -63,11 +66,16 @@ export function GuestShell({ children }: { children: React.ReactNode }) {
           className={
             ownsBottomSpace
               ? "flex flex-1 flex-col"
-              : "flex-1 pb-[calc(env(safe-area-inset-bottom,0px)+88px)]"
+              : hideTabBar
+                ? "flex-1 pb-[calc(env(safe-area-inset-bottom,0px)+88px)]"
+                : // Lets the last content scroll clear of the music launcher above the tab bar.
+                  "flex-1 pb-[calc(env(safe-area-inset-bottom,0px)+136px)]"
           }
         >
           {children}
         </main>
+
+        <BackgroundMusic showDock={!hideTabBar} />
 
         {!hideTabBar && (
           <nav

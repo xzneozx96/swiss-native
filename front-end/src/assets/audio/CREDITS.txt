@@ -5,3 +5,16 @@ tower-clock.mp3
   Bell tower of the church of La Loupe (Eure-et-Loir, France), 12.8 s
   Source: https://bigsoundbank.com/bell-5-o-clock-s3445.html
   Licence: CC0 1.0 (public domain), downloaded 14.10.2026
+
+background-swiss-native.mp3, background-swiss-native-cover.jpg
+  "Wo der Wind zu Hause ist", artist tag "bachhac", made with Suno (the file's ID3 comment reads
+  "made with suno", id 1e89b3c5-1540-44c0-896e-67e80ff1fd10), i.e. AI-generated. German vocals.
+  Guest app background music, 5:19 loop. Provided by the owner on 2026-10-16.
+  Before launch the owner must confirm the Suno plan's commercial-use licence; the track must stay
+  out of story content (never AI audio for story content).
+  The audio is the owner's original stream, not re-encoded (184 kbps, 48 kHz stereo). Tags, lyrics
+  and the embedded cover were removed (the title is set in code). Command:
+  ffmpeg -i <original> -map 0:a -c:a copy -map_metadata -1 -id3v2_version 0 background-swiss-native.mp3
+  The cover is the 360x360 art embedded in the original, scaled to 256x256:
+  ffmpeg -i <original> -map 0:v -c copy cover.jpg
+  ffmpeg -i cover.jpg -vf scale=256:256:flags=lanczos -q:v 3 background-swiss-native-cover.jpg

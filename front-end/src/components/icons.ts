@@ -173,3 +173,12 @@ export const BreakfastIcon = stable(Reicon.Coffee, "BreakfastIcon");
 export const WifiIcon = stable(Reicon.Wifi, "WifiIcon");
 export const ParkingIcon = stable(Reicon.Parking, "ParkingIcon");
 export const MealIcon = stable(Reicon.ForkKnife, "MealIcon");
+
+// Guest background music player (launcher, sheet; volume on / muted)
+export const MusicIcon = stable(Reicon.MusicNote, "MusicIcon");
+export const BackTenIcon = stable(Reicon.Backward10Seconds, "BackTenIcon");
+export const ForwardTenIcon = stable(Reicon.Forward10Seconds, "ForwardTenIcon");
+export const MusicOnIcon = stable(Reicon.VolumeHigh, "MusicOnIcon");
+export const MusicOffIcon = stable(Reicon.VolumeSlash, "MusicOffIcon");
+export const PlayIcon = stable(Reicon.Play, "PlayIcon");
+export const PauseIcon = stable(Reicon.Pause, "PauseIcon");
