@@ -6,8 +6,8 @@ This repo is a long-lived fork of `swiss-keepsakes`. Upstream is the git remote 
 | | |
 |---|---|
 | Fork point | `c7850da` (upstream, 14 Oct 2026) |
-| Last synced | `391b282` (upstream `main`: aerial tour map) |
-| Synced on | 15 Oct 2026, tag `upstream-synced-391b282` |
+| Last synced | `6049868` (upstream `main`: merchant calendar, tour editor layout) |
+| Synced on | 16 Oct 2026, tag `upstream-synced-6049868` |
 
 ## Every sync
 
@@ -41,15 +41,31 @@ next time.
 - **Message files** (`i18n/en.ts`, `de.ts`, `*/messages.ts`): keep our keys, add the keys that
   only upstream has, then delete the ones nothing uses. English and German must match.
 - Never take upstream's tour data: our tours are the five moto pass tours.
+- **Dashboard sidebar** (`components/layout/merchant-shell.tsx`): follow upstream's structure,
+  order and labels (groups that fold open, "Dashboard", "Operations", the phone bar), but list
+  only our sections. Do not add upstream items for features we do not ship.
+- **Guest departure picker**: ours is `features/tours/discovery/listing-picker` (tours, stays and
+  experiences). Upstream's `departure-picker` is a port of it without stays; it is pruned.
 
 ## Not shipped (removed on purpose)
 
 Keepsake shop (gifts, cart, checkout, orders, pickup points, categories), partners and
 referral (`/partner`, `/r/$code`, commission), local stories and content, reports and costs,
 trip advice, the manager and partner roles, the dashboard Requests section, the lab pages,
-upstream's 11 Lucerne tours (`features/tours/lucerne`) and their photos.
+upstream's 11 Lucerne tours (`features/tours/lucerne`) and their photos. Our own design lab
+(`features/lab/brand`, `routes/_guest/lab.*`) is kept; the prune script removes only upstream's.
 
 ## Sync log
+
+- **6049868** (16 Oct 2026): took the merchant Calendar (day, week and month on FullCalendar,
+  `@fullcalendar/react` and `temporal-polyfill`), adapted to our listings: tour departures as
+  timed events, experience starts as 30-minute events, stay nights in the all-day row; keepsake
+  pickups dropped. Took the tour editor's new layout (timeline step list, phone step bar, growing
+  text fields, map-linked itinerary with place search and drag reorder) and kept our grouped
+  experience departures in it. Sidebar re-ordered to upstream's pattern: Dashboard (Today,
+  Sales), Operations (Bookings, Calendar), Products, Settings; phones: Dashboard, Bookings,
+  Calendar, Products, More. Skipped: the commission stepper and gift editor changes, the
+  Inquiries tab change, the lab calendar, upstream's port of our departure picker.
 
 - **391b282** (15 Oct 2026): took the aerial tour route map (swisstopo SWISSIMAGE photo with
   terrain, labels on top, tiles of the next stop loaded before the camera flies there). Dropped

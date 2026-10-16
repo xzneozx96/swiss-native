@@ -1,3 +1,5 @@
+import { itineraryDe, itineraryEn } from "./itinerary-messages";
+
 /** M11 Products and M13 Edit tour. */
 export const productsEn = {
   "photoSheet.title": "Choose a photo",
@@ -50,8 +52,8 @@ export const productsEn = {
   "products.notFound.tour": "This tour is not in the shop.",
   "products.save": "Save changes",
   "products.saved": "Saved. Guests see the change now.",
-  "products.unsaved": "Unsaved changes",
-  "products.noChanges": "No unsaved changes",
+  "products.unsaved": "Unsaved",
+  "products.noChanges": "No changes",
   "products.fixErrors": "Check the marked fields.",
   "products.range": "Enter a number from {min} to {max}.",
   "products.and": "and",
@@ -110,7 +112,7 @@ export const productsEn = {
   "products.prices.infants": "Infants",
   "products.prices.price": "Price",
   "products.prices.fromAge": "From age",
-  "products.prices.infantAges": "Ages 0–{to}",
+  "products.prices.ageRange": "Ages {range}",
   "products.prices.help":
     "Every departure uses these prices. Bookings keep the prices they were made with.",
   "products.prices.adultAgeError":
@@ -145,6 +147,7 @@ export const productsEn = {
   "products.departure.paymentHelp.later":
     "Guests pay nothing when they book and the full price by 18:00 the day before.",
   "products.departure.prices": "Price per person: {prices}.",
+  "products.departure.pricesNight": "Price per person and night: {prices}.",
   "products.departure.pricesHelp":
     "Prices are set for the whole tour, under Prices and age groups.",
   "products.departure.past": "Choose a start after now.",
@@ -240,6 +243,7 @@ export const productsEn = {
   "products.steps.status.error": "Has errors",
   "products.steps.status.warning": "Needs attention",
   "products.steps.status.todo": "Not started",
+  "products.steps.status.current": "Current step",
   "products.review.edit": "Edit {step}",
   "products.review.none": "Not set",
   "products.review.storyIn": "Written in",
@@ -255,6 +259,7 @@ export const productsEn = {
   "products.story.help.gift":
     "Needed to publish, in English or German. Guests open it from \u201cThe story behind it\u201d on the keepsake page.",
   "products.step.pickup": "Pickup & preparation",
+  ...itineraryEn,
 } as const;
 
 export const productsDe: Record<keyof typeof productsEn, string> = {
@@ -306,10 +311,10 @@ export const productsDe: Record<keyof typeof productsEn, string> = {
   "products.back": "Produkte",
   "products.kind.tour": "Tour",
   "products.notFound.tour": "Diese Tour gibt es im Shop nicht.",
-  "products.save": "Änderungen speichern",
+  "products.save": "Speichern",
   "products.saved": "Gespeichert. Gäste sehen die Änderung sofort.",
-  "products.unsaved": "Ungespeicherte Änderungen",
-  "products.noChanges": "Keine ungespeicherten Änderungen",
+  "products.unsaved": "Nicht gespeichert",
+  "products.noChanges": "Keine Änderungen",
   "products.fixErrors": "Prüfen Sie die markierten Felder.",
   "products.range": "Geben Sie eine Zahl von {min} bis {max} ein.",
   "products.and": "und",
@@ -369,7 +374,7 @@ export const productsDe: Record<keyof typeof productsEn, string> = {
   "products.prices.infants": "Kleinkinder",
   "products.prices.price": "Preis",
   "products.prices.fromAge": "Ab Alter",
-  "products.prices.infantAges": "0–{to} Jahre",
+  "products.prices.ageRange": "{range} Jahre",
   "products.prices.help":
     "Alle Termine nutzen diese Preise. Buchungen behalten die Preise von damals.",
   "products.prices.adultAgeError":
@@ -404,6 +409,7 @@ export const productsDe: Record<keyof typeof productsEn, string> = {
   "products.departure.paymentHelp.later":
     "Gäste bezahlen bei der Buchung nichts und den ganzen Preis bis 18:00 am Vortag.",
   "products.departure.prices": "Preis pro Person: {prices}.",
+  "products.departure.pricesNight": "Preis pro Person und Nacht: {prices}.",
   "products.departure.pricesHelp":
     "Preise gelten für die ganze Tour, unter Preise und Altersgruppen.",
   "products.departure.past": "Wählen Sie einen Beginn nach jetzt.",
@@ -499,6 +505,7 @@ export const productsDe: Record<keyof typeof productsEn, string> = {
   "products.steps.status.error": "Hat Fehler",
   "products.steps.status.warning": "Braucht Aufmerksamkeit",
   "products.steps.status.todo": "Noch offen",
+  "products.steps.status.current": "Aktueller Schritt",
   "products.review.edit": "{step} bearbeiten",
   "products.review.none": "Nicht festgelegt",
   "products.review.storyIn": "Geschrieben auf",
@@ -516,4 +523,5 @@ export const productsDe: Record<keyof typeof productsEn, string> = {
   "products.story.help.gift":
     "Zum Veröffentlichen nötig, auf Englisch oder Deutsch. Gäste öffnen sie auf der Andenken-Seite über «Die Geschichte dahinter».",
   "products.step.pickup": "Abholung & Vorbereitung",
+  ...itineraryDe,
 };

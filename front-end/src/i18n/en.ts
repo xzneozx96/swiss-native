@@ -30,7 +30,8 @@ export const en = {
   "nav.account": "Account",
 
   "nav.merchant.label": "Shop",
-  "nav.today": "Overview",
+  "nav.today": "Dashboard",
+  "nav.operations": "Operations",
   "nav.bookings": "Bookings",
   "nav.products": "Products",
   "nav.settings": "Settings",
@@ -261,7 +262,7 @@ export const en = {
   "recordPayment.confirmAgain.other":
     "Record {amount} again (other method). Balance will be {balance}.",
   "recordPayment.recorded": "{amount} recorded. Balance {balance}.",
-  "merchantToday.title": "Overview",
+  "merchantToday.title": "Dashboard",
   "merchantToday.intro": "What needs doing today, and how sales are going.",
   "merchantToday.pickups.today": "Today",
   "merchantOrder.facts.label": "Key facts",

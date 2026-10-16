@@ -21,6 +21,7 @@ import { Route as GuestToursRouteImport } from './routes/_guest/tours'
 import { Route as StoreIndexRouteImport } from './routes/store/index'
 import { Route as StoreSectionRouteImport } from './routes/store/$section'
 import { Route as StoreBookingsRouteImport } from './routes/store/bookings'
+import { Route as StoreCalendarRouteImport } from './routes/store/calendar'
 import { Route as StoreSalesRouteImport } from './routes/store/sales'
 import { Route as GuestToursIndexRouteImport } from './routes/_guest/tours/index'
 import { Route as GuestToursSlugRouteImport } from './routes/_guest/tours/$slug'
@@ -98,6 +99,11 @@ const StoreSectionRoute = StoreSectionRouteImport.update({
 const StoreBookingsRoute = StoreBookingsRouteImport.update({
   id: '/bookings',
   path: '/bookings',
+  getParentRoute: () => StoreRoute,
+} as any)
+const StoreCalendarRoute = StoreCalendarRouteImport.update({
+  id: '/calendar',
+  path: '/calendar',
   getParentRoute: () => StoreRoute,
 } as any)
 const StoreSalesRoute = StoreSalesRouteImport.update({
@@ -215,6 +221,7 @@ export interface FileRoutesByFullPath {
   '/tours': typeof GuestToursRouteWithChildren
   '/store/$section': typeof StoreSectionRoute
   '/store/bookings': typeof StoreBookingsRouteWithChildren
+  '/store/calendar': typeof StoreCalendarRoute
   '/store/sales': typeof StoreSalesRoute
   '/store/': typeof StoreIndexRoute
   '/tours/$slug': typeof GuestToursSlugRoute
@@ -243,6 +250,7 @@ export interface FileRoutesByTo {
   '/experiences': typeof GuestExperiencesRoute
   '/search': typeof GuestSearchRoute
   '/store/$section': typeof StoreSectionRoute
+  '/store/calendar': typeof StoreCalendarRoute
   '/store/sales': typeof StoreSalesRoute
   '/': typeof GuestIndexRoute
   '/store': typeof StoreIndexRoute
@@ -277,6 +285,7 @@ export interface FileRoutesById {
   '/_guest/tours': typeof GuestToursRouteWithChildren
   '/store/$section': typeof StoreSectionRoute
   '/store/bookings': typeof StoreBookingsRouteWithChildren
+  '/store/calendar': typeof StoreCalendarRoute
   '/store/sales': typeof StoreSalesRoute
   '/_guest/': typeof GuestIndexRoute
   '/store/': typeof StoreIndexRoute
@@ -312,6 +321,7 @@ export interface FileRouteTypes {
     | '/tours'
     | '/store/$section'
     | '/store/bookings'
+    | '/store/calendar'
     | '/store/sales'
     | '/store/'
     | '/tours/$slug'
@@ -340,6 +350,7 @@ export interface FileRouteTypes {
     | '/experiences'
     | '/search'
     | '/store/$section'
+    | '/store/calendar'
     | '/store/sales'
     | '/'
     | '/store'
@@ -373,6 +384,7 @@ export interface FileRouteTypes {
     | '/_guest/tours'
     | '/store/$section'
     | '/store/bookings'
+    | '/store/calendar'
     | '/store/sales'
     | '/_guest/'
     | '/store/'
@@ -486,6 +498,13 @@ declare module '@tanstack/react-router' {
       path: '/bookings'
       fullPath: '/store/bookings'
       preLoaderRoute: typeof StoreBookingsRouteImport
+      parentRoute: typeof StoreRoute
+    }
+    '/store/calendar': {
+      id: '/store/calendar'
+      path: '/calendar'
+      fullPath: '/store/calendar'
+      preLoaderRoute: typeof StoreCalendarRouteImport
       parentRoute: typeof StoreRoute
     }
     '/store/sales': {
@@ -693,6 +712,7 @@ const StoreBookingsRouteWithChildren = StoreBookingsRoute._addFileChildren(
 interface StoreRouteChildren {
   StoreSectionRoute: typeof StoreSectionRoute
   StoreBookingsRoute: typeof StoreBookingsRouteWithChildren
+  StoreCalendarRoute: typeof StoreCalendarRoute
   StoreSalesRoute: typeof StoreSalesRoute
   StoreIndexRoute: typeof StoreIndexRoute
   StoreProductsExperiencesRoute: typeof StoreProductsExperiencesRoute
@@ -706,6 +726,7 @@ interface StoreRouteChildren {
 const StoreRouteChildren: StoreRouteChildren = {
   StoreSectionRoute: StoreSectionRoute,
   StoreBookingsRoute: StoreBookingsRouteWithChildren,
+  StoreCalendarRoute: StoreCalendarRoute,
   StoreSalesRoute: StoreSalesRoute,
   StoreIndexRoute: StoreIndexRoute,
   StoreProductsExperiencesRoute: StoreProductsExperiencesRoute,

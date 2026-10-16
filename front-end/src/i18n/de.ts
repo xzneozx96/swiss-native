@@ -32,7 +32,8 @@ export const de: Record<MessageKey, string> = {
   "nav.account": "Konto",
 
   "nav.merchant.label": "Laden",
-  "nav.today": "Übersicht",
+  "nav.today": "Dashboard",
+  "nav.operations": "Tagesgeschäft",
   "nav.bookings": "Buchungen",
   "nav.products": "Produkte",
   "nav.settings": "Einstellungen",
@@ -271,7 +272,7 @@ export const de: Record<MessageKey, string> = {
   "recordPayment.confirmAgain.other":
     "{amount} (andere Zahlungsart) nochmals erfassen. Danach offen: {balance}.",
   "recordPayment.recorded": "{amount} erfasst. Offen: {balance}.",
-  "merchantToday.title": "Übersicht",
+  "merchantToday.title": "Dashboard",
   "merchantToday.intro": "Was heute zu tun ist und wie die Verkäufe laufen.",
   "merchantToday.pickups.today": "Heute",
   "merchantOrder.facts.label": "Wichtigste Angaben",
