@@ -2,17 +2,19 @@ import type { Tour } from "@/features/tours/types";
 
 import { Skeleton } from "@heroui/react";
 
-import { AdviceBanner } from "./advice-banner";
+import { storyCopy } from "../story-copy";
+
 import { ExperienceFlight } from "./experience-flight";
-import { Hero } from "./hero";
-import { QuoteAirmail } from "./quote-airmail";
 import { Rail, Section } from "./section";
 import { StayKey } from "./stay-key";
-import { UspRoad } from "./usp-road";
+import { PassStrip, StoryChapter, StoryEpilogue } from "./story-chapter";
+import { StoryReel } from "./story-reel";
 
 import { BrandLogo } from "@/components/layout/brand-logo";
 import { CompactBar, SearchButton } from "@/components/layout/top-bar-buttons";
+import { useLocale } from "@/contexts/locale-context";
 import { TourCard } from "@/features/tours/discovery/tour-card";
+import { useReveal } from "@/hooks/use-reveal";
 import { useScrolledPast } from "@/hooks/use-scrolled-past";
 
 export interface DiscoveryHomeView {
@@ -47,9 +49,12 @@ function RailSkeleton() {
 }
 
 /**
- * C01 Discovery home: hero with search and the road of three selling points, then the
- * host's three services in order, each introduced in its own section: tours, the stay,
- * the experience, with Erich's handwritten line between the stay and the experience.
+ * C01 Discovery home as Erich's story (B4 "Story reel", approved 16.10.2026): a reel of
+ * four pictures (Erich, then his three offers), his introduction in his voice, then
+ * one chapter per offer: tours, the bee house, the stay. Each chapter opens on a photo
+ * and keeps its approved blocks, run full width. It ends on a dark epilogue scene with
+ * his handwritten line and Ask Erich.
+ * Search sits in the reel and in the collapsing header.
  */
 export function DiscoveryHome({
   view,
@@ -59,8 +64,10 @@ export function DiscoveryHome({
   isLoading: boolean;
 }) {
   const { hero, tours } = view;
-
-  const [heroEnd, scrolledPast] = useScrolledPast<HTMLDivElement>();
+  const { language } = useLocale();
+  const c = storyCopy[language];
+  const [reelEnd, scrolledPast] = useScrolledPast<HTMLDivElement>();
+  const ledeRef = useReveal<HTMLDivElement>();
 
   return (
     <>
@@ -70,36 +77,64 @@ export function DiscoveryHome({
         </div>
         <SearchButton label={hero.searchLabel} to="/search" tone="bar" />
       </CompactBar>
-      <div className="flex flex-col gap-9 px-4 pb-4">
-        {/* No gap: the road starts under the search box's bottom edge. */}
-        <div className="flex flex-col">
-          <Hero ref={heroEnd} {...hero} />
-          <UspRoad />
+      <div className="flex flex-col gap-10 px-4 pb-4">
+        <h1 className="sr-only">
+          {c.name}, {c.role}
+        </h1>
+        <StoryReel c={c} searchLabel={hero.searchLabel} />
+        <div ref={reelEnd} aria-hidden className="-mt-10 h-px" />
+
+        <div ref={ledeRef} className="reveal flex flex-col gap-4">
+          <p className="font-serif text-[24px] leading-9 text-balance">
+            {c.lede}
+          </p>
+          <p className="font-serif text-[17px] leading-7 text-foreground/85">
+            {c.body}
+          </p>
+          <p className="text-xs leading-4 text-muted italic">{c.voiceNote}</p>
         </div>
 
-        <Section
-          id="tours"
-          seeAll={{ label: tours.seeAll, to: "/tours" }}
-          subtitle={tours.subtitle}
-          title={tours.title}
-        >
-          {isLoading ? (
-            <RailSkeleton />
-          ) : (
-            <Rail label={tours.title}>
-              {tours.items.map((item) => (
-                <li key={item.id}>
-                  <TourCard layout="carousel" tour={item} />
-                </li>
-              ))}
-            </Rail>
-          )}
-        </Section>
+        <StoryChapter c={c} id="tours">
+          <div className="flex flex-col gap-9 pt-2">
+            <Section
+              id="story-passes"
+              level={3}
+              subtitle={c.passes.subtitle}
+              title={c.passes.title}
+            >
+              <PassStrip c={c} />
+            </Section>
+            <Section
+              id="tours"
+              level={3}
+              seeAll={{ label: tours.seeAll, to: "/tours" }}
+              subtitle={c.tours.subtitle}
+              title={c.tours.title}
+            >
+              {isLoading ? (
+                <RailSkeleton />
+              ) : (
+                <Rail label={c.tours.title}>
+                  {tours.items.map((item) => (
+                    <li key={item.id}>
+                      <TourCard layout="carousel" tour={item} />
+                    </li>
+                  ))}
+                </Rail>
+              )}
+            </Section>
+          </div>
+        </StoryChapter>
 
-        <StayKey />
-        <QuoteAirmail />
-        <ExperienceFlight />
-        <AdviceBanner />
+        <StoryChapter c={c} id="bees">
+          <ExperienceFlight />
+        </StoryChapter>
+
+        <StoryChapter c={c} id="stay">
+          <StayKey />
+        </StoryChapter>
+
+        <StoryEpilogue c={c} />
       </div>
     </>
   );

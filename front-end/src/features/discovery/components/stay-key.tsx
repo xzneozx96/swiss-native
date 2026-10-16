@@ -1,8 +1,10 @@
 /**
- * Home-page section about the host's stay (C · Schlüssel). The stay as one object: a red
- * guesthouse key tag with a brass key, hanging from a hook on a linen wall. The tag names
- * the place; tap it and it turns over to show the amenities, swinging on the hook as it
- * turns. It also swings once when it first comes into view.
+ * The stay chapter's block on the story home (C · Schlüssel), under the chapter's cover
+ * and paragraph. A full-width linen wall with the stay as one object: a red guesthouse
+ * key tag with a brass key, hanging from a hook. The tag names the place; tap it and it
+ * turns over to show the amenities, swinging on the hook as it turns. It also swings
+ * once when it first comes into view. The chapter above introduces the stay, so the
+ * wall carries no heading of its own.
  *
  * Verified, not invented: the stay is at Erich's bee house in Finsterwald (told by the
  * client); the bus line and the driving times to the start of each pass ride come from
@@ -73,8 +75,6 @@ const AMENITIES: {
 
 const copy = {
   en: {
-    title: "Stay the night in Finsterwald",
-    sub: "A homestay kept by Erich Haldi himself, in the UNESCO Biosphere Entlebuch.",
     name: "Stay at Erich's bee house",
     place: "Finsterwald · Entlebuch",
     altitude: "about 1,060 m",
@@ -99,8 +99,6 @@ const copy = {
     ask: "Ask Erich by email",
   },
   de: {
-    title: "Übernachten in Finsterwald",
-    sub: "Eine Unterkunft, geführt von Erich Haldi selbst, in der UNESCO Biosphäre Entlebuch.",
     name: "Zu Gast bei Erichs Bienenhaus",
     place: "Finsterwald · Entlebuch",
     altitude: "ca. 1060 m ü. M.",
@@ -257,8 +255,8 @@ export function StayKey() {
 
   return (
     <section
-      aria-labelledby="stay-key-title"
-      className="relative flex flex-col overflow-hidden rounded-3xl pt-7 pb-6 shadow-overlay"
+      aria-label={c.name}
+      className="relative -mx-4 flex flex-col overflow-hidden pt-4 pb-8"
       lang={language}
       style={{ background: WALL, color: INK }}
     >
@@ -270,19 +268,7 @@ export function StayKey() {
         @media (prefers-reduced-motion: reduce) { .ky-swing-0, .ky-swing-1 { animation: none; } .ky-card { transition: none !important; } }
       `}</style>
 
-      <header className="flex flex-col gap-3 px-5">
-        <h2
-          className="font-serif text-[40px] leading-[42px] font-semibold tracking-[-0.02em] text-balance"
-          id="stay-key-title"
-        >
-          {c.title}
-        </h2>
-        <p className="max-w-[30ch] text-[15px] leading-[22px] text-[#33312E]/75">
-          {c.sub}
-        </p>
-      </header>
-
-      <div ref={stageRef} className="relative mt-4 h-[408px]">
+      <div ref={stageRef} className="relative h-[408px]">
         {/* The hook rail and its peg. */}
         <span
           aria-hidden="true"

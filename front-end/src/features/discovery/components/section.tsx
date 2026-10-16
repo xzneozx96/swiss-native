@@ -10,6 +10,8 @@ interface SectionProps {
   title: string;
   subtitle?: string;
   seeAll?: { label: string; to: LinkProps["to"] };
+  /** Heading level: 3 when the section sits inside a story chapter. */
+  level?: 2 | 3;
   children: React.ReactNode;
 }
 
@@ -19,15 +21,18 @@ export function Section({
   title,
   subtitle,
   seeAll,
+  level = 2,
   children,
 }: SectionProps) {
+  const Heading = level === 3 ? "h3" : "h2";
+
   return (
     <section aria-labelledby={id} className="flex flex-col gap-3">
       <div className="flex items-end justify-between gap-4">
         <div className="flex min-w-0 flex-col gap-0.5">
-          <h2 className="text-heading" id={id}>
+          <Heading className="text-heading" id={id}>
             {title}
-          </h2>
+          </Heading>
           {subtitle && <p className="text-label text-muted">{subtitle}</p>}
         </div>
         {seeAll && (

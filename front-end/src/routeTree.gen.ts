@@ -25,6 +25,7 @@ import { Route as StoreBookingsRouteImport } from './routes/store/bookings'
 import { Route as StoreCalendarRouteImport } from './routes/store/calendar'
 import { Route as StoreSalesRouteImport } from './routes/store/sales'
 import { Route as GuestLabBrandRouteImport } from './routes/_guest/lab.brand'
+import { Route as GuestLabStoryRouteImport } from './routes/_guest/lab.story'
 import { Route as GuestToursIndexRouteImport } from './routes/_guest/tours/index'
 import { Route as GuestToursSlugRouteImport } from './routes/_guest/tours/$slug'
 import { Route as GuestToursPrivateTourRouteImport } from './routes/_guest/tours/private-tour'
@@ -121,6 +122,11 @@ const StoreSalesRoute = StoreSalesRouteImport.update({
 const GuestLabBrandRoute = GuestLabBrandRouteImport.update({
   id: '/lab/brand',
   path: '/lab/brand',
+  getParentRoute: () => GuestRoute,
+} as any)
+const GuestLabStoryRoute = GuestLabStoryRouteImport.update({
+  id: '/lab/story',
+  path: '/lab/story',
   getParentRoute: () => GuestRoute,
 } as any)
 const GuestToursIndexRoute = GuestToursIndexRouteImport.update({
@@ -238,6 +244,7 @@ export interface FileRoutesByFullPath {
   '/store/sales': typeof StoreSalesRoute
   '/store/': typeof StoreIndexRoute
   '/lab/brand': typeof GuestLabBrandRoute
+  '/lab/story': typeof GuestLabStoryRoute
   '/tours/$slug': typeof GuestToursSlugRoute
   '/tours/private-tour': typeof GuestToursPrivateTourRoute
   '/store/bookings/$bookingId': typeof StoreBookingsBookingIdRoute
@@ -270,6 +277,7 @@ export interface FileRoutesByTo {
   '/': typeof GuestIndexRoute
   '/store': typeof StoreIndexRoute
   '/lab/brand': typeof GuestLabBrandRoute
+  '/lab/story': typeof GuestLabStoryRoute
   '/tours/$slug': typeof GuestToursSlugRoute
   '/tours/private-tour': typeof GuestToursPrivateTourRoute
   '/store/bookings/$bookingId': typeof StoreBookingsBookingIdRoute
@@ -307,6 +315,7 @@ export interface FileRoutesById {
   '/_guest/': typeof GuestIndexRoute
   '/store/': typeof StoreIndexRoute
   '/_guest/lab/brand': typeof GuestLabBrandRoute
+  '/_guest/lab/story': typeof GuestLabStoryRoute
   '/_guest/tours/$slug': typeof GuestToursSlugRoute
   '/_guest/tours/private-tour': typeof GuestToursPrivateTourRoute
   '/store/bookings/$bookingId': typeof StoreBookingsBookingIdRoute
@@ -344,6 +353,7 @@ export interface FileRouteTypes {
     | '/store/sales'
     | '/store/'
     | '/lab/brand'
+    | '/lab/story'
     | '/tours/$slug'
     | '/tours/private-tour'
     | '/store/bookings/$bookingId'
@@ -376,6 +386,7 @@ export interface FileRouteTypes {
     | '/'
     | '/store'
     | '/lab/brand'
+    | '/lab/story'
     | '/tours/$slug'
     | '/tours/private-tour'
     | '/store/bookings/$bookingId'
@@ -412,6 +423,7 @@ export interface FileRouteTypes {
     | '/_guest/'
     | '/store/'
     | '/_guest/lab/brand'
+    | '/_guest/lab/story'
     | '/_guest/tours/$slug'
     | '/_guest/tours/private-tour'
     | '/store/bookings/$bookingId'
@@ -550,6 +562,13 @@ declare module '@tanstack/react-router' {
       path: '/lab/brand'
       fullPath: '/lab/brand'
       preLoaderRoute: typeof GuestLabBrandRouteImport
+      parentRoute: typeof GuestRoute
+    }
+    '/_guest/lab/story': {
+      id: '/_guest/lab/story'
+      path: '/lab/story'
+      fullPath: '/lab/story'
+      preLoaderRoute: typeof GuestLabStoryRouteImport
       parentRoute: typeof GuestRoute
     }
     '/_guest/tours/': {
@@ -712,6 +731,7 @@ interface GuestRouteChildren {
   GuestToursRoute: typeof GuestToursRouteWithChildren
   GuestIndexRoute: typeof GuestIndexRoute
   GuestLabBrandRoute: typeof GuestLabBrandRoute
+  GuestLabStoryRoute: typeof GuestLabStoryRoute
   GuestAccountBookingsBookingIdRoute: typeof GuestAccountBookingsBookingIdRoute
   GuestAccountBookingsBookingIdConfirmedRoute: typeof GuestAccountBookingsBookingIdConfirmedRoute
   GuestAccountBookingsBookingIdPayRoute: typeof GuestAccountBookingsBookingIdPayRoute
@@ -726,6 +746,7 @@ const GuestRouteChildren: GuestRouteChildren = {
   GuestToursRoute: GuestToursRouteWithChildren,
   GuestIndexRoute: GuestIndexRoute,
   GuestLabBrandRoute: GuestLabBrandRoute,
+  GuestLabStoryRoute: GuestLabStoryRoute,
   GuestAccountBookingsBookingIdRoute: GuestAccountBookingsBookingIdRoute,
   GuestAccountBookingsBookingIdConfirmedRoute:
     GuestAccountBookingsBookingIdConfirmedRoute,

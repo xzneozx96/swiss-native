@@ -209,3 +209,64 @@ button {
     }
   }
 }
+
+/*
+ * Story reel on the home page: a slow push-in on the current picture, the current bar
+ * filling over the picture's duration, and the picture's words fading in one after
+ * another by --story-delay. Reduced motion keeps the photo and words still.
+ */
+@keyframes story-kenburns {
+  from {
+    transform: scale(1);
+  }
+  to {
+    transform: scale(1.12);
+  }
+}
+
+@keyframes story-progress {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+@keyframes story-fade {
+  from {
+    opacity: 0;
+    translate: 0 8px;
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+
+@layer components {
+  .story-kenburns {
+    animation: story-kenburns 16s ease-out both;
+  }
+
+  .story-progress {
+    transform-origin: left;
+    animation: story-progress var(--story-duration, 6s) linear forwards;
+  }
+
+  .story-progress[data-paused] {
+    animation-play-state: paused;
+  }
+
+  .story-fade {
+    animation: story-fade 500ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+    animation-delay: var(--story-delay, 0ms);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .story-kenburns,
+    .story-fade {
+      animation: none;
+    }
+  }
+}

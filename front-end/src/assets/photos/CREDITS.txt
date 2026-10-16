@@ -223,3 +223,6 @@ https://commons.wikimedia.org/wiki/File:Sliced_zopf.jpg
 stay-6.jpg
 "Berghotel Oeschinensee" by www.oeschinensee.ch, CC BY-SA 4.0, Wikimedia Commons.
 https://commons.wikimedia.org/wiki/File:Berghotel_Oeschinensee.jpg
+
+erich-haldi-1.jpg
+Cropped from the client's banner of Erich Haldi (supplied by the client, October 2026). Lab use; a higher-resolution original is wanted.

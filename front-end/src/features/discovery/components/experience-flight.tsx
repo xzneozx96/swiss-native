@@ -1,7 +1,9 @@
 /**
- * Home-page section about Erich's Bee House in Finsterwald (B · Flugbahn). Deep forest
- * green; one red flight line draws itself as you scroll, from the bee house to spring
- * blossom, through a waggle dance, into the summer forest and on to 2027.
+ * The bee chapter's flight (B · Flugbahn), under the chapter's cover and paragraph on
+ * the story home. A full-width deep forest band: one red flight line draws itself as
+ * you scroll, from the bee house to spring blossom, through a waggle dance, into the
+ * summer forest and on to 2027. The chapter above already introduces Finsterwald, so
+ * the band only names the flight in a small heading.
  *
  * The line is built from measured anchors, never from fixed coordinates: each stop has
  * one red node (on a photo's edge, or at the start of the dance), and the path runs
@@ -20,7 +22,6 @@ import { photoUrl } from "@/lib/photos";
 const copy = {
   en: {
     title: "Where the bees will fly",
-    sub: "From Erich's bee house in Finsterwald out into the UNESCO Biosphere Entlebuch: forest, meadow and moor.",
     stations: [
       {
         title: "The bee house",
@@ -52,7 +53,6 @@ const copy = {
   },
   de: {
     title: "Wohin die Bienen fliegen werden",
-    sub: "Von Erichs Bienenhaus in Finsterwald hinaus in die UNESCO Biosphäre Entlebuch: Wald, Wiese und Moor.",
     stations: [
       {
         title: "Das Bienenhaus",
@@ -335,7 +335,7 @@ export function ExperienceFlight() {
   return (
     <section
       aria-labelledby="xp-flight-title"
-      className="xp-flight relative flex flex-col gap-6 overflow-hidden rounded-3xl bg-[#17241C] pt-7 pb-6 text-[#F1EEE4] shadow-overlay"
+      className="xp-flight relative -mx-4 flex flex-col gap-6 overflow-hidden bg-[#17241C] pt-8 pb-8 text-[#F1EEE4]"
       lang={language}
     >
       <style>{`
@@ -357,17 +357,12 @@ export function ExperienceFlight() {
         @media (prefers-reduced-motion: reduce) { .xp-flight .xp-end { animation: none; } }
       `}</style>
 
-      <header className="flex flex-col gap-3 px-5">
-        <h2
-          className="font-serif text-[40px] leading-[42px] font-semibold tracking-[-0.02em] text-balance"
-          id="xp-flight-title"
-        >
-          {c.title}
-        </h2>
-        <p className="max-w-[34ch] text-[15px] leading-[22px] text-[#F1EEE4]/75">
-          {c.sub}
-        </p>
-      </header>
+      <h3
+        className="px-5 text-xs font-semibold tracking-[0.16em] text-[#F1EEE4]/70 uppercase"
+        id="xp-flight-title"
+      >
+        {c.title}
+      </h3>
 
       <div ref={stageRef} className="xp-stage relative">
         {geo && (
