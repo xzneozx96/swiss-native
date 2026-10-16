@@ -1,5 +1,6 @@
 import type { Tour } from "../types";
 
+import { durationText } from "@/features/tours/lib/duration";
 import { ListingCard } from "@/components/listing-card";
 import { StatusChip } from "@/components/status-chip";
 import { useLocale } from "@/contexts/locale-context";
@@ -51,9 +52,7 @@ export function TourCard({
           : undefined
       }
       layout={layout}
-      metadata={t("tourDiscovery.duration", {
-        hours: tour.durationMinutes / 60,
-      })}
+      metadata={durationText(t, tour)}
       name={name.text}
       photo={tour.photos[0]}
       price={formatMoney(tour.adultPrice / 100, intlLocale)}

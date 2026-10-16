@@ -158,6 +158,7 @@ export const tourBookingEn = {
   "tourBooking.stayDates":
     "Check-in {checkIn} → check-out {checkOut} · {nights}",
   "tourBooking.stayTicket": "{time} → {checkOut} · {nights}",
+  "tourBooking.tourDates": "{from} → {to}",
   "tourBooking.nights.one": "{count} night",
   "tourBooking.nights.other": "{count} nights",
   "tourBooking.perNights": "{line} × {nights}",
@@ -360,6 +361,7 @@ export const tourBookingDe: Record<keyof typeof tourBookingEn, string> = {
   "tourBooking.detail.stay": "Ihr Aufenthalt",
   "tourBooking.stayDates": "Anreise {checkIn} → Abreise {checkOut} · {nights}",
   "tourBooking.stayTicket": "{time} → {checkOut} · {nights}",
+  "tourBooking.tourDates": "{from} → {to}",
   "tourBooking.nights.one": "{count} Nacht",
   "tourBooking.nights.other": "{count} Nächte",
   "tourBooking.perNights": "{line} × {nights}",

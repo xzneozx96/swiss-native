@@ -20,6 +20,7 @@ import {
   bookingNights,
   firstPaymentAmount,
   participantSeats,
+  tourDays,
   tourTotal,
   upcomingDepartures,
 } from "@/features/tours/lib/selectors";
@@ -127,7 +128,12 @@ export function useSlotModel(tour: Tour) {
       bookable,
       months,
       // The stay's last night can still be checked out of the next morning.
-      lastDay: last && tour.kind === "stay" ? last.add({ days: 1 }) : last,
+      lastDay:
+        last && tour.kind === "stay"
+          ? last.add({ days: 1 })
+          : last && tourDays(tour) > 1
+            ? last.add({ days: tourDays(tour) - 1 })
+            : last,
     };
   }, [data, tour.id, minute, tour.durationMinutes, tour.kind]);
 
@@ -411,6 +417,12 @@ export function useSlotChoice(
   const overCapacity = Boolean(slot) && used > seats;
   const total = tourTotal(model.tour, group);
   const dueToday = slot ? firstPaymentAmount(slot.policy, total) : 0;
+  // A motorbike tour lasts days: picking its first day marks the whole run on the calendar.
+  const span = tourDays(model.tour);
+  const start = slot ? parseDate(slot.day) : null;
+  const end = start ? start.add({ days: span - 1 }) : null;
+  const when = (sep: string) =>
+    start && end && span > 1 ? `${f.day(start)} ${sep} ${f.day(end)}` : null;
 
   const setDay = (date: CalendarDate) => {
     const info = model.byDay.get(date.toString());
@@ -446,18 +458,23 @@ export function useSlotChoice(
     slotId,
     setSlotId: pick,
     nextFit,
+    span,
+    start,
+    end,
     seatsCap: slot ? seats : 99,
     overCapacity,
     valid: Boolean(slot) && seats > 0 && !overCapacity && group.adults >= 1,
     total,
     dueToday,
     summary: slot
-      ? `${f.day(parseDate(slot.day))} · ${slot.time}–${slot.end} · ${f.seatsLeft(
+      ? `${when("→") ?? `${f.day(parseDate(slot.day))} · ${slot.time}–${slot.end}`} · ${f.seatsLeft(
           slot.seats,
         )}`
       : f.t(day ? "noTime" : "noDay"),
     short: slot
-      ? `${f.day(parseDate(slot.day))} · ${slot.time}–${slot.end}`
+      ? when("→")
+        ? `${when("→")} · ${f.days(span)}`
+        : `${f.day(parseDate(slot.day))} · ${slot.time}–${slot.end}`
       : f.t(day ? "noTime" : "noDay"),
   };
 }
@@ -533,6 +550,7 @@ function pickerFormat(
         : n === 1
           ? t("placeLeft")
           : t("placesLeft", { n }),
+    days: (n: number) => (n === 1 ? t("dayOne") : t("dayOther", { n })),
     nights: (n: number) => (n === 1 ? t("nightOne") : t("nightOther", { n })),
     name: (tour: Tour) => pickText(tour.name, language).text,
   };

@@ -128,7 +128,13 @@ export function DeparturePicker({
                 </Calendar.GridHeader>
                 <Calendar.GridBody>
                   {(date) => (
-                    <DayCell date={date} f={f} model={model} stay={stay} />
+                    <DayCell
+                      date={date}
+                      f={f}
+                      model={model}
+                      stay={stay}
+                      tour={slots}
+                    />
                   )}
                 </Calendar.GridBody>
               </Calendar.Grid>
@@ -210,11 +216,15 @@ function SlotPanel({
     <div className="flex flex-col gap-3">
       <Legend f={f} />
       {policyVaries && <p className="text-xs text-muted">{policyVaries}</p>}
-      {choice.dayInfo && (
+      {choice.dayInfo && choice.span === 1 && (
         <p className="text-sm font-semibold">{f.day(choice.dayInfo.date)}</p>
       )}
-      <TimeSlots booking={choice} f={f} policyText={policyText} />
-      {!single && choice.day && (
+      {choice.span > 1 ? (
+        <DateRange choice={choice} f={f} policyText={policyText} />
+      ) : (
+        <TimeSlots booking={choice} f={f} policyText={policyText} />
+      )}
+      {choice.span === 1 && !single && choice.day && (
         <div aria-live="polite" className="flex flex-col gap-0.5 text-sm">
           <p className="text-muted">{choice.summary}</p>
           {choice.slot && policyText && (
@@ -222,6 +232,46 @@ function SlotPanel({
           )}
         </div>
       )}
+    </div>
+  );
+}
+
+/** A multi-day tour's dates: first and last day, how many days, places and payment rule. */
+function DateRange({
+  choice,
+  f,
+  policyText,
+}: {
+  choice: SlotChoice;
+  f: PickerFormat;
+  policyText?: (policy: TourPaymentPolicy) => string;
+}) {
+  const { start, end, slot } = choice;
+
+  if (!start || !end || !slot) return null;
+
+  return (
+    <div
+      aria-live="polite"
+      className="relative flex flex-col gap-2 rounded-2xl border-2 border-accent bg-accent-soft px-4 py-3 text-sm text-accent-soft-foreground tabular-nums"
+    >
+      <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-3">
+        <div className="flex flex-col">
+          <span className="text-xs">{f.t("tourStarts")}</span>
+          <span className="text-base font-semibold">{f.day(start)}</span>
+        </div>
+        <span aria-hidden className="text-base">
+          →
+        </span>
+        <div className="flex flex-col">
+          <span className="text-xs">{f.t("tourEnds")}</span>
+          <span className="text-base font-semibold">{f.day(end)}</span>
+        </div>
+      </div>
+      <span>
+        {f.days(choice.span)} · {f.seatsLeft(slot.seats)}
+        {policyText && slot.seats > 0 && ` · ${policyText(slot.policy)}`}
+      </span>
     </div>
   );
 }

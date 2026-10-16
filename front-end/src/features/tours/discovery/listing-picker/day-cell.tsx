@@ -1,4 +1,4 @@
-import type { PickerFormat, SlotModel, StayBooking } from "./model";
+import type { PickerFormat, SlotChoice, SlotModel, StayBooking } from "./model";
 import type { CalendarDate, DateValue } from "@internationalized/date";
 
 import { Calendar } from "@heroui/react";
@@ -21,7 +21,7 @@ function CellName({ label }: { label: string }) {
   return <span ref={ref} hidden />;
 }
 
-type Part = "in" | "night" | "out" | null;
+type Part = "in" | "night" | "out" | "last" | null;
 
 /**
  * One month-grid day. The cell carries the red band of a stay; the rounded pill inside it holds
@@ -32,26 +32,41 @@ export function DayCell({
   model,
   f,
   stay,
+  tour,
 }: {
   date: CalendarDate;
   model: SlotModel;
   f: PickerFormat;
   /** Stay only: draws the check-in, nights and check-out. */
   stay?: StayBooking;
+  /** Multi-day tour: draws the run from its first day to its last. */
+  tour?: SlotChoice;
 }) {
   const info = model.byDay.get(date.toString());
   const isToday = date.compare(model.today) === 0;
   const state = info?.state;
   const range = stay?.range;
-  const part: Part = !range
-    ? null
-    : date.compare(range.checkIn) === 0
+  const run =
+    tour && tour.span > 1 && tour.slot && tour.start && tour.end
+      ? { start: tour.start, end: tour.end }
+      : null;
+  const part: Part = run
+    ? date.compare(run.start) === 0
       ? "in"
-      : date.compare(range.checkOut) === 0
-        ? "out"
-        : date.compare(range.checkIn) > 0 && date.compare(range.checkOut) < 0
+      : date.compare(run.end) === 0
+        ? "last"
+        : date.compare(run.start) > 0 && date.compare(run.end) < 0
           ? "night"
-          : null;
+          : null
+    : !range
+      ? null
+      : date.compare(range.checkIn) === 0
+        ? "in"
+        : date.compare(range.checkOut) === 0
+          ? "out"
+          : date.compare(range.checkIn) > 0 && date.compare(range.checkOut) < 0
+            ? "night"
+            : null;
   const awaiting = Boolean(range?.awaiting && stay?.maxOut);
   const afterMax =
     awaiting && stay?.maxOut ? date.compare(stay.maxOut) > 0 : false;
@@ -70,11 +85,11 @@ export function DayCell({
       ? "-inset-x-px"
       : part === "in"
         ? "start-1/2 -end-px"
-        : part === "out"
+        : part === "out" || part === "last"
           ? "-start-px end-1/2"
           : "";
   const pill =
-    part === "in"
+    part === "in" || part === "last"
       ? "bg-accent font-semibold text-accent-foreground"
       : part === "night"
         ? "font-semibold text-accent-foreground"
@@ -87,9 +102,20 @@ export function DayCell({
               : fits
                 ? "bg-surface-secondary font-semibold text-foreground group-hover:bg-default-hover group-data-[selected=true]:bg-accent group-data-[selected=true]:text-accent-foreground"
                 : `font-normal text-muted ${state === "soldout" ? "line-through" : ""}`;
-  const nightNo = range && part ? date.compare(range.checkIn) + 1 : 0;
-  const role =
-    part === "in"
+  const nightNo = run
+    ? date.compare(run.start) + 1
+    : range && part
+      ? date.compare(range.checkIn) + 1
+      : 0;
+  const role = run
+    ? part === "in"
+      ? f.t("roleStart")
+      : part === "last"
+        ? f.t("roleEnd")
+        : part === "night"
+          ? f.t("roleDay", { n: nightNo })
+          : ""
+    : part === "in"
       ? f.t("roleCheckIn")
       : part === "night"
         ? f.t("roleNight", { n: nightNo })

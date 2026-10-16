@@ -4,6 +4,7 @@ import { Accordion, Button } from "@heroui/react";
 import { useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
 
+import { durationText } from "@/features/tours/lib/duration";
 import { EmptyState } from "@/components/empty-state";
 import {
   ClockIcon,
@@ -206,9 +207,7 @@ function TourDetail({ tour, isBooking }: { tour: Tour; isBooking: boolean }) {
           name={name.text}
           stats={{
             primary: {
-              value: t("tourDiscovery.duration", {
-                hours: tour.durationMinutes / 60,
-              }),
+              value: durationText(t, tour),
               label: t("tourDiscovery.durationLabel"),
             },
             rating: reviews.count
@@ -257,9 +256,7 @@ function TourDetail({ tour, isBooking }: { tour: Tour; isBooking: boolean }) {
           {[
             {
               icon: ClockIcon,
-              title: t("tourDiscovery.duration", {
-                hours: tour.durationMinutes / 60,
-              }),
+              title: durationText(t, tour),
               body: t("tourDiscovery.smallGroup"),
             },
             {

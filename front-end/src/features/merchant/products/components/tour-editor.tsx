@@ -655,6 +655,7 @@ function DeparturesCard({ tour, error }: { tour: Tour; error?: string }) {
 function PhotoCard({ editor }: { editor: Editor }) {
   const { t } = useLocale();
   const { edit, change, errors } = editor;
+  const isTourKind = editor.kind === "tour";
 
   return (
     <DetailCard
@@ -671,15 +672,21 @@ function PhotoCard({ editor }: { editor: Editor }) {
       />
       <NumberField
         fullWidth
-        formatOptions={{ maximumFractionDigits: 1 }}
+        formatOptions={{ maximumFractionDigits: isTourKind ? 0 : 1 }}
         isInvalid={errors.duration !== undefined}
-        maxValue={12}
-        minValue={0.5}
-        step={0.5}
+        maxValue={isTourKind ? 14 : 12}
+        minValue={isTourKind ? 1 : 0.5}
+        step={isTourKind ? 1 : 0.5}
         value={edit.durationHours}
         onChange={(durationHours) => change({ durationHours })}
       >
-        <Label>{t("products.durationField")}</Label>
+        <Label>
+          {t(
+            isTourKind
+              ? "products.durationFieldDays"
+              : "products.durationField",
+          )}
+        </Label>
         <NumberField.Group>
           <NumberField.Input className="tabular-nums" />
         </NumberField.Group>
@@ -762,7 +769,13 @@ function TourReview({
           <ReviewRow label={t("products.field.name")}>
             {pick(edit.name) || none}
           </ReviewRow>
-          <ReviewRow label={t("products.durationField")}>
+          <ReviewRow
+            label={t(
+              editor.kind === "tour"
+                ? "products.durationFieldDays"
+                : "products.durationField",
+            )}
+          >
             {Number.isFinite(edit.durationHours) ? edit.durationHours : none}
           </ReviewRow>
           <ReviewRow label={t("products.field.summary")}>
@@ -963,7 +976,7 @@ export function TourEditor({
         }
         languages={languageStatus(editor.missing)}
         published={editor.live}
-        subtitle={`${t(`tourMerchant.kind.${tour?.kind ?? "tour"}`)} · ${t("products.duration", { hours })}`}
+        subtitle={`${t(`tourMerchant.kind.${tour?.kind ?? "tour"}`)} · ${t(editor.kind === "tour" ? "products.durationDays" : "products.duration", { hours })}`}
         title={
           pickText(edit.name, language).text ||
           (tour ? pickText(tour.name, language).text : t("products.new.tour"))

@@ -189,3 +189,7 @@ export function reconciliationPayments(booking: TourBooking) {
 export function reconciliationAmount(booking: TourBooking): number {
   return reconciliationPayments(booking).reduce((sum, p) => sum + p.amount, 0);
 }
+/** Whole days a motorbike tour lasts (a tour is on the road from its start day to its end day). */
+export function tourDays(tour: Pick<Tour, "kind" | "durationMinutes">): number {
+  return tour.kind === "tour" ? Math.floor(tour.durationMinutes / 1440) + 1 : 1;
+}

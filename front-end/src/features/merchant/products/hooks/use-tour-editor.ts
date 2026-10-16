@@ -35,6 +35,7 @@ import { useProductArchive } from "./use-merchant-products";
 
 import { useLocale } from "@/contexts/locale-context";
 import { useDemo, useDemoNow } from "@/features/demo";
+import { tourDays } from "@/features/tours/lib/selectors";
 import { createTourSeed } from "@/features/tours/seed";
 
 export interface TourEdit {
@@ -114,7 +115,8 @@ function toEdit(tour: Tour): TourEdit {
     storyTitle: { ...tour.longStory?.title },
     storyBody: { ...tour.longStory?.body },
     photo: tour.photos[0],
-    durationHours: tour.durationMinutes / 60,
+    durationHours:
+      tour.kind === "tour" ? tourDays(tour) : tour.durationMinutes / 60,
     adultPrice: tour.adultPrice / 100,
     childPrice: tour.childPrice / 100,
     infantPrice: tour.infantPrice / 100,
@@ -163,7 +165,11 @@ function toTour(edit: TourEdit, base: Tour): Tour {
     cancellationPolicy: cleanText(edit.cancellationPolicy),
     longStory: toStory(edit.storyTitle, edit.storyBody),
     photos: edit.photo ? [edit.photo, ...base.photos.slice(1)] : base.photos,
-    durationMinutes: Math.round(edit.durationHours * 60),
+    // A motorbike tour's duration is whole days: it ends on its last day, in the afternoon.
+    durationMinutes:
+      base.kind === "tour"
+        ? (Math.round(edit.durationHours) - 1) * 1440 + 450
+        : Math.round(edit.durationHours * 60),
     adultPrice: rappen(edit.adultPrice),
     childPrice: rappen(edit.childPrice),
     infantPrice: rappen(edit.infantPrice),
@@ -373,7 +379,10 @@ export function useTourEditor(
         storyTitle: storyNeedsTitle(edit.storyTitle, edit.storyBody)
           ? t("products.story.titleError")
           : undefined,
-        duration: rangeError(edit.durationHours, 0.5, 12),
+        duration:
+          (tour?.kind ?? "tour") === "tour"
+            ? rangeError(edit.durationHours, 1, 14)
+            : rangeError(edit.durationHours, 0.5, 12),
         adultPrice: price(edit.adultPrice, 0.01),
         childPrice: price(edit.childPrice, 0),
         infantPrice: price(edit.infantPrice, 0),
@@ -505,7 +514,7 @@ export function useTourEditor(
       summary: {},
       description: {},
       photos: [],
-      durationMinutes: 120,
+      durationMinutes: 1440 + 450,
       adultPrice: 0,
       childPrice: 0,
       infantPrice: 0,
@@ -579,6 +588,7 @@ export function useTourEditor(
   };
 
   return {
+    kind: tour?.kind ?? ("tour" as const),
     isNew,
     archived,
     live,

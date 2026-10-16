@@ -98,7 +98,12 @@ export function useWhenText() {
           checkOut: date(booking.endsAt),
           nights: nights(bookingNights(booking).length),
         })
-      : date(booking.startsAt);
+      : kind === "tour" && date(booking.endsAt) !== date(booking.startsAt)
+        ? t("tourBooking.tourDates", {
+            from: date(booking.startsAt),
+            to: date(booking.endsAt),
+          })
+        : date(booking.startsAt);
 }
 
 const closed: TourBooking["status"][] = [
@@ -166,7 +171,9 @@ export function TourTicketHead({
                 checkOut: `${checkOut.weekday} ${checkOut.day} ${checkOut.month}`,
                 nights: nights(bookingNights(booking).length),
               })
-            : time(booking.startsAt)}
+            : checkOut.day !== day(booking.startsAt).day
+              ? `${day(booking.startsAt).weekday} ${day(booking.startsAt).day} ${day(booking.startsAt).month} → ${checkOut.weekday} ${checkOut.day} ${checkOut.month}`
+              : time(booking.startsAt)}
         </span>
         <span className={metaRow}>
           <TravelGroupIcon aria-hidden className="mt-0.5 shrink-0" size={16} />

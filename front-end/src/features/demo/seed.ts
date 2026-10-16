@@ -6,7 +6,7 @@ import { sampleTourReviews } from "@/features/tours/reviews/seed";
 import { createTourSeed } from "@/features/tours/seed";
 
 /** Bump when the stored shape changes, so old browser data is replaced by the seed. */
-export const DEMO_VERSION = 18;
+export const DEMO_VERSION = 19;
 
 export function createSeedState(realNow: number = Date.now()): DemoState {
   return {

@@ -7,6 +7,7 @@ import {
 } from "@tanstack/react-router";
 import { useState } from "react";
 
+import { durationText } from "@/features/tours/lib/duration";
 import { useLocale } from "@/contexts/locale-context";
 import { useDemo } from "@/features/demo";
 import { ListingBookingSheet } from "@/features/tours/discovery/listing-booking-sheet";
@@ -43,7 +44,7 @@ function SearchPage() {
   ];
   const meta = (tour: (typeof allTours)[number]) =>
     tour.kind === "tour"
-      ? `${t("tourDiscovery.duration", { hours: tour.durationMinutes / 60 })} · ${t("home.from")} ${formatMoney(tour.adultPrice / 100, intlLocale)}`
+      ? `${durationText(t, tour)} · ${t("home.from")} ${formatMoney(tour.adultPrice / 100, intlLocale)}`
       : `${t("home.from")} ${formatMoney(tour.adultPrice / 100, intlLocale)}`;
   const row = (tour: (typeof allTours)[number]) => ({
     key: tour.id,

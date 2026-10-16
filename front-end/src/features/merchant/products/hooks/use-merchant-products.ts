@@ -3,6 +3,7 @@ import type { Tour } from "@/features/tours/types";
 
 import { languageStatus, missingText, tourText } from "../lib/completeness";
 
+import { tourDays } from "@/features/tours/lib/selectors";
 import { useLocale } from "@/contexts/locale-context";
 import { useDemo, useDemoNow } from "@/features/demo";
 import { demoNow } from "@/features/demo/clock";
@@ -65,11 +66,14 @@ export function useMerchantProducts() {
     href: `#/store/products/tours/${tour.id}`,
     name: pick(tour.name),
     photo: tour.photos[0],
-    meta: t("products.duration", {
-      hours: new Intl.NumberFormat(intlLocale, {
-        maximumFractionDigits: 1,
-      }).format(tour.durationMinutes / 60),
-    }),
+    meta:
+      tour.kind === "tour"
+        ? t("products.durationDays", { hours: tourDays(tour) })
+        : t("products.duration", {
+            hours: new Intl.NumberFormat(intlLocale, {
+              maximumFractionDigits: 1,
+            }).format(tour.durationMinutes / 60),
+          }),
     published: tour.published,
     archived: !!tour.archivedAt,
     languages: languageStatus(missingText(tourText(tour))),

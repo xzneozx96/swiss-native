@@ -40,6 +40,7 @@ export const productsEn = {
   "products.fact.adults": "Adults",
   "products.fact.upcoming": "Upcoming departures",
   "products.duration": "{hours} h",
+  "products.durationDays": "{hours} days",
   "products.published": "Published",
   "products.draft": "Draft",
   "products.lang.complete": "EN and DE",
@@ -206,6 +207,7 @@ export const productsEn = {
   "products.editor.linkApply": "Apply link",
   "products.editor.linkRemove": "Remove link",
   "products.durationField": "Duration (hours)",
+  "products.durationFieldDays": "Duration (days)",
   "products.departures.publishError":
     "To publish, add at least one upcoming departure.",
   "products.departures.saveFirst":
@@ -301,6 +303,7 @@ export const productsDe: Record<keyof typeof productsEn, string> = {
   "products.fact.adults": "Erwachsene",
   "products.fact.upcoming": "Kommende Termine",
   "products.duration": "{hours} Std.",
+  "products.durationDays": "{hours} Tage",
   "products.published": "Veröffentlicht",
   "products.draft": "Entwurf",
   "products.lang.complete": "EN und DE",
@@ -468,6 +471,7 @@ export const productsDe: Record<keyof typeof productsEn, string> = {
   "products.editor.linkApply": "Link übernehmen",
   "products.editor.linkRemove": "Link entfernen",
   "products.durationField": "Dauer (Stunden)",
+  "products.durationFieldDays": "Dauer (Tage)",
   "products.departures.publishError":
     "Zum Veröffentlichen braucht es mindestens einen kommenden Termin.",
   "products.departures.saveFirst":
