@@ -37,8 +37,6 @@ export const de: Record<MessageKey, string> = {
   "nav.bookings": "Buchungen",
   "nav.products": "Produkte",
   "nav.settings": "Einstellungen",
-  "nav.more": "Mehr",
-  "nav.moreTitle": "Mehr",
   "staff.owner": "Inhaber:in",
 
   "placeholder.laterPhase":

@@ -35,8 +35,6 @@ export const en = {
   "nav.bookings": "Bookings",
   "nav.products": "Products",
   "nav.settings": "Settings",
-  "nav.more": "More",
-  "nav.moreTitle": "More",
   "staff.owner": "Owner",
 
   "placeholder.laterPhase":

@@ -14,6 +14,7 @@ import { Route as SignInRouteImport } from './routes/sign-in'
 import { Route as StoreRouteImport } from './routes/store'
 import { Route as GuestIndexRouteImport } from './routes/_guest/index'
 import { Route as GuestAccountRouteImport } from './routes/_guest/account'
+import { Route as GuestBookingsRouteImport } from './routes/_guest/bookings'
 import { Route as GuestCreditsRouteImport } from './routes/_guest/credits'
 import { Route as GuestExperiencesRouteImport } from './routes/_guest/experiences'
 import { Route as GuestSearchRouteImport } from './routes/_guest/search'
@@ -65,6 +66,11 @@ const GuestIndexRoute = GuestIndexRouteImport.update({
 const GuestAccountRoute = GuestAccountRouteImport.update({
   id: '/account',
   path: '/account',
+  getParentRoute: () => GuestRoute,
+} as any)
+const GuestBookingsRoute = GuestBookingsRouteImport.update({
+  id: '/bookings',
+  path: '/bookings',
   getParentRoute: () => GuestRoute,
 } as any)
 const GuestCreditsRoute = GuestCreditsRouteImport.update({
@@ -221,6 +227,7 @@ export interface FileRoutesByFullPath {
   '/sign-in': typeof SignInRoute
   '/store': typeof StoreRouteWithChildren
   '/account': typeof GuestAccountRoute
+  '/bookings': typeof GuestBookingsRoute
   '/credits': typeof GuestCreditsRoute
   '/experiences': typeof GuestExperiencesRoute
   '/search': typeof GuestSearchRoute
@@ -253,6 +260,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/sign-in': typeof SignInRoute
   '/account': typeof GuestAccountRoute
+  '/bookings': typeof GuestBookingsRoute
   '/credits': typeof GuestCreditsRoute
   '/experiences': typeof GuestExperiencesRoute
   '/search': typeof GuestSearchRoute
@@ -287,6 +295,7 @@ export interface FileRoutesById {
   '/sign-in': typeof SignInRoute
   '/store': typeof StoreRouteWithChildren
   '/_guest/account': typeof GuestAccountRoute
+  '/_guest/bookings': typeof GuestBookingsRoute
   '/_guest/credits': typeof GuestCreditsRoute
   '/_guest/experiences': typeof GuestExperiencesRoute
   '/_guest/search': typeof GuestSearchRoute
@@ -324,6 +333,7 @@ export interface FileRouteTypes {
     | '/sign-in'
     | '/store'
     | '/account'
+    | '/bookings'
     | '/credits'
     | '/experiences'
     | '/search'
@@ -356,6 +366,7 @@ export interface FileRouteTypes {
   to:
     | '/sign-in'
     | '/account'
+    | '/bookings'
     | '/credits'
     | '/experiences'
     | '/search'
@@ -389,6 +400,7 @@ export interface FileRouteTypes {
     | '/sign-in'
     | '/store'
     | '/_guest/account'
+    | '/_guest/bookings'
     | '/_guest/credits'
     | '/_guest/experiences'
     | '/_guest/search'
@@ -461,6 +473,13 @@ declare module '@tanstack/react-router' {
       path: '/account'
       fullPath: '/account'
       preLoaderRoute: typeof GuestAccountRouteImport
+      parentRoute: typeof GuestRoute
+    }
+    '/_guest/bookings': {
+      id: '/_guest/bookings'
+      path: '/bookings'
+      fullPath: '/bookings'
+      preLoaderRoute: typeof GuestBookingsRouteImport
       parentRoute: typeof GuestRoute
     }
     '/_guest/credits': {
@@ -686,6 +705,7 @@ const GuestToursRouteWithChildren = GuestToursRoute._addFileChildren(
 
 interface GuestRouteChildren {
   GuestAccountRoute: typeof GuestAccountRoute
+  GuestBookingsRoute: typeof GuestBookingsRoute
   GuestCreditsRoute: typeof GuestCreditsRoute
   GuestExperiencesRoute: typeof GuestExperiencesRoute
   GuestSearchRoute: typeof GuestSearchRoute
@@ -699,6 +719,7 @@ interface GuestRouteChildren {
 
 const GuestRouteChildren: GuestRouteChildren = {
   GuestAccountRoute: GuestAccountRoute,
+  GuestBookingsRoute: GuestBookingsRoute,
   GuestCreditsRoute: GuestCreditsRoute,
   GuestExperiencesRoute: GuestExperiencesRoute,
   GuestSearchRoute: GuestSearchRoute,

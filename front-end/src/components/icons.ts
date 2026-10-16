@@ -24,6 +24,7 @@ function stable(Base: IconComponent, name: string): IconComponent {
 // Guest navigation and header
 export const ExploreIcon = stable(Reicon.Compass, "ExploreIcon");
 export const TourIcon = stable(Reicon.Ticket, "TourIcon");
+export const DashboardIcon = stable(Reicon.Widget, "DashboardIcon");
 export const AccountIcon = stable(Reicon.User, "AccountIcon");
 
 // Merchant navigation

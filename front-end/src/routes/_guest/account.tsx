@@ -1,7 +1,7 @@
 import type { AccountSection } from "@/features/account/lib/sections";
 import type { MessageKey } from "@/i18n/en";
 
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, redirect } from "@tanstack/react-router";
 
 import { useLocale } from "@/contexts/locale-context";
 import { AccountHub } from "@/features/account/components/account-hub";
@@ -29,6 +29,9 @@ export const Route = createFileRoute("/_guest/account")({
       ? (search.tab as AccountSection)
       : undefined,
   }),
+  beforeLoad: ({ search }) => {
+    if (search.tab === "bookings") throw redirect({ to: "/bookings" });
+  },
   component: AccountPage,
 });
 

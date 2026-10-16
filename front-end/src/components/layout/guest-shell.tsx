@@ -2,27 +2,41 @@ import type { IconComponent } from "@/components/icons";
 
 import { Link, useMatches } from "@tanstack/react-router";
 
-import { AccountIcon, ExploreIcon, TourIcon } from "@/components/icons";
+import {
+  AccountIcon,
+  BookingsIcon,
+  DashboardIcon,
+  ExploreIcon,
+  TourIcon,
+} from "@/components/icons";
 import { useLocale } from "@/contexts/locale-context";
 import { GuestAvatar } from "@/features/account/components/guest-avatar";
 import { useDemo } from "@/features/demo";
 
-type GuestNavTarget = "/" | "/tours" | "/account";
+type GuestNavTarget = "/" | "/tours" | "/bookings" | "/store" | "/account";
 
 const navItems: {
   to: GuestNavTarget;
-  label: "nav.explore" | "nav.tours" | "nav.account";
+  label:
+    "nav.explore" | "nav.tours" | "nav.bookings" | "nav.today" | "nav.account";
   icon: IconComponent;
 }[] = [
   { to: "/", label: "nav.explore", icon: ExploreIcon },
   { to: "/tours", label: "nav.tours", icon: TourIcon },
+  { to: "/bookings", label: "nav.bookings", icon: BookingsIcon },
   { to: "/account", label: "nav.account", icon: AccountIcon },
 ];
+
+const hostItem = {
+  to: "/store",
+  label: "nav.today",
+  icon: DashboardIcon,
+} as const;
 
 /**
  * Guest app frame (UX spec §3.1), built to feel like a native app (owner request):
  * a phone-width column (max 430px; centred like a phone on larger screens), no website
- * header (each screen owns its top area), and a translucent tab bar with three tabs.
+ * header (each screen owns its top area), and a translucent tab bar with four tabs: the third is "Bookings" for a guest and "Dashboard" for the host.
  * Detail screens (route staticData `hideTabBar`) hide the tab bar for their own action bar.
  */
 export function GuestShell({ children }: { children: React.ReactNode }) {
@@ -31,6 +45,9 @@ export function GuestShell({ children }: { children: React.ReactNode }) {
   // 1.12s: a signed-in guest with a profile photo sees it on the Account tab (Instagram pattern).
   const photoGuest = state.data.guests.find(
     (g) => g.id === state.data.signedInGuestId && g.avatar,
+  );
+  const items = navItems.map((item) =>
+    item.to === "/bookings" && state.role === "owner" ? hostItem : item,
   );
   const hideTabBar = useMatches({
     select: (matches) => matches.some((m) => m.staticData.hideTabBar),
@@ -57,8 +74,8 @@ export function GuestShell({ children }: { children: React.ReactNode }) {
             aria-label={t("nav.guest.label")}
             className="fixed bottom-0 z-30 w-full max-w-[430px] border-t border-separator/70 bg-surface/85 pb-[env(safe-area-inset-bottom,0px)] backdrop-blur-xl"
           >
-            <ul className="grid grid-cols-3">
-              {navItems.map(({ to, label, icon: Icon }) => (
+            <ul className="grid grid-cols-4">
+              {items.map(({ to, label, icon: Icon }) => (
                 <li key={to}>
                   <Link
                     activeOptions={{ exact: to === "/" }}

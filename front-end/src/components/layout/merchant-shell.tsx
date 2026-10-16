@@ -2,7 +2,7 @@ import type { IconComponent } from "@/components/icons";
 import type { MessageKey } from "@/i18n/en";
 import type { LinkProps } from "@tanstack/react-router";
 
-import { Button, Drawer } from "@heroui/react";
+import { Button } from "@heroui/react";
 import { Link, useLocation, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 
@@ -10,7 +10,6 @@ import {
   BookingsIcon,
   ChevronDownIcon,
   LogoutIcon,
-  MoreIcon,
   OrdersIcon,
   PickupDateIcon,
   ProductsIcon,
@@ -82,7 +81,7 @@ const sidebarItems: NavItem[] = [
   },
 ];
 
-/** Phones: Today, Bookings, Calendar and Products in the bottom bar, Settings in the More sheet. */
+/** Phones: all five items sit in the bottom bar. */
 const phoneItems: NavItem[] = [
   {
     label: "nav.today",
@@ -116,9 +115,6 @@ const phoneItems: NavItem[] = [
     settings: true,
   },
 ];
-
-const phonePrimary = phoneItems.slice(0, 4);
-const phoneMore = phoneItems.slice(4);
 
 const isUnder = (pathname: string, base: string) =>
   base === "/store"
@@ -186,14 +182,13 @@ const tabLink =
 
 /**
  * Merchant dashboard frame (UX spec §3.2). Phones: bottom navigation with Today,
- * Bookings, Calendar, Products and More (a sheet with Settings). From 1024px: a sidebar.
+ * Bookings, Calendar, Products and Settings. From 1024px: a sidebar.
  */
 export function MerchantShell({ children }: { children: React.ReactNode }) {
   const { t } = useLocale();
   const { setRole } = useDemo();
   const staffName = shop.ownerName;
   const staffRole = t("staff.owner");
-  const [moreOpen, setMoreOpen] = useState(false);
   // Groups start unfolded; the set holds the ones the user folded.
   const [folded, setFolded] = useState<Set<string>>(new Set());
   const [barSlot, setBarSlot] = useState<HTMLElement | null>(null);
@@ -348,7 +343,7 @@ export function MerchantShell({ children }: { children: React.ReactNode }) {
           className="fixed inset-x-0 bottom-0 z-20 border-t border-separator bg-surface pb-[env(safe-area-inset-bottom,0px)] lg:hidden"
         >
           <ul className="grid grid-cols-5">
-            {phonePrimary.map((item) => (
+            {phoneItems.map((item) => (
               <li key={item.label}>
                 <NavLink className={tabLink} item={item}>
                   {/* The guest tab pattern: the active tab fills its icon and takes the accent tint. */}
@@ -365,58 +360,6 @@ export function MerchantShell({ children }: { children: React.ReactNode }) {
                 </NavLink>
               </li>
             ))}
-            <li>
-              <Drawer isOpen={moreOpen} onOpenChange={setMoreOpen}>
-                <Drawer.Trigger
-                  className="flex h-16 w-full flex-col items-center justify-center gap-1 text-xs text-muted outline-none focus-visible:focus-ring data-[status=active]:font-semibold data-[status=active]:text-accent"
-                  data-status={
-                    phoneMore.some((item) => isInside(pathname, item))
-                      ? "active"
-                      : undefined
-                  }
-                >
-                  <MoreIcon size={24} />
-                  {t("nav.more")}
-                </Drawer.Trigger>
-                <Drawer.Backdrop>
-                  <Drawer.Content placement="bottom">
-                    <Drawer.Dialog>
-                      <Drawer.Handle />
-                      <Drawer.Header>
-                        <Drawer.Heading>{t("nav.moreTitle")}</Drawer.Heading>
-                        <p className="text-label text-muted">
-                          {shop.name} · {staffName} · {staffRole}
-                        </p>
-                      </Drawer.Header>
-                      <Drawer.Body>
-                        <ul className="flex flex-col gap-1 pb-4">
-                          {phoneMore.map((item) => (
-                            <li key={item.label}>
-                              <NavLink
-                                className="group flex h-12 items-center gap-3 rounded-2xl px-3 text-base outline-none hover:bg-default focus-visible:focus-ring data-[status=active]:bg-default data-[status=active]:font-semibold data-[status=active]:text-accent"
-                                item={item}
-                                onClick={() => setMoreOpen(false)}
-                              >
-                                <item.icon
-                                  className="group-data-[status=active]:hidden"
-                                  size={20}
-                                />
-                                <item.icon
-                                  className="hidden group-data-[status=active]:block"
-                                  size={20}
-                                  weight="Filled"
-                                />
-                                {labelOf(item)}
-                              </NavLink>
-                            </li>
-                          ))}
-                        </ul>
-                      </Drawer.Body>
-                    </Drawer.Dialog>
-                  </Drawer.Content>
-                </Drawer.Backdrop>
-              </Drawer>
-            </li>
           </ul>
         </nav>
       </div>
