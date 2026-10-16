@@ -6,8 +6,8 @@ This repo is a long-lived fork of `swiss-keepsakes`. Upstream is the git remote 
 | | |
 |---|---|
 | Fork point | `c7850da` (upstream, 14 Oct 2026) |
-| Last synced | `4934b13` (upstream `main`: guest background music player) |
-| Synced on | 16 Oct 2026, tag `upstream-synced-4934b13` |
+| Last synced | `ba3ff8f` (upstream `main`: music sheet simplified) |
+| Synced on | 16 Oct 2026, tag `upstream-synced-ba3ff8f` |
 
 ## Every sync
 
@@ -64,6 +64,13 @@ upstream's 11 Lucerne tours (`features/tours/lucerne`) and their photos. Our own
 (`features/lab/brand`, `routes/_guest/lab.*`) is kept; the prune script removes only upstream's.
 
 ## Sync log
+
+- **ba3ff8f** (16 Oct 2026): took the simpler music sheet (no volume or skip controls, seek thumb
+  always visible, one-line description under the title; `music.volume`, `music.back`,
+  `music.forward`, `music.mute`, `music.unmute` and their icons are gone). Skipped: the assistant
+  gradient and sparkle (`bg-assistant`, `AssistantAvatar`), and the blank-band fix on
+  `TripAdviceButton` / the order pay route, which are pruned. Our guest shell already gives
+  `ownsBottomSpace` screens no extra bottom padding.
 
 - **4934b13** (16 Oct 2026): took the guest background music player as built (launcher, player
   sheet with cover, seek, skip 10 s and volume, remembered play/pause and volume, autoplay after

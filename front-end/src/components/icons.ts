@@ -146,7 +146,7 @@ export const LogoutIcon = stable(Reicon.Logout4, "LogoutIcon");
 export const ProfileEditIcon = stable(Reicon.UserEdit, "ProfileEditIcon");
 export const SendIcon = stable(Reicon.Send, "SendIcon");
 /** The C21 trip assistant (R19). */
-export const AssistantIcon = stable(Reicon.MagicStar, "AssistantIcon");
+export const AssistantIcon = stable(Reicon.Sparkles, "AssistantIcon");
 
 // Rich-text toolbar for the long story (M12, M13; owner 15.10.2026)
 export const HeadingIcon = stable(Reicon.Text, "HeadingIcon");
@@ -174,11 +174,7 @@ export const WifiIcon = stable(Reicon.Wifi, "WifiIcon");
 export const ParkingIcon = stable(Reicon.Parking, "ParkingIcon");
 export const MealIcon = stable(Reicon.ForkKnife, "MealIcon");
 
-// Guest background music player (launcher, sheet; volume on / muted)
+// Guest background music player (launcher, sheet)
 export const MusicIcon = stable(Reicon.MusicNote, "MusicIcon");
-export const BackTenIcon = stable(Reicon.Backward10Seconds, "BackTenIcon");
-export const ForwardTenIcon = stable(Reicon.Forward10Seconds, "ForwardTenIcon");
-export const MusicOnIcon = stable(Reicon.VolumeHigh, "MusicOnIcon");
-export const MusicOffIcon = stable(Reicon.VolumeSlash, "MusicOffIcon");
 export const PlayIcon = stable(Reicon.Play, "PlayIcon");
 export const PauseIcon = stable(Reicon.Pause, "PauseIcon");
