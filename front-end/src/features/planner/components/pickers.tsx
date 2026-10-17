@@ -4,7 +4,7 @@ import { Button } from "@heroui/react";
 import clsx from "clsx";
 import { useId, useState } from "react";
 
-import { MONTHS, PASS_INTEREST, PASS_ORDER } from "../data/passes";
+import { PASS_INTEREST, PASS_ORDER } from "../data/passes";
 import { ui } from "../lib/copy";
 
 import { ArrowUpRightIcon, SelectedIcon } from "@/components/icons";
@@ -221,67 +221,36 @@ export function PartyPicker({ disabled, onSubmit }: PickerProps) {
   );
 }
 
-const LENGTHS = [5, 6, 7];
-
-export function WhenPicker({ disabled, onSubmit }: PickerProps) {
-  const lang = useLang();
-  const t = ui[lang];
-  const [month, setMonth] = useState<number | null>(null);
-  const [days, setDays] = useState<number | null>(null);
-  const monthLabel = (m: number) => (m ? MONTHS[lang][m - 6] : t.flexible);
+export function DeparturePicker({ input, disabled, onSubmit }: PickerProps) {
+  const t = ui[useLang()];
+  const pass = input.pass as PassId;
+  const options = input.options as {
+    id: string;
+    startsAt: string;
+    label: string;
+    hint: string;
+  }[];
 
   return (
-    <Group label={t.pickWhen}>
-      <Grid cols={2}>
-        {[6, 7, 8, 9].map((m, i) => (
-          <Chip
-            key={m}
-            disabled={disabled}
-            hint={i === 0 ? t.monthHint : undefined}
-            index={i}
-            selected={month === m}
-            onClick={() => setMonth(m)}
-          >
-            {monthLabel(m)}
-          </Chip>
-        ))}
-        <Chip
-          className="col-span-2"
+    <Group label={t.chooseOne}>
+      {options.map((o, i) => (
+        <Row
+          key={o.id}
           disabled={disabled}
-          index={4}
-          selected={month === 0}
-          onClick={() => setMonth(0)}
-        >
-          {t.flexible}
-        </Chip>
-      </Grid>
-      <Grid cols={3}>
-        {LENGTHS.map((d, i) => (
-          <Chip
-            key={d}
-            disabled={disabled}
-            index={5 + i}
-            selected={days === d}
-            onClick={() => setDays(d)}
-          >
-            {t.days(d)}
-          </Chip>
-        ))}
-      </Grid>
-      {month !== null && days && (
-        <Continue
-          disabled={disabled}
-          onPress={() =>
+          hint={o.hint}
+          index={i}
+          onClick={() =>
             onSubmit({
-              month,
-              days,
-              label: `${monthLabel(month)}, ${t.days(days)}`,
+              pass,
+              departureId: o.id,
+              startsAt: o.startsAt,
+              label: o.label,
             })
           }
         >
-          {t.continue}
-        </Continue>
-      )}
+          {o.label}
+        </Row>
+      ))}
     </Group>
   );
 }

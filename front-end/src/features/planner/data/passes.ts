@@ -82,10 +82,10 @@ export const passStops = (id: PassId): TourStop[] =>
 export const BASE_STOP = (id: PassId) =>
   passTour(id).itinerary.find((s) => s.id === "base-andermatt")!;
 
-/** Demo prices: CHF 780 for five days, 90 more for each extra day. */
-export const priceFor = (days: number) => 780 + (days - 5) * 90;
+export const stayTour = (): Tour => {
+  const tour = tourSeed.find((t) => t.kind === "stay");
 
-export const MONTHS: Record<Lang, string[]> = {
-  en: ["June", "July", "August", "September"],
-  de: ["Juni", "Juli", "August", "September"],
+  if (!tour) throw new Error("No stay in the tour seed");
+
+  return tour;
 };

@@ -2,14 +2,13 @@ import type { CSSProperties } from "react";
 import type { Plan } from "../lib/plan";
 
 import { Chip } from "@heroui/react";
-import { Link } from "@tanstack/react-router";
 import clsx from "clsx";
 
 import { ui } from "../lib/copy";
 
 import { useLocale } from "@/contexts/locale-context";
 
-const COLS = "grid grid-cols-[2.75rem_1rem_minmax(0,1fr)] gap-x-3";
+const COLS = "grid grid-cols-[3.25rem_1rem_minmax(0,1fr)] gap-x-3";
 const rise = (n: number) =>
   ({ "--d": `${Math.min(n, 10) * 55}ms` }) as CSSProperties;
 
@@ -24,8 +23,13 @@ export function ItineraryCard({ plan }: { plan: Plan }) {
       <header className="flex flex-col gap-1 px-5 pt-4 pb-3">
         <h3 className="font-serif text-title">{plan.title}</h3>
         <p className="text-sm text-muted">
-          {t.summary(plan.days, plan.passes.length, plan.price)}
+          {t.summary(plan.days, plan.dateRange, plan.perRider)}
         </p>
+        {plan.riders > 1 && (
+          <p className="text-sm font-medium">
+            {t.forGroup(plan.riders, plan.total)}
+          </p>
+        )}
       </header>
 
       <ol className="px-5 pb-4">
@@ -35,8 +39,15 @@ export function ItineraryCard({ plan }: { plan: Plan }) {
             className={clsx(COLS, "animate-rise")}
             style={rise(n)}
           >
-            <span className="pt-px text-sm font-semibold tabular-nums">
-              {t.day} {item.day}
+            <span className="flex flex-col pt-px">
+              <span className="text-sm font-semibold tabular-nums">
+                {item.label}
+              </span>
+              {item.date && (
+                <span className="text-xs leading-4 text-muted">
+                  {item.date}
+                </span>
+              )}
             </span>
             <div className="relative flex flex-col items-center">
               <span
@@ -64,56 +75,59 @@ export function ItineraryCard({ plan }: { plan: Plan }) {
                 )}
               </div>
               <p className="text-sm leading-snug text-muted">{item.text}</p>
-              {item.pass && (
-                <Link
-                  className="w-fit text-xs text-muted underline underline-offset-2"
-                  params={{ pass: item.pass }}
-                  to="/passes/$pass"
-                >
-                  {language === "de" ? "Geschichte lesen" : "Read the story"}
-                </Link>
+              {item.stops && (
+                <ol className="mt-1 flex flex-col gap-2">
+                  {item.stops.map((stop) => (
+                    <li
+                      key={stop.name}
+                      className="grid grid-cols-[2.5rem_minmax(0,1fr)] gap-x-2 text-sm"
+                    >
+                      <span className="font-medium tabular-nums">
+                        {stop.time}
+                      </span>
+                      <span className="flex flex-col">
+                        <span className="font-medium">{stop.name}</span>
+                        <span className="text-xs leading-4 text-muted">
+                          {stop.text}
+                        </span>
+                      </span>
+                    </li>
+                  ))}
+                </ol>
               )}
             </div>
           </li>
         ))}
       </ol>
 
-      {(plan.notes.length > 0 ||
-        plan.removed.length > 0 ||
-        plan.skipped.length > 0) && (
-        <footer className="flex flex-col gap-3 border-t border-separator bg-surface-secondary/50 px-5 py-4 text-sm">
-          {plan.removed.length > 0 && (
-            <p>
-              <span className="font-medium">{t.removed}</span>{" "}
-              <span className="text-muted line-through">
-                {plan.removed.join(", ")}
-              </span>
-            </p>
-          )}
-          {plan.notes.length > 0 && (
-            <div>
-              <p className="font-medium">{t.goodToKnow}</p>
-              <ul className="list-disc ps-5 text-muted">
-                {plan.notes.map((n) => (
-                  <li key={n}>{n}</li>
-                ))}
-              </ul>
-            </div>
-          )}
-          {plan.skipped.length > 0 && (
-            <div>
-              <p className="font-medium">{t.leftOut}</p>
-              <ul className="list-disc ps-5 text-muted">
-                {plan.skipped.map((s) => (
-                  <li key={s.name}>
-                    {s.name}: {s.reason}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
-        </footer>
-      )}
+      <footer className="flex flex-col gap-3 border-t border-separator bg-surface-secondary/50 px-5 py-4 text-sm">
+        {plan.removed.length > 0 && (
+          <p>
+            <span className="font-medium">{t.removed}</span>{" "}
+            <span className="text-muted line-through">
+              {plan.removed.join(", ")}
+            </span>
+          </p>
+        )}
+        {plan.included.length > 0 && (
+          <div>
+            <p className="font-medium">{t.included}</p>
+            <ul className="list-disc ps-5 text-muted">
+              {plan.included.map((n) => (
+                <li key={n}>{n}</li>
+              ))}
+            </ul>
+          </div>
+        )}
+        <div>
+          <p className="font-medium">{t.goodToKnow}</p>
+          <ul className="list-disc ps-5 text-muted">
+            {plan.notes.map((n) => (
+              <li key={n}>{n}</li>
+            ))}
+          </ul>
+        </div>
+      </footer>
     </article>
   );
 }

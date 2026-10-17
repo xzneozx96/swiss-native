@@ -55,9 +55,10 @@ next time.
 - **Trip assistant** (`features/planner`, `routes/_guest/plan.tsx`, `components/ai-elements`):
   the chat UI, transport and session are upstream's; the script is ours. Upstream plans a Lucerne
   day (`data/places.ts`, `data/walking.ts`, `lib/hours.ts`, `lib/plan.ts`, `lib/agent.ts`,
-  `components/pickers.tsx`, `components/itinerary-card.tsx`); ours plans a motorbike pass tour
-  from `tourSeed` and the pass stories, in English and German, and files the plan as a private
-  tour request. Take upstream's changes to the chat UI, transport and `ai-elements`; skip its
+  `components/pickers.tsx`, `components/itinerary-card.tsx`); ours matches a motorbike pass tour,
+  offers its real open departures (demo store) and lays out the tour's own days, stops, times,
+  price and conditions from `tourSeed`, in English and German, and files the plan as a private
+  tour request. It invents nothing the tour does not say. Take upstream's changes to the chat UI, transport and `ai-elements`; skip its
   Lucerne data and script, and re-apply ours if a merge touches them.
 - **Guest departure picker**: ours is `features/tours/discovery/listing-picker` (tours, stays and
   experiences). Upstream's `departure-picker` is a port of it without stays; it is pruned.
@@ -77,9 +78,10 @@ upstream's 11 Lucerne tours (`features/tours/lucerne`) and their photos. Our own
   transport, and the tab bar with the assistant raised in a notch (`nav.assistant`, the sparkle
   and the chat motion utilities in `globals.css`; new dependencies `ai`, `@ai-sdk/react`,
   `use-stick-to-bottom`). Rewrote the script for Swiss Native: it asks how you ride, how many
-  riders, month and length, and which passes draw you, checks the season, builds a day-by-day
-  plan from the pass tours (with links to the pass stories), adjusts it, and sends it to Erich
-  as a private tour request. Skipped: upstream's home rework, Victorinox, local stories, Lucerne
+  riders and which passes draw you, finds the open departures of the matching tour, builds the
+  tour's own plan on the chosen date (base day, ride-out day with stops and times, free days,
+  price, conditions), lets you switch tour or date or add the Finsterwald night, and sends it
+  to Erich as a private tour request. Skipped: upstream's home rework, Victorinox, local stories, Lucerne
   tours, tour sections and keepsakes on tour pages, the advice banner and floating assistant
   button, and the planner's Lucerne data.
 

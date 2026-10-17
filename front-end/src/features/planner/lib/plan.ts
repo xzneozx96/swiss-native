@@ -1,193 +1,202 @@
 import type { Lang, PassId } from "../data/passes";
 
-import {
-  loc,
-  PASS_INTEREST,
-  PASS_ORDER,
-  passStops,
-  passTour,
-  priceFor,
-} from "../data/passes";
+import { BASE_STOP, loc, passStops, passTour, stayTour } from "../data/passes";
+
+import { tourDays } from "@/features/tours/lib/selectors";
 
 export interface PlanInput {
   ride: "own" | "passenger" | "unsure";
   riders: number;
-  /** 6 to 9 for June to September 2027, 0 when flexible. */
-  month: number;
-  days: number;
-  interests: PassId[];
-  /** "shorter", "longer", "relaxed", "stay". */
+  /** The tour the plan is for: the first pass the guest picked, or the one they switched to. */
+  pass: PassId;
+  /** Every pass the guest picked, in order. */
+  picks: PassId[];
+  departureId: string;
+  /** ISO start of the chosen departure. */
+  startsAt: string;
+  /** "stay". */
   tweaks: string[];
+}
+
+export interface PlanStop {
+  time: string;
+  name: string;
+  text: string;
 }
 
 export interface PlanItem {
   id: string;
-  day: number;
+  /** "Day 1", "Days 3 to 5" or a label for what follows the tour. */
+  label: string;
+  /** The date or date range of the item. */
+  date: string;
   name: string;
   text: string;
+  stops?: PlanStop[];
   tag?: string;
-  /** The pass the day rides, when it rides one. */
-  pass?: PassId;
 }
 
 export interface Plan {
+  pass: PassId;
+  slug: string;
   title: string;
   days: number;
-  price: number;
-  passes: PassId[];
+  dateRange: string;
+  /** CHF per rider and for the group. */
+  perRider: number;
+  total: number;
+  riders: number;
   items: PlanItem[];
+  included: string[];
   notes: string[];
-  skipped: { name: string; reason: string }[];
   added: string[];
   removed: string[];
 }
 
 const L = (lang: Lang, en: string, de: string) => (lang === "de" ? de : en);
 
-export const effectiveDays = (input: PlanInput) => {
-  let days = input.days;
+const DAY = 86_400_000;
+const locale = (lang: Lang) => (lang === "de" ? "de-CH" : "en-GB");
 
-  if (input.tweaks.includes("shorter")) days = Math.max(5, days - 1);
-  if (input.tweaks.includes("longer")) days = Math.min(7, days + 1);
+const dateFormat = (lang: Lang, options: Intl.DateTimeFormatOptions) =>
+  new Intl.DateTimeFormat(locale(lang), {
+    timeZone: "Europe/Zurich",
+    ...options,
+  });
 
-  return days;
-};
-
-const joinNames = (lang: Lang, names: string[]) =>
-  names.length < 2
-    ? names.join("")
-    : `${names.slice(0, -1).join(", ")} ${L(lang, "and", "und")} ${names.at(-1)}`;
-
-function stopLine(lang: Lang, id: PassId) {
-  return passStops(id)
-    .map((s) => loc(s.name, lang))
-    .join(" · ");
-}
-
-/** The ride-out passes for the days that fit: the guest's picks first, then suggestions. */
-function chooseRides(input: PlanInput, rideDays: number) {
-  const picked = input.interests.slice(0, rideDays);
-  const left = input.interests.slice(rideDays);
-  const extra = PASS_ORDER.filter((p) => !input.interests.includes(p)).slice(
-    0,
-    Math.max(0, rideDays - picked.length),
+export const shortDate = (lang: Lang, ms: number) =>
+  dateFormat(lang, { weekday: "short", day: "numeric", month: "short" }).format(
+    ms,
   );
 
-  return { picked, left, extra };
-}
+const clock = (lang: Lang, ms: number) =>
+  dateFormat(lang, {
+    hour: "2-digit",
+    minute: "2-digit",
+    hourCycle: "h23",
+  }).format(ms);
 
+/** The calendar day (YYYY-MM-DD) of an instant in Zurich. */
+export const zurichDay = (ms: number) =>
+  new Intl.DateTimeFormat("en-CA", { timeZone: "Europe/Zurich" }).format(ms);
+
+/** A tour's length in days, from its duration (as on the tour page). */
+export const passDays = (id: PassId) => tourDays(passTour(id));
+
+const firstSentence = (text: string) => text.split(/(?<=\.)\s/)[0] ?? text;
+
+const chf = (rappen: number) => Math.round(rappen / 100);
+
+/**
+ * The plan is the tour as the tour page describes it, put on the chosen dates: day one at
+ * the base, the ride-out day with its stops at the times the tour gives, and the other days
+ * as free rides from the base, shaped with the host. Nothing here is invented: names,
+ * texts, times, length, price and conditions all come from the tour.
+ */
 export function buildPlan(input: PlanInput, lang: Lang): Plan {
-  const days = effectiveDays(input);
-  const rideDays = days - 2;
-  const relaxed = input.tweaks.includes("relaxed");
-  const { picked, left, extra } = chooseRides(
-    input,
-    relaxed ? rideDays - 1 : rideDays,
-  );
-  const rides = [...picked, ...extra];
+  const tour = passTour(input.pass);
+  const days = passDays(input.pass);
+  const start = Date.parse(input.startsAt);
+  const dayDate = (n: number) => shortDate(lang, start + (n - 1) * DAY);
+  const base = BASE_STOP(input.pass);
+  const stops = passStops(input.pass);
+  const others = input.picks.filter((p) => p !== input.pass);
   const items: PlanItem[] = [];
 
   items.push({
     id: "day-1",
-    day: 1,
-    name: L(lang, "Andermatt, the base", "Andermatt, der Standort"),
-    text: L(
-      lang,
-      "Meet Erich and the group, check the bikes and the weather, and plan the ride-out days together. Hotels are booked separately.",
-      "Erich und die Gruppe treffen, Motorräder und Wetter prüfen und die Ausfahrten gemeinsam planen. Hotels werden separat gebucht.",
-    ),
+    label: `${L(lang, "Day", "Tag")} 1`,
+    date: dayDate(1),
+    name: loc(base.name, lang),
+    text: loc(base.description, lang),
   });
 
-  rides.forEach((id, i) => {
-    const tour = passTour(id);
-
-    items.push({
-      id: `day-${i + 2}`,
-      day: i + 2,
-      name: loc(tour.name, lang),
-      text: stopLine(lang, id),
-      pass: id,
-      tag: input.interests.includes(id)
-        ? undefined
-        : L(lang, "Suggested", "Vorschlag"),
-    });
+  items.push({
+    id: "day-2",
+    label: `${L(lang, "Day", "Tag")} 2`,
+    date: dayDate(2),
+    name: L(lang, "The ride-out day", "Der Ausfahrtstag"),
+    text: loc(tour.summary, lang),
+    stops: stops.map((s) => ({
+      time: clock(lang, start + (s.minutesFromStart - 1440) * 60_000),
+      name: loc(s.name, lang),
+      text: firstSentence(loc(s.description, lang)),
+    })),
   });
 
-  if (relaxed) {
+  if (days > 2) {
     items.push({
-      id: `day-${rides.length + 2}`,
-      day: rides.length + 2,
-      name: L(lang, "A slow day", "Ein ruhiger Tag"),
-      text: L(
-        lang,
-        "No pass. Coffee in the village, the bikes, and whatever the group feels like.",
-        "Kein Pass. Kaffee im Dorf, die Motorräder und was der Gruppe gerade passt.",
-      ),
+      id: "free-days",
+      label:
+        days > 3
+          ? `${L(lang, "Days", "Tage")} 3–${days}`
+          : `${L(lang, "Day", "Tag")} 3`,
+      date:
+        days > 3
+          ? `${shortDate(lang, start + 2 * DAY)} – ${shortDate(lang, start + (days - 1) * DAY)}`
+          : dayDate(3),
+      name: L(lang, "Free rides from Andermatt", "Freie Fahrten ab Andermatt"),
+      text:
+        (base.note ? loc(base.note, lang) : "") +
+        (others.length
+          ? ` ${L(lang, "You also picked", "Sie haben auch gewählt")} ${others
+              .map((p) => loc(passTour(p).name, lang))
+              .join(
+                ", ",
+              )}${L(lang, ": ask Erich whether one of these days suits it.", ": fragen Sie Erich, ob einer dieser Tage dafür passt.")}`
+          : ""),
     });
   }
 
-  items.push({
-    id: `day-${days}`,
-    day: days,
-    name: input.tweaks.includes("stay")
-      ? L(lang, "A night in Finsterwald", "Eine Nacht in Finsterwald")
-      : L(lang, "Free ride and farewell", "Freie Fahrt und Abschied"),
-    text: input.tweaks.includes("stay")
-      ? L(
-          lang,
-          "Ride over to Erich's bee house in the Entlebuch biosphere for a quiet last evening. Rooms are still to be confirmed with Erich.",
-          "Fahrt zu Erichs Bienenhaus im Biosphärenreservat Entlebuch für einen ruhigen letzten Abend. Die Zimmer werden noch mit Erich bestätigt.",
-        )
-      : L(
-          lang,
-          "A free ride from the base, shaped with Erich, and a last coffee together.",
-          "Eine freie Fahrt ab dem Standort, mit Erich abgestimmt, und ein letzter Kaffee zusammen.",
-        ),
-  });
+  if (input.tweaks.includes("stay")) {
+    const stay = stayTour();
+    const description = loc(stay.description, lang)
+      .split(/(?<=\.)\s/)
+      .slice(0, 2)
+      .join(" ");
 
-  const names = rides.map((id) => PASS_INTEREST[id].theme);
+    items.push({
+      id: "stay",
+      label: L(lang, "After", "Danach"),
+      date: "",
+      name: loc(stay.name, lang),
+      text: `${description} ${L(lang, "From", "Ab")} CHF ${chf(stay.adultPrice)} ${L(lang, "per night, booked separately.", "pro Nacht, separat gebucht.")}`,
+      tag: L(lang, "Optional", "Optional"),
+    });
+  }
+
+  const name = loc(tour.name, lang);
 
   return {
-    title: L(
-      lang,
-      `${days} days over ${joinNames(lang, names)}`,
-      `${days} Tage über ${joinNames(lang, names)}`,
-    ),
+    pass: input.pass,
+    slug: tour.slug,
+    title: name,
     days,
-    price: priceFor(days),
-    passes: rides,
+    dateRange: `${shortDate(lang, start)} – ${shortDate(lang, start + (days - 1) * DAY)}`,
+    perRider: chf(tour.adultPrice),
+    total: chf(tour.adultPrice) * input.riders,
+    riders: input.riders,
     items,
+    included: tour.included.map((i) => loc(i, lang)),
     notes: [
-      L(
-        lang,
-        "Passes open with the seasons: usually from about June to October. Erich checks road status and weather before each ride-out, and a day can change.",
-        "Pässe öffnen saisonal: meist etwa von Juni bis Oktober. Erich prüft vor jeder Ausfahrt Strassenzustand und Wetter, ein Tag kann sich ändern.",
-      ),
-      L(
-        lang,
-        "Fuel, meals and accommodation are not included. Bike and gear are arranged separately with Erich.",
-        "Treibstoff, Essen und Unterkunft sind nicht inbegriffen. Motorrad und Ausrüstung klärt Erich separat mit Ihnen.",
-      ),
+      `${L(lang, "Meeting point", "Treffpunkt")}: ${loc(tour.meetingPoint, lang)}`,
+      loc(tour.excluded, lang),
+      loc(tour.conditions, lang),
     ],
-    skipped: left.map((id) => ({
-      name: loc(passTour(id).name, lang),
-      reason: L(lang, `no room in ${days} days`, `kein Platz in ${days} Tagen`),
-    })),
     added: [],
     removed: [],
   };
 }
 
-/** Compares two plans by day names, so a changed plan can say what was added and removed. */
-export function buildWithDiff(
-  input: PlanInput,
-  lang: Lang,
-  previousTweaks = input.tweaks.slice(0, -1),
-): Plan {
+/** Compares with the plan before the last adjustment, so the reply can say what changed. */
+export function buildWithDiff(input: PlanInput, lang: Lang): Plan {
   const plan = buildPlan(input, lang);
 
   if (!input.tweaks.length) return plan;
-  const before = buildPlan({ ...input, tweaks: previousTweaks }, lang);
+  const before = buildPlan(
+    { ...input, tweaks: input.tweaks.slice(0, -1) },
+    lang,
+  );
   const names = (p: Plan) => p.items.map((i) => i.name);
 
   return {

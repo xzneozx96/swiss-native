@@ -21,24 +21,20 @@ export const ui: Record<
     chooseOne: string;
     chooseAny: string;
     setNumbers: string;
-    pickWhen: string;
     adjust: string;
     nextStep: string;
     continue: string;
     riders: string;
     rider: (n: number) => string;
-    flexible: string;
-    days: (n: number) => string;
-    daysHint: string;
-    monthHint: string;
     sent: string;
     day: string;
-    summary: (days: number, passes: number, price: number) => string;
-    lunch: string;
+    summary: (days: number, range: string, price: number) => string;
     isNew: string;
+    included: string;
+    perRider: string;
+    forGroup: (riders: number, total: number) => string;
     removed: string;
     goodToKnow: string;
-    leftOut: string;
   }
 > = {
   en: {
@@ -57,33 +53,30 @@ export const ui: Record<
     toolCalls: (n) => `${n} tool call${n === 1 ? "" : "s"}`,
     tools: {
       list_tours: "Look up the pass tours",
-      check_pass_season: "Check the pass season",
-      match_tours: "Match tours to your interests",
+      find_departures: "Find open dates",
+      check_conditions: "Check the tour's conditions",
       build_itinerary: "Build the itinerary",
       create_inquiry: "Send the plan to Erich",
     },
     chooseOne: "Choose one",
     chooseAny: "Choose any",
     setNumbers: "Set the numbers",
-    pickWhen: "Pick a month and a length",
     adjust: "Adjust the plan",
     nextStep: "Next step",
     continue: "Continue",
     riders: "Riders",
     rider: (n) => `${n} rider${n === 1 ? "" : "s"}`,
-    flexible: "I'm flexible",
-    days: (n) => `${n} days`,
-    daysHint: "Tour length",
-    monthHint: "Summer 2027",
     sent: "Your plan is with Erich.",
     day: "Day",
-    summary: (days, passes, price) =>
-      `${days} days · ${passes} pass${passes === 1 ? "" : "es"} · from CHF ${price}`,
-    lunch: "Lunch",
+    summary: (days, range, price) =>
+      `${days} days · ${range} · CHF ${price} per rider`,
+    included: "Included",
+    perRider: "per rider",
+    forGroup: (riders, total) =>
+      `CHF ${total.toLocaleString("de-CH")} for ${riders} rider${riders === 1 ? "" : "s"}`,
     isNew: "New",
     removed: "Removed:",
     goodToKnow: "Good to know",
-    leftOut: "Left out",
   },
   de: {
     title: "Reiseassistent",
@@ -101,32 +94,29 @@ export const ui: Record<
     toolCalls: (n) => `${n} Werkzeugaufruf${n === 1 ? "" : "e"}`,
     tools: {
       list_tours: "Passtouren nachschlagen",
-      check_pass_season: "Passsaison prüfen",
-      match_tours: "Touren zu Ihren Interessen finden",
+      find_departures: "Freie Termine suchen",
+      check_conditions: "Bedingungen der Tour prüfen",
       build_itinerary: "Reiseplan erstellen",
       create_inquiry: "Plan an Erich senden",
     },
     chooseOne: "Eine auswählen",
     chooseAny: "Beliebig viele wählen",
     setNumbers: "Anzahl festlegen",
-    pickWhen: "Monat und Dauer wählen",
     adjust: "Plan anpassen",
     nextStep: "Nächster Schritt",
     continue: "Weiter",
     riders: "Fahrende",
     rider: (n) => `${n} ${n === 1 ? "Fahrender" : "Fahrende"}`,
-    flexible: "Ich bin flexibel",
-    days: (n) => `${n} Tage`,
-    daysHint: "Tourlänge",
-    monthHint: "Sommer 2027",
     sent: "Ihr Plan ist bei Erich.",
     day: "Tag",
-    summary: (days, passes, price) =>
-      `${days} Tage · ${passes} ${passes === 1 ? "Pass" : "Pässe"} · ab CHF ${price}`,
-    lunch: "Mittagessen",
+    summary: (days, range, price) =>
+      `${days} Tage · ${range} · CHF ${price} pro Person`,
+    included: "Inbegriffen",
+    perRider: "pro Person",
+    forGroup: (riders, total) =>
+      `CHF ${total.toLocaleString("de-CH")} für ${riders} ${riders === 1 ? "Person" : "Personen"}`,
     isNew: "Neu",
     removed: "Entfernt:",
     goodToKnow: "Gut zu wissen",
-    leftOut: "Weggelassen",
   },
 };
