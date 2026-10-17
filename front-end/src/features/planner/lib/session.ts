@@ -6,7 +6,7 @@ import { lastAssistantMessageIsCompleteWithToolCalls } from "ai";
 
 import { ScriptedChatTransport } from "./transport";
 
-const KEY = "planner-chat";
+const KEY = "planner-chat-v2";
 
 /** The mounted screen points this at the demo store, so the long-lived chat can file inquiries. */
 export const hooks: AgentHooks = {
