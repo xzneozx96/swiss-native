@@ -226,3 +226,6 @@ https://commons.wikimedia.org/wiki/File:Berghotel_Oeschinensee.jpg
 
 erich-haldi-1.jpg
 Cropped from the client's banner of Erich Haldi (supplied by the client, October 2026). Lab use; a higher-resolution original is wanted.
+
+reel-group.jpg, reel-iseran.jpg, reel-rest-stop.jpg, reel-selfie.jpg
+Rider photos supplied by the client (Erich Haldi, October 2026) for the home reel. Resized and recompressed for web.

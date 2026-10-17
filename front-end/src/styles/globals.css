@@ -271,6 +271,81 @@ button {
   }
 }
 
+/*
+ * Story reel picture change (chosen 17.10.2026, lab option D3 "Cube, pulled back"). The
+ * old and new pictures are two faces of a 3D box that turns on its vertical edge and
+ * pulls back from you mid-turn. --reel-dir is 1 going next and -1 going back, so the
+ * turn mirrors. cqw is the reel's width (the section is a size container).
+ */
+@keyframes reel-cube-in {
+  from {
+    transform: translateZ(-50cqw) rotateY(calc(var(--reel-dir) * 90deg))
+      translateZ(50cqw);
+  }
+  to {
+    transform: translateZ(-50cqw) rotateY(0deg) translateZ(50cqw);
+  }
+}
+
+@keyframes reel-cube-out {
+  from {
+    transform: translateZ(-50cqw) rotateY(0deg) translateZ(50cqw);
+  }
+  to {
+    transform: translateZ(-50cqw) rotateY(calc(var(--reel-dir) * -90deg))
+      translateZ(50cqw);
+  }
+}
+
+@keyframes reel-pull {
+  50% {
+    translate: 0 0 -45cqw;
+  }
+}
+
+@keyframes reel-simple-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@layer components {
+  .reel-layer {
+    backface-visibility: hidden;
+  }
+
+  .reel-layer[data-dir="1"] {
+    --reel-dir: 1;
+  }
+
+  .reel-layer[data-dir="-1"] {
+    --reel-dir: -1;
+  }
+
+  .reel-layer[data-role="enter"] {
+    animation:
+      reel-cube-in 800ms cubic-bezier(0.65, 0, 0.35, 1) both,
+      reel-pull 800ms ease-in-out both;
+  }
+
+  .reel-layer[data-role="exit"] {
+    animation:
+      reel-cube-out 800ms cubic-bezier(0.65, 0, 0.35, 1) both,
+      reel-pull 800ms ease-in-out both;
+  }
+
+  /* Reduced motion keeps a short fade and drops the movement. */
+  @media (prefers-reduced-motion: reduce) {
+    .reel-layer[data-role="enter"] {
+      animation: reel-simple-in 200ms ease-out both;
+    }
+
+    .reel-layer[data-role="exit"] {
+      animation: none;
+    }
+  }
+}
+
 /* The dot on a chapter connector rides its road once when the connector is first seen. */
 @keyframes road-ride {
   from {
@@ -349,7 +424,11 @@ button {
     clip-path: polygon(22% 0, 78% 0, 100% 9%, 100% 100%, 0 100%, 0 9%);
     border-radius: 0 0 8px 8px;
     background:
-      radial-gradient(circle at 30% 20%, rgb(255 255 255 / 0.18), transparent 60%),
+      radial-gradient(
+        circle at 30% 20%,
+        rgb(255 255 255 / 0.18),
+        transparent 60%
+      ),
       linear-gradient(170deg, #dcbf8f, #c9a571);
     filter: drop-shadow(0 6px 10px rgb(70 45 15 / 0.18));
   }

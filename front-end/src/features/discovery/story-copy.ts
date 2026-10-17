@@ -9,13 +9,25 @@ export type StoryChapterId = "tours" | "stay" | "bees";
 
 export const STORY_CHAPTERS: StoryChapterId[] = ["tours", "stay", "bees"];
 
-/** The reel's pictures: Erich, then the image that sums up each offer. */
-export const REEL_PHOTOS: Record<StoryChapterId | "erich", string> = {
-  erich: "erich-haldi-1",
-  tours: "furka-pass-4",
-  stay: "stay-1",
-  bees: "finsterwald-6",
-};
+export type ReelFrameId = "erich" | "group" | "iseran" | "rest" | "selfie";
+
+export interface ReelFrame {
+  id: ReelFrameId;
+  photo: string;
+  /** CSS object-position that keeps the subject in the tall crop. */
+  position: string;
+  /** Chapter the picture's button scrolls to, if its story leads there. */
+  chapter?: StoryChapterId;
+}
+
+/** The reel's pictures: Erich first, then four shots from the road. */
+export const REEL_FRAMES: ReelFrame[] = [
+  { id: "erich", photo: "erich-haldi-1", position: "60% 30%" },
+  { id: "group", photo: "reel-group", position: "55% 50%", chapter: "tours" },
+  { id: "iseran", photo: "reel-iseran", position: "50% 60%", chapter: "tours" },
+  { id: "rest", photo: "reel-rest-stop", position: "40% 50%" },
+  { id: "selfie", photo: "reel-selfie", position: "55% 50%" },
+];
 
 /**
  * Chapter covers. The bee chapter opens on the Entlebuch landscape, because the bee
@@ -77,13 +89,17 @@ export interface StoryCopy {
   tours: { title: string; subtitle: string };
   epilogue: string;
   reel: {
+    frames: Record<
+      Exclude<ReelFrameId, "erich">,
+      { kicker: string; title: string; photoAlt: string }
+    >;
     label: string;
     pause: string;
     play: string;
     prev: string;
     next: string;
     open: string;
-    /** "Picture 2 of 4", for screen readers. */
+    /** "Picture 2 of 5", for screen readers. */
     position: (n: number, total: number) => string;
   };
 }
@@ -190,7 +206,33 @@ export const storyCopy: Record<"en" | "de", StoryCopy> = {
     },
     epilogue: "Epilogue · Until we meet",
     reel: {
-      label: "Erich's story in four pictures",
+      frames: {
+        group: {
+          kicker: "Small groups",
+          title: "Good company makes every bend better",
+          photoAlt:
+            "Three riders on adventure motorbikes pausing at the side of a sunny mountain road",
+        },
+        iseran: {
+          kicker: "Col de l'Iseran · 2,770 m",
+          title: "Some views you only reach by bike",
+          photoAlt:
+            "Three riders and a BMW motorbike in front of the Col de l'Iseran sign under a deep blue sky",
+        },
+        rest: {
+          kicker: "Rest stops",
+          title: "A thumbs up, a coffee, then the next bend",
+          photoAlt:
+            "Three riders smiling beside their motorbikes at a rest stop, one with a thumbs up",
+        },
+        selfie: {
+          kicker: "On the road",
+          title: "Early starts, quiet roads, clear mountain air",
+          photoAlt:
+            "Two riders waiting on a mountain road with a rocky ridge behind them, seen past a helmet in the foreground",
+        },
+      },
+      label: "Erich's story in five pictures",
       pause: "Pause",
       play: "Play",
       prev: "Previous picture",
@@ -300,7 +342,33 @@ export const storyCopy: Record<"en" | "de", StoryCopy> = {
     },
     epilogue: "Epilog · Bis bald",
     reel: {
-      label: "Erichs Geschichte in vier Bildern",
+      frames: {
+        group: {
+          kicker: "Kleine Gruppen",
+          title: "Gute Gesellschaft macht jede Kurve schöner",
+          photoAlt:
+            "Drei Fahrer auf Reisemotorrädern halten am Rand einer sonnigen Bergstrasse",
+        },
+        iseran: {
+          kicker: "Col de l'Iseran · 2770 m",
+          title: "Manche Aussichten erreicht man nur mit dem Motorrad",
+          photoAlt:
+            "Drei Fahrer und eine BMW vor dem Schild des Col de l'Iseran unter tiefblauem Himmel",
+        },
+        rest: {
+          kicker: "Pausen",
+          title: "Daumen hoch, ein Kaffee, dann die nächste Kurve",
+          photoAlt:
+            "Drei lächelnde Fahrer neben ihren Motorrädern an einem Rastplatz, einer mit erhobenem Daumen",
+        },
+        selfie: {
+          kicker: "Unterwegs",
+          title: "Früh los, stille Strassen, klare Bergluft",
+          photoAlt:
+            "Zwei Fahrer warten auf einer Bergstrasse vor einem felsigen Grat, im Vordergrund ein Helm",
+        },
+      },
+      label: "Erichs Geschichte in fünf Bildern",
       pause: "Pause",
       play: "Abspielen",
       prev: "Vorheriges Bild",

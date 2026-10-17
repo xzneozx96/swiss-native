@@ -52,7 +52,7 @@ function RailSkeleton() {
 
 /**
  * C01 Discovery home as Erich's story (B4 "Story reel", approved 16.10.2026): a reel of
- * four pictures (Erich, then his three offers), his introduction in his voice, then
+ * five pictures (Erich, then four shots from the road), his introduction in his voice, then
  * one chapter per offer: tours, the stay, the bee house. Each chapter opens on a photo
  * and keeps its approved blocks, run full width. It ends on a dark epilogue scene with
  * his handwritten line and Ask Erich.
