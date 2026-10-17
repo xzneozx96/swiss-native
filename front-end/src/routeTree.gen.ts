@@ -17,6 +17,7 @@ import { Route as GuestAccountRouteImport } from './routes/_guest/account'
 import { Route as GuestBookingsRouteImport } from './routes/_guest/bookings'
 import { Route as GuestCreditsRouteImport } from './routes/_guest/credits'
 import { Route as GuestExperiencesRouteImport } from './routes/_guest/experiences'
+import { Route as GuestPlanRouteImport } from './routes/_guest/plan'
 import { Route as GuestSearchRouteImport } from './routes/_guest/search'
 import { Route as GuestToursRouteImport } from './routes/_guest/tours'
 import { Route as StoreIndexRouteImport } from './routes/store/index'
@@ -85,6 +86,11 @@ const GuestCreditsRoute = GuestCreditsRouteImport.update({
 const GuestExperiencesRoute = GuestExperiencesRouteImport.update({
   id: '/experiences',
   path: '/experiences',
+  getParentRoute: () => GuestRoute,
+} as any)
+const GuestPlanRoute = GuestPlanRouteImport.update({
+  id: '/plan',
+  path: '/plan',
   getParentRoute: () => GuestRoute,
 } as any)
 const GuestSearchRoute = GuestSearchRouteImport.update({
@@ -254,6 +260,7 @@ export interface FileRoutesByFullPath {
   '/bookings': typeof GuestBookingsRoute
   '/credits': typeof GuestCreditsRoute
   '/experiences': typeof GuestExperiencesRoute
+  '/plan': typeof GuestPlanRoute
   '/search': typeof GuestSearchRoute
   '/tours': typeof GuestToursRouteWithChildren
   '/store/$section': typeof StoreSectionRoute
@@ -291,6 +298,7 @@ export interface FileRoutesByTo {
   '/bookings': typeof GuestBookingsRoute
   '/credits': typeof GuestCreditsRoute
   '/experiences': typeof GuestExperiencesRoute
+  '/plan': typeof GuestPlanRoute
   '/search': typeof GuestSearchRoute
   '/store/$section': typeof StoreSectionRoute
   '/store/calendar': typeof StoreCalendarRoute
@@ -330,6 +338,7 @@ export interface FileRoutesById {
   '/_guest/bookings': typeof GuestBookingsRoute
   '/_guest/credits': typeof GuestCreditsRoute
   '/_guest/experiences': typeof GuestExperiencesRoute
+  '/_guest/plan': typeof GuestPlanRoute
   '/_guest/search': typeof GuestSearchRoute
   '/_guest/tours': typeof GuestToursRouteWithChildren
   '/store/$section': typeof StoreSectionRoute
@@ -372,6 +381,7 @@ export interface FileRouteTypes {
     | '/bookings'
     | '/credits'
     | '/experiences'
+    | '/plan'
     | '/search'
     | '/tours'
     | '/store/$section'
@@ -409,6 +419,7 @@ export interface FileRouteTypes {
     | '/bookings'
     | '/credits'
     | '/experiences'
+    | '/plan'
     | '/search'
     | '/store/$section'
     | '/store/calendar'
@@ -447,6 +458,7 @@ export interface FileRouteTypes {
     | '/_guest/bookings'
     | '/_guest/credits'
     | '/_guest/experiences'
+    | '/_guest/plan'
     | '/_guest/search'
     | '/_guest/tours'
     | '/store/$section'
@@ -542,6 +554,13 @@ declare module '@tanstack/react-router' {
       path: '/experiences'
       fullPath: '/experiences'
       preLoaderRoute: typeof GuestExperiencesRouteImport
+      parentRoute: typeof GuestRoute
+    }
+    '/_guest/plan': {
+      id: '/_guest/plan'
+      path: '/plan'
+      fullPath: '/plan'
+      preLoaderRoute: typeof GuestPlanRouteImport
       parentRoute: typeof GuestRoute
     }
     '/_guest/search': {
@@ -784,6 +803,7 @@ interface GuestRouteChildren {
   GuestBookingsRoute: typeof GuestBookingsRoute
   GuestCreditsRoute: typeof GuestCreditsRoute
   GuestExperiencesRoute: typeof GuestExperiencesRoute
+  GuestPlanRoute: typeof GuestPlanRoute
   GuestSearchRoute: typeof GuestSearchRoute
   GuestToursRoute: typeof GuestToursRouteWithChildren
   GuestIndexRoute: typeof GuestIndexRoute
@@ -802,6 +822,7 @@ const GuestRouteChildren: GuestRouteChildren = {
   GuestBookingsRoute: GuestBookingsRoute,
   GuestCreditsRoute: GuestCreditsRoute,
   GuestExperiencesRoute: GuestExperiencesRoute,
+  GuestPlanRoute: GuestPlanRoute,
   GuestSearchRoute: GuestSearchRoute,
   GuestToursRoute: GuestToursRouteWithChildren,
   GuestIndexRoute: GuestIndexRoute,

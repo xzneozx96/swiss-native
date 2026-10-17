@@ -29,6 +29,7 @@ export const de: Record<MessageKey, string> = {
   "app.name": "Erich Haldi",
 
   "nav.guest.label": "Hauptnavigation",
+  "nav.assistant": "Assistent",
   "nav.explore": "Entdecken",
   "nav.tours": "Touren",
   "nav.account": "Konto",

@@ -27,6 +27,7 @@ export const en = {
   "app.name": "Erich Haldi",
 
   "nav.guest.label": "Main",
+  "nav.assistant": "Assistant",
   "nav.explore": "Explore",
   "nav.tours": "Tours",
   "nav.account": "Account",

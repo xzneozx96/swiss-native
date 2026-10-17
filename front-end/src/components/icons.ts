@@ -147,6 +147,7 @@ export const ProfileEditIcon = stable(Reicon.UserEdit, "ProfileEditIcon");
 export const SendIcon = stable(Reicon.Send, "SendIcon");
 /** The C21 trip assistant (R19). */
 export const AssistantIcon = stable(Reicon.Sparkles, "AssistantIcon");
+export const SparkleIcon = stable(Reicon.Sparkles, "SparkleIcon");
 
 // Rich-text toolbar for the long story (M12, M13; owner 15.10.2026)
 export const HeadingIcon = stable(Reicon.Text, "HeadingIcon");

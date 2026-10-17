@@ -6,8 +6,8 @@ This repo is a long-lived fork of `swiss-keepsakes`. Upstream is the git remote 
 | | |
 |---|---|
 | Fork point | `c7850da` (upstream, 14 Oct 2026) |
-| Last synced | `ba3ff8f` (upstream `main`: music sheet simplified) |
-| Synced on | 16 Oct 2026, tag `upstream-synced-ba3ff8f` |
+| Last synced | `37bafc7` (upstream `main`: trip assistant demo) |
+| Synced on | 17 Oct 2026, tag `upstream-synced-37bafc7` |
 
 ## Every sync
 
@@ -49,8 +49,16 @@ next time.
   `assets/audio/CREDITS.txt`). If upstream adds, renames or replaces its track
   (`background-swiss-keepsakes*`), delete theirs again and keep ours wired in
   `background-music.tsx` and `music-sheet.tsx`. The sheet and the media session show
-  `app.name`, never a song or artist name. The launcher floats alone above our tab bar; upstream
-  stacks it on the trip assistant button, which we do not ship.
+  `app.name`, never a song or artist name. The launcher floats above our tab bar's right end;
+  upstream stacks it on a floating trip assistant button, which we do not ship (our assistant
+  is the raised tab bar button).
+- **Trip assistant** (`features/planner`, `routes/_guest/plan.tsx`, `components/ai-elements`):
+  the chat UI, transport and session are upstream's; the script is ours. Upstream plans a Lucerne
+  day (`data/places.ts`, `data/walking.ts`, `lib/hours.ts`, `lib/plan.ts`, `lib/agent.ts`,
+  `components/pickers.tsx`, `components/itinerary-card.tsx`); ours plans a motorbike pass tour
+  from `tourSeed` and the pass stories, in English and German, and files the plan as a private
+  tour request. Take upstream's changes to the chat UI, transport and `ai-elements`; skip its
+  Lucerne data and script, and re-apply ours if a merge touches them.
 - **Guest departure picker**: ours is `features/tours/discovery/listing-picker` (tours, stays and
   experiences). Upstream's `departure-picker` is a port of it without stays; it is pruned.
 
@@ -58,12 +66,22 @@ next time.
 
 Keepsake shop (gifts, cart, checkout, orders, pickup points, categories), partners and
 referral (`/partner`, `/r/$code`, commission), local stories and content, reports and costs,
-trip advice and the trip assistant (including upstream's tab bar with the raised assistant
-button and its sparkle animation), the manager and partner roles, the dashboard Requests section, the lab pages,
+trip advice (the old questionnaire), upstream's Lucerne trip planner content, the manager and partner roles, the dashboard Requests section, the lab pages,
 upstream's 11 Lucerne tours (`features/tours/lucerne`) and their photos. Our own design lab
 (`features/lab/brand`, `routes/_guest/lab.*`) is kept; the prune script removes only upstream's.
 
 ## Sync log
+
+- **37bafc7** (17 Oct 2026): merged with `-s ours` (so upstream's history counts as merged) and
+  took only the trip assistant: the `ai-elements` components, the chat session and scripted
+  transport, and the tab bar with the assistant raised in a notch (`nav.assistant`, the sparkle
+  and the chat motion utilities in `globals.css`; new dependencies `ai`, `@ai-sdk/react`,
+  `use-stick-to-bottom`). Rewrote the script for Swiss Native: it asks how you ride, how many
+  riders, month and length, and which passes draw you, checks the season, builds a day-by-day
+  plan from the pass tours (with links to the pass stories), adjusts it, and sends it to Erich
+  as a private tour request. Skipped: upstream's home rework, Victorinox, local stories, Lucerne
+  tours, tour sections and keepsakes on tour pages, the advice banner and floating assistant
+  button, and the planner's Lucerne data.
 
 - **ba3ff8f** (16 Oct 2026): took the simpler music sheet (no volume or skip controls, seek thumb
   always visible, one-line description under the title; `music.volume`, `music.back`,
