@@ -107,6 +107,7 @@ export function DiscoveryHome({
             <Section
               id="story-passes"
               level={3}
+              seeAll={{ label: c.passes.seeAll, to: "/passes" }}
               subtitle={c.passes.subtitle}
               title={c.passes.title}
             >

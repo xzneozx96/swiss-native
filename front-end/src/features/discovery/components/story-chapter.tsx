@@ -1,5 +1,7 @@
 import type { StoryChapterId, StoryCopy } from "../story-copy";
 
+import { Link } from "@tanstack/react-router";
+
 import {
   COVER_PHOTOS,
   EPILOGUE_PHOTO,
@@ -81,22 +83,30 @@ export function PassStrip({ c }: { c: StoryCopy }) {
           key={p.name}
           className="relative w-44 shrink-0 snap-start overflow-hidden rounded-2xl"
         >
-          <img
-            alt=""
-            className="aspect-[3/4] w-full object-cover"
-            decoding="async"
-            loading="lazy"
-            src={photoUrl(p.photo)}
-          />
-          <div className="absolute inset-0 flex flex-col justify-end bg-gradient-to-t from-black/75 via-black/20 to-transparent p-3 text-white">
-            <span className="font-script text-[28px] leading-7">{p.name}</span>
-            <span className="text-xs font-semibold tabular-nums">
-              {p.m.toLocaleString("de-CH")} m
-            </span>
-            <span className="mt-1 text-xs leading-4 text-white/85">
-              {c.passLines[p.name]}
-            </span>
-          </div>
+          <Link
+            className="block outline-none focus-visible:focus-ring active:scale-[0.98]"
+            params={{ pass: p.name.toLowerCase() }}
+            to="/passes/$pass"
+          >
+            <img
+              alt=""
+              className="aspect-[3/4] w-full object-cover"
+              decoding="async"
+              loading="lazy"
+              src={photoUrl(p.photo)}
+            />
+            <div className="absolute inset-0 flex flex-col justify-end bg-gradient-to-t from-black/75 via-black/20 to-transparent p-3 text-white">
+              <span className="font-script text-[28px] leading-7">
+                {p.name}
+              </span>
+              <span className="text-xs font-semibold tabular-nums">
+                {p.m.toLocaleString("de-CH")} m
+              </span>
+              <span className="mt-1 text-xs leading-4 text-white/85">
+                {c.passLines[p.name]}
+              </span>
+            </div>
+          </Link>
         </li>
       ))}
     </Rail>

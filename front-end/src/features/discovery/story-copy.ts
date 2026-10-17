@@ -85,7 +85,7 @@ export interface StoryCopy {
   };
   chapters: Record<StoryChapterId, Chapter>;
   passLines: Record<StoryPass, string>;
-  passes: { title: string; subtitle: string };
+  passes: { title: string; subtitle: string; seeAll: string };
   tours: { title: string; subtitle: string };
   epilogue: string;
   reel: {
@@ -199,6 +199,7 @@ export const storyCopy: Record<"en" | "de", StoryCopy> = {
     passes: {
       title: "The five passes",
       subtitle: "Every pass has its own story",
+      seeAll: "Read the stories",
     },
     tours: {
       title: "Choose your tour",
@@ -335,6 +336,7 @@ export const storyCopy: Record<"en" | "de", StoryCopy> = {
     passes: {
       title: "Die fünf Pässe",
       subtitle: "Jeder Pass hat seine eigene Geschichte",
+      seeAll: "Geschichten lesen",
     },
     tours: {
       title: "Ihre Tour wählen",
