@@ -19,11 +19,11 @@ import { ItineraryCard } from "./itinerary-card";
 import {
   Row,
   Group,
-  InterestsPicker,
   NextPicker,
-  DeparturePicker,
   PartyPicker,
   RidePicker,
+  StayPicker,
+  WhenPicker,
 } from "./pickers";
 
 import {
@@ -42,17 +42,12 @@ import { AssistantIcon } from "@/components/icons";
 import { BackButton } from "@/components/layout/top-bar-buttons";
 import { useLocale } from "@/contexts/locale-context";
 import { usePrivateTour } from "@/features/requests/hooks/use-private-tour";
-import {
-  availableSeats,
-  upcomingDepartures,
-} from "@/features/tours/lib/selectors";
-import { useTours } from "@/features/tours/hooks/use-tours";
 
 const PICKERS = {
   ask_ride: RidePicker,
   ask_party: PartyPicker,
-  ask_departure: DeparturePicker,
-  ask_interests: InterestsPicker,
+  ask_when: WhenPicker,
+  ask_stay: StayPicker,
   ask_next: NextPicker,
 } as const;
 
@@ -254,26 +249,12 @@ export function PlannerChat({ onLeave }: { onLeave: () => void }) {
   const { language } = useLocale();
   const t = ui[language];
   const { send, defaultEmail } = usePrivateTour();
-  const { data, now } = useTours();
   const languageRef = useRef(language);
   const sendRef = useRef(send);
-  const toursRef = useRef({ data, now });
 
   languageRef.current = language;
   sendRef.current = send;
-  toursRef.current = { data, now };
   hooks.language = () => languageRef.current;
-  hooks.departures = (tourId) => {
-    const { data: tours, now: at } = toursRef.current;
-
-    return upcomingDepartures(tours, tourId, at)
-      .map((d) => ({
-        id: d.id,
-        startsAt: d.startsAt,
-        seats: availableSeats(tours, d.id, at),
-      }))
-      .filter((d) => d.seats > 0);
-  };
   hooks.createInquiry = ({ riders, dateFrom, dateTo, note }) => {
     const result = sendRef.current({
       groupSize: riders,
@@ -383,24 +364,8 @@ export function PlannerChat({ onLeave }: { onLeave: () => void }) {
 
             return;
           }
-          if (name === "ask_next" && id === "private") {
-            void navigate({ to: "/tours/private-tour" });
-
-            return;
-          }
-          if (name === "ask_next" && id.startsWith("open:")) {
-            void navigate({
-              to: "/tours/$slug",
-              params: { slug: id.slice(5) },
-            });
-
-            return;
-          }
-          if (name === "ask_next" && id.startsWith("story:")) {
-            void navigate({
-              to: "/passes/$pass",
-              params: { pass: id.slice(6) },
-            });
+          if (name === "ask_next" && id === "passes") {
+            void navigate({ to: "/passes" });
 
             return;
           }

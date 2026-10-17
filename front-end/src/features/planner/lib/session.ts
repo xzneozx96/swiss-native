@@ -6,12 +6,11 @@ import { lastAssistantMessageIsCompleteWithToolCalls } from "ai";
 
 import { ScriptedChatTransport } from "./transport";
 
-const KEY = "planner-chat-v2";
+const KEY = "planner-chat-v3";
 
 /** The mounted screen points this at the demo store, so the long-lived chat can file inquiries. */
 export const hooks: AgentHooks = {
   language: () => "en",
-  departures: () => [],
   createInquiry: () => "",
 };
 
@@ -37,7 +36,6 @@ const make = (messages: UIMessage[]) =>
     sendAutomaticallyWhen: lastAssistantMessageIsCompleteWithToolCalls,
     transport: new ScriptedChatTransport({
       language: () => hooks.language(),
-      departures: (tourId) => hooks.departures(tourId),
       createInquiry: (summary) => hooks.createInquiry(summary),
     }),
   });

@@ -1,53 +1,43 @@
 import type { Lang, PassId } from "../data/passes";
 
-import { BASE_STOP, loc, passStops, passTour, stayTour } from "../data/passes";
-
-import { tourDays } from "@/features/tours/lib/selectors";
+import { BASE_STOP, loc, passTour, stayTour } from "../data/passes";
 
 export interface PlanInput {
   ride: "own" | "passenger" | "unsure";
   riders: number;
-  /** The tour the plan is for: the first pass the guest picked, or the one they switched to. */
-  pass: PassId;
-  /** Every pass the guest picked, in order. */
-  picks: PassId[];
-  departureId: string;
-  /** ISO start of the chosen departure. */
-  startsAt: string;
-  /** "stay". */
+  /** 6 to 9 for June to September 2027. */
+  month: number;
+  /** 5 to 7. */
+  days: number;
+  /** "base": every night in Andermatt. "move": change base along the way. */
+  stay: "base" | "move";
+  /** "base", "move", "longer", "shorter", "finsterwald". The last stay one wins. */
   tweaks: string[];
 }
 
 export interface PlanStop {
-  time: string;
   name: string;
   text: string;
 }
 
 export interface PlanItem {
   id: string;
-  /** "Day 1", "Days 3 to 5" or a label for what follows the tour. */
   label: string;
-  /** The date or date range of the item. */
-  date: string;
   name: string;
   text: string;
+  /** Where the night is spent. */
+  night?: string;
+  /** How far and how long the riding is, when known. */
+  ride?: string;
   stops?: PlanStop[];
   tag?: string;
 }
 
 export interface Plan {
-  pass: PassId;
-  slug: string;
   title: string;
   days: number;
-  dateRange: string;
-  /** CHF per rider and for the group. */
-  perRider: number;
-  total: number;
-  riders: number;
+  stay: "base" | "move";
   items: PlanItem[];
-  included: string[];
   notes: string[];
   added: string[];
   removed: string[];
@@ -55,133 +45,315 @@ export interface Plan {
 
 const L = (lang: Lang, en: string, de: string) => (lang === "de" ? de : en);
 
-const DAY = 86_400_000;
-const locale = (lang: Lang) => (lang === "de" ? "de-CH" : "en-GB");
+export const effectiveDays = (input: PlanInput) => {
+  const longer = input.tweaks.includes("longer") ? 1 : 0;
+  const shorter = input.tweaks.includes("shorter") ? 1 : 0;
 
-const dateFormat = (lang: Lang, options: Intl.DateTimeFormatOptions) =>
-  new Intl.DateTimeFormat(locale(lang), {
-    timeZone: "Europe/Zurich",
-    ...options,
-  });
+  return Math.min(7, Math.max(5, input.days + longer - shorter));
+};
 
-export const shortDate = (lang: Lang, ms: number) =>
-  dateFormat(lang, { weekday: "short", day: "numeric", month: "short" }).format(
-    ms,
-  );
+export const effectiveStay = (input: PlanInput): "base" | "move" => {
+  const chosen = [...input.tweaks]
+    .reverse()
+    .find((t) => t === "base" || t === "move");
 
-const clock = (lang: Lang, ms: number) =>
-  dateFormat(lang, {
-    hour: "2-digit",
-    minute: "2-digit",
-    hourCycle: "h23",
-  }).format(ms);
-
-/** The calendar day (YYYY-MM-DD) of an instant in Zurich. */
-export const zurichDay = (ms: number) =>
-  new Intl.DateTimeFormat("en-CA", { timeZone: "Europe/Zurich" }).format(ms);
-
-/** A tour's length in days, from its duration (as on the tour page). */
-export const passDays = (id: PassId) => tourDays(passTour(id));
+  return (chosen as "base" | "move" | undefined) ?? input.stay;
+};
 
 const firstSentence = (text: string) => text.split(/(?<=\.)\s/)[0] ?? text;
 
-const chf = (rappen: number) => Math.round(rappen / 100);
+/** Stops of a pass tour by id, in the order given, with the tour's own words. */
+function stops(lang: Lang, pass: PassId, ids: string[]): PlanStop[] {
+  const all = passTour(pass).itinerary;
+
+  return ids.flatMap((id) => {
+    const stop = all.find((s) => s.id === id);
+
+    return stop
+      ? [
+          {
+            name: loc(stop.name, lang),
+            text: firstSentence(loc(stop.description, lang)),
+          },
+        ]
+      : [];
+  });
+}
 
 /**
- * The plan is the tour as the tour page describes it, put on the chosen dates: day one at
- * the base, the ride-out day with its stops at the times the tour gives, and the other days
- * as free rides from the base, shaped with the host. Nothing here is invented: names,
- * texts, times, length, price and conditions all come from the tour.
+ * The three-pass loops are the classic ones around Andermatt: Furka, Grimsel and Susten (about
+ * 120 km, around 2.5 hours of riding, 3 to 5 with stops), and Gotthard, Nufenen and Furka
+ * again (about 105 to 135 km, around 2.5 hours of riding). Lengths are from published routes
+ * (Andermatt Tourism's roadbook, Switzerland Tourism); the stops are the pass tours' own.
  */
+const loopA = (lang: Lang) => [
+  ...stops(lang, "furka", ["realp", "furka-summit", "belvedere", "gletsch"]),
+  ...stops(lang, "grimsel", ["grimsel-summit", "hospiz", "raeterichsboden"]),
+  ...stops(lang, "susten", ["gadmen", "steingletscher", "summit", "wassen"]),
+  ...stops(lang, "gotthard", ["schoellenen"]),
+];
+
+const loopB = (lang: Lang) => [
+  ...stops(lang, "gotthard", ["hospice", "tremola", "airolo"]),
+  ...stops(lang, "nufenen", ["bedretto", "allacqua", "summit", "ulrichen"]),
+  ...stops(lang, "furka", ["gletsch", "belvedere", "realp"]),
+];
+
 export function buildPlan(input: PlanInput, lang: Lang): Plan {
-  const tour = passTour(input.pass);
-  const days = passDays(input.pass);
-  const start = Date.parse(input.startsAt);
-  const dayDate = (n: number) => shortDate(lang, start + (n - 1) * DAY);
-  const base = BASE_STOP(input.pass);
-  const stops = passStops(input.pass);
-  const others = input.picks.filter((p) => p !== input.pass);
+  const days = effectiveDays(input);
+  const stay = effectiveStay(input);
+  const day = (n: number) => `${L(lang, "Day", "Tag")} ${n}`;
   const items: PlanItem[] = [];
+  const base = BASE_STOP("furka");
+  const andermatt = "Andermatt";
+  const innertkirchen = "Innertkirchen";
+  const airolo = "Airolo";
+
+  const ride = {
+    a: L(
+      lang,
+      "About 120 km, around 2.5 hours of riding; 3 to 5 hours with stops.",
+      "Rund 120 km, etwa 2,5 Stunden Fahrzeit; mit Halten 3 bis 5 Stunden.",
+    ),
+    b: L(
+      lang,
+      "About 105 to 135 km, around 2.5 hours of riding before stops.",
+      "Rund 105 bis 135 km, etwa 2,5 Stunden Fahrzeit vor den Halten.",
+    ),
+  };
 
   items.push({
-    id: "day-1",
-    label: `${L(lang, "Day", "Tag")} 1`,
-    date: dayDate(1),
+    id: "d1",
+    label: day(1),
     name: loc(base.name, lang),
     text: loc(base.description, lang),
+    night: andermatt,
   });
 
-  items.push({
-    id: "day-2",
-    label: `${L(lang, "Day", "Tag")} 2`,
-    date: dayDate(2),
-    name: L(lang, "The ride-out day", "Der Ausfahrtstag"),
-    text: loc(tour.summary, lang),
-    stops: stops.map((s) => ({
-      time: clock(lang, start + (s.minutesFromStart - 1440) * 60_000),
-      name: loc(s.name, lang),
-      text: firstSentence(loc(s.description, lang)),
-    })),
-  });
-
-  if (days > 2) {
+  if (stay === "base") {
     items.push({
-      id: "free-days",
-      label:
-        days > 3
-          ? `${L(lang, "Days", "Tage")} 3–${days}`
-          : `${L(lang, "Day", "Tag")} 3`,
-      date:
-        days > 3
-          ? `${shortDate(lang, start + 2 * DAY)} – ${shortDate(lang, start + (days - 1) * DAY)}`
-          : dayDate(3),
-      name: L(lang, "Free rides from Andermatt", "Freie Fahrten ab Andermatt"),
-      text:
-        (base.note ? loc(base.note, lang) : "") +
-        (others.length
-          ? ` ${L(lang, "You also picked", "Sie haben auch gewählt")} ${others
-              .map((p) => loc(passTour(p).name, lang))
-              .join(
-                ", ",
-              )}${L(lang, ": ask Erich whether one of these days suits it.", ": fragen Sie Erich, ob einer dieser Tage dafür passt.")}`
-          : ""),
+      id: "d2",
+      label: day(2),
+      name: L(lang, "Furka, Grimsel and Susten", "Furka, Grimsel und Susten"),
+      text: L(
+        lang,
+        "The classic three-pass loop from Andermatt: up the Furka past the Rhône Glacier, over the Grimsel to Innertkirchen, then up the Susten and back through the Schöllenen gorge.",
+        "Die klassische Dreipässe-Runde ab Andermatt: über die Furka am Rhonegletscher vorbei, über die Grimsel nach Innertkirchen, dann über den Susten und durch die Schöllenen zurück.",
+      ),
+      ride: ride.a,
+      night: andermatt,
+      stops: loopA(lang),
+    });
+    items.push({
+      id: "d3",
+      label: day(3),
+      name: L(
+        lang,
+        "Gotthard, Nufenen and Furka",
+        "Gotthard, Nufenen und Furka",
+      ),
+      text: L(
+        lang,
+        "The second loop, south and back: over the Gotthard and down the cobbled Tremola to Airolo, up the Nufenen to Ulrichen, then over the Furka again from the other side.",
+        "Die zweite Runde, nach Süden und zurück: über den Gotthard und die gepflasterte Tremola nach Airolo, über den Nufenen nach Ulrichen und dann nochmals über die Furka von der anderen Seite.",
+      ),
+      ride: ride.b,
+      night: andermatt,
+      stops: loopB(lang),
+    });
+  } else {
+    items.push({
+      id: "d2",
+      label: day(2),
+      name: L(
+        lang,
+        "Furka and Grimsel to Innertkirchen",
+        "Furka und Grimsel bis Innertkirchen",
+      ),
+      text: L(
+        lang,
+        "Out of Andermatt over the Furka past the Rhône Glacier, then over the Grimsel and down to the Haslital. A shorter day than the full loop, so there is time at the stops.",
+        "Von Andermatt über die Furka am Rhonegletscher vorbei, dann über die Grimsel hinunter ins Haslital. Ein kürzerer Tag als die ganze Runde, mit Zeit für die Halte.",
+      ),
+      night: `${innertkirchen} ${L(lang, "(or Meiringen)", "(oder Meiringen)")}`,
+      stops: [
+        ...stops(lang, "furka", [
+          "realp",
+          "furka-summit",
+          "belvedere",
+          "gletsch",
+        ]),
+        ...stops(lang, "grimsel", [
+          "grimsel-summit",
+          "hospiz",
+          "raeterichsboden",
+        ]),
+      ],
+    });
+    items.push({
+      id: "d3",
+      label: day(3),
+      name: L(
+        lang,
+        "Susten and Gotthard to Airolo",
+        "Susten und Gotthard bis Airolo",
+      ),
+      text: L(
+        lang,
+        "Up the Susten and down to Wassen, through the Schöllenen gorge to Andermatt, then over the Gotthard and down the Tremola into Ticino.",
+        "Über den Susten hinunter nach Wassen, durch die Schöllenen nach Andermatt, dann über den Gotthard und die Tremola ins Tessin.",
+      ),
+      night: airolo,
+      stops: [
+        ...stops(lang, "susten", [
+          "gadmen",
+          "steingletscher",
+          "summit",
+          "wassen",
+        ]),
+        ...stops(lang, "gotthard", [
+          "schoellenen",
+          "hospice",
+          "tremola",
+          "airolo",
+        ]),
+      ],
+    });
+    items.push({
+      id: "d4",
+      label: day(4),
+      name: L(
+        lang,
+        "Nufenen and Furka back to Andermatt",
+        "Nufenen und Furka zurück nach Andermatt",
+      ),
+      text: L(
+        lang,
+        "Up the Val Bedretto and over the Nufenen to Ulrichen, then over the Furka once more from the Valais side, back to where the week began.",
+        "Durch das Bedrettotal und über den Nufenen nach Ulrichen, dann nochmals über die Furka von der Walliser Seite zurück dorthin, wo die Woche begann.",
+      ),
+      night: andermatt,
+      stops: [
+        ...stops(lang, "nufenen", [
+          "bedretto",
+          "allacqua",
+          "summit",
+          "ulrichen",
+        ]),
+        ...stops(lang, "furka", ["gletsch", "belvedere", "realp"]),
+      ],
     });
   }
 
-  if (input.tweaks.includes("stay")) {
-    const stay = stayTour();
-    const description = loc(stay.description, lang)
+  const ridden = items.length;
+  const reserve: PlanItem = {
+    id: "reserve",
+    label: "",
+    name: L(lang, "A day in reserve", "Ein Reservetag"),
+    text: L(
+      lang,
+      "Passes can close for snow or weather, and a ride-out day can change. This day keeps the loops from being lost: if everything went well, walk the Schöllenen gorge and the Devil's Bridge, or ride the pass you liked best again.",
+      "Pässe können wegen Schnee oder Wetter schliessen, ein Ausfahrtstag kann sich ändern. Dieser Tag sorgt dafür, dass keine Runde ausfällt: Ist alles gut gegangen, laufen Sie durch die Schöllenen zur Teufelsbrücke oder fahren den Pass, der Ihnen am besten gefiel, noch einmal.",
+    ),
+    tag: L(lang, "Reserve", "Reserve"),
+    night: andermatt,
+  };
+  const favourite: PlanItem = {
+    id: "favourite",
+    label: "",
+    name: L(lang, "Your favourite pass again", "Ihr Lieblingspass noch einmal"),
+    text: L(
+      lang,
+      "Pick it with Erich over breakfast, once you know which one you liked best. Riding a pass in the other direction shows it differently.",
+      "Wählen Sie ihn mit Erich beim Frühstück, wenn Sie wissen, welcher Ihnen am besten gefiel. Ein Pass in der Gegenrichtung zeigt sich anders.",
+    ),
+    night: andermatt,
+  };
+  const farewell: PlanItem = {
+    id: "farewell",
+    label: "",
+    name: L(lang, "Farewell", "Abschied"),
+    text: L(
+      lang,
+      "A last coffee with Erich in Andermatt, and the ride home.",
+      "Ein letzter Kaffee mit Erich in Andermatt, und die Heimfahrt.",
+    ),
+  };
+
+  const slow: PlanItem = {
+    id: "slow",
+    label: "",
+    name: L(lang, "A slow day in Andermatt", "Ein ruhiger Tag in Andermatt"),
+    text: L(
+      lang,
+      "No pass. The Schöllenen gorge and the Devil's Bridge, a walk through Andermatt, and time to compare photos before the last evening.",
+      "Kein Pass. Die Schöllenen und die Teufelsbrücke, ein Spaziergang durch Andermatt und Zeit, die Fotos zu vergleichen, bevor der letzte Abend kommt.",
+    ),
+    night: andermatt,
+  };
+  const reserveAndFarewell: PlanItem = {
+    ...reserve,
+    id: "reserve-farewell",
+    name: L(lang, "Reserve day and farewell", "Reservetag und Abschied"),
+    text: `${reserve.text} ${farewell.text}`,
+    night: undefined,
+  };
+  const slots = days - ridden;
+  const extra: PlanItem[] =
+    slots <= 1
+      ? [reserveAndFarewell]
+      : slots === 2
+        ? [reserve, farewell]
+        : slots === 3
+          ? [reserve, favourite, farewell]
+          : [reserve, favourite, slow, farewell];
+
+  extra.forEach((item, i) => {
+    items.push({ ...item, label: day(ridden + i + 1) });
+  });
+
+  if (input.tweaks.includes("finsterwald")) {
+    const night = stayTour();
+    const description = loc(night.description, lang)
       .split(/(?<=\.)\s/)
       .slice(0, 2)
       .join(" ");
 
     items.push({
-      id: "stay",
+      id: "finsterwald",
       label: L(lang, "After", "Danach"),
-      date: "",
-      name: loc(stay.name, lang),
-      text: `${description} ${L(lang, "From", "Ab")} CHF ${chf(stay.adultPrice)} ${L(lang, "per night, booked separately.", "pro Nacht, separat gebucht.")}`,
+      name: loc(night.name, lang),
+      text: `${description} ${L(lang, "Booked separately.", "Wird separat gebucht.")}`,
       tag: L(lang, "Optional", "Optional"),
     });
   }
 
-  const name = loc(tour.name, lang);
-
   return {
-    pass: input.pass,
-    slug: tour.slug,
-    title: name,
+    title: L(
+      lang,
+      `All five passes in ${days} days`,
+      `Alle fünf Pässe in ${days} Tagen`,
+    ),
     days,
-    dateRange: `${shortDate(lang, start)} – ${shortDate(lang, start + (days - 1) * DAY)}`,
-    perRider: chf(tour.adultPrice),
-    total: chf(tour.adultPrice) * input.riders,
-    riders: input.riders,
+    stay,
     items,
-    included: tour.included.map((i) => loc(i, lang)),
     notes: [
-      `${L(lang, "Meeting point", "Treffpunkt")}: ${loc(tour.meetingPoint, lang)}`,
-      loc(tour.excluded, lang),
-      loc(tour.conditions, lang),
+      L(
+        lang,
+        "This is a plan to talk through, not a booked itinerary. Erich confirms the route, the nights and the price with you.",
+        "Das ist ein Plan zum Besprechen, keine gebuchte Reise. Erich bestätigt Route, Übernachtungen und Preis mit Ihnen.",
+      ),
+      L(
+        lang,
+        "Hotels are booked separately. Motorcycle and riding gear are arranged separately: ask before booking.",
+        "Hotels werden separat gebucht. Motorrad und Fahrerausrüstung werden separat geklärt: bitte vor der Buchung fragen.",
+      ),
+      L(
+        lang,
+        "The pass tours start at CHF 780 for 5 days. A combined trip is quoted by Erich himself.",
+        "Die Passtouren beginnen bei CHF 780 für 5 Tage. Eine kombinierte Reise offeriert Erich selbst.",
+      ),
+      loc(passTour("furka").conditions, lang),
     ],
     added: [],
     removed: [],

@@ -1,10 +1,9 @@
-import type { Lang, PassId } from "../data/passes";
+import type { Lang } from "../data/passes";
 
 import { Button } from "@heroui/react";
 import clsx from "clsx";
 import { useId, useState } from "react";
 
-import { PASS_INTEREST, PASS_ORDER } from "../data/passes";
 import { ui } from "../lib/copy";
 
 import { ArrowUpRightIcon, SelectedIcon } from "@/components/icons";
@@ -221,79 +220,59 @@ export function PartyPicker({ disabled, onSubmit }: PickerProps) {
   );
 }
 
-export function DeparturePicker({ input, disabled, onSubmit }: PickerProps) {
-  const t = ui[useLang()];
-  const pass = input.pass as PassId;
-  const options = input.options as {
-    id: string;
-    startsAt: string;
-    label: string;
-    hint: string;
-  }[];
+const MONTHS = {
+  en: ["June", "July", "August", "September"],
+  de: ["Juni", "Juli", "August", "September"],
+};
+const LENGTHS = [5, 6, 7];
 
-  return (
-    <Group label={t.chooseOne}>
-      {options.map((o, i) => (
-        <Row
-          key={o.id}
-          disabled={disabled}
-          hint={o.hint}
-          index={i}
-          onClick={() =>
-            onSubmit({
-              pass,
-              departureId: o.id,
-              startsAt: o.startsAt,
-              label: o.label,
-            })
-          }
-        >
-          {o.label}
-        </Row>
-      ))}
-    </Group>
-  );
-}
-
-export function InterestsPicker({ disabled, onSubmit }: PickerProps) {
+export function WhenPicker({ disabled, onSubmit }: PickerProps) {
   const lang = useLang();
   const t = ui[lang];
-  const [picked, setPicked] = useState<PassId[]>([]);
-  const toggle = (id: PassId) =>
-    setPicked((c) => (c.includes(id) ? c.filter((x) => x !== id) : [...c, id]));
+  const [month, setMonth] = useState<number | null>(null);
+  const [days, setDays] = useState<number | null>(null);
 
   return (
-    <Group label={t.chooseAny}>
+    <Group label={t.pickWhen}>
       <Grid cols={2}>
-        {PASS_ORDER.map((id, n) => (
+        {[6, 7, 8, 9].map((m, i) => (
           <Chip
-            key={id}
-            className={
-              n === PASS_ORDER.length - 1 && PASS_ORDER.length % 2
-                ? "col-span-2"
-                : undefined
-            }
+            key={m}
             disabled={disabled}
-            hint={PASS_INTEREST[id].theme}
-            index={n}
-            selected={picked.includes(id)}
-            onClick={() => toggle(id)}
+            hint={i === 0 ? t.monthHint : undefined}
+            index={i}
+            selected={month === m}
+            onClick={() => setMonth(m)}
           >
-            {PASS_INTEREST[id].label[lang]}
+            {MONTHS[lang][m - 6]}
           </Chip>
         ))}
       </Grid>
-      {picked.length > 0 && (
+      <Grid cols={3}>
+        {LENGTHS.map((d, i) => (
+          <Chip
+            key={d}
+            disabled={disabled}
+            index={4 + i}
+            selected={days === d}
+            onClick={() => setDays(d)}
+          >
+            {t.days(d)}
+          </Chip>
+        ))}
+      </Grid>
+      {month !== null && days && (
         <Continue
           disabled={disabled}
           onPress={() =>
             onSubmit({
-              interests: picked,
-              label: picked.map((p) => PASS_INTEREST[p].label[lang]).join(", "),
+              month,
+              days,
+              label: `${MONTHS[lang][month - 6]} 2027, ${t.days(days)}`,
             })
           }
         >
-          {t.continue} · {picked.length}
+          {t.continue}
         </Continue>
       )}
     </Group>
@@ -330,3 +309,5 @@ export function NextPicker({ input, disabled, onSubmit }: PickerProps) {
     </div>
   );
 }
+
+export const StayPicker = RidePicker;

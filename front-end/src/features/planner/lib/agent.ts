@@ -1,13 +1,12 @@
 import type { UIMessage } from "ai";
-import type { Lang, PassId } from "../data/passes";
+import type { Lang } from "../data/passes";
 
-import { loc, PASS_INTEREST, passTour } from "../data/passes";
+import { loc } from "../data/passes";
 
 import {
   buildWithDiff,
-  passDays,
-  shortDate,
-  zurichDay,
+  effectiveDays,
+  effectiveStay,
   type PlanInput,
 } from "./plan";
 
@@ -21,16 +20,8 @@ export type Step =
 
 export type Turn = Step[];
 
-export interface OpenDeparture {
-  id: string;
-  startsAt: string;
-  seats: number;
-}
-
 export interface AgentHooks {
   language: () => Lang;
-  /** Upcoming departures of a tour that are open, with the seats still free. */
-  departures: (tourId: string) => OpenDeparture[];
   createInquiry: (summary: {
     riders: number;
     dateFrom: string;
@@ -44,7 +35,15 @@ interface Answer {
   output: Record<string, unknown>;
 }
 
+const TWEAKS = ["base", "move", "longer", "shorter", "finsterwald"];
+
 const L = (lang: Lang, en: string, de: string) => (lang === "de" ? de : en);
+
+const MONTHS: Record<Lang, string[]> = {
+  en: ["June", "July", "August", "September"],
+  de: ["Juni", "Juli", "August", "September"],
+};
+const monthName = (lang: Lang, month: number) => MONTHS[lang][month - 6];
 
 /** Every answered client tool, in conversation order. */
 function answered(messages: UIMessage[]): Answer[] {
@@ -69,186 +68,40 @@ function answered(messages: UIMessage[]): Answer[] {
 const latest = (a: Answer[], name: string) =>
   [...a].reverse().find((x) => x.name === name)?.output;
 
-/** The tour the conversation is about now: the last one whose dates were picked or asked for. */
-function currentPass(a: Answer[]): PassId {
-  const switched = [...a]
-    .reverse()
-    .find(
-      (x) =>
-        x.name === "ask_departure" ||
-        (x.name === "ask_next" && String(x.output.id).startsWith("switch:")),
-    );
-
-  if (switched?.name === "ask_departure") return switched.output.pass as PassId;
-  if (switched) return String(switched.output.id).slice(7) as PassId;
-
-  return (latest(a, "ask_interests")?.interests as PassId[])[0];
-}
-
 export function inputFrom(a: Answer[]): PlanInput | null {
   const ride = latest(a, "ask_ride");
   const party = latest(a, "ask_party");
-  const interests = latest(a, "ask_interests");
-  const at = a.map((x) => x.name).lastIndexOf("ask_departure");
+  const when = latest(a, "ask_when");
+  const stay = latest(a, "ask_stay");
 
-  if (!ride || !party || !interests || at < 0) return null;
-  const departure = a[at].output;
+  if (!ride || !party || !when || !stay) return null;
 
   return {
     ride: ride.id as PlanInput["ride"],
     riders: party.riders as number,
-    pass: departure.pass as PassId,
-    picks: interests.interests as PassId[],
-    departureId: departure.departureId as string,
-    startsAt: departure.startsAt as string,
+    month: when.month as number,
+    days: when.days as number,
+    stay: stay.id as PlanInput["stay"],
     tweaks: a
-      .slice(at + 1)
-      .filter((x) => x.name === "ask_next" && x.output.id === "stay")
-      .map(() => "stay"),
+      .filter((x) => x.name === "ask_next")
+      .map((x) => x.output.id as string)
+      .filter((id) => TWEAKS.includes(id)),
   };
-}
-
-const passName = (lang: Lang, id: PassId) => loc(passTour(id).name, lang);
-const chfFor = (id: PassId) => Math.round(passTour(id).adultPrice / 100);
-
-const MONTHS_IN_SEASON = [6, 7, 8, 9, 10];
-
-function departuresTurn(
-  pass: PassId,
-  riders: number,
-  picks: PassId[],
-  hooks: AgentHooks,
-  lead: string,
-): Turn {
-  const lang = hooks.language();
-  const tour = passTour(pass);
-  const all = hooks.departures(tour.id);
-  const open = all.filter((d) => d.seats >= riders).slice(0, 6);
-  const others = picks.filter((p) => p !== pass);
-  const days = passDays(pass);
-
-  const turn: Turn = [
-    {
-      kind: "reasoning",
-      text: [
-        lead,
-        L(
-          lang,
-          `${passName(lang, pass)} runs ${days} days from Andermatt, from CHF ${chfFor(pass)} per rider. Let me see which dates are open for ${riders === 1 ? "one rider" : `${riders} riders`}.`,
-          `${passName(lang, pass)} dauert ${days} Tage ab Andermatt, ab CHF ${chfFor(pass)} pro Person. Ich schaue, welche Termine für ${riders === 1 ? "eine Person" : `${riders} Personen`} frei sind.`,
-        ),
-      ].join("\n\n"),
-    },
-    {
-      kind: "tool",
-      name: "find_departures",
-      input: { tour: tour.slug, riders },
-      output: {
-        tour: passName("en", pass),
-        open: open.map((d) => ({
-          date: shortDate("en", Date.parse(d.startsAt)),
-          seatsLeft: d.seats,
-        })),
-        withoutEnoughSeats: all.length - open.length,
-      },
-      ms: 900,
-    },
-  ];
-
-  if (!open.length) {
-    return [
-      ...turn,
-      {
-        kind: "text",
-        text:
-          all.length > 0
-            ? L(
-                lang,
-                `No scheduled departure of ${passName(lang, pass)} has seats for ${riders} riders. Erich can arrange private dates for your group.`,
-                `Keine geplante Abfahrt von ${passName(lang, pass)} hat Plätze für ${riders} Personen. Erich kann private Termine für Ihre Gruppe vereinbaren.`,
-              )
-            : L(
-                lang,
-                `${passName(lang, pass)} has no scheduled departure open right now. Erich can arrange private dates on request.`,
-                `${passName(lang, pass)} hat zurzeit keine offene Abfahrt. Erich kann auf Anfrage private Termine vereinbaren.`,
-              ),
-      },
-      {
-        kind: "ask",
-        name: "ask_next",
-        input: {
-          options: [
-            {
-              id: "private",
-              label: L(
-                lang,
-                "Ask Erich for private dates",
-                "Erich nach privaten Terminen fragen",
-              ),
-              group: "Next",
-            },
-            ...others.slice(0, 2).map((p) => ({
-              id: `switch:${p}`,
-              label: L(
-                lang,
-                `Try ${passName(lang, p)} instead`,
-                `Stattdessen ${passName(lang, p)} versuchen`,
-              ),
-              group: "Next",
-            })),
-            {
-              id: "tours",
-              label: L(lang, "Browse the tours", "Die Touren ansehen"),
-              group: "Next",
-            },
-          ],
-        },
-      },
-    ];
-  }
-
-  return [
-    ...turn,
-    {
-      kind: "text",
-      text: L(
-        lang,
-        `These dates are open. Which one suits you?`,
-        `Diese Termine sind frei. Welcher passt Ihnen?`,
-      ),
-    },
-    {
-      kind: "ask",
-      name: "ask_departure",
-      input: {
-        pass,
-        options: open.map((d) => ({
-          id: d.id,
-          startsAt: d.startsAt,
-          label: shortDate(lang, Date.parse(d.startsAt)),
-          hint: L(
-            lang,
-            `${d.seats} seat${d.seats === 1 ? "" : "s"} left`,
-            `${d.seats} ${d.seats === 1 ? "Platz" : "Plätze"} frei`,
-          ),
-        })),
-      },
-    },
-  ];
 }
 
 function planTurn(input: PlanInput, lang: Lang, lead: string): Turn {
   const plan = buildWithDiff(input, lang);
   const first = input.tweaks.length === 0;
-  const others = input.picks.filter((p) => p !== input.pass);
   const used = new Set(input.tweaks);
+  const days = effectiveDays(input);
+  const stay = effectiveStay(input);
 
   const changes =
     plan.added.length || plan.removed.length
       ? [
-          plan.added.length &&
+          plan.added.length > 0 &&
             `${L(lang, "Added", "Neu")}: ${plan.added.join(", ")}.`,
-          plan.removed.length &&
+          plan.removed.length > 0 &&
             `${L(lang, "Removed", "Entfernt")}: ${plan.removed.join(", ")}.`,
         ]
           .filter(Boolean)
@@ -256,8 +109,34 @@ function planTurn(input: PlanInput, lang: Lang, lead: string): Turn {
       : "";
 
   const options = [
-    !used.has("stay") && {
-      id: "stay",
+    {
+      id: stay === "base" ? "move" : "base",
+      label:
+        stay === "base"
+          ? L(
+              lang,
+              "Change base along the way",
+              "Unterwegs die Unterkunft wechseln",
+            )
+          : L(
+              lang,
+              "Sleep in Andermatt every night",
+              "Jede Nacht in Andermatt schlafen",
+            ),
+      group: "Adjust",
+    },
+    days < 7 && {
+      id: "longer",
+      label: L(lang, "One day longer", "Einen Tag länger"),
+      group: "Adjust",
+    },
+    days > 5 && {
+      id: "shorter",
+      label: L(lang, "One day shorter", "Einen Tag kürzer"),
+      group: "Adjust",
+    },
+    !used.has("finsterwald") && {
+      id: "finsterwald",
       label: L(
         lang,
         "Add a night in Finsterwald",
@@ -266,67 +145,62 @@ function planTurn(input: PlanInput, lang: Lang, lead: string): Turn {
       group: "Adjust",
     },
     {
-      id: "date",
-      label: L(lang, "Pick another date", "Anderen Termin wählen"),
-      group: "Adjust",
-    },
-    ...others.slice(0, 2).map((p) => ({
-      id: `switch:${p}`,
-      label: L(
-        lang,
-        `Plan ${passName(lang, p)} instead`,
-        `Stattdessen ${passName(lang, p)} planen`,
-      ),
-      group: "Adjust",
-    })),
-    {
-      id: `open:${plan.slug}`,
-      label: L(lang, "Open this tour to book", "Diese Tour zum Buchen öffnen"),
-      group: "Next",
-    },
-    {
-      id: `story:${input.pass}`,
-      label: L(
-        lang,
-        `Read the ${PASS_INTEREST[input.pass].theme} story`,
-        `Die Geschichte des ${PASS_INTEREST[input.pass].theme} lesen`,
-      ),
-      group: "Next",
-    },
-    {
       id: "send",
       label: L(lang, "Send this plan to Erich", "Diesen Plan an Erich senden"),
       group: "Next",
     },
-  ].filter(Boolean);
-
-  const month = Number(zurichDay(Date.parse(input.startsAt)).slice(5, 7));
-  const inSeason = MONTHS_IN_SEASON.includes(month);
-
-  return [
     {
-      kind: "reasoning",
-      text: lead,
+      id: "passes",
+      label: L(
+        lang,
+        "Read the five pass stories",
+        "Die fünf Pass-Geschichten lesen",
+      ),
+      group: "Next",
     },
     {
+      id: "tours",
+      label: L(
+        lang,
+        "Browse the single-pass tours",
+        "Die Einzelpass-Touren ansehen",
+      ),
+      group: "Next",
+    },
+  ].filter(Boolean);
+
+  return [
+    { kind: "reasoning", text: lead },
+    {
       kind: "tool",
-      name: "check_conditions",
+      name: "plan_route",
       input: {
-        tour: plan.slug,
-        date: zurichDay(Date.parse(input.startsAt)),
+        passes: 5,
+        days,
+        base: stay === "base" ? "Andermatt" : "moving",
       },
       output: {
-        usualSeason: "about June to October (from the tour's conditions)",
-        departureMonth: month,
-        inUsualSeason: inSeason,
-        note: "Snow or weather can change or cancel a day",
+        loops: [
+          {
+            passes: "Furka, Grimsel, Susten",
+            km: "about 120",
+            riding: "about 2.5 h",
+            withStops: "3 to 5 h",
+          },
+          {
+            passes: "Gotthard, Nufenen, Furka",
+            km: "about 105 to 135",
+            riding: "about 2.5 h",
+          },
+        ],
+        sources: ["Andermatt Tourism roadbook", "Switzerland Tourism"],
       },
-      ms: 800,
+      ms: 900,
     },
     {
       kind: "tool",
       name: "build_itinerary",
-      input: { tour: plan.slug, departure: input.departureId },
+      input: { days, stay },
       output: plan,
       ms: 1200,
     },
@@ -336,17 +210,10 @@ function planTurn(input: PlanInput, lang: Lang, lead: string): Turn {
         (first
           ? L(
               lang,
-              `Here is ${plan.title}, ${plan.days} days from ${plan.dateRange}. The stops and times are the tour's own.`,
-              `Hier ist ${plan.title}, ${plan.days} Tage vom ${plan.dateRange}. Stationen und Zeiten sind die der Tour.`,
+              `Here is a ${days}-day plan that covers all five passes in two loops, with ${stay === "base" ? "every night in Andermatt" : "nights in Andermatt, Innertkirchen and Airolo"}.`,
+              `Hier ist ein Plan über ${days} Tage, der alle fünf Pässe in zwei Runden abdeckt, ${stay === "base" ? "mit jeder Nacht in Andermatt" : "mit Nächten in Andermatt, Innertkirchen und Airolo"}.`,
             )
           : `${L(lang, "Updated.", "Angepasst.")} ${changes}`) +
-        (inSeason
-          ? ""
-          : L(
-              lang,
-              ` That date is outside the usual pass season, so snow may change the ride-out day.`,
-              ` Dieser Termin liegt ausserhalb der üblichen Passsaison, Schnee kann den Ausfahrtstag ändern.`,
-            )) +
         L(lang, " Want to adjust anything?", " Möchten Sie etwas ändern?"),
     },
     {
@@ -358,10 +225,30 @@ function planTurn(input: PlanInput, lang: Lang, lead: string): Turn {
 }
 
 const REASON_TWEAK = (lang: Lang): Record<string, string> => ({
-  stay: L(
+  base: L(
     lang,
-    "The night at Erich's bee house in Finsterwald is a separate booking, and the rooms are still to be confirmed with him, so I add it as an optional step after the tour.",
-    "Die Nacht in Erichs Bienenhaus in Finsterwald wird separat gebucht, die Zimmer werden noch mit ihm bestätigt. Ich füge sie deshalb als optionalen Schritt nach der Tour an.",
+    "Back to one base. Both loops start and end in Andermatt, so every night can be spent there and the bags stay put.",
+    "Zurück zu einer Unterkunft. Beide Runden beginnen und enden in Andermatt, jede Nacht lässt sich dort verbringen und das Gepäck bleibt.",
+  ),
+  move: L(
+    lang,
+    "Changing base: the three-pass loop splits at Innertkirchen, and the south side is reached from Airolo, so I move the nights there and rebuild the days.",
+    "Wechsel der Unterkunft: Die Dreipässe-Runde teilt sich bei Innertkirchen, und die Südseite erreicht man von Airolo aus. Ich verlege die Nächte dorthin und baue die Tage neu.",
+  ),
+  longer: L(
+    lang,
+    "One more day. The ride days stay the same, so the extra day goes to the reserve and to a pass you want to ride again.",
+    "Ein Tag mehr. Die Fahrtage bleiben gleich, der zusätzliche Tag geht an die Reserve und an einen Pass, den Sie nochmals fahren möchten.",
+  ),
+  shorter: L(
+    lang,
+    "One day fewer. I'll keep both loops and take the time from the spare days.",
+    "Ein Tag weniger. Beide Runden bleiben, die Zeit nehme ich von den freien Tagen.",
+  ),
+  finsterwald: L(
+    lang,
+    "The night at Erich's bee house in Finsterwald is a separate booking, and the rooms are still to be confirmed with him, so I add it as an optional step after the trip.",
+    "Die Nacht in Erichs Bienenhaus in Finsterwald wird separat gebucht, die Zimmer werden noch mit ihm bestätigt. Ich füge sie deshalb als optionalen Schritt nach der Reise an.",
   ),
 });
 
@@ -379,8 +266,8 @@ export function nextTurn(messages: UIMessage[], hooks: AgentHooks): Turn {
         kind: "reasoning",
         text: L(
           lang,
-          "To suggest the right tour I need to know how you travel and what you enjoy. First, let me look at the tours we have.",
-          "Um die richtige Tour vorzuschlagen, muss ich wissen, wie Sie reisen und was Ihnen gefällt. Zuerst schaue ich, welche Touren wir haben.",
+          "Erich's five pass tours each ride one pass. Most riders who come for the passes want all five, so I'll plan that. First I need to know how you travel.",
+          "Erichs fünf Passtouren fahren je einen Pass. Wer wegen der Pässe kommt, will meist alle fünf, also plane ich das. Zuerst muss ich wissen, wie Sie reisen.",
         ),
       },
       {
@@ -391,7 +278,6 @@ export function nextTurn(messages: UIMessage[], hooks: AgentHooks): Turn {
           count: tours.length,
           tours: tours.map((t) => ({
             name: loc(t.name, "en"),
-            days: passDays(t.slug.replace("-pass", "") as PassId),
             fromCHF: Math.round(t.adultPrice / 100),
           })),
         },
@@ -401,8 +287,8 @@ export function nextTurn(messages: UIMessage[], hooks: AgentHooks): Turn {
         kind: "text",
         text: L(
           lang,
-          "Hi! I'm Erich's trip assistant. I match you to one of the pass tours he runs and plan it on dates that are really open. A few quick questions first. How will you ride?",
-          "Grüezi! Ich bin Erichs Reiseassistent. Ich finde die passende Passtour aus seinem Angebot und plane sie auf Termine, die wirklich frei sind. Zuerst ein paar kurze Fragen. Wie fahren Sie?",
+          "Hi! I'm Erich's trip assistant. I can plan all five passes (Furka, Grimsel, Susten, Gotthard and Nufenen) as one trip around Andermatt. A few quick questions first. How will you ride?",
+          "Grüezi! Ich bin Erichs Reiseassistent. Ich kann alle fünf Pässe (Furka, Grimsel, Susten, Gotthard und Nufenen) als eine Reise rund um Andermatt planen. Zuerst ein paar kurze Fragen. Wie fahren Sie?",
         ),
       },
       {
@@ -458,35 +344,89 @@ export function nextTurn(messages: UIMessage[], hooks: AgentHooks): Turn {
           kind: "text",
           text: L(
             lang,
-            "Each tour rides one pass on its ride-out day. Which passes draw you? Pick as many as you like, in the order you like them.",
-            "Jede Tour fährt am Ausfahrtstag einen Pass. Welche Pässe reizen Sie? Wählen Sie, so viele Sie möchten, in der Reihenfolge Ihrer Vorliebe.",
+            "When would you like to ride, and how many days do you have?",
+            "Wann möchten Sie fahren, und wie viele Tage haben Sie?",
           ),
         },
-        { kind: "ask", name: "ask_interests", input: {} },
+        { kind: "ask", name: "ask_when", input: {} },
       ];
-    case "ask_interests": {
-      const picks = last.output.interests as PassId[];
-      const riders = latest(a, "ask_party")?.riders as number;
+    case "ask_when": {
+      const month = last.output.month as number;
+      const early = month === 6;
 
-      return departuresTurn(
-        picks[0],
-        riders,
-        picks,
-        hooks,
-        picks.length > 1
-          ? L(
-              lang,
-              `You picked ${picks.length} passes. A tour covers one pass on its ride-out day, so I start with the first one you picked and keep the others as ideas for the free days.`,
-              `Sie haben ${picks.length} Pässe gewählt. Eine Tour fährt am Ausfahrtstag einen Pass, ich beginne also mit Ihrer ersten Wahl und behalte die anderen als Ideen für die freien Tage.`,
-            )
-          : L(
-              lang,
-              "One pass picked, so the match is direct.",
-              "Ein Pass gewählt, die Zuordnung ist also eindeutig.",
-            ),
-      );
+      return [
+        {
+          kind: "reasoning",
+          text: L(
+            lang,
+            `${monthName(lang, month)}. Pass roads close for snow in winter, so before I plan anything I should check how that month sits in the season. The tours say the passes are usually open from about June to October.`,
+            `${monthName(lang, month)}. Passstrassen sind im Winter wegen Schnee gesperrt, also prüfe ich, wie dieser Monat in der Saison liegt. Laut den Touren sind die Pässe meist von etwa Juni bis Oktober offen.`,
+          ),
+        },
+        {
+          kind: "tool",
+          name: "check_season",
+          input: { month: monthName("en", month), year: 2027 },
+          output: {
+            usualSeason: "about June to October (from the tours' conditions)",
+            status: early
+              ? "early in the season, a pass can open late"
+              : "usually open",
+            note: "Snow or weather can change or cancel a day; check road status before riding",
+          },
+          ms: 900,
+        },
+        {
+          kind: "text",
+          text: early
+            ? L(
+                lang,
+                "Early June is the start of the season, so a pass may open late. I'll keep a reserve day in the plan. Where do you want to sleep?",
+                "Anfang Juni beginnt die Saison, ein Pass kann später öffnen. Ich plane einen Reservetag ein. Wo möchten Sie übernachten?",
+              )
+            : L(
+                lang,
+                "That falls inside the usual season. Where do you want to sleep?",
+                "Das liegt in der üblichen Saison. Wo möchten Sie übernachten?",
+              ),
+        },
+        {
+          kind: "ask",
+          name: "ask_stay",
+          input: {
+            options: [
+              {
+                id: "base",
+                label: L(
+                  lang,
+                  "One base: Andermatt every night",
+                  "Eine Unterkunft: jede Nacht in Andermatt",
+                ),
+                hint: L(
+                  lang,
+                  "Both loops start and end there",
+                  "Beide Runden beginnen und enden dort",
+                ),
+              },
+              {
+                id: "move",
+                label: L(
+                  lang,
+                  "Change base along the way",
+                  "Unterwegs die Unterkunft wechseln",
+                ),
+                hint: L(
+                  lang,
+                  "Andermatt, Innertkirchen, Airolo",
+                  "Andermatt, Innertkirchen, Airolo",
+                ),
+              },
+            ],
+          },
+        },
+      ];
     }
-    case "ask_departure": {
+    case "ask_stay": {
       const input = inputFrom(a);
 
       return input
@@ -495,8 +435,8 @@ export function nextTurn(messages: UIMessage[], hooks: AgentHooks): Turn {
             lang,
             L(
               lang,
-              "Before I lay out the days I'll check the date against the tour's conditions, then put the tour's own stops and times on your dates.",
-              "Bevor ich die Tage aufbaue, prüfe ich den Termin gegen die Bedingungen der Tour und lege dann die Stationen und Zeiten der Tour auf Ihre Daten.",
+              "All five passes fit into two classic loops around Andermatt: Furka, Grimsel and Susten, then Gotthard, Nufenen and Furka again. I'll check their lengths, then lay out the days.",
+              "Alle fünf Pässe passen in zwei klassische Runden rund um Andermatt: Furka, Grimsel und Susten, dann Gotthard, Nufenen und nochmals Furka. Ich prüfe die Längen und baue dann die Tage.",
             ),
           )
         : [];
@@ -504,12 +444,14 @@ export function nextTurn(messages: UIMessage[], hooks: AgentHooks): Turn {
     case "ask_next": {
       const id = last.output.id as string;
       const input = inputFrom(a);
-      const picks = latest(a, "ask_interests")?.interests as PassId[];
-      const riders = latest(a, "ask_party")?.riders as number;
 
       if (id === "send" && input) {
-        const dayOne = Date.parse(input.startsAt);
-        const days = passDays(input.pass);
+        const days = effectiveDays(input);
+        const year = 2027;
+        const from = `${year}-${String(input.month).padStart(2, "0")}-01`;
+        const to = new Date(Date.UTC(year, input.month, 0))
+          .toISOString()
+          .slice(0, 10);
         const ride = {
           own: L(lang, "Own motorbike", "Eigenes Motorrad"),
           passenger: L(lang, "As a passenger", "Als Mitfahrende"),
@@ -517,9 +459,17 @@ export function nextTurn(messages: UIMessage[], hooks: AgentHooks): Turn {
         }[input.ride];
         const requestId = hooks.createInquiry({
           riders: input.riders,
-          dateFrom: zurichDay(dayOne),
-          dateTo: zurichDay(dayOne + (days - 1) * 86_400_000),
-          note: `${passName(lang, input.pass)}. ${ride}.${input.tweaks.includes("stay") ? ` ${L(lang, "With a night in Finsterwald.", "Mit einer Nacht in Finsterwald.")}` : ""}`,
+          dateFrom: from,
+          dateTo: to,
+          note: `${L(lang, "All five passes", "Alle fünf Pässe")}, ${days} ${L(lang, "days", "Tage")}, ${
+            effectiveStay(input) === "base"
+              ? L(lang, "every night in Andermatt", "jede Nacht in Andermatt")
+              : L(
+                  lang,
+                  "nights in Andermatt, Innertkirchen and Airolo",
+                  "Nächte in Andermatt, Innertkirchen und Airolo",
+                )
+          }. ${ride}.${input.tweaks.includes("finsterwald") ? ` ${L(lang, "With a night in Finsterwald.", "Mit einer Nacht in Finsterwald.")}` : ""}`,
         });
 
         return [
@@ -527,14 +477,14 @@ export function nextTurn(messages: UIMessage[], hooks: AgentHooks): Turn {
             kind: "reasoning",
             text: L(
               lang,
-              "Packaging your answers and the plan into a short request for Erich, with the tour, the dates and the group, then sending it.",
-              "Ich fasse Ihre Antworten und den Plan in einer kurzen Anfrage an Erich zusammen, mit Tour, Terminen und Gruppe, und sende sie.",
+              "Packaging your answers and the plan into a short request for Erich, with the month, the group and the plan, then sending it.",
+              "Ich fasse Ihre Antworten und den Plan in einer kurzen Anfrage an Erich zusammen, mit Monat, Gruppe und Plan, und sende sie.",
             ),
           },
           {
             kind: "tool",
             name: "create_inquiry",
-            input: { tour: input.pass, riders: input.riders },
+            input: { passes: 5, days, riders: input.riders },
             output: { requestId, status: "sent" },
             ms: 1000,
           },
@@ -548,30 +498,6 @@ export function nextTurn(messages: UIMessage[], hooks: AgentHooks): Turn {
           },
         ];
       }
-      if (id === "date")
-        return departuresTurn(
-          currentPass(a),
-          riders,
-          picks,
-          hooks,
-          L(
-            lang,
-            "Looking at the other open dates of the same tour.",
-            "Ich schaue auf die anderen freien Termine derselben Tour.",
-          ),
-        );
-      if (id.startsWith("switch:"))
-        return departuresTurn(
-          id.slice(7) as PassId,
-          riders,
-          picks,
-          hooks,
-          L(
-            lang,
-            `Switching to ${passName(lang, id.slice(7) as PassId)}. Its dates are its own, so I look them up again.`,
-            `Wechsel zu ${passName(lang, id.slice(7) as PassId)}. Die Termine sind eigene, ich suche sie neu heraus.`,
-          ),
-        );
       if (input) return planTurn(input, lang, REASON_TWEAK(lang)[id] ?? "");
 
       return [];

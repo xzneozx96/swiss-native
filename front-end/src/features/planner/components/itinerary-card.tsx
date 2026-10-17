@@ -23,13 +23,12 @@ export function ItineraryCard({ plan }: { plan: Plan }) {
       <header className="flex flex-col gap-1 px-5 pt-4 pb-3">
         <h3 className="font-serif text-title">{plan.title}</h3>
         <p className="text-sm text-muted">
-          {t.summary(plan.days, plan.dateRange, plan.perRider)}
+          {plan.stay === "base"
+            ? language === "de"
+              ? "Jede Nacht in Andermatt"
+              : "Every night in Andermatt"
+            : "Andermatt · Innertkirchen · Airolo"}
         </p>
-        {plan.riders > 1 && (
-          <p className="text-sm font-medium">
-            {t.forGroup(plan.riders, plan.total)}
-          </p>
-        )}
       </header>
 
       <ol className="px-5 pb-4">
@@ -39,15 +38,8 @@ export function ItineraryCard({ plan }: { plan: Plan }) {
             className={clsx(COLS, "animate-rise")}
             style={rise(n)}
           >
-            <span className="flex flex-col pt-px">
-              <span className="text-sm font-semibold tabular-nums">
-                {item.label}
-              </span>
-              {item.date && (
-                <span className="text-xs leading-4 text-muted">
-                  {item.date}
-                </span>
-              )}
+            <span className="pt-px text-sm font-semibold tabular-nums">
+              {item.label}
             </span>
             <div className="relative flex flex-col items-center">
               <span
@@ -58,7 +50,7 @@ export function ItineraryCard({ plan }: { plan: Plan }) {
                 <span aria-hidden className="w-px flex-1 bg-separator" />
               )}
             </div>
-            <div className="flex min-w-0 flex-col gap-1 pb-3">
+            <div className="flex min-w-0 flex-col gap-1 pb-4">
               <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
                 <h4 className="font-serif text-body leading-snug font-semibold">
                   {item.name}
@@ -75,25 +67,25 @@ export function ItineraryCard({ plan }: { plan: Plan }) {
                 )}
               </div>
               <p className="text-sm leading-snug text-muted">{item.text}</p>
+              {item.ride && (
+                <p className="text-xs leading-4 font-medium">{item.ride}</p>
+              )}
               {item.stops && (
-                <ol className="mt-1 flex flex-col gap-2">
+                <ol className="mt-1 flex flex-col gap-1.5 border-s border-separator ps-3">
                   {item.stops.map((stop) => (
-                    <li
-                      key={stop.name}
-                      className="grid grid-cols-[2.5rem_minmax(0,1fr)] gap-x-2 text-sm"
-                    >
-                      <span className="font-medium tabular-nums">
-                        {stop.time}
-                      </span>
-                      <span className="flex flex-col">
-                        <span className="font-medium">{stop.name}</span>
-                        <span className="text-xs leading-4 text-muted">
-                          {stop.text}
-                        </span>
+                    <li key={stop.name} className="flex flex-col text-sm">
+                      <span className="font-medium">{stop.name}</span>
+                      <span className="text-xs leading-4 text-muted">
+                        {stop.text}
                       </span>
                     </li>
                   ))}
                 </ol>
+              )}
+              {item.night && (
+                <p className="text-xs text-muted">
+                  {t.night}: {item.night}
+                </p>
               )}
             </div>
           </li>
@@ -108,16 +100,6 @@ export function ItineraryCard({ plan }: { plan: Plan }) {
               {plan.removed.join(", ")}
             </span>
           </p>
-        )}
-        {plan.included.length > 0 && (
-          <div>
-            <p className="font-medium">{t.included}</p>
-            <ul className="list-disc ps-5 text-muted">
-              {plan.included.map((n) => (
-                <li key={n}>{n}</li>
-              ))}
-            </ul>
-          </div>
         )}
         <div>
           <p className="font-medium">{t.goodToKnow}</p>
