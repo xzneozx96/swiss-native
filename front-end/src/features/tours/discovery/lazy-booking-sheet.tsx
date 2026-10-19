@@ -28,7 +28,8 @@ export function preloadBookingSheet() {
 
 /**
  * The booking sheet, fetched when it is first opened. If the chunk cannot be fetched (offline, or
- * a page left open across a deploy) the sheet closes again and the next tap tries again.
+ * a page left open across a deploy) the sheet closes again and the page keeps working. Browsers
+ * remember a failed module fetch for the life of the page, so a reload is what recovers it.
  */
 export function LazyBookingSheet(props: SheetProps) {
   const { isOpen, onClose } = props
