@@ -1,17 +1,17 @@
-import type { RichNode } from "@/lib/rich-text";
+import type { RichNode } from '@/lib/rich-text'
 
-import { Drawer } from "@heroui/react";
+import { Drawer } from '@heroui/react'
 
-import { RichText } from "@/components/rich-text";
+import { RichText } from '@/components/rich-text'
 
 export interface StoryView {
   /** Small label above the title, e.g. "The story behind it". */
-  label: string;
-  title: string;
+  label: string
+  title: string
   /** The rich body in the guest's language, or the other one with `languageNote`. */
-  body: RichNode;
+  body: RichNode
   /** Shown when the story is only in the other language (R02). */
-  languageNote?: string;
+  languageNote?: string
 }
 
 /**
@@ -25,10 +25,10 @@ export function StorySheet({
   isOpen,
   onOpenChange,
 }: {
-  story: StoryView;
-  closeLabel: string;
-  isOpen: boolean;
-  onOpenChange: (open: boolean) => void;
+  story: StoryView
+  closeLabel: string
+  isOpen: boolean
+  onOpenChange: (open: boolean) => void
 }) {
   return (
     <Drawer.Backdrop isOpen={isOpen} onOpenChange={onOpenChange}>
@@ -58,5 +58,5 @@ export function StorySheet({
         </Drawer.Dialog>
       </Drawer.Content>
     </Drawer.Backdrop>
-  );
+  )
 }

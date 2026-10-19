@@ -2,34 +2,35 @@
  * USP strip ideas: the banner's three selling points (Alpine passes, Scenic roads,
  * Hidden gems), each with its line icon. Every idea renders a real list.
  */
-import type { BrandCopy } from "./copy";
+import type { BrandCopy } from './copy'
 
-import { useLayoutEffect, useRef, useState } from "react";
+import { useLayoutEffect, useRef, useState } from 'react'
 
-import { PassIcon, PinesIcon, RoadIcon } from "./brand-icons";
-import { useReducedMotion, useReveal } from "./use-reveal";
+import { PassIcon, PinesIcon, RoadIcon } from './brand-icons'
+import { useReducedMotion, useReveal } from './use-reveal'
 
-export const NAVY = "#1E3A5F";
+export const NAVY = '#1E3A5F'
 
-type PointId = "passes" | "roads" | "gems";
+type PointId = 'passes' | 'roads' | 'gems'
 
 const POINTS: {
-  id: PointId;
-  Icon: typeof PassIcon;
+  id: PointId
+  Icon: typeof PassIcon
   /** Home-page section the jump chips (idea 4) scroll to. */
-  target: string;
+  target: string
 }[] = [
-  { id: "passes", Icon: PassIcon, target: "tours" },
-  { id: "roads", Icon: RoadIcon, target: "stay-key-title" },
-  { id: "gems", Icon: PinesIcon, target: "xp-flight-title" },
-];
+  { id: 'passes', Icon: PassIcon, target: 'tours' },
+  { id: 'roads', Icon: RoadIcon, target: 'stay-key-title' },
+  { id: 'gems', Icon: PinesIcon, target: 'xp-flight-title' },
+]
 
-const delay = (i: number) =>
-  ({ "--lab-delay": `${i * 90}ms` }) as React.CSSProperties;
+function delay(i: number) {
+  return ({ '--lab-delay': `${i * 90}ms` }) as React.CSSProperties
+}
 
 /** 1 · Faithful: icon over a letter-spaced label, three columns, hairline dividers, cream. */
 export function UspFaithful({ c }: { c: BrandCopy }) {
-  const ref = useReveal<HTMLUListElement>();
+  const ref = useReveal<HTMLUListElement>()
 
   return (
     <div className="-mx-4 border-y border-[#1E3A5F]/10 bg-hero-cream px-3 py-4">
@@ -53,12 +54,12 @@ export function UspFaithful({ c }: { c: BrandCopy }) {
         ))}
       </ul>
     </div>
-  );
+  )
 }
 
 /** 2 · Pill cards in a scroll-snap row: icon, label and one descriptive line each. */
 export function UspPills({ c }: { c: BrandCopy }) {
-  const ref = useReveal<HTMLUListElement>();
+  const ref = useReveal<HTMLUListElement>()
 
   return (
     <div className="-mx-4 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
@@ -94,7 +95,7 @@ export function UspPills({ c }: { c: BrandCopy }) {
         ))}
       </ul>
     </div>
-  );
+  )
 }
 
 /**
@@ -107,36 +108,37 @@ export function UspTicker({
   c,
   heroEdge = false,
 }: {
-  c: BrandCopy;
-  heroEdge?: boolean;
+  c: BrandCopy
+  heroEdge?: boolean
 }) {
-  const ref = useReveal<HTMLUListElement>();
-  const boxRef = useRef<HTMLDivElement>(null);
-  const [bare, setBare] = useState(false);
+  const ref = useReveal<HTMLUListElement>()
+  const boxRef = useRef<HTMLDivElement>(null)
+  const [bare, setBare] = useState(false)
 
   useLayoutEffect(() => {
-    const box = boxRef.current;
-    const list = ref.current;
+    const box = boxRef.current
+    const list = ref.current
 
-    if (!box || !list) return;
+    if (!box || !list)
+      return
     const fit = () => {
-      const iconsWidth = list.querySelectorAll("svg").length ? 0 : 3 * 22;
+      const iconsWidth = list.querySelectorAll('svg').length ? 0 : 3 * 22
 
-      setBare(list.scrollWidth + iconsWidth > box.clientWidth);
-    };
-    const ro = new ResizeObserver(fit);
+      setBare(list.scrollWidth + iconsWidth > box.clientWidth)
+    }
+    const ro = new ResizeObserver(fit)
 
-    ro.observe(box);
-    fit();
+    ro.observe(box)
+    fit()
 
-    return () => ro.disconnect();
-  }, [ref, c, bare]);
+    return () => ro.disconnect()
+  }, [ref, c, bare])
 
   return (
     <div
       ref={boxRef}
       className={`-mx-4 overflow-x-auto bg-hero-cream [scrollbar-width:none] [&::-webkit-scrollbar]:hidden ${
-        heroEdge ? "-mt-[65px] pt-[38px] pb-2" : "py-2"
+        heroEdge ? '-mt-[65px] pt-[38px] pb-2' : 'py-2'
       }`}
     >
       <ul
@@ -155,13 +157,13 @@ export function UspTicker({
             )}
             {!bare && <Icon size={16} strokeWidth={1.6} />}
             <span className="text-[12px] leading-4 font-semibold whitespace-nowrap [hyphens:none]">
-              {c.points[id].label.replace("\u00AD", "")}
+              {c.points[id].label.replace('\u00AD', '')}
             </span>
           </li>
         ))}
       </ul>
     </div>
-  );
+  )
 }
 
 /**
@@ -170,27 +172,28 @@ export function UspTicker({
  * hidden gems → the bee-house experience) and move focus to its heading.
  */
 export function UspJump({ c }: { c: BrandCopy }) {
-  const ref = useReveal<HTMLUListElement>();
-  const reduced = useReducedMotion();
+  const ref = useReveal<HTMLUListElement>()
+  const reduced = useReducedMotion()
 
   const jump = (id: string) => {
-    const heading = document.getElementById(id);
+    const heading = document.getElementById(id)
 
-    if (!heading) return;
-    (heading.closest("section") ?? heading).scrollIntoView({
-      behavior: reduced ? "auto" : "smooth",
-      block: "start",
-    });
-    heading.setAttribute("tabindex", "-1");
-    heading.focus({ preventScroll: true });
-  };
+    if (!heading)
+      return;
+    (heading.closest('section') ?? heading).scrollIntoView({
+      behavior: reduced ? 'auto' : 'smooth',
+      block: 'start',
+    })
+    heading.setAttribute('tabindex', '-1')
+    heading.focus({ preventScroll: true })
+  }
 
   return (
     <ul ref={ref} aria-label={c.listLabel} className="grid grid-cols-3 gap-2">
       {POINTS.map(({ id, Icon, target }, i) => (
         <li key={id} className="lab-reveal flex" style={delay(i)}>
           <button
-            aria-label={`${c.points[id].label.replace("\u00AD", "")}: ${c.jumpHint} ${c.jump[id]}`}
+            aria-label={`${c.points[id].label.replace('\u00AD', '')}: ${c.jumpHint} ${c.jump[id]}`}
             className="flex min-h-11 w-full flex-col items-center gap-1.5 rounded-2xl border border-[#1E3A5F]/15 bg-hero-cream px-1.5 pt-3 pb-2.5 text-center outline-none focus-visible:focus-ring active:scale-[0.97] motion-safe:transition-transform"
             type="button"
             onClick={() => jump(target)}
@@ -224,7 +227,7 @@ export function UspJump({ c }: { c: BrandCopy }) {
         </li>
       ))}
     </ul>
-  );
+  )
 }
 
 /**
@@ -232,7 +235,7 @@ export function UspJump({ c }: { c: BrandCopy }) {
  * links the three points like stops on a ride.
  */
 export function UspRoad({ c }: { c: BrandCopy }) {
-  const ref = useReveal<HTMLDivElement>();
+  const ref = useReveal<HTMLDivElement>()
 
   return (
     <div ref={ref} className="relative -mx-4 px-4 pt-1">
@@ -280,5 +283,5 @@ export function UspRoad({ c }: { c: BrandCopy }) {
         ))}
       </ul>
     </div>
-  );
+  )
 }

@@ -1,35 +1,35 @@
-import type { LinkProps } from "@tanstack/react-router";
+import type { LinkProps } from '@tanstack/react-router'
 
-import { SearchField } from "@heroui/react";
-import { Link } from "@tanstack/react-router";
+import { SearchField } from '@heroui/react'
+import { Link } from '@tanstack/react-router'
 
-import { ChevronRightIcon } from "@/components/icons";
-import { BackButton } from "@/components/layout/top-bar-buttons";
-import { Media } from "@/components/media";
+import { ChevronRightIcon } from '@/components/icons'
+import { BackButton } from '@/components/layout/top-bar-buttons'
+import { Media } from '@/components/media'
 
 export interface SearchResultRow {
-  key: string;
-  title: string;
-  meta: string;
-  photo?: string;
-  link?: LinkProps;
-  onSelect?: () => void;
+  key: string
+  title: string
+  meta: string
+  photo?: string
+  link?: LinkProps
+  onSelect?: () => void
 }
 
 export interface SearchResultGroup {
-  title: string;
-  rows: SearchResultRow[];
+  title: string
+  rows: SearchResultRow[]
 }
 
 interface GlobalSearchProps {
-  label: string;
-  placeholder: string;
-  backLabel: string;
-  query: string;
-  onQueryChange: (q: string) => void;
-  onBack: () => void;
-  groups: SearchResultGroup[];
-  noResults: string | null;
+  label: string
+  placeholder: string
+  backLabel: string
+  query: string
+  onQueryChange: (q: string) => void
+  onBack: () => void
+  groups: SearchResultGroup[]
+  noResults: string | null
 }
 
 /**
@@ -72,60 +72,62 @@ export function GlobalSearch({
           <p className="py-8 text-center text-sm text-muted">{noResults}</p>
         )}
 
-        {groups.map((group) => (
+        {groups.map(group => (
           <section key={group.title} className="flex flex-col gap-1">
             <h2 className="pb-1 text-heading">{group.title}</h2>
             <ul className="flex flex-col">
-              {group.rows.map((row) => (
+              {group.rows.map(row => (
                 <li key={row.key}>
-                  {row.onSelect ? (
-                    <button
-                      className="flex w-full items-center gap-3 rounded-2xl py-2 text-left outline-none transition-transform focus-visible:focus-ring active:scale-[0.99]"
-                      type="button"
-                      onClick={row.onSelect}
-                    >
-                      <Media
-                        alt=""
-                        className="size-14 shrink-0 rounded-xl"
-                        photo={row.photo}
-                      />
-                      <span className="flex min-w-0 flex-1 flex-col">
-                        <span className="truncate font-serif text-card-title">
-                          {row.title}
-                        </span>
-                        <span className="truncate text-label text-muted">
-                          {row.meta}
-                        </span>
-                      </span>
-                      <ChevronRightIcon
-                        className="shrink-0 text-muted"
-                        size={18}
-                      />
-                    </button>
-                  ) : (
-                    <Link
-                      {...row.link}
-                      className="flex w-full items-center gap-3 rounded-2xl py-2 text-left outline-none transition-transform focus-visible:focus-ring active:scale-[0.99]"
-                    >
-                      <Media
-                        alt=""
-                        className="size-14 shrink-0 rounded-xl"
-                        photo={row.photo}
-                      />
-                      <span className="flex min-w-0 flex-1 flex-col">
-                        <span className="truncate font-serif text-card-title">
-                          {row.title}
-                        </span>
-                        <span className="truncate text-label text-muted">
-                          {row.meta}
-                        </span>
-                      </span>
-                      <ChevronRightIcon
-                        className="shrink-0 text-muted"
-                        size={18}
-                      />
-                    </Link>
-                  )}
+                  {row.onSelect
+                    ? (
+                        <button
+                          className="flex w-full items-center gap-3 rounded-2xl py-2 text-left outline-none transition-transform focus-visible:focus-ring active:scale-[0.99]"
+                          type="button"
+                          onClick={row.onSelect}
+                        >
+                          <Media
+                            alt=""
+                            className="size-14 shrink-0 rounded-xl"
+                            photo={row.photo}
+                          />
+                          <span className="flex min-w-0 flex-1 flex-col">
+                            <span className="truncate font-serif text-card-title">
+                              {row.title}
+                            </span>
+                            <span className="truncate text-label text-muted">
+                              {row.meta}
+                            </span>
+                          </span>
+                          <ChevronRightIcon
+                            className="shrink-0 text-muted"
+                            size={18}
+                          />
+                        </button>
+                      )
+                    : (
+                        <Link
+                          {...row.link}
+                          className="flex w-full items-center gap-3 rounded-2xl py-2 text-left outline-none transition-transform focus-visible:focus-ring active:scale-[0.99]"
+                        >
+                          <Media
+                            alt=""
+                            className="size-14 shrink-0 rounded-xl"
+                            photo={row.photo}
+                          />
+                          <span className="flex min-w-0 flex-1 flex-col">
+                            <span className="truncate font-serif text-card-title">
+                              {row.title}
+                            </span>
+                            <span className="truncate text-label text-muted">
+                              {row.meta}
+                            </span>
+                          </span>
+                          <ChevronRightIcon
+                            className="shrink-0 text-muted"
+                            size={18}
+                          />
+                        </Link>
+                      )}
                 </li>
               ))}
             </ul>
@@ -133,5 +135,5 @@ export function GlobalSearch({
         ))}
       </div>
     </div>
-  );
+  )
 }

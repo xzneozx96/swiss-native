@@ -6,8 +6,8 @@ This repo is a long-lived fork of `swiss-keepsakes`. Upstream is the git remote 
 | | |
 |---|---|
 | Fork point | `c7850da` (upstream, 14 Oct 2026) |
-| Last synced | `37bafc7` (upstream `main`: trip assistant demo) |
-| Synced on | 17 Oct 2026, tag `upstream-synced-37bafc7` |
+| Last synced | `b2acdab` (upstream `main`: pnpm, antfu ESLint, React best practices) |
+| Synced on | 19 Oct 2026, tag `upstream-synced-b2acdab` |
 
 ## Every sync
 
@@ -17,7 +17,7 @@ git switch -c sync/upstream-<short-sha>
 git merge upstream/main --no-commit --no-ff
 scripts/post-sync-prune.sh          # drops files for features we do not ship
 # resolve what is left (rules below), then:
-cd front-end && npx tsc --noEmit && npx eslint src --fix && npx vite build
+cd front-end && pnpm exec tsc --noEmit && pnpm exec eslint src --fix && pnpm test && pnpm build
 # check the app (dashboard: /store, /store/sales, /store/bookings, /store/products; guest: /tours)
 git commit && git switch main && git merge --ff-only sync/upstream-<short-sha>
 git tag upstream-synced-<short-sha>
@@ -74,6 +74,17 @@ upstream's 11 Lucerne tours (`features/tours/lucerne`) and their photos. Our own
 (`features/lab/brand`, `routes/_guest/lab.*`) is kept; the prune script removes only upstream's.
 
 ## Sync log
+
+- **b2acdab** (19 Oct 2026): took upstream's React best-practice rules (React Compiler, external demo
+  store with `useDemoSelector` and `useDemoActions`, lazy German dictionary, memoised cards, shared
+  clock, `useLatest`), its `@antfu/eslint-config` setup (single quotes, no semicolons, boundaries
+  rule), Vitest and Playwright, pnpm 10 (`pnpm-lock.yaml` replaces `package-lock.json`). German messages now live next to the
+  English ones in `*.de.ts` files. The merge was done by formatting base and ours with upstream's
+  ESLint config first, then three-way merging, so only real conflicts were left. Skipped: `AGENTS.md`, `docs/development-rules`, `api/`
+  (Neon), `spikes/`, root `e2e/` (keepsake flows), `docs/spikes`, `docs/architecture`,
+  `docs/development-plan`, `docs/front-end-audit`, the e2e CI workflow, the traceability scripts,
+  the home rework, `components/assistant.tsx`, `LocaleOverride`, the calendar lab and the phone
+  `PeriodSheet` on Sales. Added `tests/e2e/routes.spec.ts`, which opens every main route.
 
 - **37bafc7** (17 Oct 2026): merged with `-s ours` (so upstream's history counts as merged) and
   took only the trip assistant: the `ai-elements` components, the chat session and scripted

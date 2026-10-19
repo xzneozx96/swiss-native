@@ -1,30 +1,31 @@
-import type { ProductAction } from "./product-rows";
-import type { ProductRow, ProductTab } from "../hooks/use-merchant-products";
+import type { ProductRow } from '../hooks/use-merchant-products'
+import type { ProductAction } from './product-rows'
+import type { ProductTab } from '@/features/merchant/products/lib/search-params'
 
-import { buttonVariants, toast } from "@heroui/react";
-import { Link, useNavigate } from "@tanstack/react-router";
-import { useEffect, useRef, useState } from "react";
+import { buttonVariants, toast } from '@heroui/react'
+import { Link, useNavigate } from '@tanstack/react-router'
+import { useEffect, useRef, useState } from 'react'
 
-import {
-  useMerchantProducts,
-  useProductArchive,
-} from "../hooks/use-merchant-products";
+import { useConfirm } from '@/components/confirm-dialog'
 
-import { ProductRows } from "./product-rows";
-
-import { useConfirm } from "@/components/confirm-dialog";
 import {
   FilterButton,
   FilterChips,
   filterGroup,
-} from "@/components/filter-bar";
-import { OptionIcon, PlusIcon, TourIcon } from "@/components/icons";
-import { MerchantPageHeader } from "@/components/layout/merchant-page-header";
-import { RouteTabs } from "@/components/route-tabs";
-import { useLocale } from "@/contexts/locale-context";
-import { useSimulatedLoading } from "@/hooks/use-simulated-loading";
+} from '@/components/filter-bar'
 
-type ProductView = "active" | "archived";
+import { OptionIcon, PlusIcon, TourIcon } from '@/components/icons'
+import { MerchantPageHeader } from '@/components/layout/merchant-page-header'
+import { RouteTabs } from '@/components/route-tabs'
+import { useLocale } from '@/contexts/locale-context'
+import { useSimulatedLoading } from '@/hooks/use-simulated-loading'
+import {
+  useMerchantProducts,
+  useProductArchive,
+} from '../hooks/use-merchant-products'
+import { ProductRows } from './product-rows'
+
+type ProductView = 'active' | 'archived'
 
 /**
  * M11 Products (spec §5.2, D3): M03's page shape. Tabs with counts (tours, and stays and
@@ -33,40 +34,40 @@ type ProductView = "active" | "archived";
  * its publish chip and its EN/DE completeness (R02).
  */
 export function MerchantProducts({ tab }: { tab: ProductTab }) {
-  const { t } = useLocale();
-  const all = useMerchantProducts();
-  const archive = useProductArchive();
-  const navigate = useNavigate();
-  const { confirm, dialog } = useConfirm();
+  const { t } = useLocale()
+  const all = useMerchantProducts()
+  const archive = useProductArchive()
+  const navigate = useNavigate()
+  const { confirm, dialog } = useConfirm()
   // Archived tours sit under their own filter. Both ticked shows both; none ticked is no
   // filter, the same as both.
-  const [view, setView] = useState<ProductView[]>(["active"]);
+  const [view, setView] = useState<ProductView[]>(['active'])
   const inView = (r: ProductRow) =>
-    !view.length || view.includes(r.archived ? "archived" : "active");
-  const tours = all.tours.filter(inView);
-  const isLoading = useSimulatedLoading();
+    !view.length || view.includes(r.archived ? 'archived' : 'active')
+  const tours = all.tours.filter(inView)
+  const isLoading = useSimulatedLoading()
   const tabs = [
     {
-      id: "tours",
-      to: "/store/products/tours",
-      label: t("products.tab.tours"),
-      badge: all.tours.filter((r) => !r.archived).length,
+      id: 'tours',
+      to: '/store/products/tours',
+      label: t('products.tab.tours'),
+      badge: all.tours.filter(r => !r.archived).length,
     },
     {
-      id: "stays",
-      to: "/store/products/stays",
-      label: t("products.tab.stays"),
+      id: 'stays',
+      to: '/store/products/stays',
+      label: t('products.tab.stays'),
       badge: all.stays.length,
     },
     {
-      id: "experiences",
-      to: "/store/products/experiences",
-      label: t("products.tab.experiences"),
+      id: 'experiences',
+      to: '/store/products/experiences',
+      label: t('products.tab.experiences'),
       badge: all.experiences.length,
     },
-  ] as const;
-  const selectedLabel = tabs.find((item) => item.id === tab)?.label ?? "";
-  const rootRef = useRef<HTMLDivElement>(null);
+  ] as const
+  const selectedLabel = tabs.find(item => item.id === tab)?.label ?? ''
+  const rootRef = useRef<HTMLDivElement>(null)
 
   // As M03: a link to a page whose tab starts off-screen in the scrolling
   // list on phones. React Aria mounts the tabs after the first commit, so wait a frame.
@@ -74,72 +75,73 @@ export function MerchantProducts({ tab }: { tab: ProductTab }) {
     const frame = requestAnimationFrame(() =>
       rootRef.current
         ?.querySelector(`[role="tab"][data-key="${tab}"]`)
-        ?.scrollIntoView({ block: "nearest", inline: "nearest" }),
-    );
+        ?.scrollIntoView({ block: 'nearest', inline: 'nearest' }),
+    )
 
-    return () => cancelAnimationFrame(frame);
-  }, [tab]);
+    return () => cancelAnimationFrame(frame)
+  }, [tab])
 
   const onAction = async (row: ProductRow, action: ProductAction) => {
-    if (action === "edit") {
+    if (action === 'edit') {
       void navigate({
-        to: "/store/products/tours/$tourId",
+        to: '/store/products/tours/$tourId',
         params: { tourId: row.id },
-      });
+      })
 
-      return;
+      return
     }
-    if (action === "restore") {
-      archive.restore(row.id);
-      toast.success(t("products.restored", { name: row.name }));
+    if (action === 'restore') {
+      archive.restore(row.id)
+      toast.success(t('products.restored', { name: row.name }))
 
-      return;
+      return
     }
     const ok = await confirm({
-      title: t("products.archive.title", { name: row.name }),
-      body: t("products.archive.body.tour"),
-      confirmLabel: t("products.action.archive"),
-    });
+      title: t('products.archive.title', { name: row.name }),
+      body: t('products.archive.body.tour'),
+      confirmLabel: t('products.action.archive'),
+    })
 
-    if (!ok) return;
-    archive.archive(row.id);
-    toast.success(t("products.archivedToast", { name: row.name }));
-  };
+    if (!ok)
+      return
+    archive.archive(row.id)
+    toast.success(t('products.archivedToast', { name: row.name }))
+  }
 
-  const groups =
-    tab === "tours"
+  const groups
+    = tab === 'tours'
       ? [
           filterGroup({
-            id: "view",
-            label: t("products.view.label"),
-            options: (["active", "archived"] as const).map((v) => ({
+            id: 'view',
+            label: t('products.view.label'),
+            options: (['active', 'archived'] as const).map(v => ({
               id: v,
               label: t(`products.view.${v}`),
-              count: all.tours.filter((r) => r.archived === (v === "archived"))
+              count: all.tours.filter(r => r.archived === (v === 'archived'))
                 .length,
             })),
             selected: view,
             onChange: setView,
           }),
         ]
-      : null;
+      : null
 
   const panel = (id: ProductTab) => {
-    const isListing = id !== "tours";
+    const isListing = id !== 'tours'
 
     return (
       <ProductRows
         columns={[
-          t(isListing ? "products.column.listing" : "products.column.tour"),
-          t("products.column.status"),
-          t("products.column.price"),
-          t("products.column.departures"),
+          t(isListing ? 'products.column.listing' : 'products.column.tour'),
+          t('products.column.status'),
+          t('products.column.price'),
+          t('products.column.departures'),
         ]}
         empty={{
           icon: isListing ? OptionIcon : TourIcon,
           message: t(
-            !isListing && view.length === 1 && view[0] === "archived"
-              ? "products.empty.archived"
+            !isListing && view.length === 1 && view[0] === 'archived'
+              ? 'products.empty.archived'
               : `products.empty.${id}`,
           ),
         }}
@@ -149,29 +151,29 @@ export function MerchantProducts({ tab }: { tab: ProductTab }) {
         rows={isListing ? all[id] : tours}
         onAction={(row, action) => void onAction(row, action)}
       />
-    );
-  };
+    )
+  }
 
   return (
     <div ref={rootRef} className="flex flex-col gap-4">
       <MerchantPageHeader
         // The screen's one red action; stays and experiences have nothing to add yet.
         action={
-          tab === "tours" && (
+          tab === 'tours' && (
             <Link
-              className={buttonVariants({ size: "sm", className: "shrink-0" })}
+              className={buttonVariants({ size: 'sm', className: 'shrink-0' })}
               to="/store/products/tours/new"
             >
               <PlusIcon aria-hidden size={16} />
-              {t("products.addTour")}
+              {t('products.addTour')}
             </Link>
           )
         }
-        description={t("products.intro")}
-        title={t("products.title")}
+        description={t('products.intro')}
+        title={t('products.title')}
       />
       <RouteTabs
-        label={t("products.tabsLabel")}
+        label={t('products.tabsLabel')}
         selected={tab}
         tabs={tabs}
         trailing={groups && <FilterButton groups={groups} />}
@@ -180,5 +182,5 @@ export function MerchantProducts({ tab }: { tab: ProductTab }) {
       {panel(tab)}
       {dialog}
     </div>
-  );
+  )
 }

@@ -1,5 +1,5 @@
-import type { Role } from "../types";
-import type { Language } from "@/contexts/locale-context";
+import type { Role } from '../types'
+import type { Language } from '@/contexts/locale-context'
 
 import {
   Button,
@@ -8,80 +8,84 @@ import {
   Label,
   Radio,
   RadioGroup,
-} from "@heroui/react";
+} from '@heroui/react'
 // import { Link, useNavigate } from "@tanstack/react-router";
-import { useNavigate } from "@tanstack/react-router";
-import { QRCodeSVG } from "qrcode.react";
-import { useState } from "react";
+import { useNavigate } from '@tanstack/react-router'
+import { lazy, Suspense, useState } from 'react'
 
-import { useDemo } from "../demo-store";
+import { PrototypeIcon, ResetIcon } from '@/components/icons'
 
 // import { ProposalsToggle } from "./proposal-mark";
 
-import { PrototypeIcon, ResetIcon } from "@/components/icons";
-import { useLocale } from "@/contexts/locale-context";
+import { useLocale } from '@/contexts/locale-context'
 // import { SignInDemoHint } from "@/features/auth/components/sign-in-demo-hint";
-import { MailPanel } from "@/features/notifications/components/mail-panel";
+import { MailPanel } from '@/features/notifications/components/mail-panel'
+import { useDemo } from '../demo-store'
 // import { TourBookingDemoControl } from "@/features/tours/booking/booking-demo-control";
 // import { ToursDemoControl } from "@/features/tours/discovery/tours-demo-control";
 // import { TourDemoControl } from "@/features/tours/merchant/tour-demo-control";
+
+const QRCodeSVG = lazy(() =>
+  import('qrcode.react').then(m => ({ default: m.QRCodeSVG })),
+)
 
 /**
  * Presenter controls, deliberately outside the product design: an ink strip with a
  * monospace "Prototype" label. Copy stays in English because it is not part of the product.
  */
 const roles: {
-  id: Role;
-  label: string;
-  detail: string;
-  home: "/" | "/store";
+  id: Role
+  label: string
+  detail: string
+  home: '/' | '/store'
 }[] = [
   {
-    id: "guest",
-    label: "Guest",
-    detail: "Erich Haldi, browsing the tours",
-    home: "/",
+    id: 'guest',
+    label: 'Guest',
+    detail: 'Erich Haldi, browsing the tours',
+    home: '/',
   },
   {
-    id: "owner",
-    label: "Host",
-    detail: "Erich Haldi, dashboard",
-    home: "/store",
+    id: 'owner',
+    label: 'Host',
+    detail: 'Erich Haldi, dashboard',
+    home: '/store',
   },
-];
+]
 
-const languages: { id: Language; label: string }[] = [
-  { id: "en", label: "EN" },
-  { id: "de", label: "DE" },
-];
+const languages: { id: Language, label: string }[] = [
+  { id: 'en', label: 'EN' },
+  { id: 'de', label: 'DE' },
+]
 
 export function PrototypeBar() {
-  const { state, setRole, reset } = useDemo();
-  const { language, setLanguage } = useLocale();
-  const navigate = useNavigate();
-  const current = roles.find((r) => r.id === state.role) ?? roles[0];
-  const [open, setOpen] = useState(false);
-  const [showQr, setShowQr] = useState(false);
+  const { state, setRole, reset } = useDemo()
+  const { language, setLanguage } = useLocale()
+  const navigate = useNavigate()
+  const current = roles.find(r => r.id === state.role) ?? roles[0]
+  const [open, setOpen] = useState(false)
+  const [showQr, setShowQr] = useState(false)
 
   const chooseRole = (value: string) => {
-    const next = roles.find((r) => r.id === value);
+    const next = roles.find(r => r.id === value)
 
-    if (!next) return;
-    setRole(next.id);
-    setOpen(false);
-    void navigate({ to: next.home });
-  };
+    if (!next)
+      return
+    setRole(next.id)
+    setOpen(false)
+    void navigate({ to: next.home })
+  }
 
   // Scanning the QR code opens the site directly, as a guest on the home page.
   const openFromQr = () => {
-    setRole("guest");
-    setOpen(false);
-    setShowQr(false);
-    void navigate({ to: "/" });
-  };
+    setRole('guest')
+    setOpen(false)
+    setShowQr(false)
+    void navigate({ to: '/' })
+  }
 
   // Hash routing, so the scannable link is this deployment's address, ending at the home page.
-  const siteUrl = `${window.location.origin}${window.location.pathname}`;
+  const siteUrl = `${window.location.origin}${window.location.pathname}`
 
   return (
     <div
@@ -116,7 +120,7 @@ export function PrototypeBar() {
                   onChange={chooseRole}
                 >
                   <Label>View as</Label>
-                  {roles.map((role) => (
+                  {roles.map(role => (
                     <Radio key={role.id} value={role.id}>
                       <Radio.Content>
                         <Radio.Control>
@@ -133,7 +137,7 @@ export function PrototypeBar() {
                   <div className="flex flex-wrap gap-2">
                     <Button
                       size="sm"
-                      variant={showQr ? "secondary" : "tertiary"}
+                      variant={showQr ? 'secondary' : 'tertiary'}
                       onPress={() => setShowQr(!showQr)}
                     >
                       Via QR code
@@ -141,14 +145,20 @@ export function PrototypeBar() {
                   </div>
                   {showQr && (
                     <div className="flex flex-col items-center gap-3 rounded-3xl bg-white p-4 text-center">
-                      <QRCodeSVG
-                        aria-label="QR code that opens the site"
-                        className="h-auto w-full max-w-56"
-                        level="M"
-                        marginSize={2}
-                        size={224}
-                        value={siteUrl}
-                      />
+                      <Suspense
+                        fallback={
+                          <div className="aspect-square w-full max-w-56" />
+                        }
+                      >
+                        <QRCodeSVG
+                          aria-label="QR code that opens the site"
+                          className="h-auto w-full max-w-56"
+                          level="M"
+                          marginSize={2}
+                          size={224}
+                          value={siteUrl}
+                        />
+                      </Suspense>
                       <p className="max-w-full text-xs break-all text-muted">
                         {siteUrl}
                       </p>
@@ -206,12 +216,12 @@ export function PrototypeBar() {
         className="flex rounded-full bg-white/12 p-0.5"
         role="group"
       >
-        {languages.map((l) => (
+        {languages.map(l => (
           <button
             key={l.id}
             aria-pressed={language === l.id}
             className={`h-6 rounded-full px-2.5 font-medium outline-none focus-visible:ring-2 focus-visible:ring-white ${
-              language === l.id ? "bg-white text-foreground" : "text-white/80"
+              language === l.id ? 'bg-white text-foreground' : 'text-white/80'
             }`}
             type="button"
             onClick={() => setLanguage(l.id)}
@@ -221,5 +231,5 @@ export function PrototypeBar() {
         ))}
       </div>
     </div>
-  );
+  )
 }

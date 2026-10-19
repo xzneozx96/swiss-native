@@ -1,83 +1,129 @@
-import type { IntlLocale } from "@/lib/format";
-import type { MessageKey } from "@/i18n/en";
+import type { MessageKey } from '@/i18n/en'
+import type { IntlLocale } from '@/lib/format'
 
-import { I18nProvider } from "@heroui/react";
+import { I18nProvider } from '@heroui/react'
 import {
   createContext,
+  use,
   useCallback,
-  useContext,
   useEffect,
   useMemo,
+  useRef,
   useState,
-} from "react";
+} from 'react'
 
-import { de } from "@/i18n/de";
-import { en } from "@/i18n/en";
-import { readStored, writeStored } from "@/lib/storage";
+import { en } from '@/i18n/en'
+import { readStored, writeStored } from '@/lib/storage'
 
-export type Language = "en" | "de";
+export type Language = 'en' | 'de'
 
-const messages: Record<Language, Record<MessageKey, string>> = { en, de };
-const intlLocales: Record<Language, IntlLocale> = { en: "en-CH", de: "de-CH" };
-const STORAGE_KEY = "sk.language";
+type Dictionary = Record<MessageKey, string>
+
+const loaded: Partial<Record<Language, Dictionary>> = { en }
+const loaders: Record<Language, () => Promise<Dictionary>> = {
+  en: () => Promise.resolve(en),
+  de: () => import('@/i18n/de').then(module => module.de),
+}
+const intlLocales: Record<Language, IntlLocale> = { en: 'en-CH', de: 'de-CH' }
+const STORAGE_KEY = 'sk.language'
+
+/** Only English ships in the first load. German is its own chunk, fetched once it is needed. */
+export function loadDictionary(language: Language): Promise<Dictionary> {
+  return loaders[language]().then((dictionary) => {
+    loaded[language] = dictionary
+
+    return dictionary
+  })
+}
+
+export function storedLanguage(): Language {
+  return readStored<unknown>(STORAGE_KEY, 'en') === 'de' ? 'de' : 'en'
+}
+
+/** The saved language, or English when its messages could not be loaded (offline, a stale page). The saved choice stays, so the next visit tries again. */
+function initialLanguage(): Language {
+  const saved = storedLanguage()
+
+  return loaded[saved] ? saved : 'en'
+}
+
+function dictionaryOf(language: Language): Dictionary {
+  const dictionary = loaded[language]
+
+  if (!dictionary)
+    throw new Error(`The ${language} messages are not loaded`)
+
+  return dictionary
+}
 
 interface LocaleContextValue {
-  language: Language;
+  language: Language
   /** Intl locale for numbers, dates and HeroUI's date components. */
-  intlLocale: IntlLocale;
-  setLanguage: (language: Language) => void;
+  intlLocale: IntlLocale
+  setLanguage: (language: Language) => void
   /** Copy for the current language; `{name}` placeholders are filled from `vars`. */
-  t: (key: MessageKey, vars?: Record<string, string | number>) => string;
+  t: (key: MessageKey, vars?: Record<string, string | number>) => string
 }
+
+const PLACEHOLDER = /\{(\w+)\}/g
 
 function fill(text: string, vars?: Record<string, string | number>): string {
   return vars
-    ? text.replace(/\{(\w+)\}/g, (match, name: string) =>
-        name in vars ? String(vars[name]) : match,
-      )
-    : text;
+    ? text.replace(PLACEHOLDER, (match, name: string) =>
+        name in vars ? String(vars[name]) : match)
+    : text
 }
 
-const LocaleContext = createContext<LocaleContextValue | null>(null);
+const LocaleContext = createContext<LocaleContextValue | null>(null)
 
 export function LocaleProvider({ children }: { children: React.ReactNode }) {
-  const [language, setLanguageState] = useState<Language>(() =>
-    readStored<unknown>(STORAGE_KEY, "en") === "de" ? "de" : "en",
-  );
+  const [language, setLanguage] = useState<Language>(initialLanguage)
+  const latestRequestRef = useRef(0)
 
-  const setLanguage = useCallback((next: Language) => {
-    setLanguageState(next);
-    writeStored(STORAGE_KEY, next);
-  }, []);
+  const changeLanguage = useCallback((next: Language) => {
+    // The last tap wins, even if an earlier language arrives after it. If the messages cannot
+    // be loaded the guest stays in the current language.
+    const request = ++latestRequestRef.current
+
+    loadDictionary(next).then(
+      () => {
+        if (request !== latestRequestRef.current)
+          return
+        setLanguage(next)
+        writeStored(STORAGE_KEY, next)
+      },
+      () => undefined,
+    )
+  }, [])
 
   useEffect(() => {
-    document.documentElement.lang = language;
-  }, [language]);
+    document.documentElement.lang = language
+  }, [language])
 
   const value = useMemo<LocaleContextValue>(
     () => ({
       language,
       intlLocale: intlLocales[language],
-      setLanguage,
-      t: (key, vars) => fill(messages[language][key], vars),
+      setLanguage: changeLanguage,
+      t: (key, vars) => fill(dictionaryOf(language)[key], vars),
     }),
-    [language, setLanguage],
-  );
+    [language, changeLanguage],
+  )
 
   return (
-    <LocaleContext.Provider value={value}>
+    <LocaleContext value={value}>
       {/* React Aria locale: Swiss date order and Monday as first weekday. */}
       <I18nProvider locale={value.intlLocale}>{children}</I18nProvider>
-    </LocaleContext.Provider>
-  );
+    </LocaleContext>
+  )
 }
 
 export function useLocale(): LocaleContextValue {
-  const context = useContext(LocaleContext);
+  const context = use(LocaleContext)
 
   if (!context) {
-    throw new Error("useLocale must be used inside LocaleProvider");
+    throw new Error('useLocale must be used inside LocaleProvider')
   }
 
-  return context;
+  return context
 }

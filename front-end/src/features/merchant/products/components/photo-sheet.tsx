@@ -1,16 +1,19 @@
-import { Button } from "@heroui/react";
-import { useState } from "react";
+import { Button } from '@heroui/react'
+import { useState } from 'react'
 
-import { libraryPhotos } from "../lib/media-library";
+import { SelectedIcon } from '@/components/icons'
 
-import { SelectedIcon } from "@/components/icons";
-import { InfoNote } from "@/components/info-note";
-import { Media } from "@/components/media";
-import { useLocale } from "@/contexts/locale-context";
-import { SheetFrame } from "@/components/sheet-frame";
+import { InfoNote } from '@/components/info-note'
+import { Media } from '@/components/media'
+import { SheetFrame } from '@/components/sheet-frame'
+import { useLocale } from '@/contexts/locale-context'
+import { libraryPhotos } from '../lib/media-library'
+
+const TRAILING_NUMBER = /-\d+$/
+const DASHES = /-/g
 
 /** "furka-pass-1" → "furka pass", to name a photo without a caption. */
-const readable = (slug: string) => slug.replace(/-\d+$/, "").replace(/-/g, " ");
+const readable = (slug: string) => slug.replace(TRAILING_NUMBER, '').replace(DASHES, ' ')
 
 /**
  * The cover or an inline photo, chosen from the shop's photo library: in the prototype the
@@ -21,37 +24,37 @@ export function PhotoSheet({
   onChoose,
   onClose,
 }: {
-  value: string;
-  onChoose: (photo: string) => void;
-  onClose: () => void;
+  value: string
+  onChoose: (photo: string) => void
+  onClose: () => void
 }) {
-  const { t } = useLocale();
-  const [selected, setSelected] = useState(value);
+  const { t } = useLocale()
+  const [selected, setSelected] = useState(value)
 
   return (
     <SheetFrame
       isOpen
-      footer={
+      footer={(
         <>
           <Button
             fullWidth
             isDisabled={!selected}
             onPress={() => onChoose(selected)}
           >
-            {t("photoSheet.use")}
+            {t('photoSheet.use')}
           </Button>
           <Button fullWidth variant="tertiary" onPress={onClose}>
-            {t("photoSheet.back")}
+            {t('photoSheet.back')}
           </Button>
         </>
-      }
-      title={t("photoSheet.title")}
+      )}
+      title={t('photoSheet.title')}
       onClose={onClose}
     >
-      <InfoNote text={t("photoSheet.note")} />
+      <InfoNote text={t('photoSheet.note')} />
       <ul className="grid grid-cols-3 gap-2">
         {libraryPhotos.map((slug) => {
-          const isSelected = slug === selected;
+          const isSelected = slug === selected
 
           return (
             <li key={slug}>
@@ -59,7 +62,7 @@ export function PhotoSheet({
                 aria-label={readable(slug)}
                 aria-pressed={isSelected}
                 className={`relative block w-full overflow-hidden rounded-xl outline-none focus-visible:focus-ring ${
-                  isSelected ? "ring-2 ring-foreground ring-offset-2" : ""
+                  isSelected ? 'ring-2 ring-foreground ring-offset-2' : ''
                 }`}
                 type="button"
                 onClick={() => setSelected(slug)}
@@ -75,11 +78,11 @@ export function PhotoSheet({
                 )}
               </button>
             </li>
-          );
+          )
         })}
       </ul>
     </SheetFrame>
-  );
+  )
 }
 
 /** A recording from the shop's audio library (prototype stand-in for an upload; R17). */

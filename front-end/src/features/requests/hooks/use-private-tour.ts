@@ -1,33 +1,36 @@
-import type { PrivateTourRequest } from "../types";
+import type { PrivateTourRequest } from '../types'
 
-import { mailPrivateTourRequest } from "../lib/request-mail";
+import { useLocale } from '@/contexts/locale-context'
+import { useDemoActions, useDemoSelector } from '@/features/demo'
 
-import { useLocale } from "@/contexts/locale-context";
-import { useDemo } from "@/features/demo";
-import { demoNow } from "@/features/demo/clock";
+import { demoNow } from '@/features/demo/clock'
+import { mailPrivateTourRequest } from '../lib/request-mail'
 
 export interface PrivateTourInput {
-  groupSize: number;
-  dateFrom?: string;
+  groupSize: number
+  dateFrom?: string
   /** Empty for a single day: saved as `dateFrom`. */
-  dateTo?: string;
-  interests: string;
-  email: string;
+  dateTo?: string
+  interests: string
+  email: string
 }
 
 export type PrivateTourErrors = Partial<
-  Record<"dates" | "email", "missing" | "invalid">
->;
+  Record<'dates' | 'email', 'missing' | 'invalid'>
+>
 
-export type PrivateTourResult =
-  { ok: true; requestId: string } | { ok: false; errors: PrivateTourErrors };
+export type PrivateTourResult
+  = { ok: true, requestId: string } | { ok: false, errors: PrivateTourErrors }
 
-const looksLikeEmail = (email: string) =>
-  /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
+const EMAIL_SHAPE = /^[^\s@]+@[^\s@][^\s.@]*\.[^\s@]+$/
+
+function looksLikeEmail(email: string) {
+  return EMAIL_SHAPE.test(email.trim())
+}
 
 /** Group size limits (D8). */
-export const GROUP_MIN = 1;
-export const GROUP_MAX = 50;
+export const GROUP_MIN = 1
+export const GROUP_MAX = 50
 
 /**
  * C22 private tour request (spec §4, D8, A1): no sign-in; group size, the first preferred
@@ -35,25 +38,29 @@ export const GROUP_MAX = 50;
  * the guest's own email is prefilled when signed in.
  */
 export function usePrivateTour() {
-  const { language } = useLocale();
-  const { state, update } = useDemo();
-  const guest = state.data.guests.find(
-    (g) => g.id === state.data.signedInGuestId,
-  );
+  const { language } = useLocale()
+  const { update } = useDemoActions()
+  const guests = useDemoSelector(s => s.data.guests)
+  const signedInGuestId = useDemoSelector(s => s.data.signedInGuestId)
+  const guest = guests.find(g => g.id === signedInGuestId)
 
   return {
-    defaultEmail: guest?.email ?? "",
+    defaultEmail: guest?.email ?? '',
     send: (input: PrivateTourInput): PrivateTourResult => {
-      const email = input.email.trim();
-      const errors: PrivateTourErrors = {};
+      const email = input.email.trim()
+      const errors: PrivateTourErrors = {}
 
-      if (!input.dateFrom) errors.dates = "missing";
-      if (!email) errors.email = "missing";
-      else if (!looksLikeEmail(email)) errors.email = "invalid";
-      if (errors.dates || errors.email) return { ok: false, errors };
+      if (!input.dateFrom)
+        errors.dates = 'missing'
+      if (!email)
+        errors.email = 'missing'
+      else if (!looksLikeEmail(email))
+        errors.email = 'invalid'
+      if (errors.dates || errors.email)
+        return { ok: false, errors }
 
-      const dateFrom = input.dateFrom as string;
-      const requestId = `pt-${Date.now().toString(36)}`;
+      const dateFrom = input.dateFrom as string
+      const requestId = `pt-${Date.now().toString(36)}`
 
       update((s) => {
         const request: PrivateTourRequest = {
@@ -65,7 +72,7 @@ export function usePrivateTour() {
           dateFrom,
           dateTo: input.dateTo ?? dateFrom,
           interests: input.interests.trim(),
-        };
+        }
 
         // N17 to the host; the guest gets no email (A2).
         return mailPrivateTourRequest(
@@ -77,10 +84,10 @@ export function usePrivateTour() {
             },
           },
           request,
-        );
-      });
+        )
+      })
 
-      return { ok: true, requestId };
+      return { ok: true, requestId }
     },
-  };
+  }
 }

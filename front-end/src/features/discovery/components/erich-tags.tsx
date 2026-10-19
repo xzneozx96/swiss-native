@@ -1,13 +1,13 @@
-import type { StoryCopy } from "../story-copy";
+import type { StoryCopy } from '../story-copy'
 
-import { useReveal } from "@/hooks/use-reveal";
+import { useReveal } from '@/hooks/use-reveal'
 
 // String length and resting tilt per tag, so they hang like a real rail, not a grid.
 const HANG = [
   { string: 20, tilt: -2 },
   { string: 44, tilt: 2 },
   { string: 28, tilt: -1.5 },
-];
+]
 
 /**
  * Erich's three loves as luggage tags hanging from a brass rail: a short story on each,
@@ -15,7 +15,7 @@ const HANG = [
  * first seen, and the row swipes sideways on a phone.
  */
 export function ErichTags({ c }: { c: StoryCopy }) {
-  const ref = useReveal<HTMLElement>();
+  const ref = useReveal<HTMLElement>()
 
   return (
     <section
@@ -44,8 +44,8 @@ export function ErichTags({ c }: { c: StoryCopy }) {
                 className="lv-hang flex w-[236px] shrink-0 snap-center flex-col items-center first:snap-start last:snap-end"
                 style={
                   {
-                    "--tilt": `${HANG[i].tilt}deg`,
-                    "--d": `${200 + i * 180}ms`,
+                    '--tilt': `${HANG[i].tilt}deg`,
+                    '--d': `${200 + i * 180}ms`,
                   } as React.CSSProperties
                 }
               >
@@ -78,5 +78,5 @@ export function ErichTags({ c }: { c: StoryCopy }) {
         </div>
       </div>
     </section>
-  );
+  )
 }

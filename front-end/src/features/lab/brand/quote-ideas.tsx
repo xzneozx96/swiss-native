@@ -3,17 +3,17 @@
  * client's pen-and-ink chalet sketch is not ours, so the ideas use our own photos
  * (the bee house stand-in finsterwald-6 and an Entlebuch chalet, finsterwald-4) or SVG.
  */
-import type { BrandCopy } from "./copy";
+import type { BrandCopy } from './copy'
 
-import { Heart, PineSilhouette } from "./brand-icons";
-import { NAVY } from "./usp-ideas";
-import { useReveal } from "./use-reveal";
+import { photoUrl } from '@/lib/photos'
+import { Heart, PineSilhouette } from './brand-icons'
+import { useReveal } from './use-reveal'
 
-import { photoUrl } from "@/lib/photos";
+import { NAVY } from './usp-ideas'
 
 /** The quote text with the red heart kept on the same line as its last word. */
-function QuoteText({ text, heart = 18 }: { text: string; heart?: number }) {
-  const cut = text.lastIndexOf(" ");
+function QuoteText({ text, heart = 18 }: { text: string, heart?: number }) {
+  const cut = text.lastIndexOf(' ')
 
   return (
     <>
@@ -23,12 +23,12 @@ function QuoteText({ text, heart = 18 }: { text: string; heart?: number }) {
         <Heart className="ms-1.5 -translate-y-px align-middle" size={heart} />
       </span>
     </>
-  );
+  )
 }
 
 /** 1 · Faithful: handwritten script on cream, left-aligned, a small round photo of the house. */
 export function QuoteFaithful({ c }: { c: BrandCopy }) {
-  const ref = useReveal<HTMLElement>();
+  const ref = useReveal<HTMLElement>()
 
   return (
     <figure
@@ -46,16 +46,16 @@ export function QuoteFaithful({ c }: { c: BrandCopy }) {
       <img
         alt=""
         className="lab-reveal size-[92px] shrink-0 rounded-full object-cover object-[50%_60%] ring-1 ring-[#1E3A5F]/25 ring-offset-4 ring-offset-hero-cream [filter:grayscale(0.85)_sepia(0.25)_contrast(1.05)]"
-        src={photoUrl("finsterwald-6")}
-        style={{ "--lab-delay": "120ms" } as React.CSSProperties}
+        src={photoUrl('finsterwald-6')}
+        style={{ '--lab-delay': '120ms' } as React.CSSProperties}
       />
     </figure>
-  );
+  )
 }
 
 /** 2 · Pull quote: big centred serif with an oversized red quotation mark, Erich's name below. */
 export function QuotePull({ c }: { c: BrandCopy }) {
-  const ref = useReveal<HTMLElement>();
+  const ref = useReveal<HTMLElement>()
 
   return (
     <figure
@@ -75,7 +75,7 @@ export function QuotePull({ c }: { c: BrandCopy }) {
       </blockquote>
       <figcaption
         className="lab-reveal mt-5 flex flex-col items-center gap-0.5"
-        style={{ "--lab-delay": "120ms" } as React.CSSProperties}
+        style={{ '--lab-delay': '120ms' } as React.CSSProperties}
       >
         <span aria-hidden="true" className="mb-2 h-px w-8 bg-foreground/30" />
         <span className="font-serif text-[17px] leading-5 font-semibold">
@@ -84,7 +84,7 @@ export function QuotePull({ c }: { c: BrandCopy }) {
         <span className="text-[13px] leading-[18px] text-muted">{c.role}</span>
       </figcaption>
     </figure>
-  );
+  )
 }
 
 /** The postmark: a circle with the place name running round it, and wavy cancel lines. */
@@ -137,7 +137,7 @@ function Postmark({ text }: { text: string }) {
       >
         CH
       </text>
-      {[22, 30, 38].map((y) => (
+      {[22, 30, 38].map(y => (
         <path
           key={y}
           d={`M62 ${y}c5-4 9 4 14 0s9 4 14 0 9 4 12 0`}
@@ -147,23 +147,23 @@ function Postmark({ text }: { text: string }) {
         />
       ))}
     </svg>
-  );
+  )
 }
 
 /** Holes only in the padding ring: a solid content-box layer plus a grid of holes. */
 const PERFORATION: React.CSSProperties = {
   maskImage:
-    "linear-gradient(#000 0 0), radial-gradient(circle at center, transparent 2px, #000 2.6px)",
-  maskClip: "content-box, border-box",
-  maskOrigin: "content-box, border-box",
-  maskSize: "auto, 7px 7px",
-  maskPosition: "0 0, -3.5px -3.5px",
-  maskRepeat: "no-repeat, repeat",
-};
+    'linear-gradient(#000 0 0), radial-gradient(circle at center, transparent 2px, #000 2.6px)',
+  maskClip: 'content-box, border-box',
+  maskOrigin: 'content-box, border-box',
+  maskSize: 'auto, 7px 7px',
+  maskPosition: '0 0, -3.5px -3.5px',
+  maskRepeat: 'no-repeat, repeat',
+}
 
 /** 3 · Postcard: the quote handwritten on a slightly turned card with a stamp and a pine. */
 export function QuotePostcard({ c }: { c: BrandCopy }) {
-  const ref = useReveal<HTMLDivElement>();
+  const ref = useReveal<HTMLDivElement>()
 
   return (
     <div ref={ref} className="px-1 py-3">
@@ -191,7 +191,9 @@ export function QuotePostcard({ c }: { c: BrandCopy }) {
               className="lab-script self-end text-[22px] leading-6 font-semibold"
               style={{ color: NAVY }}
             >
-              — {c.author.split(" ")[0]}
+              —
+              {' '}
+              {c.author.split(' ')[0]}
               <span className="sr-only"> ({c.author})</span>
             </figcaption>
           </div>
@@ -211,7 +213,7 @@ export function QuotePostcard({ c }: { c: BrandCopy }) {
             </div>
             <Postmark text={c.postmark} />
             <div aria-hidden="true" className="mt-14 flex flex-col gap-5">
-              {[0, 1, 2].map((i) => (
+              {[0, 1, 2].map(i => (
                 <span key={i} className="h-px bg-[#1E3A5F]/20" />
               ))}
             </div>
@@ -219,12 +221,12 @@ export function QuotePostcard({ c }: { c: BrandCopy }) {
         </div>
       </figure>
     </div>
-  );
+  )
 }
 
 /** 4 · Photo: the quote over a full-bleed photo of a chalet, on a soft dark scrim. */
 export function QuotePhoto({ c }: { c: BrandCopy }) {
-  const ref = useReveal<HTMLElement>();
+  const ref = useReveal<HTMLElement>()
 
   return (
     <figure
@@ -234,7 +236,7 @@ export function QuotePhoto({ c }: { c: BrandCopy }) {
       <img
         alt=""
         className="absolute inset-0 size-full object-cover object-[60%_50%]"
-        src={photoUrl("finsterwald-4")}
+        src={photoUrl('finsterwald-4')}
       />
       <div
         aria-hidden="true"
@@ -248,11 +250,11 @@ export function QuotePhoto({ c }: { c: BrandCopy }) {
         </blockquote>
         <figcaption
           className="lab-reveal text-[13px] leading-[18px] font-medium text-white/90"
-          style={{ "--lab-delay": "120ms" } as React.CSSProperties}
+          style={{ '--lab-delay': '120ms' } as React.CSSProperties}
         >
           {c.author} · {c.role}
         </figcaption>
       </div>
     </figure>
-  );
+  )
 }

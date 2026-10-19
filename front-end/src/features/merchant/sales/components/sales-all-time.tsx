@@ -1,15 +1,16 @@
-import type { SalesOverviewView } from "../hooks/use-sales-overview";
+import type { SalesOverviewView } from '../hooks/use-sales-overview'
 
-import { useState } from "react";
+import { useState } from 'react'
 
-import { Donut } from "@/components/donut";
-import { DeltaChip } from "@/components/stat-card";
-import { useLocale } from "@/contexts/locale-context";
-import { Widget } from "@/features/merchant/today/components/overview-analytics";
+import { Donut } from '@/components/donut'
+import { DeltaChip } from '@/components/stat-card'
+import { useLocale } from '@/contexts/locale-context'
+import { Widget } from '@/features/merchant/today/components/overview-analytics'
+import { numberFormat } from '@/lib/format'
 
-type AllTime = SalesOverviewView["allTime"];
+type AllTime = SalesOverviewView['allTime']
 
-const TOUR_COLOUR = "var(--chart-4)";
+const TOUR_COLOUR = 'var(--chart-4)'
 
 /**
  * The all-time hero: everything sold since the first booking, its
@@ -20,14 +21,14 @@ function TotalHero({
   allTime,
   className,
 }: {
-  allTime: AllTime;
-  className: string;
+  allTime: AllTime
+  className: string
 }) {
-  const { t, intlLocale } = useLocale();
-  const [active, setActive] = useState<number | null>(null);
-  const total = allTime.parts.reduce((sum, p) => sum + p.amount, 0);
-  const shown = active === null ? null : allTime.parts[active];
-  const percent = new Intl.NumberFormat(intlLocale, { style: "percent" });
+  const { t, intlLocale } = useLocale()
+  const [active, setActive] = useState<number | null>(null)
+  const total = allTime.parts.reduce((sum, p) => sum + p.amount, 0)
+  const shown = active === null ? null : allTime.parts[active]
+  const percent = numberFormat(intlLocale, { style: 'percent' })
 
   return (
     <section
@@ -36,10 +37,10 @@ function TotalHero({
     >
       <div className="flex flex-col">
         <h2 className="font-semibold" id="sales-all-time">
-          {t("salesOverview.allTime.title")}
+          {t('salesOverview.allTime.title')}
         </h2>
         <p className="text-xs text-pretty text-muted">
-          {t("salesOverview.allTime.since", { date: allTime.since })}
+          {t('salesOverview.allTime.since', { date: allTime.since })}
         </p>
       </div>
       <div className="flex flex-col gap-2">
@@ -52,7 +53,7 @@ function TotalHero({
         <p className="text-sm text-pretty text-muted">{allTime.sentence}</p>
       </div>
       <div
-        aria-label={t("salesOverview.allTime.parts")}
+        aria-label={t('salesOverview.allTime.parts')}
         className="flex flex-col items-center gap-4"
         role="group"
       >
@@ -63,13 +64,13 @@ function TotalHero({
           onActive={setActive}
         >
           <span className="text-xs text-muted">
-            {shown ? shown.label : t("salesOverview.allTime.title")}
+            {shown ? shown.label : t('salesOverview.allTime.title')}
           </span>
           <span className="text-base font-semibold tabular-nums">
             {shown
               ? total
                 ? percent.format(shown.amount / total)
-                : "–"
+                : '–'
               : allTime.total}
           </span>
         </Donut>
@@ -79,7 +80,7 @@ function TotalHero({
               <button
                 aria-pressed={active === i}
                 className={`flex w-full items-center gap-3 px-1 py-3 text-start outline-none transition-colors focus-visible:focus-ring ${
-                  active === i ? "bg-surface-secondary" : ""
+                  active === i ? 'bg-surface-secondary' : ''
                 }`}
                 type="button"
                 onBlur={() => setActive(null)}
@@ -96,8 +97,8 @@ function TotalHero({
                 <span className="flex min-w-0 flex-1 flex-col">
                   <span className="font-medium text-pretty">{p.label}</span>
                   <span className="text-xs text-muted">
-                    {t("salesOverview.allTime.share", {
-                      share: total ? percent.format(p.amount / total) : "–",
+                    {t('salesOverview.allTime.share', {
+                      share: total ? percent.format(p.amount / total) : '–',
                     })}
                   </span>
                 </span>
@@ -110,7 +111,7 @@ function TotalHero({
         </ul>
       </div>
     </section>
-  );
+  )
 }
 
 /**
@@ -123,36 +124,36 @@ function MonthlySales({
   className,
   onSelect,
 }: {
-  allTime: AllTime;
+  allTime: AllTime
   /** First day of the range on screen, to tint its month. */
-  current: string;
-  className: string;
-  onSelect: (monthStart: string) => void;
+  current: string
+  className: string
+  onSelect: (monthStart: string) => void
 }) {
-  const { t, intlLocale } = useLocale();
-  const amount = new Intl.NumberFormat(intlLocale, {
+  const { t, intlLocale } = useLocale()
+  const amount = numberFormat(intlLocale, {
     maximumFractionDigits: 0,
-  });
+  })
   // The tallest bar stops short of the top, so its value label stays inside the card.
-  const max = Math.max(1, ...allTime.months.map((m) => m.total)) / 0.88;
+  const max = Math.max(1, ...allTime.months.map(m => m.total)) / 0.88
 
   return (
     <Widget
       className={className}
-      description={t("salesOverview.months.description")}
+      description={t('salesOverview.months.description')}
       id="sales-months"
-      title={t("salesOverview.months.title")}
+      title={t('salesOverview.months.title')}
     >
       <div className="flex min-h-56 flex-1 items-stretch gap-2" role="group">
         {allTime.months.map((m) => {
-          const isShown = current === m.id;
+          const isShown = current === m.id
 
           return (
             <button
               key={m.id}
               aria-label={m.ariaLabel}
               aria-pressed={isShown}
-              className={`flex min-w-0 flex-1 cursor-pointer flex-col items-center rounded-xl px-1 pb-2 outline-none enabled:hover:bg-foreground/5 focus-visible:focus-ring disabled:cursor-default ${isShown ? "bg-foreground/5" : ""}`}
+              className={`flex min-w-0 flex-1 cursor-pointer flex-col items-center rounded-xl px-1 pb-2 outline-none enabled:hover:bg-foreground/5 focus-visible:focus-ring disabled:cursor-default ${isShown ? 'bg-foreground/5' : ''}`}
               disabled={!m.hasData}
               type="button"
               onClick={() => onSelect(m.id)}
@@ -162,12 +163,12 @@ function MonthlySales({
                   className="absolute inset-x-0 mb-1 text-center text-xs font-medium text-muted tabular-nums"
                   style={{ bottom: `${((m.total / max) * 100).toFixed(2)}%` }}
                 >
-                  {m.hasData ? amount.format(m.total / 100) : "–"}
+                  {m.hasData ? amount.format(m.total / 100) : '–'}
                 </span>
                 {m.hasData && (
                   <span
                     aria-hidden
-                    className={`flex w-full max-w-9 flex-col justify-end gap-0.5 ${m.isCurrent ? "opacity-70" : ""}`}
+                    className={`flex w-full max-w-9 flex-col justify-end gap-0.5 ${m.isCurrent ? 'opacity-70' : ''}`}
                     style={{
                       height: `${Math.max((m.total / max) * 100, 2).toFixed(2)}%`,
                     }}
@@ -181,16 +182,16 @@ function MonthlySales({
               </span>
               <span
                 aria-hidden
-                className={`mt-2 text-xs ${isShown || m.isCurrent ? "font-semibold text-foreground" : "text-muted"}`}
+                className={`mt-2 text-xs ${isShown || m.isCurrent ? 'font-semibold text-foreground' : 'text-muted'}`}
               >
                 {m.tick}
               </span>
             </button>
-          );
+          )
         })}
       </div>
     </Widget>
-  );
+  )
 }
 
 /** The all-time row of Overview › Sales: the total with where it stands, and sales per month. */
@@ -198,8 +199,8 @@ export function SalesAllTime({
   view,
   onMonthSelect,
 }: {
-  view: SalesOverviewView;
-  onMonthSelect: (monthStart: string) => void;
+  view: SalesOverviewView
+  onMonthSelect: (monthStart: string) => void
 }) {
   return (
     <div className="grid grid-cols-1 gap-4 lg:grid-cols-12">
@@ -211,5 +212,5 @@ export function SalesAllTime({
         onSelect={onMonthSelect}
       />
     </div>
-  );
+  )
 }

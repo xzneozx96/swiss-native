@@ -4,25 +4,25 @@
  * idea and language; each idea sits in a home-like column between the intro and the
  * tours chapter. The real home does not show this block until an idea is chosen.
  */
-import type { LovesLanguage } from "./copy";
+import type { LovesLanguage } from './copy'
 
-import { Link } from "@tanstack/react-router";
+import { Link } from '@tanstack/react-router'
 
-import "./loves.css";
+import { storyCopy } from '@/features/discovery/story-copy'
 
-import { labChrome, lovesCopy } from "./copy";
-import { IdeaOdometer } from "./idea-odometer";
-import { IdeaPhotos } from "./idea-photos";
-import { IdeaSentence } from "./idea-sentence";
-import { IdeaStamps } from "./idea-stamps";
-import { IdeaTags } from "./idea-tags";
+import { photoUrl } from '@/lib/photos'
+import { labChrome, lovesCopy } from './copy'
+import { IdeaOdometer } from './idea-odometer'
+import { IdeaPhotos } from './idea-photos'
+import { IdeaSentence } from './idea-sentence'
+import { IdeaStamps } from './idea-stamps'
 
-import { storyCopy } from "@/features/discovery/story-copy";
-import { photoUrl } from "@/lib/photos";
+import { IdeaTags } from './idea-tags'
+import './loves.css'
 
 export interface LovesSearch {
-  idea: number;
-  lang: LovesLanguage;
+  idea: number
+  lang: LovesLanguage
 }
 
 export const IDEAS = [
@@ -31,7 +31,7 @@ export const IDEAS = [
   IdeaPhotos,
   IdeaSentence,
   IdeaOdometer,
-];
+]
 
 function Segment<T extends string | number>({
   label,
@@ -40,11 +40,11 @@ function Segment<T extends string | number>({
   field,
   search,
 }: {
-  label: string;
-  value: T;
-  options: { value: T; label: string }[];
-  field: keyof LovesSearch;
-  search: LovesSearch;
+  label: string
+  value: T
+  options: { value: T, label: string }[]
+  field: keyof LovesSearch
+  search: LovesSearch
 }) {
   return (
     <div
@@ -52,15 +52,15 @@ function Segment<T extends string | number>({
       className="flex flex-1 gap-1 rounded-full bg-default p-1"
       role="group"
     >
-      {options.map((o) => (
+      {options.map(o => (
         <Link
           key={String(o.value)}
           replace
-          aria-current={o.value === value ? "true" : undefined}
+          aria-current={o.value === value ? 'true' : undefined}
           className={`flex min-h-11 flex-1 items-center justify-center rounded-full px-2 text-[13px] font-semibold outline-none focus-visible:focus-ring ${
             o.value === value
-              ? "bg-surface text-foreground shadow-surface"
-              : "text-muted"
+              ? 'bg-surface text-foreground shadow-surface'
+              : 'text-muted'
           }`}
           search={{ ...search, [field]: o.value }}
           to="/lab/loves"
@@ -69,14 +69,14 @@ function Segment<T extends string | number>({
         </Link>
       ))}
     </div>
-  );
+  )
 }
 
 export function LabLoves({ search }: { search: LovesSearch }) {
-  const t = labChrome[search.lang];
-  const story = storyCopy[search.lang];
-  const Idea = IDEAS[search.idea - 1];
-  const letter = String.fromCharCode(64 + search.idea);
+  const t = labChrome[search.lang]
+  const story = storyCopy[search.lang]
+  const Idea = IDEAS[search.idea - 1]
+  const letter = String.fromCharCode(64 + search.idea)
 
   return (
     <div lang={search.lang}>
@@ -98,8 +98,8 @@ export function LabLoves({ search }: { search: LovesSearch }) {
               field="lang"
               label={t.language}
               options={[
-                { value: "en" as LovesLanguage, label: "EN" },
-                { value: "de" as LovesLanguage, label: "DE" },
+                { value: 'en' as LovesLanguage, label: 'EN' },
+                { value: 'de' as LovesLanguage, label: 'DE' },
               ]}
               search={search}
               value={search.lang}
@@ -108,7 +108,7 @@ export function LabLoves({ search }: { search: LovesSearch }) {
         </div>
         <p className="text-[13px] leading-[18px] text-muted">
           <span className="font-semibold text-foreground">
-            {letter} · {t.names[search.idea - 1]}{" "}
+            {letter} · {t.names[search.idea - 1]}{' '}
           </span>
           {t.notes[search.idea - 1]}
         </p>
@@ -138,11 +138,11 @@ export function LabLoves({ search }: { search: LovesSearch }) {
           <img
             alt=""
             className="aspect-[16/9] w-full rounded-3xl object-cover"
-            src={photoUrl("furka-pass-4")}
+            src={photoUrl('furka-pass-4')}
           />
           <p className="text-xs text-muted italic">{t.context}</p>
         </div>
       </div>
     </div>
-  );
+  )
 }

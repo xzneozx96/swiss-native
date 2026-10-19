@@ -1,0 +1,65 @@
+import type { salesOverviewEn } from './messages'
+
+export const salesOverviewDe: Record<keyof typeof salesOverviewEn, string> = {
+  'overviewPages.label': 'Seiten des Dashboards',
+  'overviewPages.today': 'Heute',
+  'overviewPages.sales': 'Verkäufe',
+
+  'salesOverview.heading': 'So laufen die Verkäufe',
+  'salesOverview.period': 'Zeitraum',
+  'salesOverview.period.today': 'Heute',
+  'salesOverview.period.yesterday': 'Gestern',
+  'salesOverview.period.7d': 'Letzte 7 Tage',
+  'salesOverview.period.28d': 'Letzte 4 Wochen',
+  'salesOverview.period.month': 'Dieser Monat',
+  'salesOverview.period.3m': 'Letzte 3 Monate',
+  'salesOverview.period.12m': 'Letzte 12 Monate',
+  'salesOverview.period.all': 'Gesamter Zeitraum',
+  'salesOverview.period.custom': 'Eigener Zeitraum',
+  'salesOverview.dates': 'Daten',
+  'salesOverview.until': '{range}, bis {time}',
+  'salesOverview.comparedWith': 'Verglichen mit {range}',
+  'salesOverview.noCompare': 'Kein früherer Zeitraum zum Vergleich',
+  'salesOverview.delta': '{delta} verglichen mit {range}',
+  'salesOverview.deltaNone': 'Kein Vergleich mit {range} möglich',
+  'salesOverview.bucket.hour': 'pro Stunde',
+  'salesOverview.bucket.day': 'pro Tag',
+  'salesOverview.bucket.week': 'pro Woche',
+  'salesOverview.bucket.month': 'pro Monat',
+  'salesOverview.partial': 'Keine volle Woche bzw. kein voller Monat',
+  'salesOverview.previous': 'Vorheriger Zeitraum',
+
+  'salesOverview.value': 'Gesamtumsatz',
+  'salesOverview.value.hint':
+    'Der Gesamtpreis der erfassten Buchungen, ohne stornierte. Das ist kein Gewinn: Kosten und Rückerstattungen sind nicht abgezogen, und ein Teil kann noch offen sein.',
+  'salesOverview.collected': 'Eingenommen',
+  'salesOverview.collected.hint':
+    'Im Zeitraum tatsächlich erhaltenes Geld, online oder vom Geschäft erfasst, egal wann verkauft wurde.',
+  'salesOverview.orders': 'Buchungen gesamt',
+  'salesOverview.orders.hint':
+    'Wie viele Buchungen erfasst wurden, ohne stornierte.',
+  'salesOverview.unpaid': 'Offen aus diesen Verkäufen',
+  'salesOverview.unpaid.hint':
+    'Was heute auf den im Zeitraum erfassten Buchungen noch offen ist.',
+  'salesOverview.unpaid.share': '{share} des Gesamtumsatzes ist noch offen',
+
+  'salesOverview.top.title': 'Bestseller',
+  'salesOverview.top.description': 'Touren, nach Gesamtumsatz im Zeitraum',
+  'salesOverview.top.empty': 'In diesem Zeitraum wurde nichts verkauft.',
+  'salesOverview.top.product': 'Touren',
+  'salesOverview.top.sold': 'Verkauft',
+  'salesOverview.top.share': 'Anteil',
+  'salesOverview.top.guests.one': '{count} Gast',
+  'salesOverview.top.guests.other': '{count} Gäste',
+  'salesOverview.unpaidShort': 'Offen',
+  'salesOverview.allTime.title': 'Gesamtverkäufe',
+  'salesOverview.allTime.since': 'Seit der ersten Buchung am {date}',
+  'salesOverview.allTime.sentence':
+    '{last} in den letzten 30 Tagen, verglichen mit {previous} in den 30 Tagen davor.',
+  'salesOverview.allTime.delta': '{delta} verglichen mit den 30 Tagen davor',
+  'salesOverview.allTime.parts': 'Wie die Verkäufe stehen',
+  'salesOverview.allTime.share': '{share} der Gesamtverkäufe',
+  'salesOverview.months.title': 'Verkäufe pro Monat',
+  'salesOverview.months.description': 'Monat auswählen, um ihn zu öffnen',
+  'salesOverview.months.open': '{month} öffnen: {value}',
+}

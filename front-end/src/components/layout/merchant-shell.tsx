@@ -1,11 +1,12 @@
-import type { IconComponent } from "@/components/icons";
-import type { MessageKey } from "@/i18n/en";
-import type { LinkProps } from "@tanstack/react-router";
+import type { LinkProps } from '@tanstack/react-router'
+import type { IconComponent } from '@/components/icons'
+import type { MessageKey } from '@/i18n/en'
 
-import { Button } from "@heroui/react";
-import { Link, useLocation, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
+import { Button } from '@heroui/react'
+import { Link, useLocation, useNavigate } from '@tanstack/react-router'
+import { useState } from 'react'
 
+import brandMark from '@/assets/brand/swiss-native-mark.png'
 import {
   BookingsIcon,
   ChevronDownIcon,
@@ -15,33 +16,32 @@ import {
   ProductsIcon,
   SettingsIcon,
   TodayIcon,
-} from "@/components/icons";
-import brandMark from "@/assets/brand/swiss-native-mark.png";
-import { MerchantBarSlot } from "@/components/layout/merchant-back-bar";
-import { useLocale } from "@/contexts/locale-context";
-import { shop } from "@/features/catalog/seed";
-import { useDemo } from "@/features/demo";
-import { avatarUrl } from "@/lib/avatars";
+} from '@/components/icons'
+import { MerchantBarSlotContext } from '@/components/layout/merchant-back-bar'
+import { useLocale } from '@/contexts/locale-context'
+import { shop } from '@/features/catalog/seed'
+import { useDemoActions } from '@/features/demo'
+import { avatarUrl } from '@/lib/avatars'
 
-export type MerchantSection = "bookings" | "products" | "settings";
+export type MerchantSection = 'bookings' | 'products' | 'settings'
 
 /** A page listed under its group in the sidebar. `exact: false` keeps it active on its tabs and detail screens. */
 interface NavPage {
-  label: MessageKey;
-  to: LinkProps["to"];
-  exact?: boolean;
+  label: MessageKey
+  to: LinkProps['to']
+  exact?: boolean
 }
 
 interface NavItem {
-  label: MessageKey;
-  icon: IconComponent;
+  label: MessageKey
+  icon: IconComponent
   /** Where the item lives; "/store" itself matches only the exact path. */
-  paths: string[];
+  paths: string[]
   /** A single page. Items with `pages` are groups that fold open in the sidebar. */
-  to?: LinkProps["to"];
-  exact?: boolean;
-  pages?: NavPage[];
-  settings?: true;
+  to?: LinkProps['to']
+  exact?: boolean
+  pages?: NavPage[]
+  settings?: true
 }
 
 /**
@@ -50,79 +50,81 @@ interface NavItem {
  */
 const sidebarItems: NavItem[] = [
   {
-    label: "nav.today",
+    label: 'nav.today',
     icon: TodayIcon,
-    paths: ["/store", "/store/sales"],
+    paths: ['/store', '/store/sales'],
     pages: [
-      { label: "overviewPages.today", to: "/store" },
-      { label: "overviewPages.sales", to: "/store/sales" },
+      { label: 'overviewPages.today', to: '/store' },
+      { label: 'overviewPages.sales', to: '/store/sales' },
     ],
   },
   {
-    label: "nav.operations",
+    label: 'nav.operations',
     icon: OrdersIcon,
-    paths: ["/store/bookings", "/store/calendar"],
+    paths: ['/store/bookings', '/store/calendar'],
     pages: [
-      { label: "nav.bookings", to: "/store/bookings", exact: false },
-      { label: "nav.calendar", to: "/store/calendar", exact: false },
+      { label: 'nav.bookings', to: '/store/bookings', exact: false },
+      { label: 'nav.calendar', to: '/store/calendar', exact: false },
     ],
   },
   {
-    label: "nav.products",
+    label: 'nav.products',
     icon: ProductsIcon,
-    paths: ["/store/products"],
-    to: "/store/products",
+    paths: ['/store/products'],
+    to: '/store/products',
   },
   {
-    label: "nav.settings",
+    label: 'nav.settings',
     icon: SettingsIcon,
-    paths: ["/store/settings"],
+    paths: ['/store/settings'],
     settings: true,
   },
-];
+]
 
 /** Phones: all five items sit in the bottom bar. */
 const phoneItems: NavItem[] = [
   {
-    label: "nav.today",
+    label: 'nav.today',
     icon: TodayIcon,
-    paths: ["/store", "/store/sales"],
-    to: "/store",
+    paths: ['/store', '/store/sales'],
+    to: '/store',
     exact: true,
   },
   {
-    label: "nav.bookings",
+    label: 'nav.bookings',
     icon: BookingsIcon,
-    paths: ["/store/bookings"],
-    to: "/store/bookings",
+    paths: ['/store/bookings'],
+    to: '/store/bookings',
   },
   {
-    label: "nav.calendar",
+    label: 'nav.calendar',
     icon: PickupDateIcon,
-    paths: ["/store/calendar"],
-    to: "/store/calendar",
+    paths: ['/store/calendar'],
+    to: '/store/calendar',
   },
   {
-    label: "nav.products",
+    label: 'nav.products',
     icon: ProductsIcon,
-    paths: ["/store/products"],
-    to: "/store/products",
+    paths: ['/store/products'],
+    to: '/store/products',
   },
   {
-    label: "nav.settings",
+    label: 'nav.settings',
     icon: SettingsIcon,
-    paths: ["/store/settings"],
+    paths: ['/store/settings'],
     settings: true,
   },
-];
+]
 
-const isUnder = (pathname: string, base: string) =>
-  base === "/store"
+function isUnder(pathname: string, base: string) {
+  return base === '/store'
     ? pathname === base
-    : pathname === base || pathname.startsWith(`${base}/`);
+    : pathname === base || pathname.startsWith(`${base}/`)
+}
 
-const isInside = (pathname: string, item: NavItem) =>
-  item.paths.some((base) => isUnder(pathname, base));
+function isInside(pathname: string, item: NavItem) {
+  return item.paths.some(base => isUnder(pathname, base))
+}
 
 function NavLink({
   item,
@@ -130,28 +132,28 @@ function NavLink({
   children,
   onClick,
 }: {
-  item: NavItem;
-  className: string;
-  children: React.ReactNode;
-  onClick?: () => void;
+  item: NavItem
+  className: string
+  children: React.ReactNode
+  onClick?: () => void
 }) {
-  const { pathname } = useLocation();
+  const { pathname } = useLocation()
   // The item is active anywhere inside its paths (Today also on Sales, Analytics on its costs
   // screen); Settings is still a placeholder.
-  const status = isInside(pathname, item) ? "active" : undefined;
+  const status = isInside(pathname, item) ? 'active' : undefined
 
   if (item.settings) {
     return (
       <Link
         className={className}
         data-status={status}
-        params={{ section: "settings" }}
+        params={{ section: 'settings' }}
         to="/store/$section"
         onClick={onClick}
       >
         {children}
       </Link>
-    );
+    )
   }
 
   return (
@@ -164,37 +166,37 @@ function NavLink({
     >
       {children}
     </Link>
-  );
+  )
 }
 
-const sideLink =
-  "flex h-10 items-center gap-3 rounded-2xl px-3 text-sm text-muted outline-none hover:bg-default focus-visible:focus-ring data-[status=active]:bg-default data-[status=active]:font-semibold data-[status=active]:text-foreground";
+const sideLink
+  = 'flex h-10 items-center gap-3 rounded-2xl px-3 text-sm text-muted outline-none hover:bg-default focus-visible:focus-ring data-[status=active]:bg-default data-[status=active]:font-semibold data-[status=active]:text-foreground'
 
 /** A parent row: no active fill of its own, the open page below carries it. */
-const parentLink =
-  "flex h-10 items-center gap-3 rounded-2xl px-3 text-sm text-foreground outline-none hover:bg-default focus-visible:focus-ring";
+const parentLink
+  = 'flex h-10 items-center gap-3 rounded-2xl px-3 text-sm text-foreground outline-none hover:bg-default focus-visible:focus-ring'
 
-const subLink =
-  "flex h-9 items-center rounded-xl ps-11 pe-3 text-sm text-muted outline-none hover:bg-default focus-visible:focus-ring data-[status=active]:bg-default data-[status=active]:font-semibold data-[status=active]:text-foreground";
+const subLink
+  = 'flex h-9 items-center rounded-xl ps-11 pe-3 text-sm text-muted outline-none hover:bg-default focus-visible:focus-ring data-[status=active]:bg-default data-[status=active]:font-semibold data-[status=active]:text-foreground'
 
-const tabLink =
-  "group relative flex h-16 w-full flex-col items-center justify-center gap-1 text-xs text-muted outline-none focus-visible:focus-ring data-[status=active]:font-semibold data-[status=active]:text-accent";
+const tabLink
+  = 'group relative flex h-16 w-full flex-col items-center justify-center gap-1 text-xs text-muted outline-none focus-visible:focus-ring data-[status=active]:font-semibold data-[status=active]:text-accent'
 
 /**
  * Merchant dashboard frame (UX spec §3.2). Phones: bottom navigation with Today,
  * Bookings, Calendar, Products and Settings. From 1024px: a sidebar.
  */
 export function MerchantShell({ children }: { children: React.ReactNode }) {
-  const { t } = useLocale();
-  const { setRole } = useDemo();
-  const staffName = shop.ownerName;
-  const staffRole = t("staff.owner");
+  const { t } = useLocale()
+  const { setRole } = useDemoActions()
+  const staffName = shop.ownerName
+  const staffRole = t('staff.owner')
   // Groups start unfolded; the set holds the ones the user folded.
-  const [folded, setFolded] = useState<Set<string>>(new Set());
-  const [barSlot, setBarSlot] = useState<HTMLElement | null>(null);
-  const { pathname } = useLocation();
-  const navigate = useNavigate();
-  const labelOf = (item: NavItem) => t(item.label);
+  const [folded, setFolded] = useState<Set<string>>(() => new Set())
+  const [barSlot, setBarSlot] = useState<HTMLElement | null>(null)
+  const { pathname } = useLocation()
+  const navigate = useNavigate()
+  const labelOf = (item: NavItem) => t(item.label)
 
   return (
     <div className="flex flex-1">
@@ -223,55 +225,59 @@ export function MerchantShell({ children }: { children: React.ReactNode }) {
               {shop.name}
             </span>
           </Link>
-          <nav aria-label={t("nav.merchant.label")}>
+          <nav aria-label={t('nav.merchant.label')}>
             <ul className="flex flex-col gap-1">
               {sidebarItems.map((item) => {
-                const pages = item.pages ?? [];
-                const id = `nav-pages-${item.label.replace(".", "-")}`;
-                const inside = isInside(pathname, item);
-                const isOpen = !folded.has(item.label);
+                const pages = item.pages ?? []
+                const id = `nav-pages-${item.label.replace('.', '-')}`
+                const inside = isInside(pathname, item)
+                const isOpen = !folded.has(item.label)
 
                 return (
                   <li key={item.label}>
-                    {pages.length ? (
-                      // A group. Inside it the row folds or unfolds its pages; from another
-                      // group it unfolds them and opens the first page. Folded while one of its
-                      // pages is open, it shows where you are.
-                      <button
-                        aria-controls={id}
-                        aria-expanded={isOpen}
-                        className={`${parentLink} w-full text-start ${
-                          !isOpen && inside ? "bg-default font-semibold" : ""
-                        }`}
-                        type="button"
-                        onClick={() => {
-                          const next = new Set(folded);
+                    {pages.length
+                      ? (
+                    // A group. Inside it the row folds or unfolds its pages; from another
+                    // group it unfolds them and opens the first page. Folded while one of its
+                    // pages is open, it shows where you are.
+                          <button
+                            aria-controls={id}
+                            aria-expanded={isOpen}
+                            className={`${parentLink} w-full text-start ${
+                              !isOpen && inside ? 'bg-default font-semibold' : ''
+                            }`}
+                            type="button"
+                            onClick={() => {
+                              const next = new Set(folded)
 
-                          if (isOpen && inside) next.add(item.label);
-                          else {
-                            next.delete(item.label);
-                            void navigate({ to: pages[0].to });
-                          }
-                          setFolded(next);
-                        }}
-                      >
-                        <item.icon size={20} />
-                        <span className="flex-1">{labelOf(item)}</span>
-                        <ChevronDownIcon
-                          aria-hidden
-                          className={`text-muted transition-transform ${isOpen ? "" : "-rotate-90"}`}
-                          size={16}
-                        />
-                      </button>
-                    ) : (
-                      <NavLink className={sideLink} item={item}>
-                        <item.icon size={20} />
-                        {labelOf(item)}
-                      </NavLink>
-                    )}
+                              if (isOpen && inside) {
+                                next.add(item.label)
+                              }
+                              else {
+                                next.delete(item.label)
+                                void navigate({ to: pages[0].to })
+                              }
+                              setFolded(next)
+                            }}
+                          >
+                            <item.icon size={20} />
+                            <span className="flex-1">{labelOf(item)}</span>
+                            <ChevronDownIcon
+                              aria-hidden
+                              className={`text-muted transition-transform ${isOpen ? '' : '-rotate-90'}`}
+                              size={16}
+                            />
+                          </button>
+                        )
+                      : (
+                          <NavLink className={sideLink} item={item}>
+                            <item.icon size={20} />
+                            {labelOf(item)}
+                          </NavLink>
+                        )}
                     {pages.length > 0 && isOpen && (
                       <ul className="mt-1 flex flex-col gap-0.5" id={id}>
-                        {pages.map((page) => (
+                        {pages.map(page => (
                           <li key={page.label}>
                             <Link
                               activeOptions={{ exact: page.exact ?? true }}
@@ -285,7 +291,7 @@ export function MerchantShell({ children }: { children: React.ReactNode }) {
                       </ul>
                     )}
                   </li>
-                );
+                )
               })}
             </ul>
           </nav>
@@ -295,6 +301,7 @@ export function MerchantShell({ children }: { children: React.ReactNode }) {
             <img
               alt=""
               className="size-9 shrink-0 rounded-full bg-default object-cover"
+              decoding="async"
               src={avatarUrl(staffName)}
             />
             <span className="flex min-w-0 flex-col">
@@ -306,13 +313,13 @@ export function MerchantShell({ children }: { children: React.ReactNode }) {
               side, as the prototype bar's guest role does. */}
           <Button
             isIconOnly
-            aria-label={t("account.signOut")}
+            aria-label={t('account.signOut')}
             className="text-danger"
             size="sm"
             variant="ghost"
             onPress={() => {
-              setRole("guest");
-              void navigate({ to: "/" });
+              setRole('guest')
+              void navigate({ to: '/' })
             }}
           >
             <LogoutIcon aria-hidden size={18} />
@@ -330,20 +337,20 @@ export function MerchantShell({ children }: { children: React.ReactNode }) {
         {/* The calendar fills the content area edge to edge (owner, 15.10.2026). */}
         <main
           className={
-            pathname === "/store/calendar"
-              ? "flex w-full flex-1 flex-col"
-              : "mx-auto w-full max-w-5xl flex-1 px-4 pt-4 pb-24 lg:px-8 lg:pt-8 lg:pb-8"
+            pathname === '/store/calendar'
+              ? 'flex w-full flex-1 flex-col'
+              : 'mx-auto w-full max-w-5xl flex-1 px-4 pt-4 pb-24 lg:px-8 lg:pt-8 lg:pb-8'
           }
         >
-          <MerchantBarSlot value={barSlot}>{children}</MerchantBarSlot>
+          <MerchantBarSlotContext value={barSlot}>{children}</MerchantBarSlotContext>
         </main>
 
         <nav
-          aria-label={t("nav.merchant.label")}
+          aria-label={t('nav.merchant.label')}
           className="fixed inset-x-0 bottom-0 z-20 border-t border-separator bg-surface pb-[env(safe-area-inset-bottom,0px)] lg:hidden"
         >
           <ul className="grid grid-cols-5">
-            {phoneItems.map((item) => (
+            {phoneItems.map(item => (
               <li key={item.label}>
                 <NavLink className={tabLink} item={item}>
                   {/* The guest tab pattern: the active tab fills its icon and takes the accent tint. */}
@@ -364,5 +371,5 @@ export function MerchantShell({ children }: { children: React.ReactNode }) {
         </nav>
       </div>
     </div>
-  );
+  )
 }

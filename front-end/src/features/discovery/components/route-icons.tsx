@@ -4,9 +4,9 @@
  * All decorative: callers put the meaning in text.
  */
 interface IconProps {
-  size?: number;
-  strokeWidth?: number;
-  className?: string;
+  size?: number
+  strokeWidth?: number
+  className?: string
 }
 
 function Line({
@@ -30,10 +30,10 @@ function Line({
     >
       {children}
     </svg>
-  );
+  )
 }
 
-const ns = { vectorEffect: "non-scaling-stroke" } as const;
+const ns = { vectorEffect: 'non-scaling-stroke' } as const
 
 /** A mountain outline: two peaks and a snow line. */
 export function PassIcon(props: IconProps) {
@@ -43,7 +43,7 @@ export function PassIcon(props: IconProps) {
       <path d="m11.2 18.6 2.3 1.6 1.5-1.4 2.2 2.1 1.4-1.6" {...ns} />
       <path d="m23.6 17.4 1.6 1.2 1.6-1.4 1.8 1.6" {...ns} />
     </Line>
-  );
+  )
 }
 
 /** A road winding away towards the horizon, with a dashed centre line. */
@@ -58,7 +58,7 @@ export function RoadIcon(props: IconProps) {
         {...ns}
       />
     </Line>
-  );
+  )
 }
 
 /** Two pine trees on a ground line. */
@@ -71,16 +71,16 @@ export function PinesIcon(props: IconProps) {
       <path d="M27 29.5V33" {...ns} />
       <path d="M3 33h34" {...ns} />
     </Line>
-  );
+  )
 }
 
 /** The small red heart that ends the handwritten quote. */
 export function Heart({
   size = 18,
-  className = "",
+  className = '',
 }: {
-  size?: number;
-  className?: string;
+  size?: number
+  className?: string
 }) {
   return (
     <svg
@@ -95,11 +95,11 @@ export function Heart({
         d="M12 20.5c-.4 0-8.5-4.9-8.5-10.6C3.5 6.9 5.6 5 8 5c1.8 0 3.2 1 4 2.4C12.8 6 14.2 5 16 5c2.4 0 4.5 1.9 4.5 4.9 0 5.7-8.1 10.6-8.5 10.6Z"
       />
     </svg>
-  );
+  )
 }
 
 /** A plain pine silhouette, filled with the current colour. */
-export function PineSilhouette({ className = "" }: { className?: string }) {
+export function PineSilhouette({ className = '' }: { className?: string }) {
   return (
     <svg
       aria-hidden="true"
@@ -109,5 +109,5 @@ export function PineSilhouette({ className = "" }: { className?: string }) {
     >
       <path d="M20 0 9 18h5L5 32h6L1 48h16v12h6V48h16L29 32h6l-9-14h5Z" />
     </svg>
-  );
+  )
 }

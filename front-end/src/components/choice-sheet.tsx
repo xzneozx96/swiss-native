@@ -1,9 +1,9 @@
-import type { ButtonProps } from "@heroui/react";
-import type { ReactNode } from "react";
+import type { ButtonProps } from '@heroui/react'
+import type { ReactNode } from 'react'
 
-import { Button, Drawer } from "@heroui/react";
+import { Button, Drawer } from '@heroui/react'
 
-import { useSheetExit } from "@/components/sheet-exit";
+import { useSheetExit } from '@/components/sheet-exit'
 
 /**
  * The bottom sheet where a guest makes a listing's choices and commits them with one full-width
@@ -18,20 +18,20 @@ export function ChoiceSheet({
   summary,
   children,
 }: {
-  title: string;
-  closeLabel: string;
+  title: string
+  closeLabel: string
   action: {
-    label: string;
-    isDisabled?: boolean;
-    onPress: ButtonProps["onPress"];
-  };
-  isOpen: boolean;
-  onOpenChange: (open: boolean) => void;
+    label: string
+    isDisabled?: boolean
+    onPress: ButtonProps['onPress']
+  }
+  isOpen: boolean
+  onOpenChange: (open: boolean) => void
   /** The choice in words above the button, kept in sight while the body scrolls. */
-  summary?: ReactNode;
-  children: ReactNode;
+  summary?: ReactNode
+  children: ReactNode
 }) {
-  const exitRef = useSheetExit();
+  const exitRef = useSheetExit()
 
   return (
     <Drawer.Backdrop isOpen={isOpen} onOpenChange={onOpenChange}>
@@ -49,7 +49,7 @@ export function ChoiceSheet({
             {children}
           </Drawer.Body>
           <Drawer.Footer
-            className={`pt-3 pb-[calc(env(safe-area-inset-bottom,0px)+16px)] ${summary ? "flex-col items-stretch gap-2" : ""}`}
+            className={`pt-3 pb-[calc(env(safe-area-inset-bottom,0px)+16px)] ${summary ? 'flex-col items-stretch gap-2' : ''}`}
           >
             {summary}
             <Button
@@ -65,5 +65,5 @@ export function ChoiceSheet({
         </Drawer.Dialog>
       </Drawer.Content>
     </Drawer.Backdrop>
-  );
+  )
 }

@@ -1,20 +1,20 @@
-import type { TourBooking } from "../../types";
-import type { Language } from "@/contexts/locale-context";
-import type { DemoState } from "@/features/demo/types";
-import type { MailParams } from "@/features/notifications/types";
+import type { TourBooking } from '../../types'
+import type { Language } from '@/contexts/locale-context'
+import type { DemoState } from '@/features/demo/types'
+import type { MailParams } from '@/features/notifications/types'
 
+import { sendMail } from '@/features/notifications/mail'
+
+import { pickText } from '@/lib/localized'
 import {
   bookingBalance,
   bookingNights,
   bookingPaid,
-} from "../../lib/selectors";
-
-import { sendMail } from "@/features/notifications/mail";
-import { pickText } from "@/lib/localized";
+} from '../../lib/selectors'
 
 /** Tour emails of spec §6 that flow 2 sends; rendered by `renderTourMail`. */
-export type TourMailTemplate =
-  "N07" | "N08" | "N09" | "N10" | "N11" | "N13" | "N15" | "N22";
+export type TourMailTemplate
+  = 'N07' | 'N08' | 'N09' | 'N10' | 'N11' | 'N13' | 'N15' | 'N22'
 
 /** What every tour email can show, worded in the recipient's language. Money in Rappen, dates ISO. */
 function bookingParams(
@@ -24,8 +24,8 @@ function bookingParams(
 ): MailParams {
   return {
     kind:
-      state.data.tours?.tours.find((tour) => tour.id === booking.tourId)
-        ?.kind ?? "tour",
+      state.data.tours?.tours.find(tour => tour.id === booking.tourId)
+        ?.kind ?? 'tour',
     ref: booking.ref,
     tour: pickText(booking.tourName, language).text,
     meetingPoint: pickText(booking.meetingPoint, language).text,
@@ -40,7 +40,7 @@ function bookingParams(
     total: booking.total,
     paid: bookingPaid(booking),
     balance: bookingBalance(booking),
-  };
+  }
 }
 
 /**
@@ -57,13 +57,13 @@ export function mailTourGuest(
 ): DemoState {
   return sendMail(state, {
     at: now.toISOString(),
-    to: "guest",
+    to: 'guest',
     guestId: booking.guestId,
     language: booking.language,
     template,
     bookingId: booking.id,
     params: { ...bookingParams(state, booking, booking.language), ...params },
-  });
+  })
 }
 
 /** The same for the host, in the staff UI language (spec §6: N11, N22). */
@@ -77,10 +77,10 @@ export function mailTourStaff(
 ): DemoState {
   return sendMail(state, {
     at: now.toISOString(),
-    to: "staff",
+    to: 'staff',
     language: staffLanguage,
     template,
     bookingId: booking.id,
     params: { ...bookingParams(state, booking, staffLanguage), ...params },
-  });
+  })
 }

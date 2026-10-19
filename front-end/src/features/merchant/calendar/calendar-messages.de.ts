@@ -1,0 +1,25 @@
+import type { calendarEn } from './calendar-messages'
+
+export const calendarDe: Record<keyof typeof calendarEn, string> = {
+  'nav.calendar': 'Kalender',
+  'calendar.title': 'Kalender',
+  'calendar.pickDate': 'Datum wählen',
+  'calendar.close': 'Schließen',
+  'calendar.today': 'Heute',
+  'calendar.prevPeriod': 'Vorheriger Zeitraum',
+  'calendar.nextPeriod': 'Nächster Zeitraum',
+  'calendar.prevMonth': 'Vorheriger Monat',
+  'calendar.nextMonth': 'Nächster Monat',
+  'calendar.viewLabel': 'Kalenderansicht',
+  'calendar.view.day': 'Tag',
+  'calendar.view.week': 'Woche',
+  'calendar.view.month': 'Monat',
+  'calendar.more': '+{count} mehr',
+  'calendar.plusMore': '{name} +{count} weitere',
+  'calendar.noBookings': 'Noch keine Buchungen',
+  'calendar.status': 'Status',
+  'calendar.payment': 'Zahlung',
+  'calendar.openDeparture': 'Gästeliste öffnen',
+  'calendar.night': 'Nacht · Check-in {time}',
+  'calendar.stayTimes': 'Check-in {in} · Check-out {out} am nächsten Morgen',
+}

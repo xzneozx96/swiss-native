@@ -34,12 +34,26 @@ rm -rf \
   "$S/assets/audio/background-swiss-keepsakes-cover.jpg" docs/background-music
 rm -f "$S"/routes/lab.*.tsx
 
-# Upstream's lab pages. Our own design lab (features/lab/brand, routes/_guest/lab.*) stays.
+# Upstream's lab pages. Our own design lab (features/lab/brand, loves and story, routes/_guest/lab.*) stays.
 git ls-files -z -- "$S/features/lab" "$S/routes" ".impeccable/surfaces" |
   grep -zE "^$S/features/lab/|^$S/routes/lab\.|^\.impeccable/surfaces/.*lab" |
-  grep -zv "^$S/features/lab/brand/" |
+  grep -zvE "^$S/features/lab/(brand|loves|story)/" |
   xargs -0 -r git rm -q --cached --ignore-unmatch -- || true
-find "$S/features/lab" -mindepth 1 -maxdepth 1 ! -name brand -exec rm -rf {} + 2>/dev/null || true
+find "$S/features/lab" -mindepth 1 -maxdepth 1 ! -name brand ! -name loves ! -name story -exec rm -rf {} + 2>/dev/null || true
 rm -f .impeccable/surfaces/*lab*
+
+# Upstream's back-end, keepsake e2e flows, planning docs and home rework (see UPSTREAM-SYNC.md).
+git rm -rq --ignore-unmatch --cached -- api e2e spikes package.json .github docs/spikes docs/architecture \
+  docs/development-plan docs/front-end-audit docs/development-rules AGENTS.md scripts/trace.mjs \
+  scripts/trace.test.mjs scripts/fixtures scripts/REPORT-E0.9.md "$S/components/assistant.tsx" \
+  "$S/features/discovery/components/journey-steps.tsx" "$S/features/discovery/components/moving-story-rail.tsx" \
+  "$S/features/discovery/components/part-heading.tsx" "$S/features/discovery/components/snowfall.tsx" \
+  "$S/features/discovery/components/story-categories.tsx" 2>/dev/null || true
+rm -rf api e2e spikes .github docs/spikes docs/architecture docs/development-plan docs/front-end-audit \
+  docs/development-rules AGENTS.md package.json scripts/trace.mjs scripts/trace.test.mjs scripts/fixtures \
+  scripts/REPORT-E0.9.md "$S/components/assistant.tsx" \
+  "$S/features/discovery/components/journey-steps.tsx" "$S/features/discovery/components/moving-story-rail.tsx" \
+  "$S/features/discovery/components/part-heading.tsx" "$S/features/discovery/components/snowfall.tsx" \
+  "$S/features/discovery/components/story-categories.tsx"
 
 echo "Pruned. Next: resolve the remaining conflicts, then run tsc, eslint and vite build."

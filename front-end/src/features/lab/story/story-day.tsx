@@ -4,37 +4,37 @@
  * evening in Finsterwald. A line under the intro says it is a picture, not a schedule,
  * because the tours last 5 to 7 days.
  */
-import type { ChapterId, StoryCopy } from "./copy";
+import type { ChapterId, StoryCopy } from './copy'
 
+import { AdviceBanner } from '@/features/discovery/components/advice-banner'
+
+import { ExperienceFlight } from '@/features/discovery/components/experience-flight'
+import { QuoteAirmail } from '@/features/discovery/components/quote-airmail'
+import { StayKey } from '@/features/discovery/components/stay-key'
+import { useScrolledPast } from '@/hooks/use-scrolled-past'
 import {
+  chapterId,
   PassStrip,
   Photo,
   Reveal,
   StoryBar,
-  ToursRail,
   TopRow,
+  ToursRail,
   VoiceNote,
-  chapterId,
-} from "./parts";
-
-import { AdviceBanner } from "@/features/discovery/components/advice-banner";
-import { ExperienceFlight } from "@/features/discovery/components/experience-flight";
-import { QuoteAirmail } from "@/features/discovery/components/quote-airmail";
-import { StayKey } from "@/features/discovery/components/stay-key";
-import { useScrolledPast } from "@/hooks/use-scrolled-past";
+} from './parts'
 
 const MOMENT: Record<
   ChapterId,
-  { key: "morning" | "afternoon" | "evening"; dot: string; sky: string }
+  { key: 'morning' | 'afternoon' | 'evening', dot: string, sky: string }
 > = {
-  tours: { key: "morning", dot: "bg-[#E7A33E]", sky: "from-[#FBE7C6]" },
-  bees: { key: "afternoon", dot: "bg-[#5C8A3A]", sky: "from-[#E3EFD6]" },
-  stay: { key: "evening", dot: "bg-navy", sky: "from-[#D9E1EE]" },
-};
+  tours: { key: 'morning', dot: 'bg-[#E7A33E]', sky: 'from-[#FBE7C6]' },
+  bees: { key: 'afternoon', dot: 'bg-[#5C8A3A]', sky: 'from-[#E3EFD6]' },
+  stay: { key: 'evening', dot: 'bg-navy', sky: 'from-[#D9E1EE]' },
+}
 
-function Stop({ c, id }: { c: StoryCopy; id: ChapterId }) {
-  const ch = c.chapters[id];
-  const m = MOMENT[id];
+function Stop({ c, id }: { c: StoryCopy, id: ChapterId }) {
+  const ch = c.chapters[id]
+  const m = MOMENT[id]
 
   return (
     <Reveal
@@ -59,11 +59,11 @@ function Stop({ c, id }: { c: StoryCopy; id: ChapterId }) {
         </p>
       </div>
     </Reveal>
-  );
+  )
 }
 
 export function StoryDay({ c }: { c: StoryCopy }) {
-  const [prologueEnd, scrolledPast] = useScrolledPast<HTMLDivElement>();
+  const [prologueEnd, scrolledPast] = useScrolledPast<HTMLDivElement>()
 
   return (
     <>
@@ -128,5 +128,5 @@ export function StoryDay({ c }: { c: StoryCopy }) {
         </section>
       </div>
     </>
-  );
+  )
 }

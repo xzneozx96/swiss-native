@@ -5,48 +5,50 @@
  * readers get the whole quote at once; under reduced motion it is all shown at once.
  * Stamp, postmark and address lines are decoration.
  */
-import { useId } from "react";
+import { useId } from 'react'
 
-import { Heart, PineSilhouette } from "./route-icons";
+import { useLocale } from '@/contexts/locale-context'
 
-import { useLocale } from "@/contexts/locale-context";
-import { useReveal } from "@/hooks/use-reveal";
+import { useReveal } from '@/hooks/use-reveal'
+import { Heart, PineSilhouette } from './route-icons'
+
+const NON_WORD = /\W/g
 
 const copy = {
   en: {
     quote:
-      "More than roads — it's the people, the places and the little moments that stay with you.",
-    author: "Erich Haldi",
+      'More than roads — it\'s the people, the places and the little moments that stay with you.',
+    author: 'Erich Haldi',
   },
   de: {
     quote:
-      "Mehr als Strassen — es sind die Menschen, die Orte und die kleinen Momente, die bleiben.",
-    author: "Erich Haldi",
+      'Mehr als Strassen — es sind die Menschen, die Orte und die kleinen Momente, die bleiben.',
+    author: 'Erich Haldi',
   },
-};
+}
 
 /** Words that are the same on every Swiss card, so not translated. */
-const AIRMAIL = "Par avion";
-const POSTMARK = "Finsterwald · Entlebuch";
-const STAMP = "Helvetia";
+const AIRMAIL = 'Par avion'
+const POSTMARK = 'Finsterwald · Entlebuch'
+const STAMP = 'Helvetia'
 
 /** Card paper; navy ink on it is about 11:1. */
-const PAPER = "#FFFCF3";
+const PAPER = '#FFFCF3'
 
 const BORDER: React.CSSProperties = {
   background: `repeating-linear-gradient(-45deg, var(--accent) 0 10px, ${PAPER} 10px 16px, var(--navy) 16px 26px, ${PAPER} 26px 32px)`,
-};
+}
 
 /** Holes only in the padding ring: a solid content-box layer plus a grid of holes. */
 const PERFORATION: React.CSSProperties = {
   maskImage:
-    "linear-gradient(#000 0 0), radial-gradient(circle at center, transparent 2px, #000 2.6px)",
-  maskClip: "content-box, border-box",
-  maskOrigin: "content-box, border-box",
-  maskSize: "auto, 7px 7px",
-  maskPosition: "0 0, -3.5px -3.5px",
-  maskRepeat: "no-repeat, repeat",
-};
+    'linear-gradient(#000 0 0), radial-gradient(circle at center, transparent 2px, #000 2.6px)',
+  maskClip: 'content-box, border-box',
+  maskOrigin: 'content-box, border-box',
+  maskSize: 'auto, 7px 7px',
+  maskPosition: '0 0, -3.5px -3.5px',
+  maskRepeat: 'no-repeat, repeat',
+}
 
 function Stamp() {
   return (
@@ -62,12 +64,12 @@ function Stamp() {
         </span>
       </div>
     </div>
-  );
+  )
 }
 
 /** A round postmark with the place name running round it, and wavy cancel lines. */
 function Postmark() {
-  const ring = `postmark-${useId().replace(/\W/g, "")}`;
+  const ring = `postmark-${useId().replace(NON_WORD, '')}`
 
   return (
     <svg
@@ -114,7 +116,7 @@ function Postmark() {
       >
         CH
       </text>
-      {[22, 30, 38].map((y) => (
+      {[22, 30, 38].map(y => (
         <path
           key={y}
           d={`M62 ${y}c5-4 9 4 14 0s9 4 14 0 9 4 12 0`}
@@ -124,15 +126,15 @@ function Postmark() {
         />
       ))}
     </svg>
-  );
+  )
 }
 
 export function QuoteAirmail() {
-  const { language } = useLocale();
-  const c = copy[language];
-  const ref = useReveal<HTMLDivElement>();
-  const words = c.quote.split(" ");
-  const last = words.length - 1;
+  const { language } = useLocale()
+  const c = copy[language]
+  const ref = useReveal<HTMLDivElement>()
+  const words = c.quote.split(' ')
+  const last = words.length - 1
 
   return (
     <div ref={ref} className="px-1 py-3" lang={language}>
@@ -167,7 +169,7 @@ export function QuoteAirmail() {
                     <span key={i}>
                       <span
                         className="reveal-word"
-                        style={{ "--i": i } as React.CSSProperties}
+                        style={{ '--i': i } as React.CSSProperties}
                       >
                         {w}
                         {i === last && (
@@ -176,7 +178,8 @@ export function QuoteAirmail() {
                             size={16}
                           />
                         )}
-                      </span>{" "}
+                      </span>
+                      {' '}
                     </span>
                   ))}
                 </span>
@@ -184,7 +187,7 @@ export function QuoteAirmail() {
             </blockquote>
             <figcaption
               className="reveal-word self-end font-script text-[21px] leading-6 font-semibold"
-              style={{ "--i": last + 3 } as React.CSSProperties}
+              style={{ '--i': last + 3 } as React.CSSProperties}
             >
               — {c.author}
             </figcaption>
@@ -193,7 +196,7 @@ export function QuoteAirmail() {
             <Stamp />
             <Postmark />
             <div aria-hidden="true" className="mt-14 flex flex-col gap-5">
-              {[0, 1, 2].map((i) => (
+              {[0, 1, 2].map(i => (
                 <span key={i} className="h-px bg-navy/20" />
               ))}
             </div>
@@ -201,5 +204,5 @@ export function QuoteAirmail() {
         </div>
       </figure>
     </div>
-  );
+  )
 }

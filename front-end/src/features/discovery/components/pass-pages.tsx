@@ -4,45 +4,46 @@
  * ends with the same voice note as the home text. A story is a photo-led opening, the
  * story itself, "a closer look" with the other four photos, and the neighbouring passes.
  */
-import type { PassId } from "../pass-stories";
+import type { PassId } from '../pass-stories'
 
-import { buttonVariants } from "@heroui/react";
-import { Link } from "@tanstack/react-router";
+import { buttonVariants } from '@heroui/react'
+import { Link } from '@tanstack/react-router'
 
+import { ArrowRightIcon, BackIcon, ChevronRightIcon } from '@/components/icons'
+import { useLocale } from '@/contexts/locale-context'
+
+import { shop } from '@/features/catalog/seed'
+import { useReveal } from '@/hooks/use-reveal'
+import { photoUrl } from '@/lib/photos'
 import {
   PASS_HEIGHTS,
   PASS_IDS,
-  passPhotos,
   passesCopy,
-} from "../pass-stories";
-import { storyCopy } from "../story-copy";
+  passPhotos,
+} from '../pass-stories'
+import { storyCopy } from '../story-copy'
 
-import { ArrowRightIcon, BackIcon, ChevronRightIcon } from "@/components/icons";
-import { useLocale } from "@/contexts/locale-context";
-import { shop } from "@/features/catalog/seed";
-import { useReveal } from "@/hooks/use-reveal";
-import { photoUrl } from "@/lib/photos";
-
-const heightLabel = (id: PassId) =>
-  `${PASS_HEIGHTS[id].toLocaleString("de-CH")} m`;
+function heightLabel(id: PassId) {
+  return `${PASS_HEIGHTS[id].toLocaleString('de-CH')} m`
+}
 
 function Reveal({
   children,
-  className = "",
+  className = '',
 }: {
-  children: React.ReactNode;
-  className?: string;
+  children: React.ReactNode
+  className?: string
 }) {
-  const ref = useReveal<HTMLDivElement>();
+  const ref = useReveal<HTMLDivElement>()
 
   return (
     <div ref={ref} className={`reveal ${className}`}>
       {children}
     </div>
-  );
+  )
 }
 
-function BackLink({ to, label }: { to: "/" | "/passes"; label: string }) {
+function BackLink({ to, label }: { to: '/' | '/passes', label: string }) {
   return (
     <Link
       aria-label={label}
@@ -51,7 +52,7 @@ function BackLink({ to, label }: { to: "/" | "/passes"; label: string }) {
     >
       <BackIcon size={22} />
     </Link>
-  );
+  )
 }
 
 function Hero({
@@ -60,10 +61,10 @@ function Hero({
   back,
   children,
 }: {
-  photo: string;
-  alt: string;
-  back: React.ReactNode;
-  children: React.ReactNode;
+  photo: string
+  alt: string
+  back: React.ReactNode
+  children: React.ReactNode
 }) {
   return (
     <div className="relative h-[62svh] min-h-[400px] overflow-hidden bg-black">
@@ -78,7 +79,7 @@ function Hero({
         {children}
       </div>
     </div>
-  );
+  )
 }
 
 function Figure({
@@ -86,9 +87,9 @@ function Figure({
   caption,
   className,
 }: {
-  photo: string;
-  caption: string;
-  className: string;
+  photo: string
+  caption: string
+  className: string
 }) {
   return (
     <figure className="flex flex-col gap-1.5">
@@ -103,7 +104,7 @@ function Figure({
         {caption}
       </figcaption>
     </figure>
-  );
+  )
 }
 
 function NeighbourLink({
@@ -111,16 +112,16 @@ function NeighbourLink({
   label,
   align,
 }: {
-  id: PassId;
-  label: string;
-  align: "start" | "end";
+  id: PassId
+  label: string
+  align: 'start' | 'end'
 }) {
-  const { language } = useLocale();
-  const story = passesCopy[language].stories[id];
+  const { language } = useLocale()
+  const story = passesCopy[language].stories[id]
 
   return (
     <Link
-      className={`relative flex min-h-24 flex-1 overflow-hidden rounded-2xl bg-black text-white outline-none focus-visible:focus-ring active:scale-[0.98] ${align === "end" ? "text-end" : ""}`}
+      className={`relative flex min-h-24 flex-1 overflow-hidden rounded-2xl bg-black text-white outline-none focus-visible:focus-ring active:scale-[0.98] ${align === 'end' ? 'text-end' : ''}`}
       params={{ pass: id }}
       to="/passes/$pass"
     >
@@ -133,7 +134,7 @@ function NeighbourLink({
       />
       <span className="absolute inset-0 bg-gradient-to-t from-black/70 to-black/10" />
       <span
-        className={`relative flex w-full flex-col justify-end p-3 ${align === "end" ? "items-end" : ""}`}
+        className={`relative flex w-full flex-col justify-end p-3 ${align === 'end' ? 'items-end' : ''}`}
       >
         <span className="text-[11px] font-semibold tracking-[0.14em] uppercase opacity-85">
           {label}
@@ -141,19 +142,19 @@ function NeighbourLink({
         <span className="font-script text-[26px] leading-7">{story.name}</span>
       </span>
     </Link>
-  );
+  )
 }
 
 export function PassStoryPage({ id }: { id: PassId }) {
-  const { language } = useLocale();
-  const copy = passesCopy[language];
-  const story = copy.stories[id];
-  const photos = passPhotos(id);
-  const at = PASS_IDS.indexOf(id);
-  const previous = PASS_IDS[at - 1];
-  const next = PASS_IDS[at + 1];
-  const [, wide1, half1, half2, wide2] = photos;
-  const [, cap1, cap2, cap3, cap4] = story.captions;
+  const { language } = useLocale()
+  const copy = passesCopy[language]
+  const story = copy.stories[id]
+  const photos = passPhotos(id)
+  const at = PASS_IDS.indexOf(id)
+  const previous = PASS_IDS[at - 1]
+  const next = PASS_IDS[at + 1]
+  const [, wide1, half1, half2, wide2] = photos
+  const [, cap1, cap2, cap3, cap4] = story.captions
 
   return (
     <article className="flex flex-col gap-9 pb-6">
@@ -180,8 +181,8 @@ export function PassStoryPage({ id }: { id: PassId }) {
             <p
               className={
                 i === 0
-                  ? "font-serif text-[22px] leading-8 text-balance"
-                  : "font-serif text-[17px] leading-7 text-foreground/85"
+                  ? 'font-serif text-[22px] leading-8 text-balance'
+                  : 'font-serif text-[17px] leading-7 text-foreground/85'
               }
             >
               {p}
@@ -215,20 +216,24 @@ export function PassStoryPage({ id }: { id: PassId }) {
 
       <nav aria-label={copy.ui.all} className="flex flex-col gap-3 px-4">
         <div className="flex gap-3">
-          {previous ? (
-            <NeighbourLink
-              align="start"
-              id={previous}
-              label={copy.ui.previous}
-            />
-          ) : (
-            <span className="flex-1" />
-          )}
-          {next ? (
-            <NeighbourLink align="end" id={next} label={copy.ui.next} />
-          ) : (
-            <span className="flex-1" />
-          )}
+          {previous
+            ? (
+                <NeighbourLink
+                  align="start"
+                  id={previous}
+                  label={copy.ui.previous}
+                />
+              )
+            : (
+                <span className="flex-1" />
+              )}
+          {next
+            ? (
+                <NeighbourLink align="end" id={next} label={copy.ui.next} />
+              )
+            : (
+                <span className="flex-1" />
+              )}
         </div>
         <Link
           className="flex min-h-11 items-center justify-center gap-1 rounded-full bg-default text-sm font-semibold outline-none focus-visible:focus-ring active:scale-[0.98]"
@@ -239,13 +244,13 @@ export function PassStoryPage({ id }: { id: PassId }) {
         </Link>
       </nav>
     </article>
-  );
+  )
 }
 
 export function PassesIndexPage() {
-  const { language } = useLocale();
-  const copy = passesCopy[language];
-  const { index } = copy;
+  const { language } = useLocale()
+  const copy = passesCopy[language]
+  const { index } = copy
 
   return (
     <article className="flex flex-col gap-9 pb-6">
@@ -269,8 +274,8 @@ export function PassesIndexPage() {
             <p
               className={
                 i === 0
-                  ? "font-serif text-[22px] leading-8 text-balance"
-                  : "font-serif text-[17px] leading-7 text-foreground/85"
+                  ? 'font-serif text-[22px] leading-8 text-balance'
+                  : 'font-serif text-[17px] leading-7 text-foreground/85'
               }
             >
               {p}
@@ -288,7 +293,7 @@ export function PassesIndexPage() {
         </h2>
         <ol className="flex flex-col gap-3">
           {PASS_IDS.map((id, i) => {
-            const story = copy.stories[id];
+            const story = copy.stories[id]
 
             return (
               <li key={id}>
@@ -307,7 +312,7 @@ export function PassesIndexPage() {
                   />
                   <span className="flex min-w-0 flex-1 flex-col gap-0.5">
                     <span className="text-[11px] font-semibold tracking-[0.14em] text-muted uppercase tabular-nums">
-                      {String(i + 1).padStart(2, "0")} · {heightLabel(id)}
+                      {String(i + 1).padStart(2, '0')} · {heightLabel(id)}
                     </span>
                     <span className="font-script text-[28px] leading-8">
                       {story.name}
@@ -319,7 +324,7 @@ export function PassesIndexPage() {
                   <ChevronRightIcon className="shrink-0 text-muted" size={20} />
                 </Link>
               </li>
-            );
+            )
           })}
         </ol>
       </section>
@@ -331,7 +336,7 @@ export function PassesIndexPage() {
             {index.journeyTitle}
           </h2>
         </Reveal>
-        {index.journey.map((p) => (
+        {index.journey.map(p => (
           <Reveal key={p.slice(0, 24)}>
             <p className="font-serif text-[17px] leading-7 text-foreground/85">
               {p}
@@ -347,7 +352,7 @@ export function PassesIndexPage() {
         <h2 className="font-serif text-[22px] leading-7">{index.ctaTitle}</h2>
         <p className="text-body text-muted">{index.ctaBody}</p>
         <a
-          className={`${buttonVariants({ variant: "primary" })} transition-transform active:scale-[0.98]`}
+          className={`${buttonVariants({ variant: 'primary' })} transition-transform active:scale-[0.98]`}
           href={`mailto:${shop.email}?subject=${encodeURIComponent(index.ctaSubject)}`}
         >
           {index.ctaAction}
@@ -357,5 +362,5 @@ export function PassesIndexPage() {
 
       <p className="px-4 text-xs leading-4 text-muted">{index.notice}</p>
     </article>
-  );
+  )
 }

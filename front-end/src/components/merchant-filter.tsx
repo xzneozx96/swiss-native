@@ -1,12 +1,12 @@
-import { Button, Dropdown, Label } from "@heroui/react";
+import { Button, Dropdown, Label } from '@heroui/react'
 
-import { ChevronDownIcon, CloseIcon, FilterIcon } from "@/components/icons";
-import { useLocale } from "@/contexts/locale-context";
+import { ChevronDownIcon, CloseIcon, FilterIcon } from '@/components/icons'
+import { useLocale } from '@/contexts/locale-context'
 
 export interface FilterOption<Id extends string> {
-  id: Id;
-  label: string;
-  count: number;
+  id: Id
+  label: string
+  count: number
 }
 
 /** The chosen options' labels, or the "all" wording when nothing is chosen. */
@@ -17,10 +17,10 @@ export function selectedLabels<Id extends string>(
 ) {
   return selected.length
     ? options
-        .filter((o) => selected.includes(o.id))
-        .map((o) => o.label)
-        .join(", ")
-    : allLabel;
+        .filter(o => selected.includes(o.id))
+        .map(o => o.label)
+        .join(', ')
+    : allLabel
 }
 
 /**
@@ -34,12 +34,12 @@ export function MerchantFilter<Id extends string>({
   selected,
   onChange,
 }: {
-  label: string;
-  options: FilterOption<Id>[];
-  selected: Id[];
-  onChange: (selected: Id[]) => void;
+  label: string
+  options: FilterOption<Id>[]
+  selected: Id[]
+  onChange: (selected: Id[]) => void
 }) {
-  const { t } = useLocale();
+  const { t } = useLocale()
 
   return (
     <div className="flex flex-wrap items-center gap-1.5">
@@ -54,17 +54,16 @@ export function MerchantFilter<Id extends string>({
             aria-label={label}
             selectedKeys={new Set(selected)}
             selectionMode="multiple"
-            onSelectionChange={(keys) =>
+            onSelectionChange={keys =>
               onChange(
-                keys === "all"
-                  ? options.map((o) => o.id)
+                keys === 'all'
+                  ? options.map(o => o.id)
                   : (options
-                      .map((o) => o.id)
-                      .filter((id) => keys.has(id)) as Id[]),
-              )
-            }
+                      .map(o => o.id)
+                      .filter(id => keys.has(id)) as Id[]),
+              )}
           >
-            {options.map((o) => (
+            {options.map(o => (
               <Dropdown.Item key={o.id} id={o.id} textValue={o.label}>
                 <Label className="flex-1">{o.label}</Label>
                 <span className="text-sm text-muted tabular-nums">
@@ -77,21 +76,21 @@ export function MerchantFilter<Id extends string>({
         </Dropdown.Popover>
       </Dropdown>
       {options
-        .filter((o) => selected.includes(o.id))
-        .map((o) => (
+        .filter(o => selected.includes(o.id))
+        .map(o => (
           <Button
             key={o.id}
             size="sm"
             variant="secondary"
-            onPress={() => onChange(selected.filter((id) => id !== o.id))}
+            onPress={() => onChange(selected.filter(id => id !== o.id))}
           >
             {o.label}
             <CloseIcon
-              aria-label={t("reports.filter.remove", { filter: o.label })}
+              aria-label={t('reports.filter.remove', { filter: o.label })}
               size={14}
             />
           </Button>
         ))}
     </div>
-  );
+  )
 }

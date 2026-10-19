@@ -1,20 +1,20 @@
-import type { StoryChapterId, StoryCopy } from "../story-copy";
+import type { StoryChapterId, StoryCopy } from '../story-copy'
 
-import { Link } from "@tanstack/react-router";
+import { Link } from '@tanstack/react-router'
 
+import { useReveal } from '@/hooks/use-reveal'
+
+import { photoUrl } from '@/lib/photos'
 import {
   COVER_PHOTOS,
   EPILOGUE_PHOTO,
   STORY_PASSES,
   storyChapterId,
-} from "../story-copy";
+} from '../story-copy'
+import { AdviceBanner } from './advice-banner'
 
-import { AdviceBanner } from "./advice-banner";
-import { QuoteAirmail } from "./quote-airmail";
-import { Rail } from "./section";
-
-import { useReveal } from "@/hooks/use-reveal";
-import { photoUrl } from "@/lib/photos";
+import { QuoteAirmail } from './quote-airmail'
+import { Rail } from './section'
 
 /**
  * A chapter of the story home: a full-bleed photo with the chapter's title over a dark
@@ -26,13 +26,13 @@ export function StoryChapter({
   id,
   children,
 }: {
-  c: StoryCopy;
-  id: StoryChapterId;
-  children: React.ReactNode;
+  c: StoryCopy
+  id: StoryChapterId
+  children: React.ReactNode
 }) {
-  const ch = c.chapters[id];
-  const titleRef = useReveal<HTMLDivElement>();
-  const bodyRef = useReveal<HTMLParagraphElement>();
+  const ch = c.chapters[id]
+  const titleRef = useReveal<HTMLDivElement>()
+  const bodyRef = useReveal<HTMLParagraphElement>()
 
   return (
     <section
@@ -71,14 +71,14 @@ export function StoryChapter({
       </p>
       {children}
     </section>
-  );
+  )
 }
 
 /** The five passes with heights and one line each, as a snap row of photo cards. */
 export function PassStrip({ c }: { c: StoryCopy }) {
   return (
     <Rail label={c.passes.title}>
-      {STORY_PASSES.map((p) => (
+      {STORY_PASSES.map(p => (
         <li
           key={p.name}
           className="relative w-44 shrink-0 snap-start overflow-hidden rounded-2xl"
@@ -100,7 +100,7 @@ export function PassStrip({ c }: { c: StoryCopy }) {
                 {p.name}
               </span>
               <span className="text-xs font-semibold tabular-nums">
-                {p.m.toLocaleString("de-CH")} m
+                {p.m.toLocaleString('de-CH')} m
               </span>
               <span className="mt-1 text-xs leading-4 text-white/85">
                 {c.passLines[p.name]}
@@ -110,7 +110,7 @@ export function PassStrip({ c }: { c: StoryCopy }) {
         </li>
       ))}
     </Rail>
-  );
+  )
 }
 
 /**
@@ -139,5 +139,5 @@ export function StoryEpilogue({ c }: { c: StoryCopy }) {
         <AdviceBanner />
       </div>
     </section>
-  );
+  )
 }

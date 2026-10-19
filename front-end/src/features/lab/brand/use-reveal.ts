@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef } from 'react'
 
 /**
  * First-view reveal: when the element comes into view, it and every `.lab-reveal` inside
@@ -6,44 +6,46 @@ import { useEffect, useRef } from "react";
  * the CSS shows them at once without a transition.
  */
 export function useReveal<T extends HTMLElement>() {
-  const ref = useRef<T>(null);
+  const ref = useRef<T>(null)
 
   useEffect(() => {
-    const root = ref.current;
+    const root = ref.current
 
-    if (!root) return;
+    if (!root)
+      return
     const show = () => {
-      root.setAttribute("data-shown", "");
+      root.setAttribute('data-shown', '')
       root
-        .querySelectorAll(".lab-reveal")
-        .forEach((el) => el.setAttribute("data-shown", ""));
-    };
+        .querySelectorAll('.lab-reveal')
+        .forEach(el => el.setAttribute('data-shown', ''))
+    }
 
-    if (typeof IntersectionObserver === "undefined") {
-      show();
+    if (typeof IntersectionObserver === 'undefined') {
+      show()
 
-      return;
+      return
     }
     const io = new IntersectionObserver(
       ([entry]) => {
-        if (!entry.isIntersecting) return;
-        io.disconnect();
-        show();
+        if (!entry.isIntersecting)
+          return
+        io.disconnect()
+        show()
       },
       { threshold: 0.25 },
-    );
+    )
 
-    io.observe(root);
+    io.observe(root)
 
-    return () => io.disconnect();
-  }, []);
+    return () => io.disconnect()
+  }, [])
 
-  return ref;
+  return ref
 }
 
 export function useReducedMotion() {
   return (
-    typeof window !== "undefined" &&
-    window.matchMedia("(prefers-reduced-motion: reduce)").matches
-  );
+    typeof window !== 'undefined'
+    && window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  )
 }

@@ -4,44 +4,44 @@
  * opens on a black band with a centred chapter card and a wide 2.39:1 frame, then
  * returns to the light page for the approved blocks.
  */
-import type { ChapterId, StoryCopy } from "../copy";
+import type { ChapterId, StoryCopy } from '../copy'
 
-import { CHAPTERS } from "../copy";
-import { Photo, StoryBar, chapterId } from "../parts";
+import { BrandLogo } from '@/components/layout/brand-logo'
+import { SearchButton } from '@/components/layout/top-bar-buttons'
 
+import { useReveal } from '@/hooks/use-reveal'
+
+import { useScrolledPast } from '@/hooks/use-scrolled-past'
+import { CHAPTERS } from '../copy'
+import { chapterId, Photo, StoryBar } from '../parts'
 import {
-  COVERS,
   ChapterBody,
   ChapterText,
-  ERICH,
+  COVERS,
   Epilogue,
+  ERICH,
   Lede,
   SerifContents,
   Tagline,
-} from "./shared";
+} from './shared'
 
-import { BrandLogo } from "@/components/layout/brand-logo";
-import { SearchButton } from "@/components/layout/top-bar-buttons";
-import { useReveal } from "@/hooks/use-reveal";
-import { useScrolledPast } from "@/hooks/use-scrolled-past";
+const FILM = 'bg-[#0d0f12] text-white'
 
-const FILM = "bg-[#0d0f12] text-white";
-
-function Words({ text, from = 0 }: { text: string; from?: number }) {
-  return text.split(" ").map((word, i) => (
+function Words({ text, from = 0 }: { text: string, from?: number }) {
+  return text.split(' ').map((word, i) => (
     <span
       key={`${word}${i}`}
       className="reveal-word me-[0.25em] last:me-0"
-      style={{ "--i": from + i } as React.CSSProperties}
+      style={{ '--i': from + i } as React.CSSProperties}
     >
       {word}
     </span>
-  ));
+  ))
 }
 
-function ChapterCard({ c, id }: { c: StoryCopy; id: ChapterId }) {
-  const ch = c.chapters[id];
-  const ref = useReveal<HTMLDivElement>();
+function ChapterCard({ c, id }: { c: StoryCopy, id: ChapterId }) {
+  const ch = c.chapters[id]
+  const ref = useReveal<HTMLDivElement>()
 
   return (
     <div ref={ref} className={`-mx-4 flex flex-col gap-5 py-10 ${FILM}`}>
@@ -67,12 +67,12 @@ function ChapterCard({ c, id }: { c: StoryCopy; id: ChapterId }) {
         <Words text={ch.title} />
       </h2>
     </div>
-  );
+  )
 }
 
 export function CinematicLetterbox({ c }: { c: StoryCopy }) {
-  const [prologueEnd, scrolledPast] = useScrolledPast<HTMLDivElement>();
-  const titleRef = useReveal<HTMLDivElement>();
+  const [prologueEnd, scrolledPast] = useScrolledPast<HTMLDivElement>()
+  const titleRef = useReveal<HTMLDivElement>()
 
   return (
     <>
@@ -117,7 +117,7 @@ export function CinematicLetterbox({ c }: { c: StoryCopy }) {
         <Lede c={c} />
         <SerifContents c={c} />
 
-        {CHAPTERS.map((id) => (
+        {CHAPTERS.map(id => (
           <section key={id} className="flex flex-col gap-6">
             <ChapterCard c={c} id={id} />
             <ChapterText c={c} id={id} />
@@ -128,5 +128,5 @@ export function CinematicLetterbox({ c }: { c: StoryCopy }) {
         <Epilogue />
       </div>
     </>
-  );
+  )
 }

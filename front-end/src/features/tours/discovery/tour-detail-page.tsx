@@ -1,180 +1,184 @@
-import type { Tour } from "../types";
+import type { Tour } from '../types'
 
-import { Accordion, Button } from "@heroui/react";
-import { useState } from "react";
-import { useNavigate } from "@tanstack/react-router";
+import { Accordion, Button } from '@heroui/react'
+import { useNavigate } from '@tanstack/react-router'
+import { useState } from 'react'
 
-import { durationText } from "@/features/tours/lib/duration";
-import { EmptyState } from "@/components/empty-state";
+import { EmptyState } from '@/components/empty-state'
 import {
   ClockIcon,
   InfoIcon,
   PayLaterIcon,
   PickupIcon,
   TourIcon,
-} from "@/components/icons";
-import { BackButton, CompactBar } from "@/components/layout/top-bar-buttons";
+} from '@/components/icons'
+import { BackButton, CompactBar } from '@/components/layout/top-bar-buttons'
 import {
   ListingDetailHeader,
   ListingFavouriteButton,
-} from "@/components/listings/listing-detail-header";
-import { ListingReviews } from "@/components/listings/listing-reviews";
-import { Media } from "@/components/media";
-import { SellerRow } from "@/features/catalog/components/seller-row";
-import { StorySheet } from "@/features/catalog/components/story-sheet";
-import { useFavourites } from "@/features/tours/hooks/use-favourites";
-import { useProductReviews } from "@/features/catalog/hooks/use-product-reviews";
-import { shop } from "@/features/catalog/seed";
-import { PhotoGallery } from "@/components/photo-gallery";
-import { useLocale } from "@/contexts/locale-context";
-import { zurichDate } from "@/features/catalog/lib/pickup";
-import { useTours } from "@/features/tours/hooks/use-tours";
+} from '@/components/listings/listing-detail-header'
+import { ListingReviews } from '@/components/listings/listing-reviews'
+import { Media } from '@/components/media'
+import { PhotoGallery } from '@/components/photo-gallery'
+import { useLocale } from '@/contexts/locale-context'
+import { SellerRow } from '@/features/catalog/components/seller-row'
+import { StorySheet } from '@/features/catalog/components/story-sheet'
+import { useProductReviews } from '@/features/catalog/hooks/use-product-reviews'
+import { zurichDate } from '@/features/catalog/lib/pickup'
+import { shop } from '@/features/catalog/seed'
+import { ageBandLabels } from '@/features/tours/discovery/age-bands'
+import { TourSelectionSheet } from '@/features/tours/discovery/tour-selection-sheet'
+import { useFavourite } from '@/features/tours/hooks/use-favourites'
+import { useTours } from '@/features/tours/hooks/use-tours'
+import { durationText } from '@/features/tours/lib/duration'
 import {
   availableSeats,
   upcomingDepartures,
-} from "@/features/tours/lib/selectors";
-import { ageBandLabels } from "@/features/tours/discovery/age-bands";
-import { TourSelectionSheet } from "@/features/tours/discovery/tour-selection-sheet";
-import { TourItineraryMap } from "@/features/tours/map/tour-itinerary-map";
-import { useBack } from "@/hooks/use-back";
-import { useScrolledPast } from "@/hooks/use-scrolled-past";
-import { formatMoney, formatShortDate } from "@/lib/format";
-import { pickText } from "@/lib/localized";
-import { firstPhoto, openingText, pickDoc } from "@/lib/rich-text";
+} from '@/features/tours/lib/selectors'
+import { TourItineraryMap } from '@/features/tours/map/tour-itinerary-map'
+import { useBack } from '@/hooks/use-back'
+import { useScrolledPast } from '@/hooks/use-scrolled-past'
+import { formatMoney, formatShortDate, pluralCategory } from '@/lib/format'
+import { pickText } from '@/lib/localized'
+import { firstPhoto, openingText, pickDoc } from '@/lib/rich-text'
+
+const WHITESPACE = /\s/g
 
 export function TourDetailPage({
   slug,
   isBooking,
 }: {
-  slug: string;
+  slug: string
   /** C10, the departure and group sheet, is open (`?book=true`). */
-  isBooking: boolean;
+  isBooking: boolean
 }) {
-  const { tours } = useTours();
-  const { t } = useLocale();
-  const tour = tours.find((item) => item.slug === slug);
+  const { tours } = useTours()
+  const { t } = useLocale()
+  const tour = tours.find(item => item.slug === slug)
 
-  if (!tour?.published)
+  if (!tour?.published) {
     return (
       <EmptyState
-        action={{ label: t("tourDiscovery.browse"), to: "/tours" }}
+        action={{ label: t('tourDiscovery.browse'), to: '/tours' }}
         icon={TourIcon}
-        message={t("tourDiscovery.notFound")}
+        message={t('tourDiscovery.notFound')}
       />
-    );
+    )
+  }
 
-  return <TourDetail isBooking={isBooking} tour={tour} />;
+  return <TourDetail isBooking={isBooking} tour={tour} />
 }
 
-function TourDetail({ tour, isBooking }: { tour: Tour; isBooking: boolean }) {
-  const { t, language, intlLocale } = useLocale();
-  const { data, now } = useTours();
-  const navigate = useNavigate();
-  const reviews = useProductReviews(`tour:${tour.id}`);
-  const { isFavourite, toggle } = useFavourites();
-  const saved = isFavourite(`tour:${tour.id}`);
+function TourDetail({ tour, isBooking }: { tour: Tour, isBooking: boolean }) {
+  const { t, language, intlLocale } = useLocale()
+  const { data, now } = useTours()
+  const navigate = useNavigate()
+  const reviews = useProductReviews(`tour:${tour.id}`)
+  const { saved, toggle } = useFavourite(`tour:${tour.id}`)
   const favourite = {
     isSaved: saved,
-    onToggle: () => toggle(`tour:${tour.id}`),
-    label: t(saved ? "card.unsave" : "card.save", {
+    onToggle: toggle,
+    label: t(saved ? 'card.unsave' : 'card.save', {
       name: pickText(tour.name, language).text,
     }),
-  };
-  const plural =
-    new Intl.PluralRules(intlLocale).select(reviews.count) === "one"
-      ? "one"
-      : "other";
-  const [photoEnd, scrolledPast] = useScrolledPast<HTMLDivElement>();
-  const name = pickText(tour.name, language);
-  const text = (value: Tour["name"]) => pickText(value, language).text;
-  const [storyOpen, setStoryOpen] = useState(false);
+  }
+  const plural
+    = pluralCategory(intlLocale, reviews.count) === 'one'
+      ? 'one'
+      : 'other'
+  const [photoEnd, scrolledPast] = useScrolledPast<HTMLDivElement>()
+  const name = pickText(tour.name, language)
+  const text = (value: Tour['name']) => pickText(value, language).text
+  const [storyOpen, setStoryOpen] = useState(false)
   // The page's one language notice (below) covers the story too.
-  const storyBody = tour.longStory && pickDoc(tour.longStory.body, language);
-  const longStory = tour.longStory &&
-    storyBody && {
-      label: t("detail.story.label"),
-      title: text(tour.longStory.title),
-      body: storyBody.doc,
-    };
-  const upcoming = upcomingDepartures(data, tour.id, now);
-  const bookable = upcoming.filter((d) => availableSeats(data, d.id, now) > 0);
-  const next = bookable[0];
+  const storyBody = tour.longStory && pickDoc(tour.longStory.body, language)
+  const longStory = tour.longStory
+    && storyBody && {
+    label: t('detail.story.label'),
+    title: text(tour.longStory.title),
+    body: storyBody.doc,
+  }
+  const upcoming = upcomingDepartures(data, tour.id, now)
+  const bookable = upcoming.filter(d => availableSeats(data, d.id, now) > 0)
+  const next = bookable[0]
   const date = (iso: string) =>
-    formatShortDate(zurichDate(new Date(iso)), zurichDate(now), intlLocale);
+    formatShortDate(zurichDate(new Date(iso)), zurichDate(now), intlLocale)
   // Departures may differ in payment policy; say so instead of showing only the next one.
-  const policies = [...new Set(bookable.map((d) => d.policy))];
-  const policyTexts = policies.map((policy) =>
+  const policies = [...new Set(bookable.map(d => d.policy))]
+  const policyTexts = policies.map(policy =>
     t(`tourDiscovery.policy.${policy}`),
-  );
-  const policySummary =
-    policies.length > 1
-      ? t("tourDiscovery.policy.variesShort")
-      : (policyTexts[0] ?? t("tourDiscovery.noDates"));
-  const ages = ageBandLabels(tour.ageBands, t);
-  const back = useBack(() => void navigate({ to: "/tours", replace: true }));
+  )
+  const policySummary
+    = policies.length > 1
+      ? t('tourDiscovery.policy.variesShort')
+      : (policyTexts[0] ?? t('tourDiscovery.noDates'))
+  const ages = ageBandLabels(tour.ageBands, t)
+  const back = useBack(() => void navigate({ to: '/tours', replace: true }))
   const sections = [
     {
-      id: "meeting",
-      title: t("tourDiscovery.meeting"),
+      id: 'meeting',
+      title: t('tourDiscovery.meeting'),
       body: text(tour.meetingPoint),
     },
     {
-      id: "conditions",
-      title: t("tourDiscovery.conditions"),
+      id: 'conditions',
+      title: t('tourDiscovery.conditions'),
       body: text(tour.conditions),
     },
     {
-      id: "payment",
-      title: t("tourDiscovery.payment"),
+      id: 'payment',
+      title: t('tourDiscovery.payment'),
       body:
-        policies.length > 1 ? (
-          <div className="flex flex-col gap-3">
-            <p>{t("tourDiscovery.policy.varies")}</p>
-            <ul className="flex flex-col gap-3">
-              {policies.map((policy, index) => (
-                <li key={policy} className="flex flex-col gap-0.5">
-                  <span className="font-semibold">
-                    {bookable
-                      .filter((d) => d.policy === policy)
-                      .map((d) => date(d.startsAt))
-                      .join(" · ")}
-                  </span>
-                  <span>{policyTexts[index]}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
-        ) : (
-          policySummary
-        ),
+        policies.length > 1
+          ? (
+              <div className="flex flex-col gap-3">
+                <p>{t('tourDiscovery.policy.varies')}</p>
+                <ul className="flex flex-col gap-3">
+                  {policies.map((policy, index) => (
+                    <li key={policy} className="flex flex-col gap-0.5">
+                      <span className="font-semibold">
+                        {bookable
+                          .filter(d => d.policy === policy)
+                          .map(d => date(d.startsAt))
+                          .join(' · ')}
+                      </span>
+                      <span>{policyTexts[index]}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )
+          : (
+              policySummary
+            ),
     },
     {
-      id: "cancellation",
-      title: t("tourDiscovery.cancellation"),
+      id: 'cancellation',
+      title: t('tourDiscovery.cancellation'),
       body: text(tour.cancellationPolicy),
     },
-  ];
+  ]
   const fallback = [
     tour.name,
     tour.summary,
     tour.description,
     ...(tour.longStory ? [tour.longStory.title] : []),
     // The body counts as text in the language it is written in (rich text, not a string).
-    ...(storyBody ? [{ [storyBody.language]: "story" }] : []),
+    ...(storyBody ? [{ [storyBody.language]: 'story' }] : []),
     tour.meetingPoint,
     tour.conditions,
     tour.excluded,
     tour.cancellationPolicy,
     ...tour.included,
-    ...tour.itinerary.flatMap((stop) => [stop.name, stop.description]),
+    ...tour.itinerary.flatMap(stop => [stop.name, stop.description]),
   ]
-    .map((value) => pickText(value, language))
-    .find((value) => value.isFallback);
+    .map(value => pickText(value, language))
+    .find(value => value.isFallback)
 
   return (
     <div className="flex flex-1 flex-col">
       <CompactBar
-        leading={<BackButton label={t("tourDiscovery.back")} onPress={back} />}
+        leading={<BackButton label={t('tourDiscovery.back')} onPress={back} />}
         title={name.text}
         visible={scrolledPast}
       >
@@ -183,17 +187,17 @@ function TourDetail({ tour, isBooking }: { tour: Tour; isBooking: boolean }) {
       <PhotoGallery
         className="aspect-[4/3.4]"
         labels={{
-          gallery: t("tourDiscovery.gallery", { name: name.text }),
-          photo: (n, count) => t("tourDiscovery.photo", { n, count }),
-          previous: t("tourDiscovery.previous"),
-          next: t("tourDiscovery.nextPhoto"),
-          close: t("tourDiscovery.close"),
+          gallery: t('tourDiscovery.gallery', { name: name.text }),
+          photo: (n, count) => t('tourDiscovery.photo', { n, count }),
+          previous: t('tourDiscovery.previous'),
+          next: t('tourDiscovery.nextPhoto'),
+          close: t('tourDiscovery.close'),
         }}
         photos={tour.photos}
       >
         <div className="pointer-events-none absolute inset-x-4 top-[calc(env(safe-area-inset-top,0px)+12px)] z-10 flex items-center gap-2 [&>*]:pointer-events-auto">
           <BackButton
-            label={t("tourDiscovery.back")}
+            label={t('tourDiscovery.back')}
             tone="pill"
             onPress={back}
           />
@@ -208,13 +212,13 @@ function TourDetail({ tour, isBooking }: { tour: Tour; isBooking: boolean }) {
           stats={{
             primary: {
               value: durationText(t, tour),
-              label: t("tourDiscovery.durationLabel"),
+              label: t('tourDiscovery.durationLabel'),
             },
             rating: reviews.count
               ? { value: reviews.averageText, label: reviews.averageLabel }
               : {
-                  value: t("detail.stats.new"),
-                  label: t("detail.reviews.none"),
+                  value: t('detail.stats.new'),
+                  label: t('detail.reviews.none'),
                 },
             hasRating: reviews.count > 0,
             ratingValue: reviews.average,
@@ -230,20 +234,20 @@ function TourDetail({ tour, isBooking }: { tour: Tour; isBooking: boolean }) {
             address={shop.address}
             contacts={[
               {
-                kind: "call",
-                label: t("detail.seller.call"),
-                href: `tel:${shop.phone.replace(/\s/g, "")}`,
+                kind: 'call',
+                label: t('detail.seller.call'),
+                href: `tel:${shop.phone.replace(WHITESPACE, '')}`,
               },
               {
-                kind: "email",
-                label: t("detail.seller.email"),
-                href: `mailto:${shop.email}?subject=${encodeURIComponent(t("detail.seller.emailSubject", { name: name.text }))}`,
+                kind: 'email',
+                label: t('detail.seller.email'),
+                href: `mailto:${shop.email}?subject=${encodeURIComponent(t('detail.seller.emailSubject', { name: name.text }))}`,
               },
             ]}
             hours={text(shop.openingHours)}
             name={shop.name}
-            sub={t("tourDetail.operatorSub")}
-            title={t("tourDetail.operatorTitle", { shop: shop.name })}
+            sub={t('tourDetail.operatorSub')}
+            title={t('tourDetail.operatorTitle', { shop: shop.name })}
           />
         </section>
         <ul className="flex flex-col gap-5 border-t border-separator py-7">
@@ -251,16 +255,16 @@ function TourDetail({ tour, isBooking }: { tour: Tour; isBooking: boolean }) {
             {
               icon: ClockIcon,
               title: durationText(t, tour),
-              body: t("tourDiscovery.smallGroup"),
+              body: t('tourDiscovery.smallGroup'),
             },
             {
               icon: PickupIcon,
-              title: t("tourDiscovery.meeting"),
+              title: t('tourDiscovery.meeting'),
               body: text(tour.meetingPoint),
             },
             {
               icon: PayLaterIcon,
-              title: t("tourDiscovery.payment"),
+              title: t('tourDiscovery.payment'),
               body: policySummary,
             },
           ].map(({ icon: Icon, title, body }) => (
@@ -277,16 +281,16 @@ function TourDetail({ tour, isBooking }: { tour: Tour; isBooking: boolean }) {
           <p className="flex items-start gap-2 border-t border-separator pt-7 text-sm">
             <InfoIcon aria-hidden className="mt-0.5 shrink-0" size={16} />
             {t(
-              fallback.language === "en"
-                ? "tourDiscovery.onlyInEnglish"
-                : "tourDiscovery.onlyInGerman",
+              fallback.language === 'en'
+                ? 'tourDiscovery.onlyInEnglish'
+                : 'tourDiscovery.onlyInGerman',
             )}
           </p>
         )}
         <section
-          className={`flex flex-col gap-3 py-7 ${fallback ? "" : "border-t border-separator"}`}
+          className={`flex flex-col gap-3 py-7 ${fallback ? '' : 'border-t border-separator'}`}
         >
-          <h2 className="font-serif text-title">{t("tourDiscovery.about")}</h2>
+          <h2 className="font-serif text-title">{t('tourDiscovery.about')}</h2>
           <p className="text-body">{text(tour.description)}</p>
           {longStory && (
             <>
@@ -317,10 +321,10 @@ function TourDetail({ tour, isBooking }: { tour: Tour; isBooking: boolean }) {
                 variant="secondary"
                 onPress={() => setStoryOpen(true)}
               >
-                {t("detail.story.read")}
+                {t('detail.story.read')}
               </Button>
               <StorySheet
-                closeLabel={t("detail.sheet.close")}
+                closeLabel={t('detail.sheet.close')}
                 isOpen={storyOpen}
                 story={longStory}
                 onOpenChange={setStoryOpen}
@@ -332,11 +336,11 @@ function TourDetail({ tour, isBooking }: { tour: Tour; isBooking: boolean }) {
           id="tour-reviews"
           reviews={{
             ...reviews,
-            title: t("detail.reviews.title"),
+            title: t('detail.reviews.title'),
             favourite: reviews.isFavourite
               ? {
-                  title: t("detail.favourite.title"),
-                  body: t("tourDetail.favouriteBody", {
+                  title: t('detail.favourite.title'),
+                  body: t('tourDetail.favouriteBody', {
                     rating: reviews.averageText,
                   }),
                 }
@@ -344,12 +348,12 @@ function TourDetail({ tour, isBooking }: { tour: Tour; isBooking: boolean }) {
             showAllLabel: t(`detail.reviews.showAll.${plural}`, {
               count: reviews.count,
             }),
-            showMoreLabel: t("detail.reviews.showMore"),
-            overallLabel: t("detail.reviews.overall"),
-            sheetTitle: t("detail.reviews.listTitle", { name: name.text }),
-            closeLabel: t("detail.sheet.close"),
-            rule: t("tourDetail.reviewsRule"),
-            empty: t("tourDiscovery.noReviews"),
+            showMoreLabel: t('detail.reviews.showMore'),
+            overallLabel: t('detail.reviews.overall'),
+            sheetTitle: t('detail.reviews.listTitle', { name: name.text }),
+            closeLabel: t('detail.sheet.close'),
+            rule: t('tourDetail.reviewsRule'),
+            empty: t('tourDiscovery.noReviews'),
           }}
         />
         {/* A tour added in M13 has no stops yet (no map positions): no itinerary section. */}
@@ -360,36 +364,36 @@ function TourDetail({ tour, isBooking }: { tour: Tour; isBooking: boolean }) {
         )}
         <section className="flex flex-col gap-3 border-t border-separator py-7">
           <h2 className="font-serif text-title">
-            {t("tourDiscovery.included")}
+            {t('tourDiscovery.included')}
           </h2>
           <ul className="list-disc space-y-2 ps-5 text-body">
             {tour.included.map((item, index) => (
               <li key={index}>{text(item)}</li>
             ))}
           </ul>
-          <h3 className="pt-2 font-semibold">{t("tourDiscovery.excluded")}</h3>
+          <h3 className="pt-2 font-semibold">{t('tourDiscovery.excluded')}</h3>
           <p className="text-sm text-muted">{text(tour.excluded)}</p>
         </section>
         <section className="flex flex-col gap-3 border-t border-separator py-7">
-          <h2 className="font-serif text-title">{t("tourDiscovery.prices")}</h2>
+          <h2 className="font-serif text-title">{t('tourDiscovery.prices')}</h2>
           <dl className="space-y-3 text-sm">
             {[
               {
-                label: t("tourDiscovery.adults"),
+                label: t('tourDiscovery.adults'),
                 ages: ages.adults,
                 price: tour.adultPrice,
               },
               {
-                label: t("tourDiscovery.children"),
+                label: t('tourDiscovery.children'),
                 ages: ages.children,
                 price: tour.childPrice,
               },
               {
-                label: t("tourDiscovery.infants"),
-                ages: `${ages.infants} · ${t("tourDiscovery.noSeat")}`,
+                label: t('tourDiscovery.infants'),
+                ages: `${ages.infants} · ${t('tourDiscovery.noSeat')}`,
                 price: tour.infantPrice,
               },
-            ].map((row) => (
+            ].map(row => (
               <div key={row.label} className="flex justify-between gap-3">
                 <dt className="flex flex-col">
                   {row.label}
@@ -401,13 +405,13 @@ function TourDetail({ tour, isBooking }: { tour: Tour; isBooking: boolean }) {
               </div>
             ))}
           </dl>
-          <p className="text-xs text-muted">{t("tourDiscovery.sample")}</p>
+          <p className="text-xs text-muted">{t('tourDiscovery.sample')}</p>
         </section>
         <Accordion
           allowsMultipleExpanded
           className="border-t border-separator [&_.accordion\_\_body-inner]:px-0 [&_.accordion\_\_trigger]:px-0 [&_.accordion\_\_trigger]:py-5"
         >
-          {sections.map((section) => (
+          {sections.map(section => (
             <Accordion.Item key={section.id} id={section.id}>
               <Accordion.Heading>
                 <Accordion.Trigger>
@@ -427,12 +431,12 @@ function TourDetail({ tour, isBooking }: { tour: Tour; isBooking: boolean }) {
         </Accordion>
         {!next && (
           <EmptyState
-            action={{ label: t("tourDiscovery.browse"), to: "/tours" }}
+            action={{ label: t('tourDiscovery.browse'), to: '/tours' }}
             icon={TourIcon}
             message={t(
               upcoming.length > 0
-                ? "tourDiscovery.soldOutBody"
-                : "tourDiscovery.noDatesBody",
+                ? 'tourDiscovery.soldOutBody'
+                : 'tourDiscovery.noDatesBody',
             )}
           />
         )}
@@ -447,8 +451,8 @@ function TourDetail({ tour, isBooking }: { tour: Tour; isBooking: boolean }) {
               ? date(next.startsAt)
               : t(
                   upcoming.length > 0
-                    ? "tourDiscovery.soldOut"
-                    : "tourDiscovery.noDates",
+                    ? 'tourDiscovery.soldOut'
+                    : 'tourDiscovery.noDates',
                 )}
           </span>
         </div>
@@ -459,18 +463,17 @@ function TourDetail({ tour, isBooking }: { tour: Tour; isBooking: boolean }) {
           size="lg"
           onPress={() =>
             void navigate({
-              to: "/tours/$slug",
+              to: '/tours/$slug',
               params: { slug: tour.slug },
               search: { book: true },
               state: { bookOverDetail: true },
               resetScroll: false,
-            })
-          }
+            })}
         >
-          {t("tourDiscovery.choose")}
+          {t('tourDiscovery.choose')}
         </Button>
       </div>
       <TourSelectionSheet isOpen={isBooking} tour={tour} />
     </div>
-  );
+  )
 }

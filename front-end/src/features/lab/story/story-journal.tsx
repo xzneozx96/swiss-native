@@ -4,35 +4,35 @@
  * numeral and is tied to the next by a hand-drawn red thread. The approved home blocks
  * sit inside the chapters unchanged.
  */
-import type { ChapterId, StoryCopy } from "./copy";
+import type { ChapterId, StoryCopy } from './copy'
 
+import { AdviceBanner } from '@/features/discovery/components/advice-banner'
+
+import { ExperienceFlight } from '@/features/discovery/components/experience-flight'
+import { QuoteAirmail } from '@/features/discovery/components/quote-airmail'
+import { StayKey } from '@/features/discovery/components/stay-key'
+import { useScrolledPast } from '@/hooks/use-scrolled-past'
 import {
+  chapterId,
   Contents,
   PassStrip,
   Photo,
   Reveal,
   StoryBar,
-  ToursRail,
   TopRow,
+  ToursRail,
   VoiceNote,
-  chapterId,
-} from "./parts";
+} from './parts'
 
-import { AdviceBanner } from "@/features/discovery/components/advice-banner";
-import { ExperienceFlight } from "@/features/discovery/components/experience-flight";
-import { QuoteAirmail } from "@/features/discovery/components/quote-airmail";
-import { StayKey } from "@/features/discovery/components/stay-key";
-import { useScrolledPast } from "@/hooks/use-scrolled-past";
-
-function Numeral({ n, size = "sm" }: { n: string; size?: "sm" | "lg" }) {
+function Numeral({ n, size = 'sm' }: { n: string, size?: 'sm' | 'lg' }) {
   return (
     <span
       aria-hidden
-      className={`shrink-0 font-script text-accent ${size === "lg" ? "text-[64px] leading-[56px]" : "w-11 text-[30px] leading-8"}`}
+      className={`shrink-0 font-script text-accent ${size === 'lg' ? 'text-[64px] leading-[56px]' : 'w-11 text-[30px] leading-8'}`}
     >
       {n}
     </span>
-  );
+  )
 }
 
 /** A loose red line drawn by hand, from one chapter down to the next. */
@@ -52,11 +52,11 @@ function Thread() {
         strokeWidth="1.6"
       />
     </svg>
-  );
+  )
 }
 
-function Opener({ c, id }: { c: StoryCopy; id: ChapterId }) {
-  const ch = c.chapters[id];
+function Opener({ c, id }: { c: StoryCopy, id: ChapterId }) {
+  const ch = c.chapters[id]
 
   return (
     <Reveal className="flex flex-col gap-2">
@@ -79,11 +79,11 @@ function Opener({ c, id }: { c: StoryCopy; id: ChapterId }) {
         {ch.body}
       </p>
     </Reveal>
-  );
+  )
 }
 
 export function StoryJournal({ c }: { c: StoryCopy }) {
-  const [prologueEnd, scrolledPast] = useScrolledPast<HTMLDivElement>();
+  const [prologueEnd, scrolledPast] = useScrolledPast<HTMLDivElement>()
 
   return (
     <>
@@ -121,7 +121,7 @@ export function StoryJournal({ c }: { c: StoryCopy }) {
               {c.role}
             </span>
             <p className="mt-2 font-serif text-xl text-navy italic">
-              {c.tagline.join(" ")}
+              {c.tagline.join(' ')}
             </p>
           </Reveal>
           <Reveal className="flex flex-col gap-3">
@@ -132,7 +132,7 @@ export function StoryJournal({ c }: { c: StoryCopy }) {
             <VoiceNote c={c} />
           </Reveal>
           <div ref={prologueEnd} aria-hidden className="h-px" />
-          <Contents c={c} numeral={(n) => <Numeral n={n} />} />
+          <Contents c={c} numeral={n => <Numeral n={n} />} />
         </header>
 
         <Thread />
@@ -164,5 +164,5 @@ export function StoryJournal({ c }: { c: StoryCopy }) {
         </section>
       </div>
     </>
-  );
+  )
 }

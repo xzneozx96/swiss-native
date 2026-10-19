@@ -1,31 +1,31 @@
-import type { ProductRow } from "../hooks/use-merchant-products";
-import type { DataTableColumn } from "@/components/data-table";
-import type { EmptyStateProps } from "@/components/empty-state";
-import type { RowAction } from "@/components/row-actions";
+import type { ProductRow } from '../hooks/use-merchant-products'
+import type { DataTableColumn } from '@/components/data-table'
+import type { EmptyStateProps } from '@/components/empty-state'
+import type { RowAction } from '@/components/row-actions'
 
-import { LanguageChip, PublishChip } from "./status-chips";
+import { DataTable } from '@/components/data-table'
 
-import { ArchiveIcon, EditIcon, RestoreIcon } from "@/components/icons";
-import { DataTable } from "@/components/data-table";
-import { RowActions } from "@/components/row-actions";
-import { Media } from "@/components/media";
-import { StatusChip } from "@/components/status-chip";
-import { useLocale } from "@/contexts/locale-context";
+import { ArchiveIcon, EditIcon, RestoreIcon } from '@/components/icons'
+import { Media } from '@/components/media'
+import { RowActions } from '@/components/row-actions'
+import { StatusChip } from '@/components/status-chip'
+import { useLocale } from '@/contexts/locale-context'
+import { LanguageChip, PublishChip } from './status-chips'
 
-export type ProductAction = "edit" | "archive" | "restore";
+export type ProductAction = 'edit' | 'archive' | 'restore'
 
 interface ProductRowsProps {
-  rows: ProductRow[];
+  rows: ProductRow[]
   /** Accessible name of the list or table: the selected tab. */
-  label: string;
+  label: string
   /** Table headers: name, status, then the three facts. */
-  columns: [string, string, string, string];
-  onAction: (row: ProductRow, action: ProductAction) => void;
+  columns: [string, string, string, string]
+  onAction: (row: ProductRow, action: ProductAction) => void
   /** Shown inside the table (a card on phones) when `rows` is empty. */
-  empty?: EmptyStateProps;
+  empty?: EmptyStateProps
   /** Back to page 1 when this changes. */
-  resetKey?: string;
-  isLoading?: boolean;
+  resetKey?: string
+  isLoading?: boolean
 }
 
 /** Edit and archive (or restore), in a ⋯ menu as on M15, so a tap on a row never archives. */
@@ -33,39 +33,41 @@ function MoreMenu({
   row,
   onAction,
 }: {
-  row: ProductRow;
-  onAction: ProductRowsProps["onAction"];
+  row: ProductRow
+  onAction: ProductRowsProps['onAction']
 }) {
-  const { t } = useLocale();
+  const { t } = useLocale()
   const edit: RowAction<ProductAction> = {
-    id: "edit",
-    label: t("products.action.edit"),
+    id: 'edit',
+    label: t('products.action.edit'),
     icon: EditIcon,
-  };
+  }
   const archive: RowAction<ProductAction> = row.archived
-    ? { id: "restore", label: t("products.action.restore"), icon: RestoreIcon }
-    : { id: "archive", label: t("products.action.archive"), icon: ArchiveIcon };
+    ? { id: 'restore', label: t('products.action.restore'), icon: RestoreIcon }
+    : { id: 'archive', label: t('products.action.archive'), icon: ArchiveIcon }
   // The stay and the experience are never archived: they are the host's one record each.
-  const actions = row.kind === "tour" ? [edit, archive] : [edit];
+  const actions = row.kind === 'tour' ? [edit, archive] : [edit]
 
   return (
     <RowActions
       actions={actions}
-      label={t("products.action.more", { name: row.name })}
-      onAction={(id) => onAction(row, id)}
+      label={t('products.action.more', { name: row.name })}
+      onAction={id => onAction(row, id)}
     />
-  );
+  )
 }
 
 /** "Archived" in place of the publish chip. */
 function StateChip({ row }: { row: ProductRow }) {
-  const { t } = useLocale();
+  const { t } = useLocale()
 
-  return row.archived ? (
-    <StatusChip tone="neutral">{t("products.archived")}</StatusChip>
-  ) : (
-    <PublishChip published={row.published} />
-  );
+  return row.archived
+    ? (
+        <StatusChip tone="neutral">{t('products.archived')}</StatusChip>
+      )
+    : (
+        <PublishChip published={row.published} />
+      )
 }
 
 /**
@@ -76,7 +78,7 @@ function StateChip({ row }: { row: ProductRow }) {
 function StackedRows({ rows, label, onAction }: ProductRowsProps) {
   return (
     <ul aria-label={label} className="flex flex-col gap-5 lg:hidden">
-      {rows.map((row) => (
+      {rows.map(row => (
         <li key={row.id}>
           <article className="relative flex flex-col overflow-hidden rounded-3xl bg-surface shadow-surface card-hover">
             <div className="flex items-center gap-4 p-4">
@@ -115,10 +117,10 @@ function StackedRows({ rows, label, onAction }: ProductRowsProps) {
                   <dd
                     className={`text-end tabular-nums ${
                       fact.isWarning
-                        ? "text-warning"
+                        ? 'text-warning'
                         : index === 0
-                          ? "font-semibold"
-                          : "text-muted"
+                          ? 'font-semibold'
+                          : 'text-muted'
                     }`}
                   >
                     {fact.value}
@@ -130,19 +132,19 @@ function StackedRows({ rows, label, onAction }: ProductRowsProps) {
         </li>
       ))}
     </ul>
-  );
+  )
 }
 
 export function ProductRows(props: ProductRowsProps) {
-  const { columns: names, onAction } = props;
+  const { columns: names, onAction } = props
   const columns: DataTableColumn<ProductRow>[] = [
     {
-      id: "name",
+      id: 'name',
       header: names[0],
-      headerClassName: "w-[36%]",
+      headerClassName: 'w-[36%]',
       isRowHeader: true,
-      skeleton: "lead",
-      render: (row) => (
+      skeleton: 'lead',
+      render: row => (
         <div className="flex items-center gap-3">
           <Media
             alt=""
@@ -162,44 +164,44 @@ export function ProductRows(props: ProductRowsProps) {
       ),
     },
     {
-      id: "status",
+      id: 'status',
       header: names[1],
-      headerClassName: "w-[19%]",
-      skeleton: "chip",
-      cellClassName: "py-2",
-      render: (row) => (
+      headerClassName: 'w-[19%]',
+      skeleton: 'chip',
+      cellClassName: 'py-2',
+      render: row => (
         <div className="flex flex-col items-start gap-1.5 [&_svg]:shrink-0">
           <StateChip row={row} />
           <LanguageChip status={row.languages} />
         </div>
       ),
     },
-    ...[2, 3].map((fact) => ({
+    ...[2, 3].map(fact => ({
       id: `fact-${fact}`,
       header: names[fact],
-      headerClassName: "w-[15%]",
+      headerClassName: 'w-[15%]',
       cellClassName: (row: ProductRow) =>
-        `whitespace-nowrap tabular-nums ${row.facts[fact - 2]?.isWarning ? "text-warning" : ""}`,
+        `whitespace-nowrap tabular-nums ${row.facts[fact - 2]?.isWarning ? 'text-warning' : ''}`,
       render: (row: ProductRow) => row.facts[fact - 2]?.value,
     })),
-  ];
+  ]
 
   return (
     // No row link: a press in the ⋯ menu would also open the row (as on M15).
     <DataTable
-      cards={(page) => <StackedRows {...props} rows={page} />}
+      cards={page => <StackedRows {...props} rows={page} />}
       columns={columns}
       contentClassName="table-fixed"
       empty={props.empty}
-      getRowId={(row) => row.id}
+      getRowId={row => row.id}
       isLoading={props.isLoading}
       label={props.label}
       resetKey={props.resetKey}
       rowActions={{
-        render: (row) => <MoreMenu row={row} onAction={onAction} />,
-        headerClassName: "w-[7%]",
+        render: row => <MoreMenu row={row} onAction={onAction} />,
+        headerClassName: 'w-[7%]',
       }}
       rows={props.rows}
     />
-  );
+  )
 }

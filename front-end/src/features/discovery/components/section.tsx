@@ -1,18 +1,18 @@
-import type { LinkProps } from "@tanstack/react-router";
+import type { LinkProps } from '@tanstack/react-router'
 
-import { ScrollShadow } from "@heroui/react";
-import { Link } from "@tanstack/react-router";
+import { ScrollShadow } from '@heroui/react'
+import { Link } from '@tanstack/react-router'
 
-import { ChevronRightIcon } from "@/components/icons";
+import { ChevronRightIcon } from '@/components/icons'
 
 interface SectionProps {
-  id: string;
-  title: string;
-  subtitle?: string;
-  seeAll?: { label: string; to: LinkProps["to"] };
+  id: string
+  title: string
+  subtitle?: string
+  seeAll?: { label: string, to: LinkProps['to'] }
   /** Heading level: 3 when the section sits inside a story chapter. */
-  level?: 2 | 3;
-  children: React.ReactNode;
+  level?: 2 | 3
+  children: React.ReactNode
 }
 
 /** A titled discovery section with an optional app-style "See all ›" action. */
@@ -24,7 +24,7 @@ export function Section({
   level = 2,
   children,
 }: SectionProps) {
-  const Heading = level === 3 ? "h3" : "h2";
+  const Heading = level === 3 ? 'h3' : 'h2'
 
   return (
     <section aria-labelledby={id} className="flex flex-col gap-3">
@@ -47,7 +47,7 @@ export function Section({
       </div>
       {children}
     </section>
-  );
+  )
 }
 
 /**
@@ -58,8 +58,8 @@ export function Rail({
   label,
   children,
 }: {
-  label: string;
-  children: React.ReactNode;
+  label: string
+  children: React.ReactNode
 }) {
   return (
     <ScrollShadow
@@ -72,5 +72,5 @@ export function Rail({
     >
       <ul className="flex snap-x snap-mandatory gap-3 px-4 pb-2">{children}</ul>
     </ScrollShadow>
-  );
+  )
 }

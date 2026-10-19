@@ -1,15 +1,15 @@
-import type { TripTarget } from "../lib/trip";
-import type { TripAnswers } from "../types";
+import type { TripTarget } from '../lib/trip'
+import type { TripAnswers } from '../types'
 
-import { Button, Drawer } from "@heroui/react";
-import { useState } from "react";
+import { Button, Drawer } from '@heroui/react'
+import { useState } from 'react'
 
-import { useTripProfile } from "../hooks/use-trip-profile";
-import { hasTripAnswers } from "../lib/trip";
+import { useLocale } from '@/contexts/locale-context'
+import { useTripProfile } from '../hooks/use-trip-profile'
 
-import { TripFields, useTripRows } from "./trip-profile";
+import { hasTripAnswers } from '../lib/trip'
 
-import { useLocale } from "@/contexts/locale-context";
+import { TripFields, useTripRows } from './trip-profile'
 
 /**
  * "Your trip" on the Overview tab of C16 (2.17): this booking's trip answers as a
@@ -18,13 +18,13 @@ import { useLocale } from "@/contexts/locale-context";
  * date, and the card says which.
  */
 export function TripCard({ target }: { target: TripTarget }) {
-  const { t } = useLocale();
-  const trip = useTripProfile(target);
-  const rows = useTripRows(trip.answers);
-  const [isOpen, setOpen] = useState(false);
+  const { t } = useLocale()
+  const trip = useTripProfile(target)
+  const rows = useTripRows(trip.answers)
+  const [isOpen, setOpen] = useState(false)
   // A fresh form per opening, so a dismissed edit never lingers.
-  const [opening, setOpening] = useState(0);
-  const answered = trip.status === "answered";
+  const [opening, setOpening] = useState(0)
+  const answered = trip.status === 'answered'
 
   return (
     <div className="rounded-3xl bg-surface shadow-surface">
@@ -40,7 +40,7 @@ export function TripCard({ target }: { target: TripTarget }) {
               <div className="flex min-w-0 flex-col gap-0.5">
                 <dt className="text-xs text-muted">{label}</dt>
                 <dd
-                  className={isSet ? "font-medium tabular-nums" : "text-muted"}
+                  className={isSet ? 'font-medium tabular-nums' : 'text-muted'}
                 >
                   {value}
                 </dd>
@@ -50,10 +50,10 @@ export function TripCard({ target }: { target: TripTarget }) {
         </dl>
       )}
       <div
-        className={`flex items-center gap-4 p-4 ${answered ? "border-t border-separator" : ""}`}
+        className={`flex items-center gap-4 p-4 ${answered ? 'border-t border-separator' : ''}`}
       >
         <p className="min-w-0 flex-1 text-sm text-muted">
-          {t(answered ? "tripCard.note.tour" : "tripCard.open.tour")}
+          {t(answered ? 'tripCard.note.tour' : 'tripCard.open.tour')}
         </p>
         {/* One button for both states, so focus returns to it when the sheet closes. */}
         <Button
@@ -61,11 +61,11 @@ export function TripCard({ target }: { target: TripTarget }) {
           size="sm"
           variant="secondary"
           onPress={() => {
-            setOpening((n) => n + 1);
-            setOpen(true);
+            setOpening(n => n + 1)
+            setOpen(true)
           }}
         >
-          {t(answered ? "tripProfile.edit" : "tripProfile.answerNow")}
+          {t(answered ? 'tripProfile.edit' : 'tripProfile.answerNow')}
         </Button>
       </div>
 
@@ -76,38 +76,38 @@ export function TripCard({ target }: { target: TripTarget }) {
             <Drawer.Header className="flex flex-row items-start justify-between gap-2">
               <div className="flex min-w-0 flex-col gap-1">
                 <Drawer.Heading className="font-serif text-title">
-                  {t("tripProfile.title")}
+                  {t('tripProfile.title')}
                 </Drawer.Heading>
                 <p className="text-sm text-muted">
-                  {t("tripProfile.introTour")}
+                  {t('tripProfile.introTour')}
                 </p>
               </div>
-              <Drawer.CloseTrigger aria-label={t("tripProfile.date.close")} />
+              <Drawer.CloseTrigger aria-label={t('tripProfile.date.close')} />
             </Drawer.Header>
             <SheetForm
               key={opening}
               initial={trip.answers}
               onSave={(answers) => {
-                trip.save(answers);
-                setOpen(false);
+                trip.save(answers)
+                setOpen(false)
               }}
             />
           </Drawer.Dialog>
         </Drawer.Content>
       </Drawer.Backdrop>
     </div>
-  );
+  )
 }
 
 function SheetForm({
   initial,
   onSave,
 }: {
-  initial: TripAnswers;
-  onSave: (answers: TripAnswers) => void;
+  initial: TripAnswers
+  onSave: (answers: TripAnswers) => void
 }) {
-  const { t } = useLocale();
-  const [answers, setAnswers] = useState(initial);
+  const { t } = useLocale()
+  const [answers, setAnswers] = useState(initial)
 
   return (
     <>
@@ -121,9 +121,9 @@ function SheetForm({
           isDisabled={!hasTripAnswers(answers)}
           onPress={() => onSave(answers)}
         >
-          {t("tripProfile.save")}
+          {t('tripProfile.save')}
         </Button>
       </Drawer.Footer>
     </>
-  );
+  )
 }

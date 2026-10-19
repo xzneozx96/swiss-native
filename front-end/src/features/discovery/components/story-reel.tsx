@@ -9,62 +9,63 @@
  * client's banner, so it keeps its own shape at the top and fades into black; the
  * road photos fill the frame.
  */
-import type { ReelFrame, StoryCopy } from "../story-copy";
+import type { ReelFrame, StoryCopy } from '../story-copy'
 
-import { useEffect, useRef, useState } from "react";
-
-import { REEL_FRAMES, scrollToStoryChapter } from "../story-copy";
+import { useEffect, useRef, useState } from 'react'
 
 import {
   ArrowRightIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
-} from "@/components/icons";
-import { SearchButton } from "@/components/layout/top-bar-buttons";
-import { photoUrl } from "@/lib/photos";
+} from '@/components/icons'
 
-const DURATION_MS = 6000;
+import { SearchButton } from '@/components/layout/top-bar-buttons'
+import { photoUrl } from '@/lib/photos'
+import { REEL_FRAMES, scrollToStoryChapter } from '../story-copy'
+
+const DURATION_MS = 6000
 
 /** Long enough for the slowest transition to finish before the old picture goes. */
-const TRANSITION_CLEANUP_MS = 900;
+const TRANSITION_CLEANUP_MS = 900
 
 interface Leaving {
-  index: number;
+  index: number
   /** 1 when going to the next picture, -1 for the previous. */
-  dir: 1 | -1;
+  dir: 1 | -1
 }
 
-const delay = (ms: number) =>
-  ({ "--story-delay": `${ms}ms` }) as React.CSSProperties;
+function delay(ms: number) {
+  return ({ '--story-delay': `${ms}ms` }) as React.CSSProperties
+}
 
 function prefersReducedMotion() {
   return (
-    typeof window !== "undefined" &&
-    window.matchMedia("(prefers-reduced-motion: reduce)").matches
-  );
+    typeof window !== 'undefined'
+    && window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  )
 }
 
 /** Discover. Experience. Remember. with the middle word tinted. */
 export function StoryTagline({
   c,
-  className = "",
+  className = '',
 }: {
-  c: StoryCopy;
-  className?: string;
+  c: StoryCopy
+  className?: string
 }) {
   return (
     <p className={`flex flex-wrap gap-x-2 font-serif italic ${className}`}>
       {c.tagline.map((word, i) => (
-        <span key={word} className={i === 1 ? "text-[#ffb4ad]" : undefined}>
+        <span key={word} className={i === 1 ? 'text-[#ffb4ad]' : undefined}>
           {word}
         </span>
       ))}
     </p>
-  );
+  )
 }
 
-function FrameText({ c, frame }: { c: StoryCopy; frame: ReelFrame }) {
-  if (frame.id === "erich") {
+function FrameText({ c, frame }: { c: StoryCopy, frame: ReelFrame }) {
+  if (frame.id === 'erich') {
     return (
       <>
         <span className="story-fade text-sm opacity-85">{c.hello}</span>
@@ -84,10 +85,10 @@ function FrameText({ c, frame }: { c: StoryCopy; frame: ReelFrame }) {
           <StoryTagline c={c} className="mt-3 text-lg" />
         </div>
       </>
-    );
+    )
   }
-  const ch = c.reel.frames[frame.id];
-  const { chapter } = frame;
+  const ch = c.reel.frames[frame.id]
+  const { chapter } = frame
 
   return (
     <>
@@ -112,7 +113,7 @@ function FrameText({ c, frame }: { c: StoryCopy; frame: ReelFrame }) {
         </button>
       )}
     </>
-  );
+  )
 }
 
 function PlayPauseIcon({ paused }: { paused: boolean }) {
@@ -124,9 +125,9 @@ function PlayPauseIcon({ paused }: { paused: boolean }) {
       viewBox="0 0 16 16"
       width="16"
     >
-      <path d={paused ? "M4 2.5v11l9-5.5z" : "M4 2h3v12H4zM9 2h3v12H9z"} />
+      <path d={paused ? 'M4 2.5v11l9-5.5z' : 'M4 2h3v12H4zM9 2h3v12H9z'} />
     </svg>
-  );
+  )
 }
 
 function PhotoLayer({
@@ -135,21 +136,21 @@ function PhotoLayer({
   phase,
   dir,
 }: {
-  c: StoryCopy;
-  frame: ReelFrame;
-  phase: "enter" | "exit" | "rest";
-  dir: 1 | -1;
+  c: StoryCopy
+  frame: ReelFrame
+  phase: 'enter' | 'exit' | 'rest'
+  dir: 1 | -1
 }) {
   return (
     <div
-      className={`reel-layer absolute inset-x-0 top-0 overflow-hidden ${frame.id === "erich" ? "aspect-[540/620]" : "bottom-0"}`}
+      className={`reel-layer absolute inset-x-0 top-0 overflow-hidden ${frame.id === 'erich' ? 'aspect-[540/620]' : 'bottom-0'}`}
       data-dir={dir}
       data-role={phase}
     >
       <div className="reel-inner size-full">
         <img
           alt={
-            frame.id === "erich" ? c.photoAlt : c.reel.frames[frame.id].photoAlt
+            frame.id === 'erich' ? c.photoAlt : c.reel.frames[frame.id].photoAlt
           }
           className="story-kenburns size-full object-cover"
           src={photoUrl(frame.photo)}
@@ -158,47 +159,49 @@ function PhotoLayer({
       </div>
       <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-transparent via-30% to-black" />
     </div>
-  );
+  )
 }
 
 export function StoryReel({
   c,
   searchLabel,
 }: {
-  c: StoryCopy;
-  searchLabel: string;
+  c: StoryCopy
+  searchLabel: string
 }) {
-  const [index, setIndex] = useState(0);
-  const [leaving, setLeaving] = useState<Leaving | null>(null);
-  const [paused, setPaused] = useState(prefersReducedMotion);
-  const [inView, setInView] = useState(true);
-  const ref = useRef<HTMLElement>(null);
-  const frame = REEL_FRAMES[index];
+  const [index, setIndex] = useState(0)
+  const [leaving, setLeaving] = useState<Leaving | null>(null)
+  const [paused, setPaused] = useState(prefersReducedMotion)
+  const [inView, setInView] = useState(true)
+  const ref = useRef<HTMLElement>(null)
+  const frame = REEL_FRAMES[index]
   const go = (step: 1 | -1) => {
-    setLeaving({ index, dir: step });
-    setIndex((index + step + REEL_FRAMES.length) % REEL_FRAMES.length);
-  };
+    setLeaving({ index, dir: step })
+    setIndex((index + step + REEL_FRAMES.length) % REEL_FRAMES.length)
+  }
 
   useEffect(() => {
-    if (!leaving) return;
-    const timer = setTimeout(() => setLeaving(null), TRANSITION_CLEANUP_MS);
+    if (!leaving)
+      return
+    const timer = setTimeout(setLeaving, TRANSITION_CLEANUP_MS, null)
 
-    return () => clearTimeout(timer);
-  }, [leaving]);
+    return () => clearTimeout(timer)
+  }, [leaving])
 
   useEffect(() => {
-    const el = ref.current;
+    const el = ref.current
 
-    if (!el || typeof IntersectionObserver === "undefined") return;
+    if (!el || typeof IntersectionObserver === 'undefined')
+      return
     const io = new IntersectionObserver(
       ([entry]) => setInView(entry.isIntersecting),
       { threshold: 0.3 },
-    );
+    )
 
-    io.observe(el);
+    io.observe(el)
 
-    return () => io.disconnect();
-  }, []);
+    return () => io.disconnect()
+  }, [])
 
   return (
     <section
@@ -221,7 +224,7 @@ export function StoryReel({
         c={c}
         dir={leaving?.dir ?? 1}
         frame={frame}
-        phase={leaving ? "enter" : "rest"}
+        phase={leaving ? 'enter' : 'rest'}
       />
       <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent via-50% to-black/70" />
 
@@ -240,7 +243,7 @@ export function StoryReel({
                   data-paused={paused || !inView || undefined}
                   style={
                     {
-                      "--story-duration": `${DURATION_MS}ms`,
+                      '--story-duration': `${DURATION_MS}ms`,
                     } as React.CSSProperties
                   }
                   onAnimationEnd={() => go(1)}
@@ -254,7 +257,7 @@ export function StoryReel({
             aria-label={paused ? c.reel.play : c.reel.pause}
             className="glass flex size-11 items-center justify-center rounded-full outline-none focus-visible:focus-ring active:scale-95"
             type="button"
-            onClick={() => setPaused((p) => !p)}
+            onClick={() => setPaused(p => !p)}
           >
             <PlayPauseIcon paused={paused} />
           </button>
@@ -295,7 +298,7 @@ export function StoryReel({
 
       <div
         key={index}
-        aria-live={paused ? "polite" : "off"}
+        aria-live={paused ? 'polite' : 'off'}
         className="pointer-events-none absolute inset-x-0 bottom-0 z-10 flex flex-col gap-1 p-5 pb-7"
       >
         <span className="sr-only">
@@ -304,5 +307,5 @@ export function StoryReel({
         <FrameText c={c} frame={frame} />
       </div>
     </section>
-  );
+  )
 }

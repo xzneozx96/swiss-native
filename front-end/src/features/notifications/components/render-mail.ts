@@ -1,24 +1,25 @@
-import type { Mail } from "../types";
-import type { Language } from "@/contexts/locale-context";
-import type { MessageKey } from "@/i18n/en";
+import type { Mail } from '../types'
+import type { Language } from '@/contexts/locale-context'
+import type { MessageKey } from '@/i18n/en'
 
-import { de } from "@/i18n/de";
-import { en } from "@/i18n/en";
-import { renderTourMail } from "@/features/tours/merchant/lib/render-mail";
-import { renderRequestMail } from "@/features/requests/lib/render-request-mail";
+import { renderRequestMail } from '@/features/requests/lib/render-request-mail'
+import { renderTourMail } from '@/features/tours/merchant/lib/render-mail'
+import { de } from '@/i18n/de'
+import { en } from '@/i18n/en'
 
-const messages: Record<Language, Record<MessageKey, string>> = { en, de };
+const PLACEHOLDER = /\{(\w+)\}/g
+
+const messages: Record<Language, Record<MessageKey, string>> = { en, de }
 
 export interface RenderedMail {
-  subject: string;
+  subject: string
   /** Paragraphs of the email body. */
-  body: string[];
+  body: string[]
 }
 
 function fill(text: string, vars: Record<string, string | number>): string {
-  return text.replace(/\{(\w+)\}/g, (match, name: string) =>
-    name in vars ? String(vars[name]) : match,
-  );
+  return text.replace(PLACEHOLDER, (match, name: string) =>
+    name in vars ? String(vars[name]) : match)
 }
 
 /**
@@ -28,25 +29,27 @@ function fill(text: string, vars: Record<string, string | number>): string {
  * rendered here.
  */
 export function renderMail(mail: Mail): RenderedMail {
-  if (mail.bookingId) return renderTourMail(mail);
-  if (mail.template === "N17") return renderRequestMail(mail);
-  const copy = messages[mail.language];
+  if (mail.bookingId)
+    return renderTourMail(mail)
+  if (mail.template === 'N17')
+    return renderRequestMail(mail)
+  const copy = messages[mail.language]
 
-  if (mail.template !== "N01" || mail.to !== "guest") {
+  if (mail.template !== 'N01' || mail.to !== 'guest') {
     return {
       subject: mail.template,
       body: Object.entries(mail.params).map(([k, v]) => `${k}: ${v}`),
-    };
+    }
   }
-  const vars = { ...mail.params, shop: copy["app.name"] };
+  const vars = { ...mail.params, shop: copy['app.name'] }
 
   return {
-    subject: fill(copy["mail.N01.subject"], vars),
+    subject: fill(copy['mail.N01.subject'], vars),
     body: [
-      "mail.greeting",
-      "mail.N01.code",
-      "mail.N01.expiry",
-      "mail.N01.ignore",
-    ].map((key) => fill(copy[key as MessageKey], vars)),
-  };
+      'mail.greeting',
+      'mail.N01.code',
+      'mail.N01.expiry',
+      'mail.N01.ignore',
+    ].map(key => fill(copy[key as MessageKey], vars)),
+  }
 }

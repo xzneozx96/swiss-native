@@ -3,11 +3,12 @@
  * uploads (M17). Only the file names are read here; lib/photos.ts and lib/audio.ts resolve
  * them to URLs, so a chosen file always renders on C20.
  */
-const fileName = (path: string, ext: string) =>
-  path.slice(path.lastIndexOf("/") + 1, -ext.length);
+function fileName(path: string, ext: string) {
+  return path.slice(path.lastIndexOf('/') + 1, -ext.length)
+}
 
 export const libraryPhotos: string[] = Object.keys(
-  import.meta.glob("/src/assets/photos/*.jpg"),
+  import.meta.glob('/src/assets/photos/*.jpg'),
 )
-  .map((path) => fileName(path, ".jpg"))
-  .sort();
+  .map(path => fileName(path, '.jpg'))
+  .sort()

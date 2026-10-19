@@ -1,45 +1,45 @@
-import type { Tour } from "@/features/tours/types";
+import type { Tour } from '@/features/tours/types'
 
-import { Skeleton } from "@heroui/react";
+import { Skeleton } from '@heroui/react'
 
-import { storyCopy } from "../story-copy";
+import { BrandLogo } from '@/components/layout/brand-logo'
 
-import { ChapterConnector } from "./chapter-connector";
-import { ErichTags } from "./erich-tags";
-import { ExperienceFlight } from "./experience-flight";
-import { Rail, Section } from "./section";
-import { StayKey } from "./stay-key";
-import { PassStrip, StoryChapter, StoryEpilogue } from "./story-chapter";
-import { StoryReel } from "./story-reel";
+import { CompactBar, SearchButton } from '@/components/layout/top-bar-buttons'
+import { useLocale } from '@/contexts/locale-context'
+import { TourCard } from '@/features/tours/discovery/tour-card'
+import { useReveal } from '@/hooks/use-reveal'
+import { useScrolledPast } from '@/hooks/use-scrolled-past'
+import { storyCopy } from '../story-copy'
+import { ChapterConnector } from './chapter-connector'
 
-import { BrandLogo } from "@/components/layout/brand-logo";
-import { CompactBar, SearchButton } from "@/components/layout/top-bar-buttons";
-import { useLocale } from "@/contexts/locale-context";
-import { TourCard } from "@/features/tours/discovery/tour-card";
-import { useReveal } from "@/hooks/use-reveal";
-import { useScrolledPast } from "@/hooks/use-scrolled-past";
+import { ErichTags } from './erich-tags'
+import { ExperienceFlight } from './experience-flight'
+import { Rail, Section } from './section'
+import { StayKey } from './stay-key'
+import { PassStrip, StoryChapter, StoryEpilogue } from './story-chapter'
+import { StoryReel } from './story-reel'
 
 export interface DiscoveryHomeView {
   hero: {
-    appName: string;
-    hello: string;
-    title: string;
-    photoAlt: string;
-    searchLabel: string;
-    searchPrompt: string;
-  };
+    appName: string
+    hello: string
+    title: string
+    photoAlt: string
+    searchLabel: string
+    searchPrompt: string
+  }
   tours: {
-    title: string;
-    subtitle: string;
-    seeAll: string;
-    items: Tour[];
-  };
+    title: string
+    subtitle: string
+    seeAll: string
+    items: Tour[]
+  }
 }
 
 function RailSkeleton() {
   return (
     <div className="-mx-4 flex gap-3 overflow-hidden px-4">
-      {[0, 1, 2].map((i) => (
+      {[0, 1, 2].map(i => (
         <div key={i} className="flex w-60 shrink-0 flex-col gap-3">
           <Skeleton className="aspect-[4/3] rounded-3xl" />
           <Skeleton className="h-5 w-3/4 rounded-lg" />
@@ -47,7 +47,7 @@ function RailSkeleton() {
         </div>
       ))}
     </div>
-  );
+  )
 }
 
 /**
@@ -62,14 +62,14 @@ export function DiscoveryHome({
   view,
   isLoading,
 }: {
-  view: DiscoveryHomeView;
-  isLoading: boolean;
+  view: DiscoveryHomeView
+  isLoading: boolean
 }) {
-  const { hero, tours } = view;
-  const { language } = useLocale();
-  const c = storyCopy[language];
-  const [reelEnd, scrolledPast] = useScrolledPast<HTMLDivElement>();
-  const ledeRef = useReveal<HTMLDivElement>();
+  const { hero, tours } = view
+  const { language } = useLocale()
+  const c = storyCopy[language]
+  const [reelEnd, scrolledPast] = useScrolledPast<HTMLDivElement>()
+  const ledeRef = useReveal<HTMLDivElement>()
 
   return (
     <>
@@ -107,7 +107,7 @@ export function DiscoveryHome({
             <Section
               id="story-passes"
               level={3}
-              seeAll={{ label: c.passes.seeAll, to: "/passes" }}
+              seeAll={{ label: c.passes.seeAll, to: '/passes' }}
               subtitle={c.passes.subtitle}
               title={c.passes.title}
             >
@@ -116,21 +116,23 @@ export function DiscoveryHome({
             <Section
               id="tours"
               level={3}
-              seeAll={{ label: tours.seeAll, to: "/tours" }}
+              seeAll={{ label: tours.seeAll, to: '/tours' }}
               subtitle={c.tours.subtitle}
               title={c.tours.title}
             >
-              {isLoading ? (
-                <RailSkeleton />
-              ) : (
-                <Rail label={c.tours.title}>
-                  {tours.items.map((item) => (
-                    <li key={item.id}>
-                      <TourCard layout="carousel" tour={item} />
-                    </li>
-                  ))}
-                </Rail>
-              )}
+              {isLoading
+                ? (
+                    <RailSkeleton />
+                  )
+                : (
+                    <Rail label={c.tours.title}>
+                      {tours.items.map(item => (
+                        <li key={item.id}>
+                          <TourCard layout="carousel" tour={item} />
+                        </li>
+                      ))}
+                    </Rail>
+                  )}
             </Section>
           </div>
         </StoryChapter>
@@ -157,5 +159,5 @@ export function DiscoveryHome({
         <StoryEpilogue c={c} />
       </div>
     </>
-  );
+  )
 }

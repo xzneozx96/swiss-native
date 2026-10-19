@@ -4,12 +4,13 @@
  * slightly turned, resting on the page with a soft shadow. Each varies one axis: paper
  * stock, photo, interaction, print detail, mounting, motion.
  */
-import type { BrandCopy } from "./copy";
-import type { Round2Copy } from "./round2-copy";
+import type { BrandCopy } from './copy'
+import type { Round2Copy } from './round2-copy'
 
-import { useId, useState } from "react";
+import { useId, useState } from 'react'
 
-import { Heart, PineSilhouette } from "./brand-icons";
+import { photoUrl } from '@/lib/photos'
+import { Heart, PineSilhouette } from './brand-icons'
 import {
   CARD_SHADOW,
   INK,
@@ -17,61 +18,60 @@ import {
   Postmark,
   QuoteLine,
   Stamp,
-} from "./postcard-parts";
-import { useReveal } from "./use-reveal";
+} from './postcard-parts'
 
-import { photoUrl } from "@/lib/photos";
+import { useReveal } from './use-reveal'
 
 interface Props {
-  c: BrandCopy;
-  r: Round2Copy;
+  c: BrandCopy
+  r: Round2Copy
 }
 
 /** A jagged edge for tape ends and torn paper, the same on every render. */
 function jagged(steps: number, depth: number, seed: number) {
   return Array.from({ length: steps + 1 }, (_, i) => {
-    const wobble = Math.abs(Math.sin(i * 12.9898 + seed) * 43758.5453) % 1;
+    const wobble = Math.abs(Math.sin(i * 12.9898 + seed) * 43758.5453) % 1
 
-    return { at: (i / steps) * 100, depth: wobble * depth };
-  });
+    return { at: (i / steps) * 100, depth: wobble * depth }
+  })
 }
 
 const tapeEdge = (() => {
-  const left = jagged(8, 5, 1).map((p) => `${p.depth}% ${p.at}%`);
+  const left = jagged(8, 5, 1).map(p => `${p.depth}% ${p.at}%`)
   const right = jagged(8, 5, 7)
     .reverse()
-    .map((p) => `${100 - p.depth}% ${p.at}%`);
+    .map(p => `${100 - p.depth}% ${p.at}%`)
 
-  return `polygon(${[...left, ...right].join(",")})`;
-})();
+  return `polygon(${[...left, ...right].join(',')})`
+})()
 
 const tornTop = (() => {
-  const top = jagged(60, 10, 3).map((p) => `${p.at}% ${p.depth}px`);
+  const top = jagged(60, 10, 3).map(p => `${p.at}% ${p.depth}px`)
 
-  return `polygon(${top.join(",")}, 100% 100%, 0 100%)`;
-})();
+  return `polygon(${top.join(',')}, 100% 100%, 0 100%)`
+})()
 
 /* -------------------------------------------------------------------------- */
 
 const KRAFT: React.CSSProperties = {
-  backgroundColor: "#DFC8A2",
+  backgroundColor: '#DFC8A2',
   backgroundImage:
-    "radial-gradient(rgba(110,75,35,0.07) 0.7px, transparent 1.2px), radial-gradient(rgba(255,255,255,0.16) 0.7px, transparent 1.2px), linear-gradient(160deg, rgba(255,255,255,0.2), rgba(0,0,0,0.05))",
-  backgroundSize: "5px 7px, 9px 6px, 100% 100%",
-  backgroundPosition: "0 0, 3px 4px, 0 0",
-};
+    'radial-gradient(rgba(110,75,35,0.07) 0.7px, transparent 1.2px), radial-gradient(rgba(255,255,255,0.16) 0.7px, transparent 1.2px), linear-gradient(160deg, rgba(255,255,255,0.2), rgba(0,0,0,0.05))',
+  backgroundSize: '5px 7px, 9px 6px, 100% 100%',
+  backgroundPosition: '0 0, 3px 4px, 0 0',
+}
 
 /**
  * 5 · Kraft, taped, leaning: a light kraft card held by a strip of red washi tape. On the
  * home page it leans over the top edge of the Stay card below, so the two touch.
  */
 export function QuoteKraft({ c, inContext }: Props & { inContext: boolean }) {
-  const ref = useReveal<HTMLDivElement>();
+  const ref = useReveal<HTMLDivElement>()
 
   return (
     <div
       ref={ref}
-      className={`relative z-10 px-4 pt-4 ${inContext ? "-mb-12" : ""}`}
+      className={`relative z-10 px-4 pt-4 ${inContext ? '-mb-12' : ''}`}
     >
       <figure
         className="lab-reveal relative rotate-[2deg] rounded-[3px] px-6 pt-9 pb-5 shadow-[0_2px_3px_rgba(60,40,10,0.12),0_26px_30px_-14px_rgba(60,40,10,0.4)]"
@@ -83,12 +83,12 @@ export function QuoteKraft({ c, inContext }: Props & { inContext: boolean }) {
           style={{
             clipPath: tapeEdge,
             background:
-              "repeating-linear-gradient(135deg, rgba(213,43,30,0.82) 0 7px, rgba(250,238,230,0.82) 7px 14px)",
+              'repeating-linear-gradient(135deg, rgba(213,43,30,0.82) 0 7px, rgba(250,238,230,0.82) 7px 14px)',
           }}
         />
         <blockquote
           className="lab-script text-[26px] leading-[29px] font-medium text-pretty"
-          style={{ color: "#1B2F4A" }}
+          style={{ color: '#1B2F4A' }}
         >
           <p>
             <QuoteLine text={c.quote} />
@@ -98,19 +98,19 @@ export function QuoteKraft({ c, inContext }: Props & { inContext: boolean }) {
           <PineSilhouette className="h-9 shrink-0 text-[#1B2F4A]/30" />
           <span
             className="lab-script text-[22px] leading-6 font-semibold"
-            style={{ color: "#1B2F4A" }}
+            style={{ color: '#1B2F4A' }}
           >
             — {c.author}
           </span>
         </figcaption>
       </figure>
     </div>
-  );
+  )
 }
 
 /** 6 · Polaroid: a photo of the house, the quote handwritten on the white margin below. */
 export function QuotePolaroid({ c }: Props) {
-  const ref = useReveal<HTMLDivElement>();
+  const ref = useReveal<HTMLDivElement>()
 
   return (
     <div ref={ref} className="flex justify-center px-2 py-3">
@@ -120,7 +120,7 @@ export function QuotePolaroid({ c }: Props) {
         <img
           alt=""
           className="aspect-[4/3] w-full object-cover object-[50%_60%] [filter:saturate(0.85)_sepia(0.12)]"
-          src={photoUrl("finsterwald-6")}
+          src={photoUrl('finsterwald-6')}
         />
         <blockquote
           className="lab-script mt-3 px-1 text-[23px] leading-[26px] font-medium text-pretty"
@@ -138,11 +138,11 @@ export function QuotePolaroid({ c }: Props) {
         </figcaption>
       </figure>
     </div>
-  );
+  )
 }
 
 /** The writing side of a postcard: quote, sign-off, stamp, postmark and address lines. */
-function WritingSide({ c, markId }: { c: BrandCopy; markId: string }) {
+function WritingSide({ c, markId }: { c: BrandCopy, markId: string }) {
   return (
     <div className="relative grid grid-cols-[1fr_84px]">
       <div className="flex flex-col gap-3 py-5 ps-5 pe-4">
@@ -169,13 +169,13 @@ function WritingSide({ c, markId }: { c: BrandCopy; markId: string }) {
           text={c.postmark}
         />
         <div aria-hidden="true" className="mt-14 flex flex-col gap-5">
-          {[0, 1, 2].map((i) => (
+          {[0, 1, 2].map(i => (
             <span key={i} className="h-px bg-[#1E3A5F]/20" />
           ))}
         </div>
       </div>
     </div>
-  );
+  )
 }
 
 /**
@@ -184,9 +184,9 @@ function WritingSide({ c, markId }: { c: BrandCopy; markId: string }) {
  * readers; the button only turns the card.
  */
 export function QuoteFlip({ c, r }: Props) {
-  const ref = useReveal<HTMLDivElement>();
-  const markId = useId();
-  const [flipped, setFlipped] = useState(false);
+  const ref = useReveal<HTMLDivElement>()
+  const markId = useId()
+  const [flipped, setFlipped] = useState(false)
 
   return (
     <div ref={ref} className="lab-reveal px-1 py-3">
@@ -202,7 +202,7 @@ export function QuoteFlip({ c, r }: Props) {
             <img
               alt=""
               className="absolute inset-2 size-[calc(100%-16px)] rounded-[3px] object-cover"
-              src={photoUrl("finsterwald-1")}
+              src={photoUrl('finsterwald-1')}
             />
             <div className="absolute inset-2 rounded-[3px] bg-gradient-to-t from-black/60 via-black/0 via-55% to-black/0" />
             <p className="lab-script absolute start-6 end-6 bottom-6 text-[30px] leading-[32px] font-semibold text-white [text-shadow:0_1px_10px_rgba(0,0,0,0.4)]">
@@ -220,7 +220,7 @@ export function QuoteFlip({ c, r }: Props) {
           aria-pressed={flipped}
           className="absolute inset-0 rounded-[6px] outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-4"
           type="button"
-          onClick={() => setFlipped((v) => !v)}
+          onClick={() => setFlipped(v => !v)}
         />
       </figure>
       <p
@@ -244,14 +244,14 @@ export function QuoteFlip({ c, r }: Props) {
         {flipped ? r.turnBack : r.turnHint}
       </p>
     </div>
-  );
+  )
 }
 
 const GRAIN: React.CSSProperties = {
   backgroundImage:
-    "radial-gradient(rgba(60,40,10,0.05) 0.7px, transparent 1.2px), linear-gradient(170deg, #FFFDF7, #FBF5E6)",
-  backgroundSize: "5px 5px, 100% 100%",
-};
+    'radial-gradient(rgba(60,40,10,0.05) 0.7px, transparent 1.2px), linear-gradient(170deg, #FFFDF7, #FBF5E6)',
+  backgroundSize: '5px 5px, 100% 100%',
+}
 
 /**
  * 8 · Back of the card: the printed reverse of a Swiss postcard, flat on the page. A
@@ -259,8 +259,8 @@ const GRAIN: React.CSSProperties = {
  * Finsterwald postmark over it, and ruled lines where the address would go.
  */
 export function QuoteBack({ c, r }: Props) {
-  const ref = useReveal<HTMLDivElement>();
-  const markId = useId();
+  const ref = useReveal<HTMLDivElement>()
+  const markId = useId()
 
   return (
     <div ref={ref} className="px-1 py-3">
@@ -318,7 +318,7 @@ export function QuoteBack({ c, r }: Props) {
         </div>
       </figure>
     </div>
-  );
+  )
 }
 
 /** A red pushpin seen from above, with its shadow. */
@@ -336,7 +336,7 @@ function Pushpin() {
       <circle cx="16" cy="15" fill="#D52B1E" r="8" />
       <circle cx="13" cy="12" fill="rgba(255,255,255,0.55)" r="2.6" />
     </svg>
-  );
+  )
 }
 
 /**
@@ -344,7 +344,7 @@ function Pushpin() {
  * page with a red pushpin. The handwriting sits on the lines.
  */
 export function QuoteNotepad({ c }: Props) {
-  const ref = useReveal<HTMLDivElement>();
+  const ref = useReveal<HTMLDivElement>()
 
   return (
     <div ref={ref} className="px-3 pt-5 pb-2">
@@ -355,8 +355,8 @@ export function QuoteNotepad({ c }: Props) {
           style={{
             clipPath: tornTop,
             backgroundImage:
-              "repeating-linear-gradient(to bottom, transparent 0 29px, rgba(30,58,95,0.17) 29px 30px)",
-            backgroundPosition: "0 7px",
+              'repeating-linear-gradient(to bottom, transparent 0 29px, rgba(30,58,95,0.17) 29px 30px)',
+            backgroundPosition: '0 7px',
           }}
         >
           <span
@@ -380,13 +380,13 @@ export function QuoteNotepad({ c }: Props) {
         </div>
       </figure>
     </div>
-  );
+  )
 }
 
 const AIRMAIL: React.CSSProperties = {
   background:
-    "repeating-linear-gradient(-45deg, #D52B1E 0 10px, #FFFCF3 10px 16px, #1E3A5F 16px 26px, #FFFCF3 26px 32px)",
-};
+    'repeating-linear-gradient(-45deg, #D52B1E 0 10px, #FFFCF3 10px 16px, #1E3A5F 16px 26px, #FFFCF3 26px 32px)',
+}
 
 /**
  * 10 · Airmail, written as you watch: a card with an airmail border. When it comes into
@@ -394,10 +394,10 @@ const AIRMAIL: React.CSSProperties = {
  * get the full quote at once; under reduced motion everything is shown at once.
  */
 export function QuoteAirmail({ c, r }: Props) {
-  const ref = useReveal<HTMLDivElement>();
-  const markId = useId();
-  const words = c.quote.split(" ");
-  const last = words.length - 1;
+  const ref = useReveal<HTMLDivElement>()
+  const markId = useId()
+  const words = c.quote.split(' ')
+  const last = words.length - 1
 
   return (
     <div ref={ref} className="px-1 py-3">
@@ -425,7 +425,7 @@ export function QuoteAirmail({ c, r }: Props) {
                     <span key={i}>
                       <span
                         className="lab-word"
-                        style={{ "--i": i } as React.CSSProperties}
+                        style={{ '--i': i } as React.CSSProperties}
                       >
                         {w}
                         {i === last && (
@@ -434,7 +434,8 @@ export function QuoteAirmail({ c, r }: Props) {
                             size={16}
                           />
                         )}
-                      </span>{" "}
+                      </span>
+                      {' '}
                     </span>
                   ))}
                 </span>
@@ -442,7 +443,7 @@ export function QuoteAirmail({ c, r }: Props) {
             </blockquote>
             <figcaption
               className="lab-script lab-word self-end text-[21px] leading-6 font-semibold"
-              style={{ color: INK, "--i": last + 3 } as React.CSSProperties}
+              style={{ 'color': INK, '--i': last + 3 } as React.CSSProperties}
             >
               — {c.author}
             </figcaption>
@@ -455,7 +456,7 @@ export function QuoteAirmail({ c, r }: Props) {
               text={c.postmark}
             />
             <div aria-hidden="true" className="mt-14 flex flex-col gap-5">
-              {[0, 1, 2].map((i) => (
+              {[0, 1, 2].map(i => (
                 <span key={i} className="h-px bg-[#1E3A5F]/20" />
               ))}
             </div>
@@ -463,5 +464,5 @@ export function QuoteAirmail({ c, r }: Props) {
         </div>
       </figure>
     </div>
-  );
+  )
 }

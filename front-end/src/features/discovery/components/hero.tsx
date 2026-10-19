@@ -1,20 +1,19 @@
-import { Link } from "@tanstack/react-router";
-import { forwardRef } from "react";
+import { Link } from '@tanstack/react-router'
 
-import heroPhoto from "@/assets/photos/furka-pass-4.jpg";
-import { SearchIcon } from "@/components/icons";
-import { BrandLogo } from "@/components/layout/brand-logo";
-import { SearchButton } from "@/components/layout/top-bar-buttons";
+import heroPhoto from '@/assets/photos/furka-pass-4.jpg'
+import { SearchIcon } from '@/components/icons'
+import { BrandLogo } from '@/components/layout/brand-logo'
+import { SearchButton } from '@/components/layout/top-bar-buttons'
 
 interface HeroProps {
-  appName: string;
-  hello: string;
-  title: string;
-  photoAlt: string;
+  appName: string
+  hello: string
+  title: string
+  photoAlt: string
   /** Accessible name of the global search action. */
-  searchLabel: string;
+  searchLabel: string
   /** Text inside the big search box. */
-  searchPrompt: string;
+  searchPrompt: string
 }
 
 /**
@@ -23,10 +22,7 @@ interface HeroProps {
  * the water that opens global search, like the search icon in the top row.
  * The forwarded ref marks the hero's bottom edge for the collapsing header.
  */
-export const Hero = forwardRef<HTMLDivElement, HeroProps>(function Hero(
-  { appName, hello, title, photoAlt, searchLabel, searchPrompt },
-  endRef,
-) {
+export function Hero({ ref: endRef, appName, hello, title, photoAlt, searchLabel, searchPrompt }: HeroProps & { ref?: React.RefObject<HTMLDivElement | null> }) {
   return (
     <section className="relative -mx-4 flex flex-col">
       <div className="bg-gradient-to-b from-hero-sky to-hero-sky/40">
@@ -48,6 +44,8 @@ export const Hero = forwardRef<HTMLDivElement, HeroProps>(function Hero(
         <img
           alt={photoAlt}
           className="-mt-6 h-[220px] w-full object-cover object-[50%_45%] [mask-image:linear-gradient(to_bottom,transparent,black_45%)]"
+          decoding="async"
+          fetchPriority="high"
           height={799}
           src={heroPhoto}
           width={1200}
@@ -62,5 +60,5 @@ export const Hero = forwardRef<HTMLDivElement, HeroProps>(function Hero(
       </Link>
       <div ref={endRef} aria-hidden className="h-px" />
     </section>
-  );
-});
+  )
+}

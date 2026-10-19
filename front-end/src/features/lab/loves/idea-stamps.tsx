@@ -1,13 +1,15 @@
-import type { IdeaProps } from "./parts";
+import type { IdeaProps } from './parts'
 
-import { useId } from "react";
+import { useId } from 'react'
 
-import { LovesHeading } from "./parts";
+import { useReveal } from '@/hooks/use-reveal'
 
-import { useReveal } from "@/hooks/use-reveal";
+import { LovesHeading } from './parts'
 
-const INKS = ["#c9302a", "#253f78", "#2e6a46"];
-const TILTS = [-9, 6, -4];
+const COLONS = /:/g
+
+const INKS = ['#c9302a', '#253f78', '#2e6a46']
+const TILTS = [-9, 6, -4]
 
 function Ink({ id }: { id: string }) {
   // Warps the edges a little, then punches small holes where the ink did not take.
@@ -41,7 +43,7 @@ function Ink({ id }: { id: string }) {
       />
       <feComposite in="rough" in2="holes" operator="in" />
     </filter>
-  );
+  )
 }
 
 function Stamp({
@@ -52,24 +54,24 @@ function Stamp({
   detail,
   label,
 }: {
-  shape: 0 | 1 | 2;
-  ink: string;
-  word: string;
-  top: string;
-  detail: string;
-  label: string;
+  shape: 0 | 1 | 2
+  ink: string
+  word: string
+  top: string
+  detail: string
+  label: string
 }) {
-  const uid = useId().replace(/:/g, "");
+  const uid = useId().replace(COLONS, '')
   // Long words (Homeland) shrink so they stay inside the frame.
   const fit = (size: number, room: number) =>
-    Math.min(size, room / (word.length * 0.72));
-  const f = `ink-${uid}`;
+    Math.min(size, room / (word.length * 0.72))
+  const f = `ink-${uid}`
   const text = {
     fill: ink,
-    fontFamily: "Inter, sans-serif",
+    fontFamily: 'Inter, sans-serif',
     fontWeight: 700,
-    letterSpacing: "0.14em",
-  } as const;
+    letterSpacing: '0.14em',
+  } as const
 
   return (
     <svg
@@ -109,7 +111,7 @@ function Stamp({
             <text
               fontSize={fit(15, 70)}
               stroke="none"
-              style={{ ...text, letterSpacing: "0.04em" }}
+              style={{ ...text, letterSpacing: '0.04em' }}
               textAnchor="middle"
               x="70"
               y="75"
@@ -136,7 +138,7 @@ function Stamp({
             <text
               fontSize={fit(21, 96)}
               stroke="none"
-              style={{ ...text, letterSpacing: "0.02em" }}
+              style={{ ...text, letterSpacing: '0.02em' }}
               textAnchor="middle"
               x="70"
               y="80"
@@ -187,7 +189,7 @@ function Stamp({
             <text
               fontSize={fit(20, 98)}
               stroke="none"
-              style={{ ...text, letterSpacing: "0.02em" }}
+              style={{ ...text, letterSpacing: '0.02em' }}
               textAnchor="middle"
               x="70"
               y="78"
@@ -208,7 +210,7 @@ function Stamp({
         )}
       </g>
     </svg>
-  );
+  )
 }
 
 /**
@@ -217,7 +219,7 @@ function Stamp({
  * line sits beside each stamp.
  */
 export function IdeaStamps({ c }: IdeaProps) {
-  const ref = useReveal<HTMLElement>();
+  const ref = useReveal<HTMLElement>()
 
   return (
     <section
@@ -228,19 +230,19 @@ export function IdeaStamps({ c }: IdeaProps) {
       <LovesHeading c={c} id="loves-stamps" />
       <ul className="lv-passport flex flex-col gap-1 rounded-[22px] px-4 py-5">
         {c.loves.map((love, i) => {
-          const s = c.stamps[i];
+          const s = c.stamps[i]
 
           return (
             <li
               key={love.id}
-              className={`flex items-center gap-3 ${i === 1 ? "flex-row-reverse text-right" : ""}`}
+              className={`flex items-center gap-3 ${i === 1 ? 'flex-row-reverse text-right' : ''}`}
             >
               <div
                 className="lv-stamp"
                 style={
                   {
-                    "--tilt": `${TILTS[i]}deg`,
-                    "--d": `${250 + i * 420}ms`,
+                    '--tilt': `${TILTS[i]}deg`,
+                    '--d': `${250 + i * 420}ms`,
                   } as React.CSSProperties
                 }
               >
@@ -265,9 +267,9 @@ export function IdeaStamps({ c }: IdeaProps) {
                 </p>
               </div>
             </li>
-          );
+          )
         })}
       </ul>
     </section>
-  );
+  )
 }

@@ -11,106 +11,106 @@
  * a row it stays in the photo column, passing behind the photos. Bees are planned from
  * 2027; the first-season dates are bookable from the sheet the main button opens.
  */
-import { useLayoutEffect, useRef, useState } from "react";
+import { useLayoutEffect, useRef, useState } from 'react'
 
-import { ArrowRightIcon } from "@/components/icons";
-import { useLocale } from "@/contexts/locale-context";
-import { shop } from "@/features/catalog/seed";
-import { ListingBookingSheet } from "@/features/tours/discovery/listing-booking-sheet";
-import { photoUrl } from "@/lib/photos";
+import { ArrowRightIcon } from '@/components/icons'
+import { useLocale } from '@/contexts/locale-context'
+import { shop } from '@/features/catalog/seed'
+import { ListingBookingSheet } from '@/features/tours/discovery/listing-booking-sheet'
+import { photoUrl } from '@/lib/photos'
 
 const copy = {
   en: {
-    title: "Where the bees will fly",
+    title: 'Where the bees will fly',
     stations: [
       {
-        title: "The bee house",
-        text: "Dry, airy, flowers and water nearby. Empty until 2027.",
+        title: 'The bee house',
+        text: 'Dry, airy, flowers and water nearby. Empty until 2027.',
       },
       {
-        title: "Spring blossom",
-        text: "Dandelion and meadow flowers. Spring honey is often light and floral.",
+        title: 'Spring blossom',
+        text: 'Dandelion and meadow flowers. Spring honey is often light and floral.',
       },
       {
-        title: "The waggle dance",
-        text: "Back home, a bee dances the way: direction and distance to the food.",
+        title: 'The waggle dance',
+        text: 'Back home, a bee dances the way: direction and distance to the food.',
       },
       {
-        title: "Summer forest",
-        text: "Honeydew from the trees: darker honey, malty, resinous.",
+        title: 'Summer forest',
+        text: 'Honeydew from the trees: darker honey, malty, resinous.',
       },
     ],
-    end: "First flight",
-    endWhen: "planned for 2027",
-    note: "Honey notes are typical of the region, not a promise.",
-    cta: "Reserve a spot",
-    ask: "Ask Erich by email",
+    end: 'First flight',
+    endWhen: 'planned for 2027',
+    note: 'Honey notes are typical of the region, not a promise.',
+    cta: 'Reserve a spot',
+    ask: 'Ask Erich by email',
     alts: [
-      "Gabled wooden bee house with painted flight boards",
-      "A bee on a dandelion",
-      "Forest and meadows on a slope in Entlebuch",
+      'Gabled wooden bee house with painted flight boards',
+      'A bee on a dandelion',
+      'Forest and meadows on a slope in Entlebuch',
     ],
   },
   de: {
-    title: "Wohin die Bienen fliegen werden",
+    title: 'Wohin die Bienen fliegen werden',
     stations: [
       {
-        title: "Das Bienenhaus",
-        text: "Trocken, luftig, Blüten und Wasser in der Nähe. Leer bis 2027.",
+        title: 'Das Bienenhaus',
+        text: 'Trocken, luftig, Blüten und Wasser in der Nähe. Leer bis 2027.',
       },
       {
-        title: "Frühlingsblüten",
-        text: "Löwenzahn und Wiesenblumen. Frühlingshonig ist oft hell und blumig.",
+        title: 'Frühlingsblüten',
+        text: 'Löwenzahn und Wiesenblumen. Frühlingshonig ist oft hell und blumig.',
       },
       {
-        title: "Der Schwänzeltanz",
-        text: "Zurück im Stock tanzt die Biene den Weg: Richtung und Distanz zum Futter.",
+        title: 'Der Schwänzeltanz',
+        text: 'Zurück im Stock tanzt die Biene den Weg: Richtung und Distanz zum Futter.',
       },
       {
-        title: "Sommerwald",
-        text: "Honigtau aus den Bäumen: dunkler Honig, malzig, harzig.",
+        title: 'Sommerwald',
+        text: 'Honigtau aus den Bäumen: dunkler Honig, malzig, harzig.',
       },
     ],
-    end: "Erster Flug",
-    endWhen: "geplant für 2027",
-    note: "Die Honignoten sind typisch für die Region, kein Versprechen.",
-    cta: "Platz reservieren",
-    ask: "Erich per E-Mail fragen",
+    end: 'Erster Flug',
+    endWhen: 'geplant für 2027',
+    note: 'Die Honignoten sind typisch für die Region, kein Versprechen.',
+    cta: 'Platz reservieren',
+    ask: 'Erich per E-Mail fragen',
     alts: [
-      "Bienenhaus aus Holz mit Giebel und bemalten Flugbrettern",
-      "Eine Biene auf einem Löwenzahn",
-      "Wald und Wiesen an einem Hang im Entlebuch",
+      'Bienenhaus aus Holz mit Giebel und bemalten Flugbrettern',
+      'Eine Biene auf einem Löwenzahn',
+      'Wald und Wiesen an einem Hang im Entlebuch',
     ],
   },
-};
+}
 
-const RED = "#E3352A";
+const RED = '#E3352A'
 
 interface Point {
-  x: number;
-  y: number;
+  x: number
+  y: number
 }
 
 interface Geometry {
-  width: number;
-  height: number;
-  d: string;
-  dance: Point;
-  target: Point;
+  width: number
+  height: number
+  d: string
+  dance: Point
+  target: Point
 }
 
-const f = (n: number) => n.toFixed(1);
+const f = (n: number) => n.toFixed(1)
 
 /**
  * Straight down a clear column. Longer drops meander a little, like a bee, within 12px
  * of the column line, and always arrive heading straight down.
  */
 function descend(x: number, from: number, to: number) {
-  const len = to - from;
+  const len = to - from
 
   return len < 48
     ? `L ${f(x)} ${f(to)}`
-    : `C ${f(x + 12)} ${f(from + len * 0.3)} ${f(x - 12)} ${f(to - len * 0.45)} ${f(x)} ${f(to)}`;
+    : `C ${f(x + 12)} ${f(from + len * 0.3)} ${f(x - 12)} ${f(to - len * 0.45)} ${f(x)} ${f(to)}`
 }
 
 /**
@@ -118,100 +118,100 @@ function descend(x: number, from: number, to: number) {
  * never leaves the gap, then down to the next entry point.
  */
 function hop(from: Point, to: Point, gapTop: number, gapBottom: number) {
-  const mid = (gapTop + gapBottom) / 2;
-  const h = Math.max(2, (gapBottom - gapTop) / 2 - 8);
+  const mid = (gapTop + gapBottom) / 2
+  const h = Math.max(2, (gapBottom - gapTop) / 2 - 8)
 
-  return `${descend(from.x, from.y, mid - h)} C ${f(from.x)} ${f(mid)} ${f(to.x)} ${f(mid)} ${f(to.x)} ${f(mid + h)} L ${f(to.x)} ${f(to.y)}`;
+  return `${descend(from.x, from.y, mid - h)} C ${f(from.x)} ${f(mid)} ${f(to.x)} ${f(mid)} ${f(to.x)} ${f(mid + h)} L ${f(to.x)} ${f(to.y)}`
 }
 
 /** A waggle run: a straight run down, wiggling side to side. */
 function run(x: number, top: number, bottom: number) {
-  const steps = 6;
-  let d = "";
+  const steps = 6
+  let d = ''
 
   for (let i = 1; i <= steps; i++) {
-    const dx = i === steps ? 0 : i % 2 ? 4 : -4;
+    const dx = i === steps ? 0 : i % 2 ? 4 : -4
 
-    d += ` L ${f(x + dx)} ${f(top + ((bottom - top) * i) / steps)}`;
+    d += ` L ${f(x + dx)} ${f(top + ((bottom - top) * i) / steps)}`
   }
 
-  return d;
+  return d
 }
 
 /** Run, loop back on the right, run, loop back on the left, run: the figure of eight. */
 function waggle(x: number, top: number, bottom: number) {
-  const w = 34;
+  const w = 34
   const loop = (side: 1 | -1) =>
-    ` C ${f(x + side * 2 * w)} ${f(bottom + 12)} ${f(x + side * 2 * w)} ${f(top - 12)} ${f(x)} ${f(top)}`;
+    ` C ${f(x + side * 2 * w)} ${f(bottom + 12)} ${f(x + side * 2 * w)} ${f(top - 12)} ${f(x)} ${f(top)}`
 
   return (
-    run(x, top, bottom) +
-    loop(1) +
-    run(x, top, bottom) +
-    loop(-1) +
     run(x, top, bottom)
-  );
+    + loop(1)
+    + run(x, top, bottom)
+    + loop(-1)
+    + run(x, top, bottom)
+  )
 }
 
 function measure(stage: HTMLElement): Geometry | null {
-  const s = stage.getBoundingClientRect();
+  const s = stage.getBoundingClientRect()
   const el = (key: string) =>
-    stage.querySelector<HTMLElement>(`[data-anchor="${key}"]`);
+    stage.querySelector<HTMLElement>(`[data-anchor="${key}"]`)
   const centre = (key: string): Point | null => {
-    const node = el(key);
+    const node = el(key)
 
-    if (!node) return null;
-    const r = node.getBoundingClientRect();
+    if (!node)
+      return null
+    const r = node.getBoundingClientRect()
 
     return {
       x: r.left + r.width / 2 - s.left,
       y: r.top + r.height / 2 - s.top,
-    };
-  };
-  const rows = [...stage.querySelectorAll<HTMLElement>("[data-row]")].map(
-    (row) => {
-      const r = row.getBoundingClientRect();
+    }
+  }
+  const rows = Array.from(stage.querySelectorAll<HTMLElement>('[data-row]'), (row) => {
+    const r = row.getBoundingClientRect()
 
-      return { top: r.top - s.top, bottom: r.bottom - s.top };
-    },
-  );
-  const start = centre("start");
-  const in2 = centre("in-2");
-  const out2 = centre("out-2");
-  const in4 = centre("in-4");
-  const out4 = centre("out-4");
-  const danceBox = el("dance")?.getBoundingClientRect();
-  const danceHead = el("dance-head")?.getBoundingClientRect();
-  const endLines = [...(el("end")?.getClientRects() ?? [])];
-  const endLine = endLines.at(-1);
+    return { top: r.top - s.top, bottom: r.bottom - s.top }
+  })
+  const start = centre('start')
+  const in2 = centre('in-2')
+  const out2 = centre('out-2')
+  const in4 = centre('in-4')
+  const out4 = centre('out-4')
+  const danceBox = el('dance')?.getBoundingClientRect()
+  const danceHead = el('dance-head')?.getBoundingClientRect()
+  const endLines = [...(el('end')?.getClientRects() ?? [])]
+  const endLine = endLines.at(-1)
 
   if (
-    !start ||
-    !in2 ||
-    !out2 ||
-    !in4 ||
-    !out4 ||
-    !danceBox ||
-    !danceHead ||
-    !endLine ||
-    rows.length < 5
-  )
-    return null;
+    !start
+    || !in2
+    || !out2
+    || !in4
+    || !out4
+    || !danceBox
+    || !danceHead
+    || !endLine
+    || rows.length < 5
+  ) {
+    return null
+  }
 
   // The dance sits beside the heading of stop 03, inside its own reserved block.
-  const danceX = danceBox.left + danceBox.width / 2 - s.left;
-  const blockTop = danceBox.top - s.top;
-  const headMid = danceHead.top + danceHead.height / 2 - s.top;
-  const runTop = Math.max(blockTop + 14, headMid - 18);
-  const runBottom = runTop + 36;
-  const dance = { x: danceX, y: runTop };
+  const danceX = danceBox.left + danceBox.width / 2 - s.left
+  const blockTop = danceBox.top - s.top
+  const headMid = danceHead.top + danceHead.height / 2 - s.top
+  const runTop = Math.max(blockTop + 14, headMid - 18)
+  const runBottom = runTop + 36
+  const dance = { x: danceX, y: runTop }
   // The target closes "planned for 2027" like a full stop: level with its last line,
   // right of every line, so the curve down from stop 04 never crosses the words.
-  const textRight = Math.max(...endLines.map((r) => r.right)) - s.left;
+  const textRight = Math.max(...endLines.map(r => r.right)) - s.left
   const target = {
     x: Math.min(out4.x, textRight + 18),
     y: endLine.top + endLine.height / 2 - s.top,
-  };
+  }
 
   const d = [
     `M ${f(start.x)} ${f(start.y)}`,
@@ -223,32 +223,32 @@ function measure(stage: HTMLElement): Geometry | null {
     hop({ x: danceX, y: runBottom }, in4, rows[2].bottom, rows[3].top),
     `L ${f(out4.x)} ${f(out4.y)}`,
     `C ${f(out4.x + 12)} ${f(out4.y + (target.y - out4.y) * 0.45)} ${f(target.x)} ${f(target.y - 60)} ${f(target.x)} ${f(target.y)}`,
-  ].join(" ");
+  ].join(' ')
 
-  return { width: s.width, height: s.height, d, dance, target };
+  return { width: s.width, height: s.height, d, dance, target }
 }
 
 const PHOTOS = [
-  { slug: "finsterwald-6", ratio: "4 / 3", tilt: "-2deg", pos: "50% 60%" },
-  { slug: "finsterwald-8", ratio: "4 / 5", tilt: "2.5deg", pos: "42% 45%" },
-  { slug: "finsterwald-3", ratio: "4 / 3", tilt: "-1.5deg", pos: "50% 50%" },
-];
+  { slug: 'finsterwald-6', ratio: '4 / 3', tilt: '-2deg', pos: '50% 60%' },
+  { slug: 'finsterwald-8', ratio: '4 / 5', tilt: '2.5deg', pos: '42% 45%' },
+  { slug: 'finsterwald-3', ratio: '4 / 3', tilt: '-1.5deg', pos: '50% 50%' },
+]
 
 /** A red node on the line, the visible anchor of a stop. */
-const NODE =
-  "pointer-events-none absolute size-3.5 -translate-x-1/2 -translate-y-1/2 rounded-full border-[2.5px] border-[#17241C] bg-[#E3352A]";
+const NODE
+  = 'pointer-events-none absolute size-3.5 -translate-x-1/2 -translate-y-1/2 rounded-full border-[2.5px] border-[#17241C] bg-[#E3352A]'
 
 function Photo({
   index,
   alt,
   anchors,
 }: {
-  index: number;
-  alt: string;
+  index: number
+  alt: string
   /** "start" for the first stop (its node is on the lower edge), else "in-N"/"out-N". */
-  anchors: { top?: string; bottom: string };
+  anchors: { top?: string, bottom: string }
 }) {
-  const { slug, ratio, tilt, pos } = PHOTOS[index];
+  const { slug, ratio, tilt, pos } = PHOTOS[index]
 
   return (
     <div className="xp-pop relative" style={{ rotate: tilt }}>
@@ -269,14 +269,14 @@ function Photo({
       )}
       <span
         className={
-          anchors.bottom === "start"
+          anchors.bottom === 'start'
             ? `${NODE} top-full left-1/2`
-            : "pointer-events-none absolute top-full left-1/2 size-0"
+            : 'pointer-events-none absolute top-full left-1/2 size-0'
         }
         data-anchor={anchors.bottom}
       />
     </div>
-  );
+  )
 }
 
 function Stop({
@@ -285,10 +285,10 @@ function Stop({
   text,
   headAnchor,
 }: {
-  index: number;
-  title: string;
-  text: string;
-  headAnchor?: string;
+  index: number
+  title: string
+  text: string
+  headAnchor?: string
 }) {
   return (
     <div className="flex min-w-0 flex-col gap-1">
@@ -305,32 +305,33 @@ function Stop({
         {text}
       </p>
     </div>
-  );
+  )
 }
 
-const PHOTO_LEFT = "grid grid-cols-[46%_minmax(0,1fr)] items-start gap-x-4";
-const PHOTO_RIGHT = "grid grid-cols-[minmax(0,1fr)_46%] items-start gap-x-4";
+const PHOTO_LEFT = 'grid grid-cols-[46%_minmax(0,1fr)] items-start gap-x-4'
+const PHOTO_RIGHT = 'grid grid-cols-[minmax(0,1fr)_46%] items-start gap-x-4'
 
 export function ExperienceFlight() {
-  const { language } = useLocale();
-  const c = copy[language];
-  const stageRef = useRef<HTMLDivElement>(null);
-  const [geo, setGeo] = useState<Geometry | null>(null);
-  const [booking, setBooking] = useState(false);
+  const { language } = useLocale()
+  const c = copy[language]
+  const stageRef = useRef<HTMLDivElement>(null)
+  const [geo, setGeo] = useState<Geometry | null>(null)
+  const [booking, setBooking] = useState(false)
 
   // Re-measure on every size change of the stage (width, wrapping copy, web fonts).
   useLayoutEffect(() => {
-    const stage = stageRef.current;
+    const stage = stageRef.current
 
-    if (!stage) return;
-    const update = () => setGeo(measure(stage));
-    const ro = new ResizeObserver(update);
+    if (!stage)
+      return
+    const update = () => setGeo(measure(stage))
+    const ro = new ResizeObserver(update)
 
-    ro.observe(stage);
-    void document.fonts?.ready.then(update);
+    ro.observe(stage)
+    void document.fonts?.ready.then(update)
 
-    return () => ro.disconnect();
-  }, [language]);
+    return () => ro.disconnect()
+  }, [language])
 
   return (
     <section
@@ -355,7 +356,8 @@ export function ExperienceFlight() {
         @keyframes xp-fly { from { offset-distance: 0%; } to { offset-distance: 100%; } }
         @keyframes xp-pop { from { opacity: 0; } to { opacity: 1; } }
         @media (prefers-reduced-motion: reduce) { .xp-flight .xp-end { animation: none; } }
-      `}</style>
+      `}
+      </style>
 
       <h3
         className="px-5 text-xs font-semibold tracking-[0.16em] text-[#F1EEE4]/70 uppercase"
@@ -398,21 +400,21 @@ export function ExperienceFlight() {
             <span
               aria-hidden="true"
               className="xp-bee pointer-events-none absolute top-0 left-0 size-3 rounded-full bg-[#F1EEE4] shadow-[0_0_0_3px_#E3352A]"
-              style={{ offsetPath: `path("${geo.d}")`, offsetRotate: "0deg" }}
+              style={{ offsetPath: `path("${geo.d}")`, offsetRotate: '0deg' }}
             />
           </>
         )}
 
         <ol className="relative flex flex-col gap-16 px-5">
           <li data-row className={PHOTO_LEFT}>
-            <Photo alt={c.alts[0]} anchors={{ bottom: "start" }} index={0} />
+            <Photo alt={c.alts[0]} anchors={{ bottom: 'start' }} index={0} />
             <Stop index={0} {...c.stations[0]} />
           </li>
           <li data-row className={PHOTO_RIGHT}>
             <Stop index={1} {...c.stations[1]} />
             <Photo
               alt={c.alts[1]}
-              anchors={{ top: "in-2", bottom: "out-2" }}
+              anchors={{ top: 'in-2', bottom: 'out-2' }}
               index={1}
             />
           </li>
@@ -424,7 +426,7 @@ export function ExperienceFlight() {
             <Stop index={3} {...c.stations[3]} />
             <Photo
               alt={c.alts[2]}
-              anchors={{ top: "in-4", bottom: "out-4" }}
+              anchors={{ top: 'in-4', bottom: 'out-4' }}
               index={2}
             />
           </li>
@@ -485,5 +487,5 @@ export function ExperienceFlight() {
         onClose={() => setBooking(false)}
       />
     </section>
-  );
+  )
 }

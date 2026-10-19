@@ -1,18 +1,18 @@
-import { Link } from "@tanstack/react-router";
+import { Link } from '@tanstack/react-router'
 
+import { ChevronRightIcon, EmailIcon } from '@/components/icons'
+
+import { useLocale } from '@/contexts/locale-context'
+import { useDemoSelector } from '@/features/demo'
+import { renderMail } from '@/features/notifications/components/render-mail'
+import { formatOrderDateTime } from '@/lib/dates'
 import {
-  RowIcon,
-  SettingsGroup,
   itemClass,
   plainItemClass,
   rowClass,
-} from "./settings-list";
-
-import { ChevronRightIcon, EmailIcon } from "@/components/icons";
-import { useLocale } from "@/contexts/locale-context";
-import { useDemo } from "@/features/demo";
-import { renderMail } from "@/features/notifications/components/render-mail";
-import { formatOrderDateTime } from "@/lib/dates";
+  RowIcon,
+  SettingsGroup,
+} from './settings-list'
 
 /**
  * Notifications (1.12s): where booking updates go, and every email the prototype sent this
@@ -22,76 +22,80 @@ export function NotificationsPanel({
   guestId,
   email,
 }: {
-  guestId: string;
-  email: string;
+  guestId: string
+  email: string
 }) {
-  const { t, intlLocale } = useLocale();
-  const { state } = useDemo();
-  const mails = state.data.mail
-    .filter((m) => m.to === "guest" && m.guestId === guestId)
-    .reverse();
+  const { t, intlLocale } = useLocale()
+  const demoMail = useDemoSelector(s => s.data.mail)
+  const mails = demoMail
+    .filter(m => m.to === 'guest' && m.guestId === guestId)
+    .reverse()
 
   return (
     <>
-      <SettingsGroup id="mail-where" title={t("account.mail.where")}>
+      <SettingsGroup id="mail-where" title={t('account.mail.where')}>
         <li className={`${itemClass} flex items-center gap-3 px-4 py-3`}>
           <RowIcon icon={EmailIcon} />
           <span className="flex min-w-0 flex-1 flex-col">
             <span className="font-medium break-all">{email}</span>
             <span className="text-sm text-muted">
-              {t("account.profile.mail.hint")}
+              {t('account.profile.mail.hint')}
             </span>
           </span>
         </li>
       </SettingsGroup>
 
-      <SettingsGroup id="mail-sent" title={t("account.profile.mail.title")}>
-        {mails.length === 0 ? (
-          <li className="px-4 py-4 text-sm text-muted">
-            {t("account.profile.mail.none")}
-          </li>
-        ) : (
-          mails.map((mail) => {
-            const body = (
-              <>
-                <span className="flex min-w-0 flex-1 flex-col">
-                  <span className="truncate font-medium" lang={mail.language}>
-                    {renderMail(mail).subject}
-                  </span>
-                  <span className="text-sm text-muted tabular-nums">
-                    {formatOrderDateTime(mail.at, intlLocale)}
-                  </span>
-                </span>
-                {mail.bookingId && (
-                  <ChevronRightIcon
-                    aria-hidden
-                    className="shrink-0 text-muted"
-                    size={20}
-                  />
-                )}
-              </>
-            );
-
-            return (
-              <li key={mail.id} className={plainItemClass}>
-                {mail.bookingId ? (
-                  <Link
-                    className={rowClass}
-                    params={{ bookingId: mail.bookingId }}
-                    to="/account/bookings/$bookingId"
-                  >
-                    {body}
-                  </Link>
-                ) : (
-                  <div className="flex min-h-16 items-center gap-3 px-4 py-3">
-                    {body}
-                  </div>
-                )}
+      <SettingsGroup id="mail-sent" title={t('account.profile.mail.title')}>
+        {mails.length === 0
+          ? (
+              <li className="px-4 py-4 text-sm text-muted">
+                {t('account.profile.mail.none')}
               </li>
-            );
-          })
-        )}
+            )
+          : (
+              mails.map((mail) => {
+                const body = (
+                  <>
+                    <span className="flex min-w-0 flex-1 flex-col">
+                      <span className="truncate font-medium" lang={mail.language}>
+                        {renderMail(mail).subject}
+                      </span>
+                      <span className="text-sm text-muted tabular-nums">
+                        {formatOrderDateTime(mail.at, intlLocale)}
+                      </span>
+                    </span>
+                    {mail.bookingId && (
+                      <ChevronRightIcon
+                        aria-hidden
+                        className="shrink-0 text-muted"
+                        size={20}
+                      />
+                    )}
+                  </>
+                )
+
+                return (
+                  <li key={mail.id} className={plainItemClass}>
+                    {mail.bookingId
+                      ? (
+                          <Link
+                            className={rowClass}
+                            params={{ bookingId: mail.bookingId }}
+                            to="/account/bookings/$bookingId"
+                          >
+                            {body}
+                          </Link>
+                        )
+                      : (
+                          <div className="flex min-h-16 items-center gap-3 px-4 py-3">
+                            {body}
+                          </div>
+                        )}
+                  </li>
+                )
+              })
+            )}
       </SettingsGroup>
     </>
-  );
+  )
 }

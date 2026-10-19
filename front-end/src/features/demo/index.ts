@@ -1,3 +1,10 @@
-export { DemoProvider, useDemo, useDemoNow } from "./demo-store";
-export { PrototypeBar } from "./components/prototype-bar";
-export type { Role } from "./types";
+export { PrototypeBar } from './components/prototype-bar'
+export {
+  DemoProvider,
+  useDemo,
+  useDemoActions,
+  useDemoNow,
+  useDemoSelector,
+  useStorageFull,
+} from './demo-store'
+export type { Role } from './types'

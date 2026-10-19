@@ -1,21 +1,21 @@
-import { Description, Label, NumberField } from "@heroui/react";
+import { Description, Label, NumberField } from '@heroui/react'
 
 interface QuantityProps {
-  value: number;
-  min?: number;
-  max: number;
-  onChange: (value: number) => void;
+  value: number
+  min?: number
+  max: number
+  onChange: (value: number) => void
 }
 
 interface QuantityStepperProps extends QuantityProps {
-  label: string;
+  label: string
   /** Muted line under the label, e.g. "4 available". */
-  hint?: string;
+  hint?: string
 }
 
 // One quantity control (owner request 13.10.2026): the boxed − n +.
-const stepButton =
-  "flex size-11 items-center justify-center rounded-lg border-0 bg-transparent outline-none transition-colors hover:bg-default focus-visible:focus-ring active:bg-default-hover disabled:opacity-30";
+const stepButton
+  = 'flex size-11 items-center justify-center rounded-lg border-0 bg-transparent outline-none transition-colors hover:bg-default focus-visible:focus-ring active:bg-default-hover disabled:opacity-30'
 
 /** The boxed − n +; must sit inside a NumberField. */
 function StepperGroup() {
@@ -25,7 +25,7 @@ function StepperGroup() {
       <NumberField.Input className="w-7 p-0 text-center text-sm font-semibold tabular-nums" />
       <NumberField.IncrementButton className={stepButton} />
     </NumberField.Group>
-  );
+  )
 }
 
 /**
@@ -47,7 +47,7 @@ export function QuantityStepper({
       maxValue={max}
       minValue={min}
       value={value}
-      onChange={(v) => onChange(Number.isNaN(v) ? min : v)}
+      onChange={v => onChange(Number.isNaN(v) ? min : v)}
     >
       <div className="flex flex-col">
         <Label className="text-heading">{label}</Label>
@@ -55,5 +55,5 @@ export function QuantityStepper({
       </div>
       <StepperGroup />
     </NumberField>
-  );
+  )
 }

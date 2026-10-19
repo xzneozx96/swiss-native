@@ -3,26 +3,26 @@
  * with his name; each chapter opens on a full-bleed photo with its title over a dark
  * fade, then the approved home blocks.
  */
-import type { ChapterId, StoryCopy } from "../copy";
+import type { ChapterId, StoryCopy } from '../copy'
 
-import { CHAPTERS } from "../copy";
-import { Photo, Reveal, StoryBar, TopRow, chapterId } from "../parts";
+import { useScrolledPast } from '@/hooks/use-scrolled-past'
+import { CHAPTERS } from '../copy'
+
+import { chapterId, Photo, Reveal, StoryBar, TopRow } from '../parts'
 
 import {
-  COVERS,
   ChapterBody,
   ChapterText,
-  ERICH,
+  COVERS,
   Epilogue,
+  ERICH,
   Lede,
   SerifContents,
   Tagline,
-} from "./shared";
+} from './shared'
 
-import { useScrolledPast } from "@/hooks/use-scrolled-past";
-
-function Cover({ c, id }: { c: StoryCopy; id: ChapterId }) {
-  const ch = c.chapters[id];
+function Cover({ c, id }: { c: StoryCopy, id: ChapterId }) {
+  const ch = c.chapters[id]
 
   return (
     <div className="relative -mx-4 h-[62svh] min-h-[380px] overflow-hidden">
@@ -44,11 +44,11 @@ function Cover({ c, id }: { c: StoryCopy; id: ChapterId }) {
         </h2>
       </Reveal>
     </div>
-  );
+  )
 }
 
 export function CinematicOriginal({ c }: { c: StoryCopy }) {
-  const [prologueEnd, scrolledPast] = useScrolledPast<HTMLDivElement>();
+  const [prologueEnd, scrolledPast] = useScrolledPast<HTMLDivElement>()
 
   return (
     <>
@@ -82,7 +82,7 @@ export function CinematicOriginal({ c }: { c: StoryCopy }) {
         <Lede c={c} />
         <SerifContents c={c} />
 
-        {CHAPTERS.map((id) => (
+        {CHAPTERS.map(id => (
           <section key={id} className="flex flex-col gap-5">
             <Cover c={c} id={id} />
             <ChapterText c={c} id={id} />
@@ -93,5 +93,5 @@ export function CinematicOriginal({ c }: { c: StoryCopy }) {
         <Epilogue />
       </div>
     </>
-  );
+  )
 }

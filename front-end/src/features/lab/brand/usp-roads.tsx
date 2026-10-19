@@ -6,71 +6,75 @@
  * echoes the red flight line of the dark-green Experience block further down.
  * Paths that must meet the stops exactly are built in pixels from the measured width.
  */
-import type { BrandCopy } from "./copy";
-import type { Round2Copy } from "./round2-copy";
+import type { BrandCopy } from './copy'
+import type { Round2Copy } from './round2-copy'
 
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 
-import { PassIcon, PinesIcon, RoadIcon } from "./brand-icons";
-import { useReducedMotion, useReveal } from "./use-reveal";
+import { PassIcon, PinesIcon, RoadIcon } from './brand-icons'
+import { useReducedMotion, useReveal } from './use-reveal'
 
-const NAVY = "#1E3A5F";
-const ROAD = "#EADFC6";
-const RED = "#D52B1E";
+const RIDGE_END = /L\d+(?:\.\d+)? \d+Z$/
+
+const NAVY = '#1E3A5F'
+const ROAD = '#EADFC6'
+const RED = '#D52B1E'
 
 const POINTS = [
-  { id: "passes", Icon: PassIcon },
-  { id: "roads", Icon: RoadIcon },
-  { id: "gems", Icon: PinesIcon },
-] as const;
+  { id: 'passes', Icon: PassIcon },
+  { id: 'roads', Icon: RoadIcon },
+  { id: 'gems', Icon: PinesIcon },
+] as const
 
 interface Props {
-  c: BrandCopy;
-  r: Round2Copy;
+  c: BrandCopy
+  r: Round2Copy
 }
 
-const plain = (label: string) => label.replace("\u00AD", "");
+const plain = (label: string) => label.replace('\u00AD', '')
 
-const delay = (ms: number) =>
-  ({ "--lab-delay": `${ms}ms` }) as React.CSSProperties;
+function delay(ms: number) {
+  return ({ '--lab-delay': `${ms}ms` }) as React.CSSProperties
+}
 
 function useWidth<T extends HTMLElement>() {
-  const ref = useRef<T>(null);
-  const [width, setWidth] = useState(0);
+  const ref = useRef<T>(null)
+  const [width, setWidth] = useState(0)
 
   useLayoutEffect(() => {
-    const el = ref.current;
+    const el = ref.current
 
-    if (!el) return;
-    setWidth(el.clientWidth);
+    if (!el)
+      return
+    setWidth(el.clientWidth)
     const ro = new ResizeObserver(([entry]) =>
       setWidth(Math.round(entry.contentRect.width)),
-    );
+    )
 
-    ro.observe(el);
+    ro.observe(el)
 
-    return () => ro.disconnect();
-  }, []);
+    return () => ro.disconnect()
+  }, [])
 
-  return [ref, width] as const;
+  return [ref, width] as const
 }
 
-type Pt = [number, number];
+type Pt = [number, number]
 
 /** A road through the points; each stretch bows by its offset (+ down, - up). */
 function bowed(points: Pt[], offsets: number[]) {
-  let d = `M${points[0][0]} ${points[0][1]}`;
+  let d = `M${points[0][0]} ${points[0][1]}`
 
   for (let i = 1; i < points.length; i++) {
-    const [ax, ay] = points[i - 1];
-    const [bx, by] = points[i];
-    const half = (bx - ax) / 2;
-    const k = offsets[i - 1] ?? 0;
+    const [ax, ay] = points[i - 1]
+    const [bx, by] = points[i]
+    const half = (bx - ax) / 2
+    const k = offsets[i - 1] ?? 0
 
-    d += `C${ax + half} ${ay + k} ${bx - half} ${by + k} ${bx} ${by}`;
+    d += `C${ax + half} ${ay + k} ${bx - half} ${by + k} ${bx} ${by}`
   }
 
-  return d;
+  return d
 }
 
 /**
@@ -81,25 +85,25 @@ function roadThrough(points: Pt[], bow: number, firstSide = -1) {
   return bowed(
     points,
     points.map((_, i) => bow * (i % 2 ? -firstSide : firstSide)),
-  );
+  )
 }
 
 /** The road band with its dashed centre line. */
 function Road({
   d,
   width = 12,
-  className = "",
+  className = '',
 }: {
-  d: string;
-  width?: number;
-  className?: string;
+  d: string
+  width?: number
+  className?: string
 }) {
   return (
     <g className={className} fill="none" strokeLinecap="round">
       <path d={d} stroke={ROAD} strokeWidth={width} />
       <path d={d} stroke={NAVY} strokeDasharray="5 6" strokeWidth="1.5" />
     </g>
-  );
+  )
 }
 
 function Stop({
@@ -107,9 +111,9 @@ function Stop({
   size = 56,
   icon = 34,
 }: {
-  Icon: (typeof POINTS)[number]["Icon"];
-  size?: number;
-  icon?: number;
+  Icon: (typeof POINTS)[number]['Icon']
+  size?: number
+  icon?: number
 }) {
   return (
     <span
@@ -118,11 +122,11 @@ function Stop({
     >
       <Icon size={icon} />
     </span>
-  );
+  )
 }
 
-const LABEL =
-  "text-[11px] leading-[14px] font-semibold tracking-[0.1em] uppercase";
+const LABEL
+  = 'text-[11px] leading-[14px] font-semibold tracking-[0.1em] uppercase'
 
 /* -------------------------------------------------------------------------- */
 
@@ -131,7 +135,7 @@ const LABEL =
  * it with one line of text. Its end fades out pointing at the Tours heading below.
  */
 export function UspRoadVertical({ c }: Props) {
-  const ref = useReveal<HTMLDivElement>();
+  const ref = useReveal<HTMLDivElement>()
 
   return (
     <div ref={ref} className="relative">
@@ -179,7 +183,7 @@ export function UspRoadVertical({ c }: Props) {
         ))}
       </ul>
     </div>
-  );
+  )
 }
 
 /**
@@ -188,13 +192,13 @@ export function UspRoadVertical({ c }: Props) {
  * once. Under reduced motion the road is drawn and the dot waits at the end.
  */
 export function UspRoadRide({ c }: Props) {
-  const ref = useReveal<HTMLDivElement>();
-  const [box, w] = useWidth<HTMLDivElement>();
-  const reduced = useReducedMotion();
-  const pathRef = useRef<SVGPathElement>(null);
-  const dotRef = useRef<SVGCircleElement>(null);
-  const motionRef = useRef<SVGAnimateMotionElement>(null);
-  const y = 34;
+  const ref = useReveal<HTMLDivElement>()
+  const [box, w] = useWidth<HTMLDivElement>()
+  const reduced = useReducedMotion()
+  const pathRef = useRef<SVGPathElement>(null)
+  const dotRef = useRef<SVGCircleElement>(null)
+  const motionRef = useRef<SVGAnimateMotionElement>(null)
+  const y = 34
   const d = w
     ? roadThrough(
         [
@@ -206,43 +210,45 @@ export function UspRoadRide({ c }: Props) {
         ],
         18,
       )
-    : "";
+    : ''
 
   useEffect(() => {
-    const root = ref.current;
-    const dot = dotRef.current;
-    const path = pathRef.current;
+    const root = ref.current
+    const dot = dotRef.current
+    const path = pathRef.current
 
-    if (!root || !dot || !path || !d) return;
+    if (!root || !dot || !path || !d)
+      return
     if (reduced) {
-      const end = path.getPointAtLength(path.getTotalLength() * 0.9);
+      const end = path.getPointAtLength(path.getTotalLength() * 0.9)
 
-      dot.setAttribute("cx", String(end.x));
-      dot.setAttribute("cy", String(end.y));
-      dot.setAttribute("opacity", "1");
+      dot.setAttribute('cx', String(end.x))
+      dot.setAttribute('cy', String(end.y))
+      dot.setAttribute('opacity', '1')
 
-      return;
+      return
     }
     const ride = () => {
-      dot.setAttribute("opacity", "1");
-      motionRef.current?.beginElement();
-    };
+      dot.setAttribute('opacity', '1')
+      motionRef.current?.beginElement()
+    }
 
-    if (root.hasAttribute("data-shown")) {
-      ride();
+    if (root.hasAttribute('data-shown')) {
+      ride()
 
-      return;
+      return
     }
     const mo = new MutationObserver(() => {
-      if (!root.hasAttribute("data-shown")) return;
-      mo.disconnect();
-      ride();
-    });
+      if (!root.hasAttribute('data-shown'))
+        return
+      mo.disconnect()
+      ride()
+    })
 
-    mo.observe(root, { attributes: true });
+    mo.observe(root, { attributes: true })
 
-    return () => mo.disconnect();
-  }, [ref, d, reduced]);
+    return () => mo.disconnect()
+  }, [ref, d, reduced])
 
   return (
     <div ref={ref} className="relative -mx-4">
@@ -315,7 +321,7 @@ export function UspRoadRide({ c }: Props) {
         ))}
       </ul>
     </div>
-  );
+  )
 }
 
 /**
@@ -323,22 +329,22 @@ export function UspRoadRide({ c }: Props) {
  * set inside a bend, like the signs at a pass, with a red dot at the apex.
  */
 export function UspRoadHairpin({ c }: Props) {
-  const ref = useReveal<HTMLDivElement>();
-  const [box, w] = useWidth<HTMLDivElement>();
-  const R = 25;
-  const y0 = 18;
-  const m = 10;
-  const xr = w - m - R;
-  const xl = m + R;
+  const ref = useReveal<HTMLDivElement>()
+  const [box, w] = useWidth<HTMLDivElement>()
+  const R = 25
+  const y0 = 18
+  const m = 10
+  const xr = w - m - R
+  const xl = m + R
   const d = w
     ? `M-12 ${y0}H${xr}A${R} ${R} 0 0 1 ${xr} ${y0 + 2 * R}H${xl}A${R} ${R} 0 0 0 ${xl} ${y0 + 4 * R}H${xr}A${R} ${R} 0 0 1 ${xr} ${y0 + 6 * R}H-12`
-    : "";
-  const height = y0 + 6 * R + 18;
+    : ''
+  const height = y0 + 6 * R + 18
   const apex: Pt[] = [
     [xr + R, y0 + R],
     [xl - R, y0 + 3 * R],
     [xr + R, y0 + 5 * R],
-  ];
+  ]
 
   return (
     <div ref={ref} className="relative -mx-4" style={{ height }}>
@@ -386,7 +392,7 @@ export function UspRoadHairpin({ c }: Props) {
         ))}
       </ul>
     </div>
-  );
+  )
 }
 
 /**
@@ -395,14 +401,14 @@ export function UspRoadHairpin({ c }: Props) {
  * stand below.
  */
 export function UspRoadRidge({ c }: Props) {
-  const ref = useReveal<HTMLDivElement>();
-  const [box, w] = useWidth<HTMLDivElement>();
-  const h = 92;
-  const xs = [w / 6, w / 2, (5 * w) / 6];
-  const saddle = [44, 38, 46];
+  const ref = useReveal<HTMLDivElement>()
+  const [box, w] = useWidth<HTMLDivElement>()
+  const h = 92
+  const xs = [w / 6, w / 2, (5 * w) / 6]
+  const saddle = [44, 38, 46]
   const ridge = w
     ? `M0 ${h}L0 52L${w * 0.06} 44L${w * 0.1} 48L${xs[0]} ${saddle[0]}L${w * 0.26} 26L${w * 0.3} 30L${w * 0.35} 12L${w * 0.39} 20L${w * 0.43} 24L${xs[1]} ${saddle[1]}L${w * 0.57} 22L${w * 0.62} 28L${w * 0.67} 10L${w * 0.72} 18L${xs[2]} ${saddle[2]}L${w * 0.9} 30L${w * 0.95} 36L${w} 28L${w} ${h}Z`
-    : "";
+    : ''
   const road = w
     ? bowed(
         [
@@ -415,7 +421,7 @@ export function UspRoadRidge({ c }: Props) {
         // Rise to the first saddle, dip into each valley between, then fall away.
         [0, 34, 34, 0],
       )
-    : "";
+    : ''
 
   return (
     <div ref={ref} className="relative -mx-4 flex flex-col">
@@ -436,7 +442,7 @@ export function UspRoadRidge({ c }: Props) {
             </defs>
             <path d={ridge} fill="url(#lab-ridge)" />
             <path
-              d={ridge.replace(/L\d+(\.\d+)? \d+Z$/, "")}
+              d={ridge.replace(RIDGE_END, '')}
               fill="none"
               stroke={NAVY}
               strokeLinejoin="round"
@@ -475,7 +481,7 @@ export function UspRoadRidge({ c }: Props) {
         ))}
       </ul>
     </div>
-  );
+  )
 }
 
 /**
@@ -484,8 +490,8 @@ export function UspRoadRidge({ c }: Props) {
  * the mountain-trail signs.
  */
 export function UspRoadSignpost({ c }: Props) {
-  const ref = useReveal<HTMLDivElement>();
-  const [box, w] = useWidth<HTMLDivElement>();
+  const ref = useReveal<HTMLDivElement>()
+  const [box, w] = useWidth<HTMLDivElement>()
   const road = w
     ? roadThrough(
         [
@@ -496,7 +502,7 @@ export function UspRoadSignpost({ c }: Props) {
         ],
         12,
       )
-    : "";
+    : ''
 
   return (
     <div ref={ref} className="relative -mx-4">
@@ -520,7 +526,7 @@ export function UspRoadSignpost({ c }: Props) {
                 className="flex size-full items-center gap-2 bg-[#F5C400] ps-3 text-[#1F1E1C]"
                 style={{
                   clipPath:
-                    "polygon(0 0, calc(100% - 16px) 0, 100% 50%, calc(100% - 16px) 100%, 0 100%)",
+                    'polygon(0 0, calc(100% - 16px) 0, 100% 50%, calc(100% - 16px) 100%, 0 100%)',
                 }}
               >
                 <Icon size={20} strokeWidth={1.7} />
@@ -552,26 +558,26 @@ export function UspRoadSignpost({ c }: Props) {
         )}
       </div>
     </div>
-  );
+  )
 }
 
 /** Closed wobbly rings around a hill, smoothed through midpoints. */
 function contour(cx: number, cy: number, r: number, seed: number) {
   const pts: Pt[] = Array.from({ length: 18 }, (_, k) => {
-    const a = (k / 18) * Math.PI * 2;
-    const rr =
-      r * (1 + 0.14 * Math.sin(3 * a + seed) + 0.07 * Math.sin(5 * a + seed));
+    const a = (k / 18) * Math.PI * 2
+    const rr
+      = r * (1 + 0.14 * Math.sin(3 * a + seed) + 0.07 * Math.sin(5 * a + seed))
 
-    return [cx + rr * Math.cos(a) * 1.35, cy + rr * Math.sin(a)];
-  });
-  const mid = (p: Pt, q: Pt) => `${(p[0] + q[0]) / 2} ${(p[1] + q[1]) / 2}`;
-  let d = `M${mid(pts[17], pts[0])}`;
+    return [cx + rr * Math.cos(a) * 1.35, cy + rr * Math.sin(a)]
+  })
+  const mid = (p: Pt, q: Pt) => `${(p[0] + q[0]) / 2} ${(p[1] + q[1]) / 2}`
+  let d = `M${mid(pts[17], pts[0])}`
 
   pts.forEach((p, k) => {
-    d += `Q${p[0]} ${p[1]} ${mid(p, pts[(k + 1) % 18])}`;
-  });
+    d += `Q${p[0]} ${p[1]} ${mid(p, pts[(k + 1) % 18])}`
+  })
 
-  return `${d}Z`;
+  return `${d}Z`
 }
 
 /**
@@ -580,17 +586,17 @@ function contour(cx: number, cy: number, r: number, seed: number) {
  * supporting text.
  */
 export function UspRoadTopo({ c, r }: Props) {
-  const ref = useReveal<HTMLDivElement>();
-  const [box, w] = useWidth<HTMLDivElement>();
-  const mapH = 128;
+  const ref = useReveal<HTMLDivElement>()
+  const [box, w] = useWidth<HTMLDivElement>()
+  const mapH = 128
   const stops: Pt[] = [
     [w / 6, 52],
     [w / 2, 82],
     [(5 * w) / 6, 50],
-  ];
+  ]
   const route = w
     ? roadThrough([[-12, 96], ...stops, [w + 12, 92]], 22, 1)
-    : "";
+    : ''
 
   return (
     <div
@@ -607,7 +613,7 @@ export function UspRoadTopo({ c, r }: Props) {
             width={w}
           >
             <g fill="none" stroke="#9C7A4E">
-              {[0, 1, 2, 3, 4].map((i) => (
+              {[0, 1, 2, 3, 4].map(i => (
                 <path
                   key={`a${i}`}
                   d={contour(w * 0.78, 18, 14 + i * 15, 1.3 + i * 0.4)}
@@ -615,7 +621,7 @@ export function UspRoadTopo({ c, r }: Props) {
                   strokeWidth={i === 2 ? 1.2 : 0.8}
                 />
               ))}
-              {[0, 1, 2, 3].map((i) => (
+              {[0, 1, 2, 3].map(i => (
                 <path
                   key={`b${i}`}
                   d={contour(w * 0.22, mapH + 6, 18 + i * 16, 4 + i * 0.5)}
@@ -646,8 +652,8 @@ export function UspRoadTopo({ c, r }: Props) {
             </g>
           </svg>
         )}
-        {w > 0 &&
-          POINTS.map(({ id, Icon }, i) => (
+        {w > 0
+          && POINTS.map(({ id, Icon }, i) => (
             <span
               key={id}
               aria-hidden="true"
@@ -670,7 +676,7 @@ export function UspRoadTopo({ c, r }: Props) {
         {POINTS.map(({ id }) => (
           <li key={id} className="flex flex-col items-center gap-1">
             <span className={LABEL}>{c.points[id].label}</span>
-            {id === "passes" && (
+            {id === 'passes' && (
               <span className="text-[11px] leading-[14px] text-foreground/75">
                 {r.passNames}
               </span>
@@ -679,5 +685,5 @@ export function UspRoadTopo({ c, r }: Props) {
         ))}
       </ul>
     </div>
-  );
+  )
 }

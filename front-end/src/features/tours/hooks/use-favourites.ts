@@ -1,30 +1,29 @@
-import { useCallback } from "react";
+import { useCallback } from 'react'
 
-import { useDemo } from "@/features/demo";
+import { useDemoActions, useDemoSelector } from '@/features/demo'
 
 /**
- * Saved listings (UX proposal: favourites are not in the PRD). Kept in the demo data,
- * so they work without signing in and survive reloads in this browser.
+ * One listing's saved state (UX proposal: favourites are not in the PRD). Kept in the demo data,
+ * so it works without signing in and survives reloads in this browser. It re-renders only when
+ * this listing's flag flips, not on every other save.
  */
-export function useFavourites() {
-  const { state, update } = useDemo();
-  const ids = state.data.favouriteListingIds;
-
+export function useFavourite(listingId: string) {
+  const { update } = useDemoActions()
+  const saved = useDemoSelector(s =>
+    s.data.favouriteListingIds.includes(listingId),
+  )
   const toggle = useCallback(
-    (listingId: string) =>
+    () =>
       update((s) => {
-        const current = s.data.favouriteListingIds;
+        const current = s.data.favouriteListingIds
         const next = current.includes(listingId)
-          ? current.filter((id) => id !== listingId)
-          : [...current, listingId];
+          ? current.filter(id => id !== listingId)
+          : [...current, listingId]
 
-        return { ...s, data: { ...s.data, favouriteListingIds: next } };
+        return { ...s, data: { ...s.data, favouriteListingIds: next } }
       }),
-    [update],
-  );
+    [update, listingId],
+  )
 
-  return {
-    isFavourite: (listingId: string) => ids.includes(listingId),
-    toggle,
-  };
+  return { saved, toggle }
 }

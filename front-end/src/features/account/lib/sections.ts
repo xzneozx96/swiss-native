@@ -4,10 +4,10 @@
  * on the same content. No `tab` is the hub itself.
  */
 export const accountSections = [
-  "bookings",
-  "payments",
-  "profile",
-  "notifications",
-  "edit",
-] as const;
-export type AccountSection = (typeof accountSections)[number];
+  'bookings',
+  'payments',
+  'profile',
+  'notifications',
+  'edit',
+] as const
+export type AccountSection = (typeof accountSections)[number]

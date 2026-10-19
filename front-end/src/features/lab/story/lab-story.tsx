@@ -4,27 +4,27 @@
  * home page that reuses the approved home blocks as its chapters. The real home is not
  * changed until a direction is chosen.
  */
-import type { StoryLanguage } from "./copy";
+import type { StoryLanguage } from './copy'
 
-import { Link } from "@tanstack/react-router";
-import { useEffect } from "react";
+import { Link } from '@tanstack/react-router'
+import { useEffect } from 'react'
 
-import { CinematicOriginal } from "./cinematic/b1-original";
-import { CinematicScrollOver } from "./cinematic/b2-scroll-over";
-import { CinematicMagazine } from "./cinematic/b3-magazine";
-import { CinematicReel } from "./cinematic/b4-reel";
-import { CinematicLetterbox } from "./cinematic/b5-letterbox";
-import { labChrome, storyCopy } from "./copy";
-import { StoryDay } from "./story-day";
-import { StoryJournal } from "./story-journal";
+import { useLocale } from '@/contexts/locale-context'
+import { CinematicOriginal } from './cinematic/b1-original'
+import { CinematicScrollOver } from './cinematic/b2-scroll-over'
+import { CinematicMagazine } from './cinematic/b3-magazine'
+import { CinematicReel } from './cinematic/b4-reel'
+import { CinematicLetterbox } from './cinematic/b5-letterbox'
+import { labChrome, storyCopy } from './copy'
+import { StoryDay } from './story-day'
 
-import { useLocale } from "@/contexts/locale-context";
+import { StoryJournal } from './story-journal'
 
 export interface StorySearch {
-  dir: number;
+  dir: number
   /** Variant inside the cinematic direction (B), 1-based. */
-  v: number;
-  lang: StoryLanguage;
+  v: number
+  lang: StoryLanguage
 }
 
 export const CINEMATIC = [
@@ -33,11 +33,11 @@ export const CINEMATIC = [
   CinematicMagazine,
   CinematicReel,
   CinematicLetterbox,
-];
+]
 
-export const DIRECTIONS = [StoryJournal, CINEMATIC, StoryDay] as const;
+export const DIRECTIONS = [StoryJournal, CINEMATIC, StoryDay] as const
 
-const CINEMATIC_DIR = 2;
+const CINEMATIC_DIR = 2
 
 function Segment<T extends string | number>({
   label,
@@ -46,11 +46,11 @@ function Segment<T extends string | number>({
   field,
   search,
 }: {
-  label: string;
-  value: T;
-  options: { value: T; label: string }[];
-  field: keyof StorySearch;
-  search: StorySearch;
+  label: string
+  value: T
+  options: { value: T, label: string }[]
+  field: keyof StorySearch
+  search: StorySearch
 }) {
   return (
     <div
@@ -58,15 +58,15 @@ function Segment<T extends string | number>({
       className="flex flex-1 gap-1 rounded-full bg-default p-1"
       role="group"
     >
-      {options.map((o) => (
+      {options.map(o => (
         <Link
           key={String(o.value)}
           replace
-          aria-current={o.value === value ? "true" : undefined}
+          aria-current={o.value === value ? 'true' : undefined}
           className={`flex min-h-11 flex-1 items-center justify-center rounded-full px-2 text-[13px] font-semibold outline-none focus-visible:focus-ring ${
             o.value === value
-              ? "bg-surface text-foreground shadow-surface"
-              : "text-muted"
+              ? 'bg-surface text-foreground shadow-surface'
+              : 'text-muted'
           }`}
           search={{ ...search, [field]: o.value }}
           to="/lab/story"
@@ -75,24 +75,25 @@ function Segment<T extends string | number>({
         </Link>
       ))}
     </div>
-  );
+  )
 }
 
 export function LabStory({ search }: { search: StorySearch }) {
-  const { language, setLanguage } = useLocale();
-  const t = labChrome[search.lang];
-  const isCinematic = search.dir === CINEMATIC_DIR;
+  const { language, setLanguage } = useLocale()
+  const t = labChrome[search.lang]
+  const isCinematic = search.dir === CINEMATIC_DIR
   const Direction = isCinematic
     ? CINEMATIC[search.v - 1]
-    : (DIRECTIONS[search.dir - 1] as typeof StoryJournal);
+    : (DIRECTIONS[search.dir - 1] as typeof StoryJournal)
   const note = isCinematic
     ? t.variants[search.v - 1][1]
-    : t.notes[search.dir - 1];
+    : t.notes[search.dir - 1]
 
   // The reused home blocks read the app language, so the lab keeps it in step.
   useEffect(() => {
-    if (language !== search.lang) setLanguage(search.lang);
-  }, [language, search.lang, setLanguage]);
+    if (language !== search.lang)
+      setLanguage(search.lang)
+  }, [language, search.lang, setLanguage])
 
   return (
     <div lang={search.lang}>
@@ -124,7 +125,7 @@ export function LabStory({ search }: { search: StorySearch }) {
           <p className="min-w-0 flex-1 text-[13px] leading-[18px] text-muted">
             {isCinematic && (
               <span className="font-semibold text-foreground">
-                B{search.v} · {t.variants[search.v - 1][0]}{" "}
+                B{search.v} · {t.variants[search.v - 1][0]}{' '}
               </span>
             )}
             {note}
@@ -134,8 +135,8 @@ export function LabStory({ search }: { search: StorySearch }) {
               field="lang"
               label={t.language}
               options={[
-                { value: "en" as StoryLanguage, label: "EN" },
-                { value: "de" as StoryLanguage, label: "DE" },
+                { value: 'en' as StoryLanguage, label: 'EN' },
+                { value: 'de' as StoryLanguage, label: 'DE' },
               ]}
               search={search}
               value={search.lang}
@@ -147,5 +148,5 @@ export function LabStory({ search }: { search: StorySearch }) {
         <Direction c={storyCopy[search.lang]} />
       </div>
     </div>
-  );
+  )
 }

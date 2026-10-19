@@ -1,133 +1,136 @@
-import type { TourBooking, TourKind, TourParticipants } from "../types";
+import type { TourBooking, TourKind, TourParticipants } from '../types'
 
-import { useBookingKind, useKindT } from "./kind";
+import { DateTile } from '@/components/date-tile'
 
-import { DateTile } from "@/components/date-tile";
 import {
   BookingsIcon,
   ClockIcon,
   PickupIcon,
   TravelGroupIcon,
-} from "@/components/icons";
-import { Media } from "@/components/media";
-import { SurfaceCardBlock, SurfaceCardTitle } from "@/components/surface-card";
-import { useLocale } from "@/contexts/locale-context";
-import { BookingStatusLabels } from "@/features/tours/components/booking-status";
-import { useTours } from "@/features/tours/hooks/use-tours";
-import { bookingNights } from "@/features/tours/lib/selectors";
-import { formatMoney } from "@/lib/format";
-import { pickText } from "@/lib/localized";
+} from '@/components/icons'
+import { Media } from '@/components/media'
+import { SurfaceCardBlock, SurfaceCardTitle } from '@/components/surface-card'
+import { useLocale } from '@/contexts/locale-context'
+import { BookingStatusLabels } from '@/features/tours/components/booking-status'
+import { useTours } from '@/features/tours/hooks/use-tours'
+import { bookingNights } from '@/features/tours/lib/selectors'
+import { dateTimeFormat, formatMoney } from '@/lib/format'
+import { pickText } from '@/lib/localized'
+import { useBookingKind, useKindT } from './kind'
+
+const TRAILING_DOT = /\.$/
 
 export function useBookingFormat() {
-  const { intlLocale } = useLocale();
+  const { intlLocale } = useLocale()
   const zurich = (iso: string, options: Intl.DateTimeFormatOptions) =>
-    new Intl.DateTimeFormat(intlLocale, {
+    dateTimeFormat(intlLocale, {
       ...options,
-      timeZone: "Europe/Zurich",
-    }).format(new Date(iso));
+      timeZone: 'Europe/Zurich',
+    }).format(new Date(iso))
   // A DateTile part without the trailing dot of "Di." or "Okt.".
   const part = (iso: string, options: Intl.DateTimeFormatOptions) =>
-    zurich(iso, options).replace(/\.$/, "");
+    zurich(iso, options).replace(TRAILING_DOT, '')
 
   return {
     money: (cents: number) => formatMoney(cents / 100, intlLocale),
     date: (iso: string) =>
       zurich(iso, {
-        weekday: "short",
-        day: "numeric",
-        month: "short",
-        hour: "2-digit",
-        minute: "2-digit",
+        weekday: 'short',
+        day: 'numeric',
+        month: 'short',
+        hour: '2-digit',
+        minute: '2-digit',
       }),
-    time: (iso: string) => zurich(iso, { hour: "2-digit", minute: "2-digit" }),
+    time: (iso: string) => zurich(iso, { hour: '2-digit', minute: '2-digit' }),
     day: (iso: string) => ({
-      weekday: part(iso, { weekday: "short" }),
-      day: part(iso, { day: "numeric" }),
-      month: part(iso, { month: "short" }),
+      weekday: part(iso, { weekday: 'short' }),
+      day: part(iso, { day: 'numeric' }),
+      month: part(iso, { month: 'short' }),
     }),
-  };
+  }
 }
 
 /** "2 adults · 1 child", leaving out groups with nobody in them. */
 export function useGroupText() {
-  const { t } = useLocale();
+  const { t } = useLocale()
 
   return (group: TourParticipants) =>
     (
       [
-        ["adults", group.adults],
-        ["children", group.children],
-        ["infants", group.infants],
+        ['adults', group.adults],
+        ['children', group.children],
+        ['infants', group.infants],
       ] as const
     )
       .filter(([, count]) => count > 0)
       .map(([kind, count]) =>
-        t(`tourBooking.count.${kind}.${count === 1 ? "one" : "other"}`, {
+        t(`tourBooking.count.${kind}.${count === 1 ? 'one' : 'other'}`, {
           count,
         }),
       )
-      .join(" · ");
+      .join(' · ')
 }
 
 /** "3 nights" / "3 Nächte". */
 export function useNightsText() {
-  const { t } = useLocale();
+  const { t } = useLocale()
 
   return (count: number) =>
-    t(`tourBooking.nights.${count === 1 ? "one" : "other"}`, { count });
+    t(`tourBooking.nights.${count === 1 ? 'one' : 'other'}`, { count })
 }
 
 type Dated = Pick<
   TourBooking,
-  "startsAt" | "endsAt" | "departureId" | "nightIds"
->;
+  'startsAt' | 'endsAt' | 'departureId' | 'nightIds'
+>
 
 /**
  * When a booking takes place: a stay as "Check-in Sat, 24 Oct, 15:00 → check-out Tue, 27 Oct,
  * 11:00 · 3 nights", anything else as its start.
  */
 export function useWhenText() {
-  const { t } = useLocale();
-  const { date } = useBookingFormat();
-  const nights = useNightsText();
+  const { t } = useLocale()
+  const { date } = useBookingFormat()
+  const nights = useNightsText()
 
   return (booking: Dated, kind: TourKind) =>
-    kind === "stay"
-      ? t("tourBooking.stayDates", {
+    kind === 'stay'
+      ? t('tourBooking.stayDates', {
           checkIn: date(booking.startsAt),
           checkOut: date(booking.endsAt),
           nights: nights(bookingNights(booking).length),
         })
-      : kind === "tour" && date(booking.endsAt) !== date(booking.startsAt)
-        ? t("tourBooking.tourDates", {
+      : kind === 'tour' && date(booking.endsAt) !== date(booking.startsAt)
+        ? t('tourBooking.tourDates', {
             from: date(booking.startsAt),
             to: date(booking.endsAt),
           })
-        : date(booking.startsAt);
+        : date(booking.startsAt)
 }
 
-const closed: TourBooking["status"][] = [
-  "expired",
-  "cancelled",
-  "completed",
-  "no_show",
-];
+const closed: TourBooking['status'][] = [
+  'expired',
+  'cancelled',
+  'completed',
+  'no_show',
+]
 
 /** Bookings that need nothing more from the guest or the organiser: C14 lists them under "Past". */
-export const isClosedBooking = (booking: TourBooking) =>
-  closed.includes(booking.status);
+export function isClosedBooking(booking: TourBooking) {
+  return closed.includes(booking.status)
+}
 
 /** The tour's first photo: the ticket and list thumbnails. */
 export function useTourPhoto(booking: TourBooking) {
-  const { tours } = useTours();
+  const { tours } = useTours()
 
   return (
-    tours.find((item) => item.id === booking.tourId)?.photos[0] ??
-    "furka-pass-1"
-  );
+    tours.find(item => item.id === booking.tourId)?.photos[0]
+    ?? 'furka-pass-1'
+  )
 }
 
-const metaRow = "flex min-w-0 items-start gap-1.5 text-sm text-muted";
+const metaRow = 'flex min-w-0 items-start gap-1.5 text-sm text-muted'
 
 /**
  * The ticket head of gift C14 (md tile) and C15 (lg tile): date tile, tour name, start time
@@ -135,19 +138,19 @@ const metaRow = "flex min-w-0 items-start gap-1.5 text-sm text-muted";
  */
 export function TourTicketHead({
   booking,
-  size = "md",
+  size = 'md',
 }: {
-  booking: TourBooking;
-  size?: "md" | "lg";
+  booking: TourBooking
+  size?: 'md' | 'lg'
 }) {
-  const { t, language } = useLocale();
-  const { day, time } = useBookingFormat();
-  const groupText = useGroupText();
-  const nights = useNightsText();
-  const name = pickText(booking.tourName, language);
-  const photo = useTourPhoto(booking);
-  const isStay = useBookingKind(booking) === "stay";
-  const checkOut = day(booking.endsAt);
+  const { t, language } = useLocale()
+  const { day, time } = useBookingFormat()
+  const groupText = useGroupText()
+  const nights = useNightsText()
+  const name = pickText(booking.tourName, language)
+  const photo = useTourPhoto(booking)
+  const isStay = useBookingKind(booking) === 'stay'
+  const checkOut = day(booking.endsAt)
 
   return (
     <div className="flex items-center gap-4 p-4">
@@ -166,7 +169,7 @@ export function TourTicketHead({
         <span className={`${metaRow} tabular-nums`}>
           <ClockIcon aria-hidden className="mt-0.5 shrink-0" size={16} />
           {isStay
-            ? t("tourBooking.stayTicket", {
+            ? t('tourBooking.stayTicket', {
                 time: time(booking.startsAt),
                 checkOut: `${checkOut.weekday} ${checkOut.day} ${checkOut.month}`,
                 nights: nights(bookingNights(booking).length),
@@ -182,11 +185,11 @@ export function TourTicketHead({
       </div>
       <Media alt="" className="size-14 shrink-0 rounded-xl" photo={photo} />
     </div>
-  );
+  )
 }
 
-const row = "flex items-start gap-2 text-sm";
-const rowIcon = "mt-0.5 shrink-0";
+const row = 'flex items-start gap-2 text-sm'
+const rowIcon = 'mt-0.5 shrink-0'
 
 /**
  * C13's booking card (gift C07's order card): tour name and reference beside the tour photo (the
@@ -194,14 +197,14 @@ const rowIcon = "mt-0.5 shrink-0";
  * rows; then contact and answers. C13 wraps it in a SurfaceCard.
  */
 export function BookingSummary({ booking }: { booking: TourBooking }) {
-  const { t, language } = useLocale();
-  const kind = useBookingKind(booking);
-  const kt = useKindT(kind);
-  const when = useWhenText();
-  const groupText = useGroupText();
-  const name = pickText(booking.tourName, language);
-  const meeting = pickText(booking.meetingPoint, language);
-  const photo = useTourPhoto(booking);
+  const { t, language } = useLocale()
+  const kind = useBookingKind(booking)
+  const kt = useKindT(kind)
+  const when = useWhenText()
+  const groupText = useGroupText()
+  const name = pickText(booking.tourName, language)
+  const meeting = pickText(booking.meetingPoint, language)
+  const photo = useTourPhoto(booking)
 
   return (
     <>
@@ -212,7 +215,7 @@ export function BookingSummary({ booking }: { booking: TourBooking }) {
               {name.text}
             </SurfaceCardTitle>
             <span className="text-sm text-muted tabular-nums">
-              {t("tourBooking.reference")} {booking.ref}
+              {t('tourBooking.reference')} {booking.ref}
             </span>
           </div>
           <Media alt="" className="size-14 shrink-0 rounded-xl" photo={photo} />
@@ -230,7 +233,9 @@ export function BookingSummary({ booking }: { booking: TourBooking }) {
           <p className={row}>
             <PickupIcon aria-hidden className={rowIcon} size={16} />
             <span>
-              {kt("tourBooking.meeting")}:{" "}
+              {kt('tourBooking.meeting')}
+              :
+              {' '}
               <span lang={meeting.language}>{meeting.text}</span>
             </span>
           </p>
@@ -239,19 +244,19 @@ export function BookingSummary({ booking }: { booking: TourBooking }) {
       <SurfaceCardBlock>
         <dl className="flex flex-col gap-3 text-sm">
           <div>
-            <dt className="text-muted">{t("tourBooking.contact")}</dt>
+            <dt className="text-muted">{t('tourBooking.contact')}</dt>
             <dd>
               {booking.contactName} · {booking.phone}
             </dd>
           </div>
           {booking.childName && (
             <div>
-              <dt className="text-muted">{t("tourBooking.childNameShort")}</dt>
+              <dt className="text-muted">{t('tourBooking.childNameShort')}</dt>
               <dd>{booking.childName}</dd>
             </div>
           )}
           {booking.participantInfo?.map((answer) => {
-            const label = pickText(answer.label, language);
+            const label = pickText(answer.label, language)
 
             return (
               <div key={label.text}>
@@ -260,10 +265,10 @@ export function BookingSummary({ booking }: { booking: TourBooking }) {
                 </dt>
                 <dd className="break-words">{answer.value}</dd>
               </div>
-            );
+            )
           })}
         </dl>
       </SurfaceCardBlock>
     </>
-  );
+  )
 }

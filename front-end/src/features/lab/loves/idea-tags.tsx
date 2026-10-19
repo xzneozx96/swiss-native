@@ -1,22 +1,22 @@
-import type { IdeaProps } from "./parts";
+import type { IdeaProps } from './parts'
 
-import { LovesHeading } from "./parts";
+import { useReveal } from '@/hooks/use-reveal'
 
-import { useReveal } from "@/hooks/use-reveal";
+import { LovesHeading } from './parts'
 
 // String length and resting tilt per tag, so the three hang like a real rail, not a grid.
 const HANG = [
   { string: 22, tilt: -4 },
   { string: 48, tilt: 3 },
   { string: 30, tilt: -2 },
-];
+]
 
 /**
  * A. Luggage tags: three kraft tags on strings from a brass rail. Each swings once from
  * its knot when first seen, one after another, then rests at a slight tilt.
  */
 export function IdeaTags({ c }: IdeaProps) {
-  const ref = useReveal<HTMLElement>();
+  const ref = useReveal<HTMLElement>()
 
   return (
     <section
@@ -34,8 +34,8 @@ export function IdeaTags({ c }: IdeaProps) {
               className="lv-hang flex flex-col items-center"
               style={
                 {
-                  "--tilt": `${HANG[i].tilt}deg`,
-                  "--d": `${200 + i * 180}ms`,
+                  '--tilt': `${HANG[i].tilt}deg`,
+                  '--d': `${200 + i * 180}ms`,
                 } as React.CSSProperties
               }
             >
@@ -64,5 +64,5 @@ export function IdeaTags({ c }: IdeaProps) {
         </ul>
       </div>
     </section>
-  );
+  )
 }

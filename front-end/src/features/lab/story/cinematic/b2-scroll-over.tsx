@@ -4,38 +4,38 @@
  * chapter's page until it is covered. Pure CSS (position: sticky), so it scrolls at the
  * phone's own speed.
  */
-import type { ChapterId, StoryCopy } from "../copy";
+import type { ChapterId, StoryCopy } from '../copy'
 
-import { CHAPTERS } from "../copy";
-import { Photo, Reveal, StoryBar, TopRow, chapterId } from "../parts";
+import { useScrolledPast } from '@/hooks/use-scrolled-past'
+import { CHAPTERS } from '../copy'
+
+import { chapterId, Photo, Reveal, StoryBar, TopRow } from '../parts'
 
 import {
-  COVERS,
   ChapterBody,
   ChapterText,
-  ERICH,
+  COVERS,
   Epilogue,
+  ERICH,
   Lede,
   SerifContents,
   Tagline,
-} from "./shared";
+} from './shared'
 
-import { useScrolledPast } from "@/hooks/use-scrolled-past";
-
-const SHEET =
-  "relative z-10 rounded-t-[28px] shadow-[0_-16px_40px_rgba(0,0,0,0.28)]";
+const SHEET
+  = 'relative z-10 rounded-t-[28px] shadow-[0_-16px_40px_rgba(0,0,0,0.28)]'
 
 function Grabber({ light = false }: { light?: boolean }) {
   return (
     <span
       aria-hidden
-      className={`mx-auto mb-1 block h-1 w-10 rounded-full ${light ? "bg-white/40" : "bg-foreground/15"}`}
+      className={`mx-auto mb-1 block h-1 w-10 rounded-full ${light ? 'bg-white/40' : 'bg-foreground/15'}`}
     />
-  );
+  )
 }
 
-function Scene({ c, id }: { c: StoryCopy; id: ChapterId }) {
-  const ch = c.chapters[id];
+function Scene({ c, id }: { c: StoryCopy, id: ChapterId }) {
+  const ch = c.chapters[id]
 
   return (
     <section className="relative -mx-4">
@@ -66,11 +66,11 @@ function Scene({ c, id }: { c: StoryCopy; id: ChapterId }) {
         <ChapterBody c={c} id={id} />
       </div>
     </section>
-  );
+  )
 }
 
 export function CinematicScrollOver({ c }: { c: StoryCopy }) {
-  const [prologueEnd, scrolledPast] = useScrolledPast<HTMLDivElement>();
+  const [prologueEnd, scrolledPast] = useScrolledPast<HTMLDivElement>()
 
   return (
     <>
@@ -108,7 +108,7 @@ export function CinematicScrollOver({ c }: { c: StoryCopy }) {
           </div>
         </header>
 
-        {CHAPTERS.map((id) => (
+        {CHAPTERS.map(id => (
           <Scene key={id} c={c} id={id} />
         ))}
 
@@ -117,5 +117,5 @@ export function CinematicScrollOver({ c }: { c: StoryCopy }) {
         </div>
       </div>
     </>
-  );
+  )
 }

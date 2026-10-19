@@ -1,8 +1,8 @@
-import type { PrivateTourRequest } from "../types";
-import type { DemoState } from "@/features/demo/types";
+import type { PrivateTourRequest } from '../types'
+import type { DemoState } from '@/features/demo/types'
 
-import { shop } from "@/features/catalog/seed";
-import { sendMail } from "@/features/notifications/mail";
+import { shop } from '@/features/catalog/seed'
+import { sendMail } from '@/features/notifications/mail'
 
 /**
  * N17 new private-tour request: one mail to the host (Erich Haldi), in English. The guest
@@ -14,10 +14,10 @@ export function mailPrivateTourRequest(
 ): DemoState {
   return sendMail(state, {
     at: request.sentAt,
-    to: "staff",
+    to: 'staff',
     recipient: `${shop.ownerName} (Host)`,
-    language: "en",
-    template: "N17",
+    language: 'en',
+    template: 'N17',
     params: {
       requestId: request.id,
       staffName: shop.ownerName,
@@ -29,5 +29,5 @@ export function mailPrivateTourRequest(
       dateTo: request.dateTo,
       interests: request.interests,
     },
-  });
+  })
 }

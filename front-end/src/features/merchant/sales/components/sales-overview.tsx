@@ -2,10 +2,10 @@ import type {
   SalesBar,
   SalesKpi,
   SalesOverviewView,
-} from "../hooks/use-sales-overview";
-import type { SalesPeriodId } from "../lib/periods";
-import type { DataTableColumn } from "@/components/data-table";
-import type { DayRange } from "@/features/merchant/today/lib/analytics";
+} from '../hooks/use-sales-overview'
+import type { SalesPeriodId } from '../lib/periods'
+import type { DataTableColumn } from '@/components/data-table'
+import type { DayRange } from '@/lib/analytics'
 
 import {
   Button,
@@ -15,9 +15,9 @@ import {
   Label,
   RangeCalendar,
   Skeleton,
-} from "@heroui/react";
-import { parseDate } from "@internationalized/date";
-import { useState } from "react";
+} from '@heroui/react'
+import { parseDate } from '@internationalized/date'
+import { useState } from 'react'
 import {
   Bar,
   BarChart,
@@ -27,28 +27,29 @@ import {
   Tooltip,
   XAxis,
   YAxis,
-} from "recharts";
+} from 'recharts'
 
-import { useSalesOverview } from "../hooks/use-sales-overview";
+import { DataTable } from '@/components/data-table'
 
-import { SalesAllTime } from "./sales-all-time";
+import { EmptyState } from '@/components/empty-state'
 
-import { DataTable } from "@/components/data-table";
-import { EmptyState } from "@/components/empty-state";
-import { ChevronDownIcon, ReportsIcon } from "@/components/icons";
-import { DeltaChip } from "@/components/stat-card";
-import { useLocale } from "@/contexts/locale-context";
+import { ChevronDownIcon, ReportsIcon } from '@/components/icons'
+import { DeltaChip } from '@/components/stat-card'
+import { useLocale } from '@/contexts/locale-context'
 import {
   TooltipCard,
   Widget,
-} from "@/features/merchant/today/components/overview-analytics";
-import { WidgetSkeleton } from "@/features/merchant/today/components/overview-pages";
-import { useSimulatedLoading } from "@/hooks/use-simulated-loading";
+} from '@/features/merchant/today/components/overview-analytics'
+import { WidgetSkeleton } from '@/features/merchant/today/components/overview-pages'
+import { useSimulatedLoading } from '@/hooks/use-simulated-loading'
+import { numberFormat } from '@/lib/format'
+import { useSalesOverview } from '../hooks/use-sales-overview'
+import { SalesAllTime } from './sales-all-time'
 
-const noAnimation = { isAnimationActive: false } as const;
+const noAnimation = { isAnimationActive: false } as const
 /** Tours teal (owner 15.10.2026), in every chart of the page. */
-const TOUR_COLOUR = "var(--chart-4)";
-const tick = { fill: "var(--muted)", fontSize: 11 };
+const TOUR_COLOUR = 'var(--chart-4)'
+const tick = { fill: 'var(--muted)', fontSize: 11 }
 
 /** The period dropdown; "Custom range" adds a date range field next to it. */
 export function PeriodPicker({
@@ -58,21 +59,21 @@ export function PeriodPicker({
   onPeriod,
   onCustom,
 }: {
-  view: SalesOverviewView;
-  period: SalesPeriodId;
-  custom: DayRange | null;
-  onPeriod: (p: SalesPeriodId) => void;
-  onCustom: (r: DayRange) => void;
+  view: SalesOverviewView
+  period: SalesPeriodId
+  custom: DayRange | null
+  onPeriod: (p: SalesPeriodId) => void
+  onCustom: (r: DayRange) => void
 }) {
-  const { t } = useLocale();
-  const label = view.periods.find((p) => p.id === period)?.label ?? "";
-  const range = custom ?? view.current;
+  const { t } = useLocale()
+  const label = view.periods.find(p => p.id === period)?.label ?? ''
+  const range = custom ?? view.current
 
   return (
     <div className="flex shrink-0 flex-wrap items-center justify-end gap-2">
       <Dropdown>
         <Button
-          aria-label={`${t("salesOverview.period")}: ${label}`}
+          aria-label={`${t('salesOverview.period')}: ${label}`}
           variant="tertiary"
         >
           {label}
@@ -80,16 +81,17 @@ export function PeriodPicker({
         </Button>
         <Dropdown.Popover placement="bottom end">
           <Dropdown.Menu
-            aria-label={t("salesOverview.period")}
+            aria-label={t('salesOverview.period')}
             selectedKeys={new Set([period])}
             selectionMode="single"
             onSelectionChange={(keys) => {
-              const [next] = [...keys];
+              const [next] = [...keys]
 
-              if (next) onPeriod(next as SalesPeriodId);
+              if (next)
+                onPeriod(next as SalesPeriodId)
             }}
           >
-            {view.periods.map((p) => (
+            {view.periods.map(p => (
               <Dropdown.Item key={p.id} id={p.id} textValue={p.label}>
                 <Label>{p.label}</Label>
                 <Dropdown.ItemIndicator />
@@ -98,32 +100,31 @@ export function PeriodPicker({
           </Dropdown.Menu>
         </Dropdown.Popover>
       </Dropdown>
-      {period === "custom" && (
+      {period === 'custom' && (
         <DateRangePicker
-          aria-label={t("salesOverview.dates")}
+          aria-label={t('salesOverview.dates')}
           maxValue={parseDate(view.today)}
           minValue={parseDate(view.firstDay)}
           value={{ start: parseDate(range.start), end: parseDate(range.end) }}
-          onChange={(v) =>
-            v && onCustom({ start: v.start.toString(), end: v.end.toString() })
-          }
+          onChange={v =>
+            v && onCustom({ start: v.start.toString(), end: v.end.toString() })}
         >
           <DateField.Group>
             <DateField.Input slot="start">
-              {(segment) => <DateField.Segment segment={segment} />}
+              {segment => <DateField.Segment segment={segment} />}
             </DateField.Input>
             <DateRangePicker.RangeSeparator />
             <DateField.Input slot="end">
-              {(segment) => <DateField.Segment segment={segment} />}
+              {segment => <DateField.Segment segment={segment} />}
             </DateField.Input>
             <DateField.Suffix>
-              <DateRangePicker.Trigger aria-label={t("salesOverview.dates")}>
+              <DateRangePicker.Trigger aria-label={t('salesOverview.dates')}>
                 <DateRangePicker.TriggerIndicator />
               </DateRangePicker.Trigger>
             </DateField.Suffix>
           </DateField.Group>
           <DateRangePicker.Popover>
-            <RangeCalendar aria-label={t("salesOverview.dates")}>
+            <RangeCalendar aria-label={t('salesOverview.dates')}>
               <RangeCalendar.Header>
                 <RangeCalendar.Heading />
                 <RangeCalendar.NavButton slot="previous" />
@@ -131,12 +132,12 @@ export function PeriodPicker({
               </RangeCalendar.Header>
               <RangeCalendar.Grid>
                 <RangeCalendar.GridHeader>
-                  {(day) => (
+                  {day => (
                     <RangeCalendar.HeaderCell>{day}</RangeCalendar.HeaderCell>
                   )}
                 </RangeCalendar.GridHeader>
                 <RangeCalendar.GridBody>
-                  {(date) => <RangeCalendar.Cell date={date} />}
+                  {date => <RangeCalendar.Cell date={date} />}
                 </RangeCalendar.GridBody>
               </RangeCalendar.Grid>
             </RangeCalendar>
@@ -144,7 +145,7 @@ export function PeriodPicker({
         </DateRangePicker>
       )}
     </div>
-  );
+  )
 }
 
 /**
@@ -155,35 +156,36 @@ export function FigureChart({
   kpi,
   view,
 }: {
-  kpi: SalesKpi;
-  view: SalesOverviewView;
+  kpi: SalesKpi
+  view: SalesOverviewView
 }) {
-  const { t, intlLocale } = useLocale();
-  const compact = new Intl.NumberFormat(intlLocale, {
-    notation: "compact",
+  const { t, intlLocale } = useLocale()
+  const compact = numberFormat(intlLocale, {
+    notation: 'compact',
     maximumFractionDigits: 1,
-  });
+  })
   const tooltip = ({
     active,
     payload,
   }: {
-    active?: boolean;
-    payload?: readonly { payload?: SalesBar }[];
+    active?: boolean
+    payload?: readonly { payload?: SalesBar }[]
   }) => {
-    const bar = payload?.[0]?.payload;
+    const bar = payload?.[0]?.payload
 
-    if (!active || !bar) return null;
+    if (!active || !bar)
+      return null
 
     return (
       <TooltipCard
         heading={
           bar.partial
-            ? `${bar.heading} · ${t("salesOverview.partial")}`
+            ? `${bar.heading} · ${t('salesOverview.partial')}`
             : bar.heading
         }
         rows={[
           {
-            key: "now",
+            key: 'now',
             colour: TOUR_COLOUR,
             label: kpi.label,
             value: bar.valueText,
@@ -191,17 +193,17 @@ export function FigureChart({
           ...(bar.previousText
             ? [
                 {
-                  key: "before",
-                  colour: "var(--chart-3)",
-                  label: t("salesOverview.previous"),
+                  key: 'before',
+                  colour: 'var(--chart-3)',
+                  label: t('salesOverview.previous'),
                   value: bar.previousText,
                 },
               ]
             : []),
         ]}
       />
-    );
-  };
+    )
+  }
 
   return (
     <Widget
@@ -240,8 +242,7 @@ export function FigureChart({
               tick={tick}
               tickCount={4}
               tickFormatter={(v: number) =>
-                compact.format(kpi.isMoney ? v / 100 : v)
-              }
+                compact.format(kpi.isMoney ? v / 100 : v)}
               tickLine={false}
               width={40}
             />
@@ -252,7 +253,7 @@ export function FigureChart({
               maxBarSize={24}
               radius={[6, 6, 6, 6]}
             >
-              {kpi.bars.map((b) => (
+              {kpi.bars.map(b => (
                 <Cell
                   key={b.key}
                   fill={TOUR_COLOUR}
@@ -264,40 +265,40 @@ export function FigureChart({
         </ResponsiveContainer>
       </div>
     </Widget>
-  );
+  )
 }
 
 /** The best sellers: the top 5 tours of the period. */
-export function TopSellers({ rows }: { rows: SalesOverviewView["top"] }) {
-  const { t } = useLocale();
+export function TopSellers({ rows }: { rows: SalesOverviewView['top'] }) {
+  const { t } = useLocale()
 
   return (
     <Widget
       className="h-full"
-      description={t("salesOverview.top.description")}
+      description={t('salesOverview.top.description')}
       id="sales-top-sellers"
-      title={t("salesOverview.top.title")}
+      title={t('salesOverview.top.title')}
     >
       <SellersTable rows={rows} />
     </Widget>
-  );
+  )
 }
 
-function SellersTable({ rows }: { rows: SalesOverviewView["top"] }) {
-  const { t } = useLocale();
-  const columns: DataTableColumn<SalesOverviewView["top"][number]>[] = [
+function SellersTable({ rows }: { rows: SalesOverviewView['top'] }) {
+  const { t } = useLocale()
+  const columns: DataTableColumn<SalesOverviewView['top'][number]>[] = [
     {
-      id: "rank",
+      id: 'rank',
       header: <span className="sr-only">#</span>,
-      headerClassName: "w-6",
-      cellClassName: "text-muted tabular-nums",
-      render: (r) => rows.indexOf(r) + 1,
+      headerClassName: 'w-6',
+      cellClassName: 'text-muted tabular-nums',
+      render: r => rows.indexOf(r) + 1,
     },
     {
-      id: "product",
-      header: t("salesOverview.top.product"),
+      id: 'product',
+      header: t('salesOverview.top.product'),
       isRowHeader: true,
-      render: (r) => (
+      render: r => (
         <>
           <span className="block font-medium">{r.name}</span>
           <span className="text-xs text-muted sm:hidden">{r.sold}</span>
@@ -305,43 +306,43 @@ function SellersTable({ rows }: { rows: SalesOverviewView["top"] }) {
       ),
     },
     {
-      id: "sold",
-      header: t("salesOverview.top.sold"),
-      headerClassName: "hidden text-end sm:table-cell",
+      id: 'sold',
+      header: t('salesOverview.top.sold'),
+      headerClassName: 'hidden text-end sm:table-cell',
       cellClassName:
-        "hidden text-end whitespace-nowrap text-muted tabular-nums sm:table-cell",
-      render: (r) => r.sold,
+        'hidden text-end whitespace-nowrap text-muted tabular-nums sm:table-cell',
+      render: r => r.sold,
     },
     {
-      id: "value",
-      header: t("salesOverview.value"),
-      headerClassName: "text-end",
-      cellClassName: "text-end font-medium whitespace-nowrap tabular-nums",
-      render: (r) => r.value,
+      id: 'value',
+      header: t('salesOverview.value'),
+      headerClassName: 'text-end',
+      cellClassName: 'text-end font-medium whitespace-nowrap tabular-nums',
+      render: r => r.value,
     },
     {
-      id: "share",
-      header: t("salesOverview.top.share"),
-      headerClassName: "hidden text-end sm:table-cell",
-      cellClassName: "hidden text-end text-muted tabular-nums sm:table-cell",
-      render: (r) => r.share,
+      id: 'share',
+      header: t('salesOverview.top.share'),
+      headerClassName: 'hidden text-end sm:table-cell',
+      cellClassName: 'hidden text-end text-muted tabular-nums sm:table-cell',
+      render: r => r.share,
     },
-  ];
+  ]
 
   return (
     <DataTable
       columns={columns}
-      empty={{ icon: ReportsIcon, message: t("salesOverview.top.empty") }}
-      getRowId={(r) => r.id}
-      label={t("salesOverview.top.title")}
+      empty={{ icon: ReportsIcon, message: t('salesOverview.top.empty') }}
+      getRowId={r => r.id}
+      label={t('salesOverview.top.title')}
       rows={rows}
       variant="card"
     />
-  );
+  )
 }
 
 /** Bars of the demo-week shape while loading. */
-const SKELETON_BARS = [30, 55, 40, 70, 45, 85, 60];
+const SKELETON_BARS = [30, 55, 40, 70, 45, 85, 60]
 
 /** Sales while loading: the header, four chart cards and top sellers. */
 function SalesSkeleton() {
@@ -355,7 +356,7 @@ function SalesSkeleton() {
         <Skeleton className="h-10 w-32 rounded-full" />
       </div>
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-        {[0, 1, 2, 3].map((i) => (
+        {[0, 1, 2, 3].map(i => (
           <WidgetSkeleton key={i}>
             <div className="flex items-center gap-3">
               <Skeleton className="h-7 w-36 rounded-lg" />
@@ -375,7 +376,7 @@ function SalesSkeleton() {
       </div>
       <WidgetSkeleton>
         <div className="flex flex-col gap-4">
-          {[0, 1, 2, 3, 4].map((i) => (
+          {[0, 1, 2, 3, 4].map(i => (
             <div key={i} className="flex items-center gap-4">
               <Skeleton className="h-4 w-4 rounded" />
               <Skeleton className="h-4 flex-1 rounded-lg" />
@@ -385,7 +386,7 @@ function SalesSkeleton() {
         </div>
       </WidgetSkeleton>
     </div>
-  );
+  )
 }
 
 /**
@@ -393,13 +394,14 @@ function SalesSkeleton() {
  * days), a chart per figure, and the top tours.
  */
 export function SalesOverview() {
-  const { t } = useLocale();
-  const isLoading = useSimulatedLoading();
-  const [period, setPeriod] = useState<SalesPeriodId>("7d");
-  const [custom, setCustom] = useState<DayRange | null>(null);
-  const view = useSalesOverview(period, period === "custom" ? custom : null);
+  const { t } = useLocale()
+  const isLoading = useSimulatedLoading()
+  const [period, setPeriod] = useState<SalesPeriodId>('7d')
+  const [custom, setCustom] = useState<DayRange | null>(null)
+  const view = useSalesOverview(period, period === 'custom' ? custom : null)
 
-  if (isLoading) return <SalesSkeleton />;
+  if (isLoading)
+    return <SalesSkeleton />
 
   return (
     <section aria-labelledby="sales-heading" className="flex flex-col gap-4">
@@ -407,19 +409,19 @@ export function SalesOverview() {
         view={view}
         onMonthSelect={(start) => {
           // A month opens as its days, up to today for the running month.
-          const last = new Date(`${start.slice(0, 8)}01T12:00:00Z`);
+          const last = new Date(`${start.slice(0, 8)}01T12:00:00Z`)
 
-          last.setUTCMonth(last.getUTCMonth() + 1, 0);
-          const end = last.toISOString().slice(0, 10);
+          last.setUTCMonth(last.getUTCMonth() + 1, 0)
+          const end = last.toISOString().slice(0, 10)
 
-          setCustom({ start, end: end < view.today ? end : view.today });
-          setPeriod("custom");
+          setCustom({ start, end: end < view.today ? end : view.today })
+          setPeriod('custom')
         }}
       />
       <div className="flex items-start justify-between gap-3 sm:items-end">
         <div className="flex min-w-0 flex-col">
           <h2 className="text-heading" id="sales-heading">
-            {t("salesOverview.heading")}
+            {t('salesOverview.heading')}
           </h2>
           <p className="text-sm text-muted">
             {view.rangeText} · {view.comparison}
@@ -431,25 +433,28 @@ export function SalesOverview() {
           view={view}
           onCustom={setCustom}
           onPeriod={(p) => {
-            if (p === "custom" && !custom) setCustom(view.current);
-            setPeriod(p);
+            if (p === 'custom' && !custom)
+              setCustom(view.current)
+            setPeriod(p)
           }}
         />
       </div>
-      {view.isEmpty ? (
-        <div className="rounded-3xl bg-surface shadow-surface">
-          <EmptyState icon={ReportsIcon} message={t("overview.empty")} />
-        </div>
-      ) : (
-        <>
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-            {view.kpis.map((k) => (
-              <FigureChart key={k.id} kpi={k} view={view} />
-            ))}
-          </div>
-          <TopSellers rows={view.top} />
-        </>
-      )}
+      {view.isEmpty
+        ? (
+            <div className="rounded-3xl bg-surface shadow-surface">
+              <EmptyState icon={ReportsIcon} message={t('overview.empty')} />
+            </div>
+          )
+        : (
+            <>
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                {view.kpis.map(k => (
+                  <FigureChart key={k.id} kpi={k} view={view} />
+                ))}
+              </div>
+              <TopSellers rows={view.top} />
+            </>
+          )}
     </section>
-  );
+  )
 }

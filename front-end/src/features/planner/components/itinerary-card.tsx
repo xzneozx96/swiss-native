@@ -1,33 +1,34 @@
-import type { CSSProperties } from "react";
-import type { Plan } from "../lib/plan";
+import type { CSSProperties } from 'react'
+import type { Plan } from '../lib/plan'
 
-import { Chip } from "@heroui/react";
-import clsx from "clsx";
+import { Chip } from '@heroui/react'
+import clsx from 'clsx'
 
-import { ui } from "../lib/copy";
+import { useLocale } from '@/contexts/locale-context'
 
-import { useLocale } from "@/contexts/locale-context";
+import { ui } from '../lib/copy'
 
-const COLS = "grid grid-cols-[3.25rem_1rem_minmax(0,1fr)] gap-x-3";
-const rise = (n: number) =>
-  ({ "--d": `${Math.min(n, 10) * 55}ms` }) as CSSProperties;
+const COLS = 'grid grid-cols-[3.25rem_1rem_minmax(0,1fr)] gap-x-3'
+function rise(n: number) {
+  return ({ '--d': `${Math.min(n, 10) * 55}ms` }) as CSSProperties
+}
 
 /** The itinerary the build_itinerary tool returned, as a timeline: day, rail, what the day holds. */
 export function ItineraryCard({ plan }: { plan: Plan }) {
-  const { language } = useLocale();
-  const t = ui[language];
-  const isNew = (name: string) => plan.added.includes(name);
+  const { language } = useLocale()
+  const t = ui[language]
+  const isNew = (name: string) => plan.added.includes(name)
 
   return (
     <article className="animate-rise w-full overflow-hidden rounded-3xl bg-surface shadow-surface">
       <header className="flex flex-col gap-1 px-5 pt-4 pb-3">
         <h3 className="font-serif text-title">{plan.title}</h3>
         <p className="text-sm text-muted">
-          {plan.stay === "base"
-            ? language === "de"
-              ? "Jede Nacht in Andermatt"
-              : "Every night in Andermatt"
-            : "Andermatt · Innertkirchen · Airolo"}
+          {plan.stay === 'base'
+            ? language === 'de'
+              ? 'Jede Nacht in Andermatt'
+              : 'Every night in Andermatt'
+            : 'Andermatt · Innertkirchen · Airolo'}
         </p>
       </header>
 
@@ -35,7 +36,7 @@ export function ItineraryCard({ plan }: { plan: Plan }) {
         {plan.items.map((item, n) => (
           <li
             key={item.id}
-            className={clsx(COLS, "animate-rise")}
+            className={clsx(COLS, 'animate-rise')}
             style={rise(n)}
           >
             <span className="pt-px text-sm font-semibold tabular-nums">
@@ -72,7 +73,7 @@ export function ItineraryCard({ plan }: { plan: Plan }) {
               )}
               {item.stops && (
                 <ol className="mt-1 flex flex-col gap-1.5 border-s border-separator ps-3">
-                  {item.stops.map((stop) => (
+                  {item.stops.map(stop => (
                     <li key={stop.name} className="flex flex-col text-sm">
                       <span className="font-medium">{stop.name}</span>
                       <span className="text-xs leading-4 text-muted">
@@ -95,21 +96,22 @@ export function ItineraryCard({ plan }: { plan: Plan }) {
       <footer className="flex flex-col gap-3 border-t border-separator bg-surface-secondary/50 px-5 py-4 text-sm">
         {plan.removed.length > 0 && (
           <p>
-            <span className="font-medium">{t.removed}</span>{" "}
+            <span className="font-medium">{t.removed}</span>
+            {' '}
             <span className="text-muted line-through">
-              {plan.removed.join(", ")}
+              {plan.removed.join(', ')}
             </span>
           </p>
         )}
         <div>
           <p className="font-medium">{t.goodToKnow}</p>
           <ul className="list-disc ps-5 text-muted">
-            {plan.notes.map((n) => (
+            {plan.notes.map(n => (
               <li key={n}>{n}</li>
             ))}
           </ul>
         </div>
       </footer>
     </article>
-  );
+  )
 }

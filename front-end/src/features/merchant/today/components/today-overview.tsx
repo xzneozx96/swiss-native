@@ -1,14 +1,14 @@
-import { Skeleton } from "@heroui/react";
-
-import { WidgetSkeleton } from "./overview-pages";
+import { Skeleton } from '@heroui/react'
 
 import {
   NextDeparturesWidget,
   TourCollectWidget,
   TourTaskTiles,
-} from "@/features/tours/merchant/today-queue";
-import { useOverdueCheck } from "@/features/tours/merchant/use-overdue-check";
-import { useSimulatedLoading } from "@/hooks/use-simulated-loading";
+} from '@/features/tours/merchant/today-queue'
+
+import { useOverdueCheck } from '@/features/tours/merchant/use-overdue-check'
+import { useSimulatedLoading } from '@/hooks/use-simulated-loading'
+import { WidgetSkeleton } from './overview-pages'
 
 /** A task tile while loading: icon, name, count. */
 function TileSkeleton() {
@@ -26,14 +26,14 @@ function TileSkeleton() {
         <Skeleton className="h-7 w-8 rounded-lg" />
       </div>
     </div>
-  );
+  )
 }
 
 /** A list row while loading: the date tile and two lines (Next departures). */
 function RowsSkeleton() {
   return (
     <ul className="flex flex-col gap-4">
-      {[0, 1, 2, 3].map((i) => (
+      {[0, 1, 2, 3].map(i => (
         <li key={i} className="flex items-center gap-3">
           <Skeleton className="h-16 w-12 shrink-0 rounded-xl" />
           <div className="flex flex-1 flex-col gap-2">
@@ -43,7 +43,7 @@ function RowsSkeleton() {
         </li>
       ))}
     </ul>
-  );
+  )
 }
 
 /** The tour balance still to collect while loading: total, stacked bar, three legend rows. */
@@ -53,7 +53,7 @@ function CollectSkeleton() {
       <Skeleton className="h-8 w-40 rounded-lg" />
       <Skeleton className="mt-4 h-3 w-full rounded-full" />
       <div className="mt-4 flex flex-col gap-3">
-        {[0, 1, 2].map((i) => (
+        {[0, 1, 2].map(i => (
           <div key={i} className="flex justify-between gap-3">
             <Skeleton className="h-3.5 w-2/5 rounded-lg" />
             <Skeleton className="h-3.5 w-16 rounded-lg" />
@@ -61,7 +61,7 @@ function CollectSkeleton() {
         ))}
       </div>
     </>
-  );
+  )
 }
 
 /** Today while loading: the task tiles, then the departures and the balance to collect. */
@@ -69,7 +69,7 @@ function TodaySkeleton() {
   return (
     <div className="flex flex-col gap-4">
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-4 lg:gap-4">
-        {[0, 1, 2, 3].map((i) => (
+        {[0, 1, 2, 3].map(i => (
           <TileSkeleton key={i} />
         ))}
       </div>
@@ -82,7 +82,7 @@ function TodaySkeleton() {
         </WidgetSkeleton>
       </div>
     </div>
-  );
+  )
 }
 
 /**
@@ -90,11 +90,12 @@ function TodaySkeleton() {
  * collect.
  */
 export function TodayOverview() {
-  const isLoading = useSimulatedLoading();
+  const isLoading = useSimulatedLoading()
 
-  useOverdueCheck();
+  useOverdueCheck()
 
-  if (isLoading) return <TodaySkeleton />;
+  if (isLoading)
+    return <TodaySkeleton />
 
   return (
     <div className="flex flex-col gap-4">
@@ -104,5 +105,5 @@ export function TodayOverview() {
         <TourCollectWidget />
       </div>
     </div>
-  );
+  )
 }

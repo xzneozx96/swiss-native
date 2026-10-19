@@ -1,21 +1,23 @@
-import type { IdeaProps } from "./parts";
+import type { IdeaProps } from './parts'
 
-import { LovesHeading } from "./parts";
+import { useReveal } from '@/hooks/use-reveal'
 
-import { useReveal } from "@/hooks/use-reveal";
+import { LovesHeading } from './parts'
+
+const LEADING_PUNCTUATION = /^[,.;:!?]/
 
 // Each mark draws in after the one before it.
-const delay = (mark: number) => `${500 + mark * 750}ms`;
+const delay = (mark: number) => `${500 + mark * 750}ms`
 
 /** A marker sweep behind the word, an underline twice, and a loop round it. */
-function Mark({ mark, small = false }: { mark: 0 | 1 | 2; small?: boolean }) {
+function Mark({ mark, small = false }: { mark: 0 | 1 | 2, small?: boolean }) {
   const common = {
-    fill: "none",
+    fill: 'none',
     pathLength: 1,
-    vectorEffect: "non-scaling-stroke" as const,
-    className: "lv-draw",
-  };
-  const style = { "--d": small ? "0ms" : delay(mark) } as React.CSSProperties;
+    vectorEffect: 'non-scaling-stroke' as const,
+    className: 'lv-draw',
+  }
+  const style = { '--d': small ? '0ms' : delay(mark) } as React.CSSProperties
 
   if (mark === 0) {
     return (
@@ -23,8 +25,8 @@ function Mark({ mark, small = false }: { mark: 0 | 1 | 2; small?: boolean }) {
         aria-hidden
         className={
           small
-            ? "size-full"
-            : "absolute top-[0.32em] -left-[0.12em] -z-10 h-[0.72em] w-[calc(100%+0.24em)]"
+            ? 'size-full'
+            : 'absolute top-[0.32em] -left-[0.12em] -z-10 h-[0.72em] w-[calc(100%+0.24em)]'
         }
         preserveAspectRatio="none"
         style={style}
@@ -37,7 +39,7 @@ function Mark({ mark, small = false }: { mark: 0 | 1 | 2; small?: boolean }) {
           strokeWidth={small ? 8 : 20}
         />
       </svg>
-    );
+    )
   }
 
   if (mark === 1) {
@@ -46,8 +48,8 @@ function Mark({ mark, small = false }: { mark: 0 | 1 | 2; small?: boolean }) {
         aria-hidden
         className={
           small
-            ? "size-full"
-            : "absolute -bottom-[0.18em] -left-[0.06em] h-[0.34em] w-[calc(100%+0.12em)]"
+            ? 'size-full'
+            : 'absolute -bottom-[0.18em] -left-[0.06em] h-[0.34em] w-[calc(100%+0.12em)]'
         }
         preserveAspectRatio="none"
         style={style}
@@ -69,7 +71,7 @@ function Mark({ mark, small = false }: { mark: 0 | 1 | 2; small?: boolean }) {
           strokeWidth={small ? 1.5 : 1.8}
         />
       </svg>
-    );
+    )
   }
 
   return (
@@ -77,8 +79,8 @@ function Mark({ mark, small = false }: { mark: 0 | 1 | 2; small?: boolean }) {
       aria-hidden
       className={
         small
-          ? "size-full"
-          : "absolute -top-[0.16em] -left-[0.3em] h-[calc(100%+0.32em)] w-[calc(100%+0.6em)]"
+          ? 'size-full'
+          : 'absolute -top-[0.16em] -left-[0.3em] h-[calc(100%+0.32em)] w-[calc(100%+0.6em)]'
       }
       preserveAspectRatio="none"
       style={style}
@@ -92,7 +94,7 @@ function Mark({ mark, small = false }: { mark: 0 | 1 | 2; small?: boolean }) {
         strokeWidth={small ? 1.6 : 2.4}
       />
     </svg>
-  );
+  )
 }
 
 /**
@@ -101,7 +103,7 @@ function Mark({ mark, small = false }: { mark: 0 | 1 | 2; small?: boolean }) {
  * lines follow, each with its mark.
  */
 export function IdeaSentence({ c }: IdeaProps) {
-  const ref = useReveal<HTMLElement>();
+  const ref = useReveal<HTMLElement>()
 
   return (
     <section
@@ -112,16 +114,16 @@ export function IdeaSentence({ c }: IdeaProps) {
       <LovesHeading c={c} id="loves-sentence" />
       <p className="isolate font-serif text-[31px] leading-[44px] tracking-[-0.01em] text-balance">
         {c.sentence.map((part, i) => {
-          const prev = c.sentence[i - 1];
-          const next = c.sentence[i + 1];
+          const prev = c.sentence[i - 1]
+          const next = c.sentence[i + 1]
           // Punctuation right after a marked word stays on its line.
-          const stuck =
-            typeof next === "string" ? (/^[,.;:!?]/.exec(next)?.[0] ?? "") : "";
+          const stuck
+            = typeof next === 'string' ? (LEADING_PUNCTUATION.exec(next)?.[0] ?? '') : ''
 
-          if (typeof part === "string") {
-            return typeof prev === "object" && /^[,.;:!?]/.test(part)
+          if (typeof part === 'string') {
+            return typeof prev === 'object' && LEADING_PUNCTUATION.test(part)
               ? part.slice(1)
-              : part;
+              : part
           }
 
           return (
@@ -132,7 +134,7 @@ export function IdeaSentence({ c }: IdeaProps) {
               </span>
               {stuck}
             </span>
-          );
+          )
         })}
       </p>
       <ul className="flex flex-col gap-3 border-t border-separator pt-4">
@@ -141,7 +143,7 @@ export function IdeaSentence({ c }: IdeaProps) {
             key={love.id}
             className="reveal grid grid-cols-[28px_1fr] items-start gap-x-3"
             style={
-              { "--reveal-delay": `${1200 + i * 150}ms` } as React.CSSProperties
+              { '--reveal-delay': `${1200 + i * 150}ms` } as React.CSSProperties
             }
           >
             <span className="mt-1 h-3.5 w-7">
@@ -159,5 +161,5 @@ export function IdeaSentence({ c }: IdeaProps) {
         ))}
       </ul>
     </section>
-  );
+  )
 }

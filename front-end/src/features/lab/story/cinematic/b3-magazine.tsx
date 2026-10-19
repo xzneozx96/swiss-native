@@ -4,27 +4,27 @@
  * opens on a photo carrying one big number (5 passes, 2027, 1,060 m), with the title
  * set below it like a feature headline.
  */
-import type { ChapterId, StoryCopy } from "../copy";
+import type { ChapterId, StoryCopy } from '../copy'
 
-import { CHAPTERS } from "../copy";
-import { Photo, Reveal, StoryBar, chapterId, scrollToChapter } from "../parts";
+import { ChevronRightIcon } from '@/components/icons'
+import { SearchButton } from '@/components/layout/top-bar-buttons'
 
+import { useScrolledPast } from '@/hooks/use-scrolled-past'
+
+import { CHAPTERS } from '../copy'
+import { chapterId, Photo, Reveal, scrollToChapter, StoryBar } from '../parts'
 import {
-  COVERS,
   ChapterBody,
   ChapterText,
-  ERICH,
+  COVERS,
   Epilogue,
+  ERICH,
   Lede,
   Tagline,
-} from "./shared";
+} from './shared'
 
-import { ChevronRightIcon } from "@/components/icons";
-import { SearchButton } from "@/components/layout/top-bar-buttons";
-import { useScrolledPast } from "@/hooks/use-scrolled-past";
-
-function Feature({ c, id }: { c: StoryCopy; id: ChapterId }) {
-  const ch = c.chapters[id];
+function Feature({ c, id }: { c: StoryCopy, id: ChapterId }) {
+  const ch = c.chapters[id]
 
   return (
     <div className="flex flex-col gap-4">
@@ -57,11 +57,11 @@ function Feature({ c, id }: { c: StoryCopy; id: ChapterId }) {
         </h2>
       </Reveal>
     </div>
-  );
+  )
 }
 
 export function CinematicMagazine({ c }: { c: StoryCopy }) {
-  const [prologueEnd, scrolledPast] = useScrolledPast<HTMLDivElement>();
+  const [prologueEnd, scrolledPast] = useScrolledPast<HTMLDivElement>()
 
   return (
     <>
@@ -83,7 +83,7 @@ export function CinematicMagazine({ c }: { c: StoryCopy }) {
               <SearchButton label={c.searchLabel} to="/search" tone="glass" />
             </div>
             <h1 className="-mt-1 font-serif text-[68px] leading-[0.9] font-semibold tracking-[-0.03em]">
-              {c.name.split(" ").map((part) => (
+              {c.name.split(' ').map(part => (
                 <span key={part} className="block">
                   {part}
                 </span>
@@ -97,7 +97,7 @@ export function CinematicMagazine({ c }: { c: StoryCopy }) {
             <Tagline c={c} className="-mt-1 text-xl" />
             <ul className="flex flex-col divide-y divide-white/25 border-t border-white/40">
               {CHAPTERS.map((id) => {
-                const ch = c.chapters[id];
+                const ch = c.chapters[id]
 
                 return (
                   <li key={id}>
@@ -116,7 +116,7 @@ export function CinematicMagazine({ c }: { c: StoryCopy }) {
                       <ChevronRightIcon size={16} />
                     </button>
                   </li>
-                );
+                )
               })}
             </ul>
           </div>
@@ -125,7 +125,7 @@ export function CinematicMagazine({ c }: { c: StoryCopy }) {
 
         <Lede c={c} />
 
-        {CHAPTERS.map((id) => (
+        {CHAPTERS.map(id => (
           <section key={id} className="flex flex-col gap-5">
             <Feature c={c} id={id} />
             <ChapterText c={c} id={id} />
@@ -136,5 +136,5 @@ export function CinematicMagazine({ c }: { c: StoryCopy }) {
         <Epilogue />
       </div>
     </>
-  );
+  )
 }

@@ -1,6 +1,6 @@
-import type { IconComponent } from "@/components/icons";
+import type { IconComponent } from '@/components/icons'
 
-import { Button } from "@heroui/react";
+import { Button } from '@heroui/react'
 
 /** An icon-only button with its label for screen readers (from upstream's content editor). */
 export function IconAction({
@@ -11,13 +11,13 @@ export function IconAction({
   buttonProps,
   onPress,
 }: {
-  label: string;
-  icon: IconComponent;
-  isDisabled?: boolean;
-  className?: string;
+  label: string
+  icon: IconComponent
+  isDisabled?: boolean
+  className?: string
   /** Extra class (a tone, a taller hit area) and data attribute for the button itself. */
-  buttonProps?: { className?: string; "data-move"?: "up" | "down" };
-  onPress: () => void;
+  buttonProps?: { 'className'?: string, 'data-move'?: 'up' | 'down' }
+  onPress: () => void
 }) {
   return (
     <Button
@@ -31,5 +31,5 @@ export function IconAction({
     >
       <Icon aria-hidden className={className} size={18} />
     </Button>
-  );
+  )
 }

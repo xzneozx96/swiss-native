@@ -1,19 +1,19 @@
-import type { IdeaProps } from "./parts";
+import type { IdeaProps } from './parts'
 
-import { LovesHeading } from "./parts";
+import { useReveal } from '@/hooks/use-reveal'
 
-import { useReveal } from "@/hooks/use-reveal";
-import { photoUrl } from "@/lib/photos";
+import { photoUrl } from '@/lib/photos'
+import { LovesHeading } from './parts'
 
 // The Tremola's hairpins, a stop at the Belvedere on the Furka, the Entlebuch at home.
-const PHOTOS = ["gotthard-pass-8", "furka-pass-1", "finsterwald-5"];
+const PHOTOS = ['gotthard-pass-8', 'furka-pass-1', 'finsterwald-5']
 
 /**
  * C. Photo rail: three tall photo cards that snap as you swipe, each with the love as a
  * big handwritten word, one line, and a small index.
  */
 export function IdeaPhotos({ c }: IdeaProps) {
-  const ref = useReveal<HTMLElement>();
+  const ref = useReveal<HTMLElement>()
 
   return (
     <section
@@ -35,7 +35,7 @@ export function IdeaPhotos({ c }: IdeaProps) {
               key={love.id}
               className="reveal w-[80%] shrink-0 snap-start"
               style={
-                { "--reveal-delay": `${i * 120}ms` } as React.CSSProperties
+                { '--reveal-delay': `${i * 120}ms` } as React.CSSProperties
               }
             >
               <figure className="relative aspect-[3/4.3] overflow-hidden rounded-[28px] bg-default">
@@ -66,5 +66,5 @@ export function IdeaPhotos({ c }: IdeaProps) {
         </ul>
       </div>
     </section>
-  );
+  )
 }
