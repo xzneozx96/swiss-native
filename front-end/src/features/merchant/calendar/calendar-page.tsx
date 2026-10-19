@@ -7,7 +7,7 @@ import { memo, useEffect, useMemo, useRef, useState } from 'react'
 
 import { ChevronLeftIcon, ChevronRightIcon } from '@/components/icons'
 import { useLocale } from '@/contexts/locale-context'
-import { dateTimeFormat } from '@/lib/format'
+import { calendarDay, dateTimeFormat } from '@/lib/format'
 
 import { calendarPlugins, MOBILE_QUERY, swissDate } from './calendar-core'
 import { CalendarOverlays } from './calendar-overlays'
@@ -38,8 +38,6 @@ const CalendarScreen = memo(function CalendarScreen({
   const calendarRef = useRef<CalendarRef>(null)
   const [view, setView] = useState<CalendarView>('month')
   const [activeDate, setActiveDate] = useState(today)
-  const [monthTitle, setMonthTitle] = useState('')
-  const [yearTitle, setYearTitle] = useState('')
   const [overlay, setOverlay] = useState<CalendarOverlay>(null)
   const [mobile, setMobile] = useState(
     () => window.matchMedia(MOBILE_QUERY).matches,
@@ -105,22 +103,17 @@ const CalendarScreen = memo(function CalendarScreen({
         : item.lead
       : ''
 
-  function updatePeriod(info: DatesSetInfo) {
-    const date = info.view.calendar.getDate()
+  const monthTitle = dateTimeFormat(intlLocale, {
+    month: 'long',
+    timeZone: 'Europe/Zurich',
+  }).format(calendarDay(activeDate))
+  const yearTitle = dateTimeFormat(intlLocale, {
+    year: 'numeric',
+    timeZone: 'Europe/Zurich',
+  }).format(calendarDay(activeDate))
 
-    setActiveDate(swissDate(date))
-    setMonthTitle(
-      dateTimeFormat(intlLocale, {
-        month: 'long',
-        timeZone: 'Europe/Zurich',
-      }).format(date),
-    )
-    setYearTitle(
-      dateTimeFormat(intlLocale, {
-        year: 'numeric',
-        timeZone: 'Europe/Zurich',
-      }).format(date),
-    )
+  function updatePeriod(info: DatesSetInfo) {
+    setActiveDate(swissDate(info.view.calendar.getDate()))
   }
   function changeView(next: CalendarView, date = activeDate) {
     setView(next)

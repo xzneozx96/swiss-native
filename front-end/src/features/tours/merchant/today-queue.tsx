@@ -204,8 +204,10 @@ export function NextDeparturesWidget({ className = 'lg:col-span-3' }) {
 
       return phase === 'open' || phase === 'closed'
     })
-    .sort((a, b) => Date.parse(a.startsAt) - Date.parse(b.startsAt))
+    .map(departure => ({ departure, start: Date.parse(departure.startsAt) }))
+    .sort((a, b) => a.start - b.start)
     .slice(0, 4)
+    .map(({ departure }) => departure)
 
   return (
     <Widget
@@ -356,7 +358,14 @@ export function TourCollectWidget({ className = 'lg:col-span-2' }) {
     .filter(p => p.list.length > 0)
   const next = owed
     .filter(b => stageOf(b, now) === 'upcoming')
-    .sort((a, b) => Date.parse(a.balanceDueAt) - Date.parse(b.balanceDueAt))[0]
+    .reduce<TourBooking | undefined>(
+      (soonest, b) =>
+        !soonest
+        || Date.parse(b.balanceDueAt) < Date.parse(soonest.balanceDueAt)
+          ? b
+          : soonest,
+      undefined,
+    )
 
   return (
     <Widget

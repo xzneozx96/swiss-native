@@ -20,8 +20,9 @@ export type SearchState
     | { status: 'error' }
     | { status: 'done', places: Place[] }
 
+export const PLACE_SEARCH_ORIGIN = 'https://api3.geo.admin.ch'
 /** swisstopo's SearchServer: free, no key, CORS open. Streets and addresses in Switzerland. */
-const ENDPOINT = 'https://api3.geo.admin.ch/rest/services/api/SearchServer'
+const ENDPOINT = `${PLACE_SEARCH_ORIGIN}/rest/services/api/SearchServer`
 const ORIGINS = 'gazetteer,address,zipcode'
 const MIN_LENGTH = 2
 const DEBOUNCE_MS = 300
@@ -73,6 +74,25 @@ function unique(places: Place[]) {
   })
 }
 
+async function searchPlaces(text: string, signal: AbortSignal) {
+  const url = new URL(ENDPOINT)
+
+  url.search = new URLSearchParams({
+    searchText: text,
+    type: 'locations',
+    limit: '8',
+    sr: '4326',
+    origins: ORIGINS,
+  }).toString()
+  const response = await fetch(url, { signal })
+
+  if (!response.ok)
+    throw new Error(String(response.status))
+  const body = (await response.json()) as { results?: Hit[] }
+
+  return unique((body.results ?? []).map(toPlace)).slice(0, 6)
+}
+
 /** Debounced place search; a newer query (or unmount) aborts the one in flight. */
 export function usePlaceSearch(query: string, attempt = 0): SearchState {
   const text = query.trim()
@@ -91,34 +111,15 @@ export function usePlaceSearch(query: string, attempt = 0): SearchState {
     if (tooShort)
       return
     const controller = new AbortController()
-    const timer = setTimeout(async () => {
+    const timer = setTimeout(() => {
       setState({ status: 'loading' })
-      try {
-        const url = new URL(ENDPOINT)
-
-        url.search = new URLSearchParams({
-          searchText: text,
-          type: 'locations',
-          limit: '8',
-          sr: '4326',
-          origins: ORIGINS,
-        }).toString()
-        const response = await fetch(url, { signal: controller.signal })
-
-        if (!response.ok)
-          throw new Error(String(response.status))
-        const body = (await response.json()) as { results?: Hit[] }
-
-        setState({
-          status: 'done',
-          places: unique((body.results ?? []).map(toPlace)).slice(0, 6),
-        })
-      }
-      catch (error) {
-        if ((error as Error).name === 'AbortError')
-          return
-        setState({ status: 'error' })
-      }
+      searchPlaces(text, controller.signal).then(
+        places => setState({ status: 'done', places }),
+        (error: Error) => {
+          if (error.name !== 'AbortError')
+            setState({ status: 'error' })
+        },
+      )
     }, DEBOUNCE_MS)
 
     return () => {

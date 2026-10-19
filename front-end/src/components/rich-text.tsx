@@ -2,16 +2,13 @@ import type { RichNode } from '@/lib/rich-text'
 
 import { Media } from '@/components/media'
 import { photoUrl } from '@/lib/photos'
-import { isUploadedPhoto, safeHref } from '@/lib/rich-text'
+import { safeHref } from '@/lib/rich-text'
 
 /** A photo attribute is a library slug or an uploaded data URL; anything else is dropped. */
 function photoOf(node: RichNode): string | undefined {
   const photo = node.attrs?.photo
 
-  return typeof photo === 'string'
-    && (isUploadedPhoto(photo) || photoUrl(photo))
-    ? photo
-    : undefined
+  return typeof photo === 'string' && photoUrl(photo) ? photo : undefined
 }
 
 function Marked({ node }: { node: RichNode }) {

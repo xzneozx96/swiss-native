@@ -2,6 +2,7 @@ import type { Guest } from '@/features/account/types'
 
 import { buttonVariants } from '@heroui/react'
 import { Link } from '@tanstack/react-router'
+import { Suspense } from 'react'
 
 import {
   LanguageIcon,
@@ -13,6 +14,7 @@ import {
 } from '@/components/icons'
 
 import { useLocale } from '@/contexts/locale-context'
+import { MailSubject } from '@/features/notifications/components/mail-subject'
 import { useAccountHub } from '../hooks/use-account-hub'
 
 import { GuestAvatar } from './guest-avatar'
@@ -94,8 +96,16 @@ export function AccountHub({
           title={t('account.section.profile')}
         />
         <SectionRow
-          description={hub.mail.text}
-          descriptionLang={hub.mail.lang}
+          description={
+            hub.lastMail
+              ? (
+                  <Suspense fallback={'\u00A0'}>
+                    <MailSubject mail={hub.lastMail} />
+                  </Suspense>
+                )
+              : t('account.hub.mail.none')
+          }
+          descriptionLang={hub.lastMail?.language}
           icon={NotificationIcon}
           section="notifications"
           title={t('account.section.notifications')}

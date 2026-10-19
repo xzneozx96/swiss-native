@@ -3,7 +3,7 @@ import type { Tour } from '@/features/tours/types'
 
 import { useLocale } from '@/contexts/locale-context'
 
-import { useDemo, useDemoActions, useDemoNow } from '@/features/demo'
+import { useDemoActions, useDemoNow, useDemoSelector } from '@/features/demo'
 import { demoNow } from '@/features/demo/clock'
 import { tourDays } from '@/features/tours/lib/selectors'
 import { createTourSeed } from '@/features/tours/seed'
@@ -28,26 +28,28 @@ export interface ProductRow {
   facts: { label: string, value: string, isWarning?: boolean }[]
 }
 
-/** Tours that have not started and are not cancelled, as M05 counts them. */
-function upcomingCount(
-  tour: Tour,
+/** Per tour, the departures that have not started and are not cancelled, as M05 counts them. */
+function upcomingCounts(
   departures: { tourId: string, startsAt: string, cancelledAt?: string }[],
   now: Date,
 ) {
-  return departures.filter(
-    d =>
-      d.tourId === tour.id
-      && !d.cancelledAt
-      && Date.parse(d.startsAt) > now.getTime(),
-  ).length
+  const counts = new Map<string, number>()
+
+  for (const d of departures) {
+    if (!d.cancelledAt && Date.parse(d.startsAt) > now.getTime())
+      counts.set(d.tourId, (counts.get(d.tourId) ?? 0) + 1)
+  }
+
+  return counts
 }
 
 /** M11 rows, in the seed's order (the host's own order): tours, the stay and the experience. */
 export function useMerchantProducts() {
   const { t, language, intlLocale } = useLocale()
-  const { state } = useDemo()
+  const tours = useDemoSelector(s => s.data.tours)
   const now = useDemoNow()
-  const tourData = state.data.tours ?? createTourSeed()
+  const tourData = tours ?? createTourSeed()
+  const upcoming = upcomingCounts(tourData.departures, now)
   const money = (rappen: number) => formatMoney(rappen / 100, intlLocale)
   const pick = (text: Partial<Record<'en' | 'de', string>>) =>
     pickText(text, language).text
@@ -73,7 +75,7 @@ export function useMerchantProducts() {
       { label: t('products.fact.adults'), value: money(tour.adultPrice) },
       {
         label: t('products.fact.upcoming'),
-        value: String(upcomingCount(tour, tourData.departures, now)),
+        value: String(upcoming.get(tour.id) ?? 0),
       },
     ],
   })

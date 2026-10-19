@@ -374,7 +374,7 @@ export function DateSheet({
   const exitRef = useSheetExit()
   const { t } = useLocale()
   const today = parseDate(zurichDate(useDemoNow()))
-  const [date, setDate] = useState<CalendarDate | null>(
+  const [date, setDate] = useState<CalendarDate | null>(() =>
     value ? parseDate(value) : null,
   )
 

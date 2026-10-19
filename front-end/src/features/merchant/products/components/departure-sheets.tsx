@@ -90,9 +90,13 @@ export function NewDepartureSheet({
 }) {
   const { t } = useLocale()
   const { add } = useDepartureActions()
-  const latest = [...departures]
+  const latest = departures
     .filter(d => d.tourId === tour.id)
-    .sort((a, b) => Date.parse(b.startsAt) - Date.parse(a.startsAt))[0]
+    .reduce<Departure | undefined>(
+      (last, d) =>
+        !last || Date.parse(d.startsAt) > Date.parse(last.startsAt) ? d : last,
+      undefined,
+    )
   const today = parseDate(zurichDate(now))
   const [date, setDate] = useState<CalendarDate | null>(null)
   const [time, setTime] = useState<Time>(() =>

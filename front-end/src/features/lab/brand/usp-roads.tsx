@@ -12,7 +12,7 @@ import type { Round2Copy } from './round2-copy'
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 
 import { PassIcon, PinesIcon, RoadIcon } from './brand-icons'
-import { useReducedMotion, useReveal } from './use-reveal'
+import { prefersReducedMotion, useReveal } from './use-reveal'
 
 const RIDGE_END = /L\d+(?:\.\d+)? \d+Z$/
 
@@ -46,7 +46,6 @@ function useWidth<T extends HTMLElement>() {
 
     if (!el)
       return
-    setWidth(el.clientWidth)
     const ro = new ResizeObserver(([entry]) =>
       setWidth(Math.round(entry.contentRect.width)),
     )
@@ -194,7 +193,7 @@ export function UspRoadVertical({ c }: Props) {
 export function UspRoadRide({ c }: Props) {
   const ref = useReveal<HTMLDivElement>()
   const [box, w] = useWidth<HTMLDivElement>()
-  const reduced = useReducedMotion()
+  const reduced = prefersReducedMotion()
   const pathRef = useRef<SVGPathElement>(null)
   const dotRef = useRef<SVGCircleElement>(null)
   const motionRef = useRef<SVGAnimateMotionElement>(null)

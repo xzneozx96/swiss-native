@@ -1,4 +1,4 @@
-import { useNavigate, useRouterState } from '@tanstack/react-router'
+import { useNavigate, useRouter } from '@tanstack/react-router'
 import { useCallback } from 'react'
 
 import { useDemoSelector } from '@/features/demo'
@@ -24,22 +24,25 @@ declare module '@tanstack/history' {
 export function useRequireSignIn() {
   const signedIn = useDemoSelector(s => s.data.signedInGuestId !== null)
   const navigate = useNavigate()
-  const here = useRouterState({ select: s => s.location.href })
+  const router = useRouter()
 
   const requireSignIn = useCallback(
-    (onDone: () => void = () => {}, returnTo: string = here) => {
+    (onDone: () => void = () => {}, returnTo?: string) => {
       if (signedIn) {
         onDone()
 
         return
       }
+      const here = router.state.location.href
+      const target = returnTo ?? here
+
       void navigate({
         to: '/sign-in',
-        search: { returnTo },
-        state: { signInOverReturnTo: returnTo === here },
+        search: { returnTo: target },
+        state: { signInOverReturnTo: target === here },
       })
     },
-    [signedIn, navigate, here],
+    [signedIn, navigate, router],
   )
 
   return { signedIn, requireSignIn, signInSheet: null }

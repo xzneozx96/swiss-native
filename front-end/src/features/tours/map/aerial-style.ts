@@ -4,6 +4,8 @@ import type {
   StyleSpecification,
 } from 'maplibre-gl'
 
+import { preconnect } from 'react-dom'
+
 /** Free tiles, no keys: swisstopo SWISSIMAGE photo and AWS Terrarium elevation. */
 const PHOTO_TILES
   = 'https://wmts.geo.admin.ch/1.0.0/ch.swisstopo.swissimage/default/current/3857/{z}/{x}/{y}.jpeg'
@@ -86,6 +88,9 @@ let loaded: Promise<StyleSpecification> | undefined
  * gets its own copy, because MapLibre may keep and change the style it is given.
  */
 export function loadAerialStyle(): Promise<StyleSpecification> {
+  // Photo tiles are first requested once maplibre has downloaded; open the connection now.
+  // Anonymous, because maplibre and the tile warm-up fetch them without credentials.
+  preconnect('https://wmts.geo.admin.ch', { crossOrigin: 'anonymous' })
   loaded ??= fetchAerialStyle().catch(() => {
     loaded = undefined
 

@@ -1,6 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
 
-import { TourReviewPage } from '@/features/tours/booking'
+import { TourReviewPage } from '@/features/tours/booking/tour-review-page'
 
 export const Route = createFileRoute('/_guest/tours/$slug_/book_/review')({
   staticData: { hideTabBar: true, ownsBottomSpace: true },

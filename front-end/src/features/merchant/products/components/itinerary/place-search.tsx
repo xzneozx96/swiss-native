@@ -2,11 +2,12 @@ import type { Place } from './use-place-search'
 
 import { Button, Input, Label, TextField } from '@heroui/react'
 import { useState } from 'react'
+import { preconnect } from 'react-dom'
 
 import { CloseIcon, PickupIcon, SearchIcon } from '@/components/icons'
 
 import { useLocale } from '@/contexts/locale-context'
-import { usePlaceSearch } from './use-place-search'
+import { PLACE_SEARCH_ORIGIN, usePlaceSearch } from './use-place-search'
 
 /**
  * "Add a stop": searches real places (swisstopo, no key) as you type and adds the one you
@@ -34,6 +35,9 @@ export function PlaceSearch({ onPick }: { onPick: (place: Place) => void }) {
             className="ps-10 pe-11"
             enterKeyHint="search"
             placeholder={t('products.itinerary.search.placeholder')}
+            // The search fetch is CORS without credentials, so only an anonymous socket is reused.
+            onFocus={() =>
+              preconnect(PLACE_SEARCH_ORIGIN, { crossOrigin: 'anonymous' })}
           />
           {query && (
             <Button

@@ -1,16 +1,12 @@
-import type { Language } from '@/contexts/locale-context'
+import type { Dictionary } from '@/contexts/locale-context'
 import type { RenderedMail } from '@/features/notifications/components/render-mail'
 import type { Mail } from '@/features/notifications/types'
 import type { MessageKey } from '@/i18n/en'
 import type { IntlLocale } from '@/lib/format'
 
-import { de } from '@/i18n/de'
-import { en } from '@/i18n/en'
 import { formatOrderDate, formatOrderDateTime } from '@/lib/dates'
 
 const PLACEHOLDER = /\{(\w+)\}/g
-
-const messages: Record<Language, Record<MessageKey, string>> = { en, de }
 
 function fill(text: string, vars: Record<string, string | number>): string {
   return text.replace(PLACEHOLDER, (match, name: string) =>
@@ -33,8 +29,7 @@ export function formatDateRange(
 /**
  * N17, the private-tour request, in the host's language.
  */
-export function renderRequestMail(mail: Mail): RenderedMail {
-  const copy = messages[mail.language]
+export function renderRequestMail(mail: Mail, copy: Dictionary): RenderedMail {
   const locale = mail.language === 'de' ? 'de-CH' : 'en-CH'
   const p = mail.params
   const line = (key: MessageKey, vars: Record<string, string | number> = {}) =>

@@ -7,7 +7,7 @@ import type { Departure, Tour } from '@/features/tours/types'
 import { Button, FieldError, Label, NumberField } from '@heroui/react'
 import { Link } from '@tanstack/react-router'
 
-import { useId, useRef, useState } from 'react'
+import { useEffect, useId, useRef, useState } from 'react'
 import { DateTile } from '@/components/date-tile'
 import { DetailCard } from '@/components/detail-card'
 
@@ -58,6 +58,9 @@ import {
   useStepBar,
 } from './step-shell'
 import { StoryCard } from './story-card'
+
+/** Tiptap, which `StoryCard` lazy-loads: fetched one step early, so Story does not wait for the download. */
+const preloadStoryEditor = () => import('./story-editor')
 
 type Editor = ReturnType<typeof useTourEditor>
 type TextKey
@@ -439,14 +442,12 @@ function DeparturesCard({ tour, error }: { tour: Tour, error?: string }) {
     .filter(d => d.tourId === tour.id)
     .map(departure => ({
       departure,
+      startsAt: Date.parse(departure.startsAt),
       phase: departurePhase(departure, tour, now),
       seats: departureSeats(data, departure.id, now),
     }))
     .filter(row => row.phase === 'open' || row.phase === 'closed')
-    .sort(
-      (a, b) =>
-        Date.parse(a.departure.startsAt) - Date.parse(b.departure.startsAt),
-    )
+    .sort((a, b) => a.startsAt - b.startsAt)
   const editing = upcoming.find(row => row.departure.id === seatsFor)
   const policyLine = (departure: Departure) =>
     t(`products.departures.policy.${departure.policy}`, {
@@ -495,7 +496,12 @@ function DeparturesCard({ tour, error }: { tour: Tour, error?: string }) {
                 const first = slots[0].departure
 
                 return (
-                  <li key={first.id} className="flex flex-col gap-1">
+                  <li
+                    key={first.id}
+                    // content-visibility clips paint to the padding box, so -m-1 p-1 keeps the slots' focus
+                    // ring; 666px is a full day of 13 visits, so jumping down the list lands where it would.
+                    className="-m-1 flex flex-col gap-1 p-1 [contain-intrinsic-block-size:auto_666px] [content-visibility:auto]"
+                  >
                     <div className="flex items-center gap-4 py-2">
                       <DateTile
                         date={{
@@ -873,6 +879,12 @@ export function TourEditor({
   const { edit, change } = editor
 
   useFocusFirstInvalid(rootRef, editor.focusCount)
+
+  useEffect(() => {
+    // A failed preload is harmless: the Story step's own lazy import loads it again.
+    if (step === 'policies')
+      preloadStoryEditor().catch(() => undefined)
+  }, [step])
 
   const steps: StepView[] = TOUR_STEPS.map(id => ({
     id,

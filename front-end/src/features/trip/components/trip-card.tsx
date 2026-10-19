@@ -21,7 +21,7 @@ export function TripCard({ target }: { target: TripTarget }) {
   const { t } = useLocale()
   const trip = useTripProfile(target)
   const rows = useTripRows(trip.answers)
-  const [isOpen, setOpen] = useState(false)
+  const [isOpen, setIsOpen] = useState(false)
   // A fresh form per opening, so a dismissed edit never lingers.
   const [opening, setOpening] = useState(0)
   const answered = trip.status === 'answered'
@@ -62,14 +62,14 @@ export function TripCard({ target }: { target: TripTarget }) {
           variant="secondary"
           onPress={() => {
             setOpening(n => n + 1)
-            setOpen(true)
+            setIsOpen(true)
           }}
         >
           {t(answered ? 'tripProfile.edit' : 'tripProfile.answerNow')}
         </Button>
       </div>
 
-      <Drawer.Backdrop isOpen={isOpen} onOpenChange={setOpen}>
+      <Drawer.Backdrop isOpen={isOpen} onOpenChange={setIsOpen}>
         <Drawer.Content className="mx-auto max-w-[430px]" placement="bottom">
           <Drawer.Dialog className="flex max-h-[92dvh] flex-col">
             <Drawer.Handle />
@@ -89,7 +89,7 @@ export function TripCard({ target }: { target: TripTarget }) {
               initial={trip.answers}
               onSave={(answers) => {
                 trip.save(answers)
-                setOpen(false)
+                setIsOpen(false)
               }}
             />
           </Drawer.Dialog>

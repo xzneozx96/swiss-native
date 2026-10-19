@@ -7,27 +7,40 @@ import { EmptyState } from '@/components/empty-state'
 import { TourIcon } from '@/components/icons'
 
 import { useLocale } from '@/contexts/locale-context'
+import { useDemoSelector } from '@/features/demo'
+import { demoNow } from '@/features/demo/clock'
 import { ProviderPage } from '@/features/payment/components/provider-page'
 import { useTourActions, useTours } from '@/features/tours/hooks/use-tours'
+import { useSharedClock } from '@/hooks/use-shared-clock'
 import { ExpiredNotice, ReconciliationNotice } from './expired-notice'
 import { useTourPayment } from './use-tour-payment'
 
+/**
+ * The signed-in guest's booking. `now` reads the clock to the minute, for deadlines; `holdNow`
+ * ticks every second only while a hold runs, for its countdown, its expiry and the pay check.
+ * Only what takes `holdNow` re-renders each second.
+ */
 export function useOwnedBooking(bookingId: string) {
-  const { bookings, guestId, now } = useTours('second')
+  const { bookings, guestId, now } = useTours()
+  const clockStartedAt = useDemoSelector(s => s.clockStartedAt)
   const { expireHolds } = useTourActions()
   const booking = bookings.find(
     item => item.id === bookingId && item.guestId === guestId,
   )
+  const holdNow = demoNow(
+    clockStartedAt,
+    useSharedClock(booking?.status === 'pending_payment' ? 1_000 : 60_000),
+  )
   const expired
     = booking?.status === 'pending_payment'
-      && Date.parse(booking.holdUntil) <= now.getTime()
+      && Date.parse(booking.holdUntil) <= holdNow.getTime()
 
   useEffect(() => {
     if (expired)
       expireHolds()
   }, [expired, expireHolds])
 
-  return { booking, now }
+  return { booking, now, holdNow }
 }
 
 export function MissingBooking() {
@@ -71,11 +84,11 @@ export function HoldNotice({
 }
 
 export function TourPaymentPage({ bookingId }: { bookingId: string }) {
-  const { booking, now } = useOwnedBooking(bookingId)
+  const { booking, holdNow } = useOwnedBooking(bookingId)
 
   return booking
     ? (
-        <PaymentContent booking={booking} now={now} />
+        <PaymentContent booking={booking} now={holdNow} />
       )
     : (
         <MissingBooking />

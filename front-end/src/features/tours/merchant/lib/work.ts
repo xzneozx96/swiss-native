@@ -1,4 +1,4 @@
-import type { Departure, Tour, TourBooking, TourData } from '../../types'
+import type { Departure, Tour, TourBooking } from '../../types'
 
 import {
   balanceOverdue,
@@ -6,6 +6,8 @@ import {
   bookingNights,
   reconciliationAmount,
 } from '../../lib/selectors'
+
+export { departureBookings } from '../../lib/selectors'
 
 /** The tour has ended and the merchant has not recorded delivered or no-show yet (AC09). */
 export function needsResult(booking: TourBooking, now: Date): boolean {
@@ -60,7 +62,10 @@ export interface TourWork {
 }
 
 /** What needs the merchant, for one departure's bookings or all of them (M02, M05). */
-export function tourWork(bookings: TourBooking[], now: Date): TourWork {
+export function tourWork(
+  bookings: readonly TourBooking[],
+  now: Date,
+): TourWork {
   return {
     toRecord: bookings.filter(b => needsResult(b, now)),
     overdue: bookings.filter(b => balanceOverdue(b, now)),
@@ -70,13 +75,6 @@ export function tourWork(bookings: TourBooking[], now: Date): TourWork {
     reconcile: bookings.filter(needsReconciliation),
     toCollect: bookings.reduce((sum, b) => sum + balanceToCollect(b), 0),
   }
-}
-
-export function departureBookings(
-  data: TourData,
-  departureId: string,
-): TourBooking[] {
-  return data.bookings.filter(b => bookingNights(b).includes(departureId))
 }
 
 export type StayNightRole = 'arrives' | 'stays' | 'leaves'

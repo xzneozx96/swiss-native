@@ -75,7 +75,7 @@ function owes(booking: TourBooking) {
  * follow, and the booking's reference sections sit in C15's four tabs below.
  */
 export function GuestTourBookingPage({ bookingId }: { bookingId: string }) {
-  const { booking, now } = useOwnedBooking(bookingId)
+  const { booking, now, holdNow } = useOwnedBooking(bookingId)
   const { t } = useLocale()
   const kt = useKindT(useBookingKind(booking ?? { tourId: '' }))
   const navigate = useNavigate()
@@ -102,7 +102,7 @@ export function GuestTourBookingPage({ bookingId }: { bookingId: string }) {
       </header>
       <div className="flex flex-col gap-3 px-4 pt-2">
         <BookingTicket booking={booking} now={now} />
-        <HoldNotice booking={booking} now={now} />
+        <HoldNotice booking={booking} now={holdNow} />
         <ReconciliationNotice booking={booking} />
         {booking.status === 'no_show' && (
           <Alert className="w-full" status="warning">

@@ -1,6 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
 
-import { TourConfirmedPage } from '@/features/tours/booking'
+import { TourConfirmedPage } from '@/features/tours/booking/tour-confirmed-page'
 
 export const Route = createFileRoute(
   '/_guest/account_/bookings/$bookingId_/confirmed',

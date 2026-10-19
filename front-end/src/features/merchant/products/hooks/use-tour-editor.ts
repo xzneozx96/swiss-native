@@ -15,7 +15,7 @@ import { useNavigate } from '@tanstack/react-router'
 
 import { useEffect, useState } from 'react'
 import { useLocale } from '@/contexts/locale-context'
-import { useDemo, useDemoActions, useDemoNow } from '@/features/demo'
+import { useDemoActions, useDemoNow, useDemoSelector } from '@/features/demo'
 import { TOUR_STEPS } from '@/features/merchant/products/lib/search-params'
 import { tourDays } from '@/features/tours/lib/selectors'
 import { createTourSeed } from '@/features/tours/seed'
@@ -136,6 +136,22 @@ function textOf(edit: TourEdit) {
     ...edit,
     included: edit.included.map(item => item.text).filter(hasAny),
   }
+}
+
+/**
+ * `JSON.stringify(a) !== JSON.stringify(b)`, field by field: a field the merchant has not
+ * touched keeps its reference, so a main photo's data URL is not serialized on each keystroke.
+ */
+function differs(a: TourEdit, b: TourEdit) {
+  if (a === b)
+    return false
+  const keys = new Set([...Object.keys(a), ...Object.keys(b)]) as Set<
+    keyof TourEdit
+  >
+
+  return [...keys].some(
+    key => a[key] !== b[key] && JSON.stringify(a[key]) !== JSON.stringify(b[key]),
+  )
 }
 
 function rappen(chf: number) {
@@ -282,7 +298,8 @@ export function useTourEditor(
   go: (step: TourStep) => void,
 ) {
   const { t, language: interfaceLanguage } = useLocale()
-  const { state } = useDemo()
+  const tours = useDemoSelector(s => s.data.tours)
+  const { getState } = useDemoActions()
   const now = useDemoNow()
   const navigate = useNavigate()
   const write = useTourWrite()
@@ -325,7 +342,7 @@ export function useTourEditor(
   const changeStory = (lang: Language, doc: RichNode | undefined) =>
     setEdit(e => ({ ...e, storyBody: { ...e.storyBody, [lang]: doc } }))
 
-  const data = state.data.tours ?? createTourSeed()
+  const data = tours ?? createTourSeed()
   const hasUpcoming
     = !!tour
       && data.departures.some(
@@ -531,6 +548,8 @@ export function useTourEditor(
 
     // Demo state lives in localStorage; refuse a save that would not fit, rather than
     // keeping it only until the next reload.
+    const state = getState()
+
     if (
       JSON.stringify({
         ...state,
@@ -652,7 +671,7 @@ export function useTourEditor(
     },
     stopId,
     selectStop: setStopId,
-    isDirty: JSON.stringify(edit) !== JSON.stringify(saved),
+    isDirty: differs(edit, saved),
     hasErrors: !!shown && hasIssues(shown),
     storageFull,
     justSaved,

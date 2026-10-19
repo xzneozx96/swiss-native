@@ -21,6 +21,7 @@ interface Drag {
   tops: number[]
   heights: number[]
   gap: number
+  transition: string
 }
 
 /**
@@ -100,7 +101,7 @@ export function useStopDrag({
     }
     current.to = to
     nodes.forEach((node, i) => {
-      node.style.transition = reducedMotion() ? '' : 'transform 150ms ease-out'
+      node.style.transition = current.transition
       if (i === from) {
         node.style.transition = ''
         node.style.transform = `translateY(${dy}px)`
@@ -157,6 +158,7 @@ export function useStopDrag({
       = nodes.length > 1
         ? current.tops[1] - current.tops[0] - current.heights[0]
         : 0
+    current.transition = reducedMotion() ? '' : 'transform 150ms ease-out'
   }
 
   const press = (index: number) => (event: ReactPointerEvent<HTMLElement>) => {
@@ -173,6 +175,7 @@ export function useStopDrag({
       tops: [],
       heights: [],
       gap: 0,
+      transition: '',
     }
   }
 

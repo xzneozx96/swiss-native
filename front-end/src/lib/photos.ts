@@ -17,6 +17,10 @@ const bySlug = new Map(
 /** A photo uploaded in M12/M13, kept in demo data as a small JPEG, PNG or WebP data URL. */
 const UPLOADED = /^data:image\/(?:jpeg|png|webp);base64,[A-Za-z0-9+/=]+$/
 
+// A data URL runs to 300K characters and is usually checked twice in a row (a story image's
+// check, then its <img>), so the last one that passed skips the second scan.
+let lastUploaded: string | undefined
+
 /**
  * URL for a photo slug, or undefined when the photo is not in the repo yet. An uploaded
  * photo (a data URL) is its own URL.
@@ -24,6 +28,11 @@ const UPLOADED = /^data:image\/(?:jpeg|png|webp);base64,[A-Za-z0-9+/=]+$/
 export function photoUrl(slug: string | undefined): string | undefined {
   if (!slug)
     return undefined
+  if (slug === lastUploaded)
+    return slug
+  if (!UPLOADED.test(slug))
+    return bySlug.get(slug)
+  lastUploaded = slug
 
-  return UPLOADED.test(slug) ? slug : bySlug.get(slug)
+  return slug
 }

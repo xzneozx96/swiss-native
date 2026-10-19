@@ -120,11 +120,9 @@ export function GuestShell({ children }: { children: React.ReactNode }) {
                     aria-hidden
                     className="absolute -top-9 flex size-14 items-center justify-center rounded-full bg-assistant text-white shadow-[0_10px_18px_-6px_rgba(213,43,30,0.5)] transition-transform group-active:scale-95"
                   >
-                    <SparkleIcon
-                      className="animate-sparkle"
-                      size={26}
-                      weight="Filled"
-                    />
+                    <span className="inline-flex animate-sparkle">
+                      <SparkleIcon size={26} weight="Filled" />
+                    </span>
                   </span>
                   {t('nav.assistant')}
                 </Link>

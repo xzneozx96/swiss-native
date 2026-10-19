@@ -234,7 +234,9 @@ function AssistantAvatar() {
       aria-hidden
       className="flex size-10 shrink-0 items-center justify-center rounded-full bg-assistant text-white"
     >
-      <AssistantIcon className="animate-sparkle" size={20} weight="Filled" />
+      <span className="inline-flex animate-sparkle">
+        <AssistantIcon size={20} weight="Filled" />
+      </span>
     </span>
   )
 }

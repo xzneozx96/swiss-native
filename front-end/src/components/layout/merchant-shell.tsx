@@ -137,10 +137,10 @@ function NavLink({
   children: React.ReactNode
   onClick?: () => void
 }) {
-  const { pathname } = useLocation()
   // The item is active anywhere inside its paths (Today also on Sales, Analytics on its costs
   // screen); Settings is still a placeholder.
-  const status = isInside(pathname, item) ? 'active' : undefined
+  const active = useLocation({ select: l => isInside(l.pathname, item) })
+  const status = active ? 'active' : undefined
 
   if (item.settings) {
     return (
@@ -194,7 +194,7 @@ export function MerchantShell({ children }: { children: React.ReactNode }) {
   // Groups start unfolded; the set holds the ones the user folded.
   const [folded, setFolded] = useState<Set<string>>(() => new Set())
   const [barSlot, setBarSlot] = useState<HTMLElement | null>(null)
-  const { pathname } = useLocation()
+  const pathname = useLocation({ select: l => l.pathname })
   const navigate = useNavigate()
   const labelOf = (item: NavItem) => t(item.label)
 

@@ -603,13 +603,23 @@ export function TourDeparturesPage() {
       work: tourWork(departureBookings(data, departure.id), now),
     }
   })
-  const byStart = (a: Row, b: Row) =>
-    Date.parse(a.departure.startsAt) - Date.parse(b.departure.startsAt)
+  // Each start is parsed once, not on every comparison; -1 lists the latest first.
+  const byStart = (list: Row[], order: 1 | -1) =>
+    list
+      .map(row => ({ row, start: Date.parse(row.departure.startsAt) }))
+      .sort((a, b) => order * (a.start - b.start))
+      .map(({ row }) => row)
   const upcoming = groupDays(
-    rows.filter(r => r.phase !== 'ended').sort(byStart),
+    byStart(
+      rows.filter(r => r.phase !== 'ended'),
+      1,
+    ),
   )
   const ended = groupDays(
-    rows.filter(r => r.phase === 'ended').sort((a, b) => byStart(b, a)),
+    byStart(
+      rows.filter(r => r.phase === 'ended'),
+      -1,
+    ),
   )
 
   const noDepartures = {

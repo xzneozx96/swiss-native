@@ -1,17 +1,13 @@
 import type { TourMailTemplate } from './mail'
-import type { Language } from '@/contexts/locale-context'
+import type { Dictionary } from '@/contexts/locale-context'
 import type { Mail, MailParams } from '@/features/notifications/types'
 import type { MessageKey } from '@/i18n/en'
 
 import { shop } from '@/features/catalog/seed'
-import { de } from '@/i18n/de'
-import { en } from '@/i18n/en'
 import { formatOrderDateTime } from '@/lib/dates'
 import { formatMoney } from '@/lib/format'
 
 const PLACEHOLDER = /\{(\w+)\}/g
-
-const messages: Record<Language, Record<MessageKey, string>> = { en, de }
 
 /** A body line, or null when the email has nothing to say there. */
 type Line = (p: MailParams) => MessageKey | null
@@ -122,11 +118,13 @@ function fill(text: string, vars: Record<string, string | number>): string {
 }
 
 /** Renders a tour email in the recipient's language (spec §6), whatever the prototype shows. */
-export function renderTourMail(mail: Mail): {
+export function renderTourMail(
+  mail: Mail,
+  copy: Dictionary,
+): {
   subject: string
   body: string[]
 } {
-  const copy = messages[mail.language]
   const locale = mail.language === 'de' ? 'de-CH' : 'en-CH'
   const template = (mail.to === 'staff' ? staffTemplates : guestTemplates)[
     mail.template as TourMailTemplate

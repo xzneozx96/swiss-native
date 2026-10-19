@@ -15,12 +15,12 @@ const SETS = [
   {
     name: 'guest',
     role: 'guest',
-    routes: ['/', '/gifts', '/gifts/:gift', '/tours', '/tours/lucerne-the-things-that-remain', '/stories', '/stories/musegg-morning', '/search', '/cart', '/plan', '/credits', '/account', '/account/bookings/:booking', '/account/bookings/:booking/pay', '/account/orders/:order'],
+    routes: ['/', '/tours', '/tours/:slug', '/passes', '/experiences', '/search', '/plan', '/credits', '/bookings', '/account', '/account/bookings/:booking', '/account/bookings/:booking/pay'],
   },
   {
     name: 'owner',
     role: 'owner',
-    routes: ['/store', '/store/orders', '/store/orders/:order', '/store/bookings', '/store/bookings/:booking', '/store/bookings/departures/:departure', '/store/calendar', '/store/sales', '/store/reports', '/store/reports/sales', '/store/reports/costs', '/store/reports/guests', '/store/reports/margin', '/store/partners', '/store/partners/:partner', '/store/partners/analytics', '/store/products', '/store/products/gifts/:gift', '/store/products/tours', '/store/products/tours/:tour', '/store/content', '/store/content/analytics', '/store/content/reviews', '/store/requests', '/store/requests/analytics', '/store/requests/private', '/store/requests/questions', '/store/products/gifts/:gift?step=pickup', '/store/products/gifts/:gift?step=bogus', '/store/products/tours/:tour?step=departures', '/store/products/tours/:tour?step=bogus', '/store/products?tab=tours', '/store/products?tab=nope', '/store/content?lang=de', '/store/content?lang=en'],
+    routes: ['/store', '/store/bookings', '/store/bookings/:booking', '/store/bookings/departures/:departure', '/store/calendar', '/store/sales', '/store/products', '/store/products/tours', '/store/products/stays', '/store/products/experiences', '/store/products/tours/:tour', '/store/products/tours/:tour?step=departures', '/store/products/tours/:tour?step=bogus', '/store/products?tab=tours', '/store/products?tab=nope'],
   },
 ]
 
@@ -44,8 +44,7 @@ async function capture(label, dir) {
         ({ role, lang }) => {
           const state = JSON.parse(localStorage.getItem('sk.demo'))
           const d = state.data
-          const guest = d.guests.find(g => d.orders.some(o => o.guestId === g.id)) ?? d.guests[0]
-          const booking = d.tours.bookings.find(b => b.guestId === guest.id) ?? d.tours.bookings[0]
+          const booking = d.tours.bookings.find(b => d.guests.some(g => g.id === b.guestId)) ?? d.tours.bookings[0]
 
           state.role = role
           d.signedInGuestId = booking.guestId
@@ -53,13 +52,10 @@ async function capture(label, dir) {
           localStorage.setItem('sk.language', JSON.stringify(lang))
 
           return {
-            gift: d.products[0].slug ?? d.products[0].id,
-            giftId: d.products[0].id,
             booking: booking.id,
             departure: d.tours.departures[0].id,
             tour: d.tours.tours[0].id,
-            order: d.orders.find(o => o.guestId === booking.guestId)?.id ?? d.orders[0].id,
-            partner: d.partners[0].id,
+            slug: d.tours.tours.find(t => t.kind === 'tour')?.slug ?? d.tours.tours[0].id,
           }
         },
         { role: set.role, lang },
@@ -69,7 +65,7 @@ async function capture(label, dir) {
       await page.waitForTimeout(1200)
 
       for (const route of set.routes) {
-        const path = route.replace(':gift', route.includes('/store/') ? ids.giftId : ids.gift).replace(':booking', ids.booking).replace(':departure', ids.departure).replace(':tour', ids.tour).replace(':order', ids.order).replace(':partner', ids.partner)
+        const path = route.replace(':booking', ids.booking).replace(':departure', ids.departure).replace(':tour', ids.tour).replace(':slug', ids.slug)
         const key = `${lang}${set.name}${route.replaceAll('/', '_')}`
         const messages = []
         const onError = e => messages.push(String(e.message).slice(0, 160))

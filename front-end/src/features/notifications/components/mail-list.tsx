@@ -1,10 +1,11 @@
 import type { Mail } from '../types'
 
+import { useMessages } from '@/contexts/locale-context'
 import { useDemoSelector } from '@/features/demo'
 import { dateTimeFormat } from '@/lib/format'
 import { renderMail } from './render-mail'
 
-/** The emails of one recipient, rendered in the recipient's language. Loaded when the panel opens, so the dictionaries it needs stay out of the first load. */
+/** The emails of one recipient, rendered in the recipient's language. Loaded when the panel opens; an email in a language the page has not loaded yet waits for that language's messages. */
 export function MailList({ items }: { items: Mail[] }) {
   const guests = useDemoSelector(s => s.data.guests)
 
@@ -17,7 +18,6 @@ export function MailList({ items }: { items: Mail[] }) {
   return (
     <ul className="flex flex-col gap-2">
       {items.map((mail, i) => {
-        const { subject, body } = renderMail(mail)
         const guest = guests.find(g => g.id === mail.guestId)
         const to = mail.recipient
           ? mail.recipient
@@ -27,32 +27,46 @@ export function MailList({ items }: { items: Mail[] }) {
               ? `${guest.name} <${String(mail.params.email ?? guest.email)}>`
               : 'Guest'
 
-        return (
-          <li key={mail.id}>
-            <details
-              className="group rounded-2xl border border-separator bg-surface"
-              open={i === 0}
-            >
-              <summary className="flex cursor-pointer list-none flex-col gap-0.5 rounded-2xl px-4 py-3 outline-none focus-visible:focus-ring">
-                <span className="flex items-center gap-2 font-mono text-[11px] text-muted">
-                  <span className="rounded bg-surface-secondary px-1.5">
-                    {mail.template}
-                  </span>
-                  {`${mail.language.toUpperCase()} · ${formatSentAt(mail.at)}`}
-                </span>
-                <span className="text-sm font-semibold">{subject}</span>
-              </summary>
-              <div className="flex flex-col gap-3 border-t border-separator px-4 py-3 text-sm">
-                <p className="text-xs text-muted">To: {to}</p>
-                {body.map((paragraph, n) => (
-                  <p key={n}>{paragraph}</p>
-                ))}
-              </div>
-            </details>
-          </li>
-        )
+        return <MailItem key={mail.id} mail={mail} open={i === 0} to={to} />
       })}
     </ul>
+  )
+}
+
+function MailItem({
+  mail,
+  open,
+  to,
+}: {
+  mail: Mail
+  open: boolean
+  to: string
+}) {
+  const { subject, body } = renderMail(mail, useMessages(mail.language))
+
+  return (
+    <li>
+      <details
+        className="group rounded-2xl border border-separator bg-surface"
+        open={open}
+      >
+        <summary className="flex cursor-pointer list-none flex-col gap-0.5 rounded-2xl px-4 py-3 outline-none focus-visible:focus-ring">
+          <span className="flex items-center gap-2 font-mono text-[11px] text-muted">
+            <span className="rounded bg-surface-secondary px-1.5">
+              {mail.template}
+            </span>
+            {`${mail.language.toUpperCase()} · ${formatSentAt(mail.at)}`}
+          </span>
+          <span className="text-sm font-semibold">{subject}</span>
+        </summary>
+        <div className="flex flex-col gap-3 border-t border-separator px-4 py-3 text-sm">
+          <p className="text-xs text-muted">To: {to}</p>
+          {body.map((paragraph, n) => (
+            <p key={n}>{paragraph}</p>
+          ))}
+        </div>
+      </details>
+    </li>
   )
 }
 

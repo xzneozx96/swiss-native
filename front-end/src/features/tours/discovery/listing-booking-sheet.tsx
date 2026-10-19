@@ -5,8 +5,8 @@ import type {
 } from './listing-picker/model'
 import type { Tour, TourKind } from '@/features/tours/types'
 
-import { useNavigate } from '@tanstack/react-router'
-import { useState } from 'react'
+import { useNavigate, useRouter } from '@tanstack/react-router'
+import { useEffect, useState } from 'react'
 
 import { ChoiceSheet } from '@/components/choice-sheet'
 import { useLocale } from '@/contexts/locale-context'
@@ -105,7 +105,19 @@ function PickerSheet({
 }) {
   const { t } = useLocale()
   const navigate = useNavigate()
+  const router = useRouter()
   const { updateDraft } = useTourActions()
+
+  // Continue is a Button, not a Link, so it gets no preload on intent; an open sheet is the intent.
+  useEffect(() => {
+    if (isOpen) {
+      void router.preloadRoute({
+        to: '/tours/$slug/book/review',
+        params: { slug: listing.slug },
+      })
+    }
+  }, [isOpen, router, listing.slug])
+
   const proceed = () => {
     const nightIds = choice.kind === 'stay' ? choice.nightIds : undefined
 

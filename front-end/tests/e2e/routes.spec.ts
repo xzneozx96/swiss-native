@@ -54,3 +54,15 @@ test('English never downloads the German dictionary @smoke', async ({ page }) =>
 
   expect(scripts.filter(url => /\/i18n\/de\.ts|\/de-[\w-]+\.js/.test(url))).toEqual([])
 })
+
+for (const [language, shown, hidden] of [['en', 'Explore', 'Entdecken'], ['de', 'Entdecken', 'Explore']] as const) {
+  test(`the tab bar is in ${language} from the first paint @smoke`, async ({ page }) => {
+    await page.addInitScript((value) => {
+      localStorage.setItem('sk.language', JSON.stringify(value))
+    }, language)
+    await page.goto('/#/')
+
+    await expect(page.getByRole('navigation').getByText(shown, { exact: true }).first()).toBeVisible()
+    await expect(page.getByText(hidden, { exact: true })).toHaveCount(0)
+  })
+}

@@ -53,7 +53,10 @@ export function getChat() {
 }
 
 export function resetChat() {
-  sessionStorage.removeItem(KEY)
+  try {
+    sessionStorage.removeItem(KEY)
+  }
+  catch {}
   chat = make([])
 
   return chat

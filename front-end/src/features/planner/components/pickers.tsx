@@ -263,7 +263,7 @@ export function WhenPicker({ disabled, onSubmit }: PickerProps) {
           </Chip>
         ))}
       </Grid>
-      {month !== null && days && (
+      {month !== null && days !== null && (
         <Continue
           disabled={disabled}
           onPress={() =>

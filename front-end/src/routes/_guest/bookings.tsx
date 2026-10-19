@@ -4,7 +4,7 @@ import { useLocale } from '@/contexts/locale-context'
 import { SignInPrompt } from '@/features/auth/components/account-profile'
 import { useRequireSignIn } from '@/features/auth/hooks/use-require-sign-in'
 import { useDemoSelector } from '@/features/demo'
-import { TourBookingList } from '@/features/tours/booking'
+import { TourBookingList } from '@/features/tours/booking/tour-booking-list'
 
 export const Route = createFileRoute('/_guest/bookings')({
   component: BookingsPage,

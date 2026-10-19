@@ -2,7 +2,8 @@ import type { LabSearch } from '@/features/lab/brand/lab-brand'
 
 import { createFileRoute } from '@tanstack/react-router'
 
-import { ideaCount, LabBrand } from '@/features/lab/brand/lab-brand'
+import { IDEA_COUNT } from '@/features/lab/brand/counts'
+import { LabBrand } from '@/features/lab/brand/lab-brand'
 
 // Throwaway design lab: brand blocks from the client's banner (USP strip, quote).
 export const Route = createFileRoute('/_guest/lab/brand')({
@@ -13,7 +14,7 @@ export const Route = createFileRoute('/_guest/lab/brand')({
     return {
       piece,
       idea:
-        Number.isInteger(idea) && idea >= 1 && idea <= ideaCount(piece)
+        Number.isInteger(idea) && idea >= 1 && idea <= IDEA_COUNT[piece]
           ? idea
           : 1,
       lang: search.lang === 'de' ? 'de' : 'en',

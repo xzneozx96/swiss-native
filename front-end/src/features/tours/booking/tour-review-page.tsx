@@ -60,7 +60,7 @@ const clearOfFooter = 'scroll-mb-40'
 const rowIcon = 'mt-0.5 shrink-0'
 
 export function TourReviewPage({ slug }: { slug: string }) {
-  const { data, tours, departures, draft, bookings, now, guestId } = useTours()
+  const { data, tours, departures, draft, now, guestId } = useTours()
   const { updateDraft, createBooking } = useTourActions()
   const { t, language } = useLocale()
   const navigate = useNavigate()
@@ -70,12 +70,11 @@ export function TourReviewPage({ slug }: { slug: string }) {
   const when = useWhenText()
   const nightsText = useNightsText()
   const [error, setError] = useState<{ code: string, bookingId?: string }>()
-  // The booking just submitted: leave for payment only once it is really in the data.
-  const [created, setCreated] = useState<{ id: string, later: boolean }>()
+  // Set once the booking is saved. Until the next screen opens, the data shows the new booking
+  // as the guest's own hold and its seats as taken, so those checks stay hidden.
+  const [submitted, setSubmitted] = useState(false)
   const submittingRef = useRef(false)
   const alertRef = useRef<HTMLDivElement>(null)
-  const createdBooking
-    = created && bookings.find(booking => booking.id === created.id)
   const tour = tours.find(
     item => item.slug === slug && item.id === draft.tourId,
   )
@@ -103,30 +102,9 @@ export function TourReviewPage({ slug }: { slug: string }) {
   )
 
   useEffect(() => {
-    if (!created)
-      return
-    if (createdBooking) {
-      void navigate({
-        to: created.later
-          ? '/account/bookings/$bookingId/confirmed'
-          : '/account/bookings/$bookingId/pay',
-        params: { bookingId: created.id },
-        replace: true,
-      })
-
-      return
-    }
-    // The seats went between the check and the save: nothing was created. The capacity error
-    // below shows it, and the next tap may submit again.
-    submittingRef.current = false
-  }, [created, createdBooking, navigate])
-
-  const savedNothing = !!created && !createdBooking
-
-  useEffect(() => {
-    if (error || savedNothing)
+    if (error)
       alertRef.current?.scrollIntoView({ block: 'center' })
-  }, [error, savedNothing])
+  }, [error])
 
   if (!tour || !departure) {
     return (
@@ -165,17 +143,15 @@ export function TourReviewPage({ slug }: { slug: string }) {
   // true, and rechecked on submit.
   const shownError
     = error
-      ?? (savedNothing
-        ? { code: 'capacity' }
-        : created
-          ? undefined
-          : held
-            ? { code: 'held', bookingId: held.id }
-            : nightIds.some(
-              id => participantSeats(draft) > availableSeats(data, id, now),
-            )
-              ? { code: 'capacity' }
-              : undefined)
+      ?? (submitted
+        ? undefined
+        : held
+          ? { code: 'held', bookingId: held.id }
+          : nightIds.some(
+            id => participantSeats(draft) > availableSeats(data, id, now),
+          )
+            ? { code: 'capacity' }
+            : undefined)
   const submit = () =>
     requireSignIn(() => {
       if (submittingRef.current)
@@ -190,9 +166,14 @@ export function TourReviewPage({ slug }: { slug: string }) {
         return
       }
       setError(undefined)
-      setCreated({
-        id: result.bookingId,
-        later: departure.policy === 'later',
+      setSubmitted(true)
+      void navigate({
+        to:
+          departure.policy === 'later'
+            ? '/account/bookings/$bookingId/confirmed'
+            : '/account/bookings/$bookingId/pay',
+        params: { bookingId: result.bookingId },
+        replace: true,
       })
     })
 
@@ -516,7 +497,7 @@ export function TourReviewPage({ slug }: { slug: string }) {
           )}
           <Button
             fullWidth
-            isDisabled={!!createdBooking}
+            isDisabled={submitted}
             size="lg"
             type="submit"
           >

@@ -7,7 +7,7 @@ import type { BrandCopy } from './copy'
 import { useLayoutEffect, useRef, useState } from 'react'
 
 import { PassIcon, PinesIcon, RoadIcon } from './brand-icons'
-import { useReducedMotion, useReveal } from './use-reveal'
+import { prefersReducedMotion, useReveal } from './use-reveal'
 
 export const NAVY = '#1E3A5F'
 
@@ -129,7 +129,6 @@ export function UspTicker({
     const ro = new ResizeObserver(fit)
 
     ro.observe(box)
-    fit()
 
     return () => ro.disconnect()
   }, [ref, c, bare])
@@ -173,7 +172,7 @@ export function UspTicker({
  */
 export function UspJump({ c }: { c: BrandCopy }) {
   const ref = useReveal<HTMLUListElement>()
-  const reduced = useReducedMotion()
+  const reduced = prefersReducedMotion()
 
   const jump = (id: string) => {
     const heading = document.getElementById(id)

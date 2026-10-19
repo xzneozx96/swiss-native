@@ -4,6 +4,7 @@ import type { Tour } from '../types'
 import { Button, Skeleton, Spinner, ToggleButton } from '@heroui/react'
 import workerUrl from 'maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url'
 import { useEffect, useRef, useState } from 'react'
+import { preconnect } from 'react-dom'
 
 import {
   ChevronLeftIcon,
@@ -30,6 +31,9 @@ type MapState = 'loading' | 'ready' | 'error'
 function reducedMotion() {
   return window.matchMedia('(prefers-reduced-motion: reduce)').matches
 }
+
+// Outside the component: the React Compiler skips a component that contains `import()`.
+const loadMapLibre = () => import('maplibre-gl')
 
 /**
  * C09 itinerary (owner reference: Wanderlog). The selected stop shows as a card inside the
@@ -96,143 +100,142 @@ export function TourItineraryMap({ tour }: { tour: Tour }) {
         return
       started = true
       setMapState('loading')
-      try {
-        const styleLoading = loadAerialStyle()
-        const {
-          Map,
-          Marker,
-          NavigationControl,
-          FullscreenControl,
-          setWorkerUrl,
-        } = await import('maplibre-gl')
+      // The terrain's elevation tiles come from S3: connect while maplibre downloads.
+      preconnect('https://s3.amazonaws.com', { crossOrigin: 'anonymous' })
+      const styleLoading = loadAerialStyle()
+      const {
+        Map,
+        Marker,
+        NavigationControl,
+        FullscreenControl,
+        setWorkerUrl,
+      } = await loadMapLibre()
 
-        if (disposed || !container || !frame)
+      if (disposed || !container || !frame)
+        return
+      setWorkerUrl(workerUrl)
+      const copy = translationsRef.current.t
+
+      const style = await styleLoading
+
+      if (disposed)
+        return
+      map = new Map({
+        container,
+        style,
+        center: first.coordinates,
+        zoom: 16.2,
+        pitch: 55,
+        bearing: -25,
+        maxPitch: 65,
+        cooperativeGestures: true,
+        attributionControl: { compact: true },
+        locale: {
+          'NavigationControl.ZoomIn': copy('tourMap.zoomIn'),
+          'NavigationControl.ZoomOut': copy('tourMap.zoomOut'),
+          'NavigationControl.ResetBearing': copy('tourMap.compass'),
+          'FullscreenControl.Enter': copy('tourMap.fullscreen'),
+          'FullscreenControl.Exit': copy('tourMap.exitFullscreen'),
+          'CooperativeGesturesHandler.WindowsHelpText': copy('tourMap.wheel'),
+          'CooperativeGesturesHandler.MacHelpText': copy('tourMap.wheelMac'),
+          'CooperativeGesturesHandler.MobileHelpText': copy('tourMap.touch'),
+        },
+      })
+      mapRef.current = map
+      const initializedMap = map
+
+      // Fullscreen takes the whole frame, so the stop card and buttons come along. Pseudo
+      // (CSS) fullscreen keeps the stop sheet visible above it and also works on iPhone.
+      const fullscreenControl = new FullscreenControl({
+        container: frame,
+        pseudo: true,
+      })
+
+      fullscreenControl.on('fullscreenstart', () => setFullscreen(true))
+      fullscreenControl.on('fullscreenend', () => setFullscreen(false))
+      map.addControl(fullscreenControl, 'top-right')
+      map.addControl(
+        new NavigationControl({ visualizePitch: true }),
+        'top-right',
+      )
+      map.getCanvas().setAttribute('aria-label', copy('tourMap.mapLabel'))
+      map.on('load', () => {
+        if (disposed || !map)
           return
-        setWorkerUrl(workerUrl)
-        const copy = translationsRef.current.t
-
-        const style = await styleLoading
-
-        if (disposed)
-          return
-        map = new Map({
-          container,
-          style,
-          center: first.coordinates,
-          zoom: 16.2,
-          pitch: 55,
-          bearing: -25,
-          maxPitch: 65,
-          cooperativeGestures: true,
-          attributionControl: { compact: true },
-          locale: {
-            'NavigationControl.ZoomIn': copy('tourMap.zoomIn'),
-            'NavigationControl.ZoomOut': copy('tourMap.zoomOut'),
-            'NavigationControl.ResetBearing': copy('tourMap.compass'),
-            'FullscreenControl.Enter': copy('tourMap.fullscreen'),
-            'FullscreenControl.Exit': copy('tourMap.exitFullscreen'),
-            'CooperativeGesturesHandler.WindowsHelpText': copy('tourMap.wheel'),
-            'CooperativeGesturesHandler.MacHelpText': copy('tourMap.wheelMac'),
-            'CooperativeGesturesHandler.MobileHelpText': copy('tourMap.touch'),
+        clearTimeout(timeout)
+        map.setTerrain({ source: 'dem', exaggeration: 1.3 })
+        map.addSource('tour-route', {
+          type: 'geojson',
+          data: {
+            type: 'Feature',
+            properties: {},
+            geometry: {
+              type: 'LineString',
+              coordinates: tour.itinerary.map(stop => stop.coordinates),
+            },
           },
         })
-        mapRef.current = map
-        const initializedMap = map
-
-        // Fullscreen takes the whole frame, so the stop card and buttons come along. Pseudo
-        // (CSS) fullscreen keeps the stop sheet visible above it and also works on iPhone.
-        const fullscreenControl = new FullscreenControl({
-          container: frame,
-          pseudo: true,
+        map.addLayer({
+          id: 'tour-route-halo',
+          type: 'line',
+          source: 'tour-route',
+          layout: { 'line-cap': 'round', 'line-join': 'round' },
+          paint: {
+            'line-color': '#fffaf4',
+            'line-width': 8,
+            'line-opacity': 0.9,
+          },
         })
-
-        fullscreenControl.on('fullscreenstart', () => setFullscreen(true))
-        fullscreenControl.on('fullscreenend', () => setFullscreen(false))
-        map.addControl(fullscreenControl, 'top-right')
-        map.addControl(
-          new NavigationControl({ visualizePitch: true }),
-          'top-right',
-        )
-        map.getCanvas().setAttribute('aria-label', copy('tourMap.mapLabel'))
-        map.on('load', () => {
-          if (disposed || !map)
-            return
-          clearTimeout(timeout)
-          map.setTerrain({ source: 'dem', exaggeration: 1.3 })
-          map.addSource('tour-route', {
-            type: 'geojson',
-            data: {
-              type: 'Feature',
-              properties: {},
-              geometry: {
-                type: 'LineString',
-                coordinates: tour.itinerary.map(stop => stop.coordinates),
-              },
-            },
-          })
-          map.addLayer({
-            id: 'tour-route-halo',
-            type: 'line',
-            source: 'tour-route',
-            layout: { 'line-cap': 'round', 'line-join': 'round' },
-            paint: {
-              'line-color': '#fffaf4',
-              'line-width': 8,
-              'line-opacity': 0.9,
-            },
-          })
-          map.addLayer({
-            id: 'tour-route-line',
-            type: 'line',
-            source: 'tour-route',
-            layout: { 'line-cap': 'round', 'line-join': 'round' },
-            paint: {
-              'line-color': '#d52b1e',
-              'line-width': 4,
-              'line-dasharray': [2, 1],
-            },
-          })
-          setMapState('ready')
+        map.addLayer({
+          id: 'tour-route-line',
+          type: 'line',
+          source: 'tour-route',
+          layout: { 'line-cap': 'round', 'line-join': 'round' },
+          paint: {
+            'line-color': '#d52b1e',
+            'line-width': 4,
+            'line-dasharray': [2, 1],
+          },
         })
-        timeout = setTimeout(() => {
-          if (!disposed)
-            setMapState('error')
-        }, 16000)
-        map.on('error', () => {
-          if (map && !map.isStyleLoaded() && !disposed)
-            setMapState('error')
-        })
-        markersRef.current = tour.itinerary.map((stop, index) => {
-          const button = document.createElement('button')
-
-          button.type = 'button'
-          button.className = 'tour-map-marker'
-          button.textContent = String(index + 1)
-          button.setAttribute(
-            'aria-label',
-            `${copy('tourMap.stop', { number: index + 1 })}: ${pickText(stop.name, translationsRef.current.language).text}`,
-          )
-          button.setAttribute('aria-pressed', String(index === 0))
-          // eslint-disable-next-line react-web-api/no-leaked-event-listener -- each marker button is discarded with its marker when the map is removed
-          button.addEventListener('click', () => setSelectedId(stop.id))
-
-          return new Marker({ element: button, anchor: 'center' })
-            .setLngLat(stop.coordinates)
-            .addTo(initializedMap)
-        })
-        resizeObserver = new ResizeObserver(() => map?.resize())
-        resizeObserver.observe(container)
-      }
-      catch {
+        setMapState('ready')
+      })
+      timeout = setTimeout(() => {
         if (!disposed)
           setMapState('error')
-      }
+      }, 16000)
+      map.on('error', () => {
+        if (map && !map.isStyleLoaded() && !disposed)
+          setMapState('error')
+      })
+      markersRef.current = tour.itinerary.map((stop, index) => {
+        const button = document.createElement('button')
+
+        button.type = 'button'
+        button.className = 'tour-map-marker'
+        button.textContent = String(index + 1)
+        button.setAttribute(
+          'aria-label',
+          `${copy('tourMap.stop', { number: index + 1 })}: ${pickText(stop.name, translationsRef.current.language).text}`,
+        )
+        button.setAttribute('aria-pressed', String(index === 0))
+        // eslint-disable-next-line react-web-api/no-leaked-event-listener -- each marker button is discarded with its marker when the map is removed
+        button.addEventListener('click', () => setSelectedId(stop.id))
+
+        return new Marker({ element: button, anchor: 'center' })
+          .setLngLat(stop.coordinates)
+          .addTo(initializedMap)
+      })
+      resizeObserver = new ResizeObserver(() => map?.resize())
+      resizeObserver.observe(container)
     }
     const observer = new IntersectionObserver(
       (entries) => {
         if (entries.some(entry => entry.isIntersecting)) {
           observer.disconnect()
-          void initialize()
+          void initialize().catch(() => {
+            if (!disposed)
+              setMapState('error')
+          })
         }
       },
       { rootMargin: '240px' },
@@ -252,6 +255,8 @@ export function TourItineraryMap({ tour }: { tour: Tour }) {
     }
   }, [tour.id, tour.itinerary, attempt, translationsRef])
 
+  // The pins follow the selection and the language. `mapState` reruns this once the map is
+  // ready: the pins are made with the first stop pressed, and another may be chosen by then.
   useEffect(() => {
     markersRef.current.forEach((marker, index) => {
       const stop = tour.itinerary[index]
@@ -266,6 +271,10 @@ export function TourItineraryMap({ tour }: { tour: Tour }) {
         `${t('tourMap.stop', { number: index + 1 })}: ${pickText(stop.name, language).text}`,
       )
     })
+  }, [active, language, t, tour.itinerary, mapState])
+
+  // The camera, apart from the pins: a language switch does not warm tiles or fly again.
+  useEffect(() => {
     const map = mapRef.current
     const camera = {
       pitch: threeD ? 55 : 0,
@@ -308,7 +317,7 @@ export function TourItineraryMap({ tour }: { tour: Tour }) {
       clearTimeout(veilTimer)
       setTilesLoading(false)
     }
-  }, [active, language, t, threeD, mapState, fullscreen, tour.itinerary])
+  }, [active, threeD, mapState, fullscreen])
 
   // MapLibre writes its own (creation-time) labels when fullscreen toggles; put ours back.
   useEffect(() => {
@@ -366,7 +375,7 @@ export function TourItineraryMap({ tour }: { tour: Tour }) {
 
     if (!map)
       return
-    void import('maplibre-gl').then(({ LngLatBounds }) => {
+    void loadMapLibre().then(({ LngLatBounds }) => {
       if (map !== mapRef.current)
         return
       const bounds = new LngLatBounds()

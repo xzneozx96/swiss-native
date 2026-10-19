@@ -79,7 +79,7 @@ function RowBody({
   value,
 }: {
   title: string
-  description?: string
+  description?: React.ReactNode
   descriptionLang?: string
   value?: React.ReactNode
 }) {
@@ -117,7 +117,7 @@ export function SectionRow({
   icon: IconComponent
   tone?: 'default' | 'accent'
   title: string
-  description?: string
+  description?: React.ReactNode
   descriptionLang?: string
   value?: React.ReactNode
 }) {

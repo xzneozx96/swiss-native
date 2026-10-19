@@ -9,7 +9,7 @@ import { useMemo } from 'react'
 import { useLocale } from '@/contexts/locale-context'
 import { zurichDate, zurichDayOf } from '@/features/catalog/lib/pickup'
 
-import { useDemo, useDemoNow } from '@/features/demo'
+import { useDemoNow, useDemoSelector } from '@/features/demo'
 import { deltaOf } from '@/lib/analytics'
 import {
   calendarDay,
@@ -40,6 +40,14 @@ const zurichTime = dateTimeFormat('en-GB', {
   hourCycle: 'h23',
 })
 const timeOf = (iso: string) => zurichTime.format(new Date(iso))
+
+function addTo<X>(lists: Map<string, X[]>, key: string, item: X) {
+  const list = lists.get(key)
+
+  if (list)
+    list.push(item)
+  else lists.set(key, [item])
+}
 
 /** One sale (a tour booking) at the minute it was placed. */
 interface Sale {
@@ -105,20 +113,20 @@ export function useSalesOverview(
   custom: DayRange | null,
 ) {
   const { t, language, intlLocale } = useLocale()
-  const { state } = useDemo()
+  const tours = useDemoSelector(s => s.data.tours)
   const now = useDemoNow()
   const today = zurichDate(now)
   const nowTime = timeOf(now.toISOString())
-  const { tours } = state.data
 
   const { sales, payments, firstDay } = useMemo(() => {
     const sales: Sale[] = []
     const payments: Payment[] = []
+    const txs = saleTransactions({ tours })
 
-    for (const [id, tx] of saleTransactions({ tours })) {
-      const source = tours?.bookings.find(b => b.id === id)
+    for (const source of tours?.bookings ?? []) {
+      const tx = txs.get(source.id)
 
-      if (!source)
+      if (!tx)
         continue
       sales.push({
         tx,
@@ -179,26 +187,20 @@ export function useSalesOverview(
     paid: paidIn(previous),
   }
 
-  /** Each bucket's figure, for the card lines and the chart. */
-  const series = (
+  /** Each bucket's sales and payments, grouped once per range for all four cards. */
+  const bucketsOf = (
     r: SalesRange,
-    f: (placed: Sale[], paid: Payment[]) => number,
+    list: { placed: Sale[], paid: Payment[] },
   ) => {
     const b = bucketOf(r)
     const keys = bucketSlots(r, b).map(slot => slot.key)
     const placed = new Map<string, Sale[]>()
     const paid = new Map<string, Payment[]>()
 
-    for (const s of placedIn(r)) {
-      const k = bucketKey(s.day, s.time, b, r)
-
-      placed.set(k, [...(placed.get(k) ?? []), s])
-    }
-    for (const p of paidIn(r)) {
-      const k = bucketKey(p.day, p.time, b, r)
-
-      paid.set(k, [...(paid.get(k) ?? []), p])
-    }
+    for (const s of list.placed)
+      addTo(placed, bucketKey(s.day, s.time, b, r), s)
+    for (const p of list.paid)
+      addTo(paid, bucketKey(p.day, p.time, b, r), p)
     // Today: the hours still to come stay empty rather than zero.
     // Yesterday until now: the hours after it are not part of the comparison.
     const lastHour
@@ -213,9 +215,11 @@ export function useSalesOverview(
     return keys.map(k =>
       b === 'hour' && k > lastHour
         ? null
-        : f(placed.get(k) ?? [], paid.get(k) ?? []),
+        : { placed: placed.get(k) ?? [], paid: paid.get(k) ?? [] },
     )
   }
+  const currentBuckets = bucketsOf(current, cur)
+  const previousBuckets = previous && prev ? bucketsOf(previous, prev) : []
 
   const range = (r: DayRange) =>
     (
@@ -306,8 +310,8 @@ export function useSalesOverview(
     f: (placed: Sale[], paid: Payment[]) => number,
     format: (n: number) => string,
   ): SalesBar[] => {
-    const now = series(current, f)
-    const before = previous ? series(previous, f) : []
+    const now = currentBuckets.map(x => x && f(x.placed, x.paid))
+    const before = previousBuckets.map(x => x && f(x.placed, x.paid))
 
     return slots.map((slot, i) => {
       const value = now[i]
@@ -404,22 +408,6 @@ export function useSalesOverview(
 
   // All time, whatever the period: the total, where it stands, the last 30 days against the
   // 30 before, and the last seven months (Overview › Sales only).
-  const placedAll = sales.filter(s => !s.lost)
-  const totalAll = sum(placedAll, s => s.value)
-  const collectedAll = sum(payments, p => p.amount)
-  const unpaidAll = sum(placedAll, s => s.outstanding)
-  const valueIn = (r: DayRange) =>
-    sum(
-      placedAll.filter(s => s.day >= r.start && s.day <= r.end),
-      s => s.value,
-    )
-  const last30 = valueIn({ start: addDays(today, -29), end: today })
-  const before30 = valueIn({
-    start: addDays(today, -59),
-    end: addDays(today, -30),
-  })
-  const change = deltaOf(last30, before30, 'up', intlLocale)
-  const firstMonth = `${(firstDay < today ? firstDay : today).slice(0, 8)}01`
   const monthStart = (back: number) => {
     const d = new Date(`${today.slice(0, 8)}01T12:00:00Z`)
 
@@ -427,16 +415,41 @@ export function useSalesOverview(
 
     return d.toISOString().slice(0, 10)
   }
+  const monthIds = Array.from({ length: 7 }, (_, i) => monthStart(6 - i))
+  const last30Start = addDays(today, -29)
+  const before30Start = addDays(today, -59)
+  const before30End = addDays(today, -30)
+  // One pass over every sale: this is the list that grows with the shop's history.
+  const monthTotals = new Map(monthIds.map(id => [id.slice(0, 7), 0]))
+  let totalAll = 0
+  let unpaidAll = 0
+  let last30 = 0
+  let before30 = 0
+
+  for (const s of sales) {
+    if (s.lost)
+      continue
+    totalAll += s.value
+    unpaidAll += s.outstanding
+    if (s.day >= last30Start && s.day <= today)
+      last30 += s.value
+    if (s.day >= before30Start && s.day <= before30End)
+      before30 += s.value
+    const month = s.day.slice(0, 7)
+    const monthTotal = monthTotals.get(month)
+
+    if (monthTotal !== undefined)
+      monthTotals.set(month, monthTotal + s.value)
+  }
+  const collectedAll = sum(payments, p => p.amount)
+  const change = deltaOf(last30, before30, 'up', intlLocale)
+  const firstMonth = `${(firstDay < today ? firstDay : today).slice(0, 8)}01`
   const monthFmt = (o: Intl.DateTimeFormatOptions, iso: string) =>
     dateTimeFormat(intlLocale, { ...o, timeZone: 'UTC' }).format(
       calendarDay(iso),
     )
-  const months = Array.from({ length: 7 }, (_, i) => {
-    const id = monthStart(6 - i)
-    const total = sum(
-      placedAll.filter(s => s.day.slice(0, 7) === id.slice(0, 7)),
-      s => s.value,
-    )
+  const months = monthIds.map((id, i) => {
+    const total = monthTotals.get(id.slice(0, 7)) ?? 0
     const hasData = id >= firstMonth
     const label = monthFmt({ month: 'long', year: 'numeric' }, id)
 

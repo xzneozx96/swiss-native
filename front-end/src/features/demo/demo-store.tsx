@@ -31,24 +31,37 @@ function loadState(): DemoState {
 type Update = (recipe: (state: DemoState) => DemoState) => void
 
 interface DemoActions {
+  /** The current state, read at call time: an event handler uses it without subscribing. */
+  getState: () => DemoState
   update: Update
   setRole: (role: Role) => void
   reset: () => void
 }
 
 interface DemoStore extends DemoActions {
-  getState: () => DemoState
   getStorageFull: () => boolean
   subscribe: (listener: () => void) => () => void
   save: () => void
+  /** Writes the save still waiting for idle time, if there is one. */
+  flush: () => void
+}
+
+/** Safari has no requestIdleCallback; a short timer still keeps the save out of the event. */
+function whenIdle(task: () => void) {
+  if ('requestIdleCallback' in window)
+    requestIdleCallback(task, { timeout: 1000 })
+  else
+    setTimeout(task, 50)
 }
 
 function createDemoStore(initial: DemoState): DemoStore {
   const listeners = new Set<() => void>()
   let state = initial
   let storageFull = false
+  let savePending = false
 
   const save = () => {
+    savePending = false
     const full = writeStored(STORAGE_KEY, state) === 'full'
 
     if (full === storageFull)
@@ -56,16 +69,17 @@ function createDemoStore(initial: DemoState): DemoStore {
     storageFull = full
     listeners.forEach(notify => notify())
   }
-  // Several updates in one event are saved once, after the last of them.
-  let saveQueued = false
+  const flush = () => {
+    if (savePending)
+      save()
+  }
+  // Saving stringifies the whole state, so it waits for idle time instead of holding up the
+  // next paint, and the updates made meanwhile (keystrokes, stepper taps) are saved once.
   const update: Update = (recipe) => {
     state = recipe(state)
-    if (!saveQueued) {
-      saveQueued = true
-      queueMicrotask(() => {
-        saveQueued = false
-        save()
-      })
+    if (!savePending) {
+      savePending = true
+      whenIdle(flush)
     }
     listeners.forEach(notify => notify())
   }
@@ -81,6 +95,7 @@ function createDemoStore(initial: DemoState): DemoStore {
       }
     },
     save,
+    flush,
     update,
     setRole: role => update(s => ({ ...s, role })),
     // Keeps the current role so the presenter stays where they are.
@@ -95,6 +110,23 @@ export function DemoProvider({ children }: { children: React.ReactNode }) {
   const [store] = useState(() => createDemoStore(loadState()))
 
   useEffect(() => store.save(), [store])
+
+  // A save still waiting for idle time is written before the page is left, reloaded or
+  // hidden, so the next load always sees the latest change.
+  useEffect(() => {
+    const flushWhenHidden = () => {
+      if (document.visibilityState === 'hidden')
+        store.flush()
+    }
+
+    window.addEventListener('pagehide', store.flush)
+    document.addEventListener('visibilitychange', flushWhenHidden)
+
+    return () => {
+      window.removeEventListener('pagehide', store.flush)
+      document.removeEventListener('visibilitychange', flushWhenHidden)
+    }
+  }, [store])
 
   return <DemoContext value={store}>{children}</DemoContext>
 }
@@ -120,9 +152,12 @@ export function useDemoSelector<T>(select: (state: DemoState) => T): T {
 
 /** The writers, without subscribing to any state. */
 export function useDemoActions(): DemoActions {
-  const { update, setRole, reset } = useStore()
+  const { getState, update, setRole, reset } = useStore()
 
-  return useMemo(() => ({ update, setRole, reset }), [update, setRole, reset])
+  return useMemo(
+    () => ({ getState, update, setRole, reset }),
+    [getState, update, setRole, reset],
+  )
 }
 
 /** The browser refused the last save because storage is full, so the latest changes live in this tab only. */

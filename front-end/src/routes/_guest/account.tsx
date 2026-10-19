@@ -14,7 +14,7 @@ import { accountSections } from '@/features/account/lib/sections'
 import { SignInPrompt } from '@/features/auth/components/account-profile'
 import { useRequireSignIn } from '@/features/auth/hooks/use-require-sign-in'
 import { useDemoActions, useDemoSelector } from '@/features/demo'
-import { TourBookingList } from '@/features/tours/booking'
+import { TourBookingList } from '@/features/tours/booking/tour-booking-list'
 
 // Account tab: signed-out prompt opens C05 (step 1.6); signed in, the settings-style hub (1.12s)
 // whose rows drill into sub-screens kept in `?tab=`. The 1.12r tab values are sub-screens now,

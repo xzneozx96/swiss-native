@@ -1,4 +1,4 @@
-import type { Tour } from '../types'
+import type { Tour, TourDraft } from '../types'
 
 import { useCanGoBack, useNavigate, useRouter } from '@tanstack/react-router'
 import { useEffect, useRef } from 'react'
@@ -41,7 +41,7 @@ declare module '@tanstack/history' {
   }
 }
 
-function useTourSelection(tour: Tour, isOpen: boolean) {
+function useTourSelection(tour: Tour) {
   const { t, intlLocale } = useLocale()
   const { data, draft, now } = useTours()
   const { updateDraft } = useTourActions()
@@ -59,22 +59,26 @@ function useTourSelection(tour: Tour, isOpen: boolean) {
   const total = tourTotal(tour, group)
   const dueToday = selected ? firstPaymentAmount(selected.policy, total) : 0
   const money = (rappen: number) => formatMoney(rappen / 100, intlLocale)
-
-  // Only an open sheet starts a draft for this tour: viewing C09 keeps another tour's draft.
-  useEffect(() => {
-    if (isOpen && draft.tourId !== tour.id) {
-      updateDraft({
-        tourId: tour.id,
-        departureId: first?.id ?? '',
-        nightIds: undefined,
-        adults: 2,
-        children: 1,
-        infants: 0,
-      })
-    }
-  }, [isOpen, draft.tourId, tour.id, first?.id, updateDraft])
+  // Viewing C09 keeps another tour's draft. The first choice in the sheet, or Review, starts
+  // this tour's draft from what the sheet shows.
+  const choose = (patch: Partial<TourDraft>) =>
+    updateDraft(
+      changingTour
+        ? {
+            tourId: tour.id,
+            departureId,
+            nightIds: undefined,
+            adults: group.adults,
+            children: group.children,
+            infants: group.infants,
+            ...patch,
+          }
+        : patch,
+    )
 
   return {
+    changingTour,
+    choose,
     departureId,
     group,
     selected,
@@ -94,7 +98,6 @@ type TourSelection = ReturnType<typeof useTourSelection>
  */
 function useTourPicker(tour: Tour, selection: TourSelection) {
   const { t, intlLocale } = useLocale()
-  const { updateDraft } = useTourActions()
   const model = useSlotModel(tour)
   const plural = (count: number) =>
     pluralCategory(intlLocale, count) === 'one' ? 'one' : 'other'
@@ -107,9 +110,9 @@ function useTourPicker(tour: Tour, selection: TourSelection) {
   const choice = useSlotChoice(model, f, {
     group: selection.group,
     setGroup: ({ adults, children, infants }) =>
-      updateDraft({ adults, children, infants }),
+      selection.choose({ adults, children, infants }),
     slotId: selection.departureId,
-    setSlotId: departureId => updateDraft({ departureId }),
+    setSlotId: departureId => selection.choose({ departureId }),
   })
 
   return { model, f, choice }
@@ -224,7 +227,7 @@ function TourSheet({ tour, isOpen }: { tour: Tour, isOpen: boolean }) {
   const canGoBack = useCanGoBack()
   // X, a swipe, Escape and the backdrop all close: one step back per history entry.
   const closedFromRef = useRef<string>(undefined)
-  const selection = useTourSelection(tour, isOpen)
+  const selection = useTourSelection(tour)
   const picker = useTourPicker(tour, selection)
 
   const close = () => {
@@ -254,16 +257,30 @@ function TourSheet({ tour, isOpen }: { tour: Tour, isOpen: boolean }) {
       closedFromRef.current = undefined
   }, [isOpen])
 
+  // Review is a Button, not a Link, so it gets no preload on intent; an open sheet is the intent.
+  useEffect(() => {
+    if (isOpen) {
+      void router.preloadRoute({
+        to: '/tours/$slug/book/review',
+        params: { slug: tour.slug },
+      })
+    }
+  }, [isOpen, router, tour.slug])
+
   return (
     <ChoiceSheet
       action={{
         label: selection.reviewLabel,
         isDisabled: !selection.valid,
-        onPress: () =>
+        onPress: () => {
+          // The review reads the draft, so a draft still for another tour takes this one first.
+          if (selection.changingTour)
+            selection.choose({})
           void navigate({
             to: '/tours/$slug/book/review',
             params: { slug: tour.slug },
-          }),
+          })
+        },
       }}
       closeLabel={t('tourDiscovery.close')}
       isOpen={isOpen}

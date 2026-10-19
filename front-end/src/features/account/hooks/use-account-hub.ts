@@ -2,7 +2,6 @@ import { useLocale } from '@/contexts/locale-context'
 
 import { zurichDate } from '@/features/catalog/lib/pickup'
 import { useDemoNow, useDemoSelector } from '@/features/demo'
-import { renderMail } from '@/features/notifications/components/render-mail'
 import { bookingAmountDue } from '@/features/tours/lib/selectors'
 import { formatMoney, formatShortDate } from '@/lib/format'
 import { useAccountPayments } from './use-account-payments'
@@ -53,12 +52,7 @@ export function useAccountHub(guestId: string) {
             amount: formatMoney(dueTotal / 100, intlLocale),
           })
         : t('account.hub.payments.settled'),
-    /** The latest email's subject, in that email's own language. */
-    mail: lastMail
-      ? {
-          text: renderMail(lastMail).subject,
-          lang: lastMail.language,
-        }
-      : { text: t('account.hub.mail.none') },
+    /** The latest email, shown by its subject in that email's own language. */
+    lastMail,
   }
 }

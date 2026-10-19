@@ -1,6 +1,6 @@
 import { createFileRoute, Navigate } from '@tanstack/react-router'
 
-import { TourDetailPage } from '@/features/tours/discovery'
+import { TourDetailPage } from '@/features/tours/discovery/tour-detail-page'
 import { useTours } from '@/features/tours/hooks/use-tours'
 import { isTour } from '@/features/tours/lib/selectors'
 

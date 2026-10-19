@@ -1,15 +1,11 @@
 import type { Mail } from '../types'
-import type { Language } from '@/contexts/locale-context'
+import type { Dictionary } from '@/contexts/locale-context'
 import type { MessageKey } from '@/i18n/en'
 
 import { renderRequestMail } from '@/features/requests/lib/render-request-mail'
 import { renderTourMail } from '@/features/tours/merchant/lib/render-mail'
-import { de } from '@/i18n/de'
-import { en } from '@/i18n/en'
 
 const PLACEHOLDER = /\{(\w+)\}/g
-
-const messages: Record<Language, Record<MessageKey, string>> = { en, de }
 
 export interface RenderedMail {
   subject: string
@@ -25,15 +21,14 @@ function fill(text: string, vars: Record<string, string | number>): string {
 /**
  * Renders a logged email in the recipient's language (spec §6: guests get the language
  * they booked in, the host their UI language), whatever language the prototype shows now.
- * Tour and private tour request mails have their own renderers; the sign-in code (N01) is
- * rendered here.
+ * `copy` holds the messages of `mail.language` (`useMessages`). Tour and private tour
+ * request mails have their own renderers; the sign-in code (N01) is rendered here.
  */
-export function renderMail(mail: Mail): RenderedMail {
+export function renderMail(mail: Mail, copy: Dictionary): RenderedMail {
   if (mail.bookingId)
-    return renderTourMail(mail)
+    return renderTourMail(mail, copy)
   if (mail.template === 'N17')
-    return renderRequestMail(mail)
-  const copy = messages[mail.language]
+    return renderRequestMail(mail, copy)
 
   if (mail.template !== 'N01' || mail.to !== 'guest') {
     return {

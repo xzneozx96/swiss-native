@@ -24,7 +24,7 @@ import {
   tourTotal,
   upcomingDepartures,
 } from '@/features/tours/lib/selectors'
-import { formatMoney, formatShortDate } from '@/lib/format'
+import { dateTimeFormat, formatMoney, formatShortDate } from '@/lib/format'
 import { pickText } from '@/lib/localized'
 
 const TRAILING_DOT = /\.$/
@@ -72,6 +72,7 @@ export function useSlotModel(tour: Tour) {
   // Stable identities: React Aria memoizes against min/max value objects.
   const today = useMemo(() => parseDate(todayIso), [todayIso])
   const minute = Math.floor(now.getTime() / 60_000)
+  const span = tourDays(tour)
 
   const model = useMemo(() => {
     const at = new Date(minute * 60_000)
@@ -134,11 +135,11 @@ export function useSlotModel(tour: Tour) {
       lastDay:
         last && tour.kind === 'stay'
           ? last.add({ days: 1 })
-          : last && tourDays(tour) > 1
-            ? last.add({ days: tourDays(tour) - 1 })
+          : last && span > 1
+            ? last.add({ days: span - 1 })
             : last,
     }
-  }, [data, tour.id, minute, tour.durationMinutes, tour.kind])
+  }, [data, tour.id, minute, tour.durationMinutes, tour.kind, span])
 
   return { tour, today, ...model }
 }
@@ -521,15 +522,15 @@ function pickerFormat(
   t: (key: PickerKey, vars?: Record<string, string | number>) => string,
 ) {
   const locale: IntlLocale = language === 'de' ? 'de-CH' : 'en-CH'
-  const monthShort = new Intl.DateTimeFormat(locale, {
+  const monthShort = dateTimeFormat(locale, {
     month: 'short',
     timeZone: 'UTC',
   })
-  const weekday = new Intl.DateTimeFormat(locale, {
+  const weekday = dateTimeFormat(locale, {
     weekday: 'short',
     timeZone: 'UTC',
   })
-  const full = new Intl.DateTimeFormat(locale, {
+  const full = dateTimeFormat(locale, {
     weekday: 'long',
     day: 'numeric',
     month: 'long',

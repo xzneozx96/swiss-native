@@ -29,6 +29,9 @@ type MapState = 'loading' | 'ready' | 'error'
 const LUCERNE: Coordinates = [8.3093, 47.0502]
 const STOP_ZOOM = 16.2
 
+// Outside the component: the React Compiler cannot compile a component with `import()` in it.
+const loadMapLibre = () => import('maplibre-gl')
+
 /**
  * The itinerary editor's map: the guest map's aerial photo, numbered pins and dashed route,
  * seen from above so pins are easy to place. Pins are numbered by their position in `stops`
@@ -80,106 +83,103 @@ export function ItineraryMap({
     const markers = markersRef.current
 
     void (async () => {
-      try {
-        const styleLoading = loadAerialStyle()
-        const { Map, NavigationControl, LngLatBounds, setWorkerUrl }
-          = await import('maplibre-gl')
+      const styleLoading = loadAerialStyle()
+      const { Map, NavigationControl, LngLatBounds, setWorkerUrl }
+        = await loadMapLibre()
 
+      if (disposed)
+        return
+      setWorkerUrl(workerUrl)
+      const copy = translations.current
+      const style = await styleLoading
+
+      if (disposed)
+        return
+      const { stops: initial, selectedId: initialId } = live.current
+      const start
+        = initial.find(stop => stop.id === initialId) ?? initial[0]
+
+      map = new Map({
+        container,
+        style,
+        center: start?.coordinates ?? LUCERNE,
+        zoom: start ? STOP_ZOOM : 12,
+        pitch: 0,
+        maxPitch: 0,
+        dragRotate: false,
+        cooperativeGestures: true,
+        attributionControl: { compact: true },
+        locale: {
+          'NavigationControl.ZoomIn': copy('products.itinerary.map.zoomIn'),
+          'NavigationControl.ZoomOut': copy('products.itinerary.map.zoomOut'),
+          'CooperativeGesturesHandler.WindowsHelpText': copy(
+            'products.itinerary.map.wheel',
+          ),
+          'CooperativeGesturesHandler.MacHelpText': copy(
+            'products.itinerary.map.wheelMac',
+          ),
+          'CooperativeGesturesHandler.MobileHelpText': copy(
+            'products.itinerary.map.touch',
+          ),
+        },
+      })
+      mapRef.current = map
+      const created = map
+
+      created.addControl(
+        new NavigationControl({ showCompass: false }),
+        'top-right',
+      )
+      created
+        .getCanvas()
+        .setAttribute('aria-label', copy('products.itinerary.map.label'))
+      created.on('load', () => {
         if (disposed)
           return
-        setWorkerUrl(workerUrl)
-        const copy = translations.current
-        const style = await styleLoading
-
-        if (disposed)
-          return
-        const { stops: initial, selectedId: initialId } = live.current
-        const start
-          = initial.find(stop => stop.id === initialId) ?? initial[0]
-
-        map = new Map({
-          container,
-          style,
-          center: start?.coordinates ?? LUCERNE,
-          zoom: start ? STOP_ZOOM : 12,
-          pitch: 0,
-          maxPitch: 0,
-          dragRotate: false,
-          cooperativeGestures: true,
-          attributionControl: { compact: true },
-          locale: {
-            'NavigationControl.ZoomIn': copy('products.itinerary.map.zoomIn'),
-            'NavigationControl.ZoomOut': copy('products.itinerary.map.zoomOut'),
-            'CooperativeGesturesHandler.WindowsHelpText': copy(
-              'products.itinerary.map.wheel',
-            ),
-            'CooperativeGesturesHandler.MacHelpText': copy(
-              'products.itinerary.map.wheelMac',
-            ),
-            'CooperativeGesturesHandler.MobileHelpText': copy(
-              'products.itinerary.map.touch',
-            ),
-          },
-        })
-        mapRef.current = map
-        const created = map
-
-        created.addControl(
-          new NavigationControl({ showCompass: false }),
-          'top-right',
+        clearTimeout(timeout)
+        addRoute(
+          created,
+          live.current.stops.map(stop => stop.coordinates),
         )
-        created
-          .getCanvas()
-          .setAttribute('aria-label', copy('products.itinerary.map.label'))
-        created.on('load', () => {
-          if (disposed)
-            return
-          clearTimeout(timeout)
-          addRoute(
-            created,
-            live.current.stops.map(stop => stop.coordinates),
+        // Selected stop: the map already opened on it. Otherwise frame the whole route.
+        if (!initialId && initial.length > 1) {
+          const bounds = new LngLatBounds(
+            initial[0].coordinates,
+            initial[0].coordinates,
           )
-          // Selected stop: the map already opened on it. Otherwise frame the whole route.
-          if (!initialId && initial.length > 1) {
-            const bounds = new LngLatBounds(
-              initial[0].coordinates,
-              initial[0].coordinates,
-            )
 
-            initial.forEach(stop => bounds.extend(stop.coordinates))
-            created.fitBounds(bounds, {
-              padding: 48,
-              maxZoom: 16,
-              duration: 0,
-            })
-          }
-          setMapState('ready')
-        })
-        created.on('click', (event) => {
-          const { dropping: active, onDrop: drop } = live.current
-          const target = event.originalEvent.target as HTMLElement | null
+          initial.forEach(stop => bounds.extend(stop.coordinates))
+          created.fitBounds(bounds, {
+            padding: 48,
+            maxZoom: 16,
+            duration: 0,
+          })
+        }
+        setMapState('ready')
+      })
+      created.on('click', (event) => {
+        const { dropping: active, onDrop: drop } = live.current
+        const target = event.originalEvent.target as HTMLElement | null
 
-          if (!active || target?.closest('.tour-map-marker'))
-            return
-          setDropping(false)
-          drop([event.lngLat.lng, event.lngLat.lat])
-        })
-        created.on('error', () => {
-          if (!disposed && !created.isStyleLoaded())
-            setMapState('error')
-        })
-        timeout = setTimeout(() => {
-          if (!disposed)
-            setMapState('error')
-        }, 16000)
-        resizeObserver = new ResizeObserver(() => created.resize())
-        resizeObserver.observe(container)
-      }
-      catch {
+        if (!active || target?.closest('.tour-map-marker'))
+          return
+        setDropping(false)
+        drop([event.lngLat.lng, event.lngLat.lat])
+      })
+      created.on('error', () => {
+        if (!disposed && !created.isStyleLoaded())
+          setMapState('error')
+      })
+      timeout = setTimeout(() => {
         if (!disposed)
           setMapState('error')
-      }
-    })()
+      }, 16000)
+      resizeObserver = new ResizeObserver(() => created.resize())
+      resizeObserver.observe(container)
+    })().catch(() => {
+      if (!disposed)
+        setMapState('error')
+    })
 
     return () => {
       disposed = true
@@ -204,7 +204,7 @@ export function ItineraryMap({
       return
     let cancelled = false
 
-    void import('maplibre-gl').then(({ Marker }) => {
+    void loadMapLibre().then(({ Marker }) => {
       if (cancelled)
         return
       const markers = markersRef.current

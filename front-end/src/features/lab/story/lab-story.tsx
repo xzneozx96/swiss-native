@@ -5,6 +5,7 @@
  * changed until a direction is chosen.
  */
 import type { StoryLanguage } from './copy'
+import type { CINEMATIC_COUNT, DIRECTION_COUNT } from './counts'
 
 import { Link } from '@tanstack/react-router'
 import { useEffect } from 'react'
@@ -27,15 +28,19 @@ export interface StorySearch {
   lang: StoryLanguage
 }
 
-export const CINEMATIC = [
+const CINEMATIC = [
   CinematicOriginal,
   CinematicScrollOver,
   CinematicMagazine,
   CinematicReel,
   CinematicLetterbox,
-]
+] as const satisfies { length: typeof CINEMATIC_COUNT }
 
-export const DIRECTIONS = [StoryJournal, CINEMATIC, StoryDay] as const
+const DIRECTIONS = [
+  StoryJournal,
+  CINEMATIC,
+  StoryDay,
+] as const satisfies { length: typeof DIRECTION_COUNT }
 
 const CINEMATIC_DIR = 2
 

@@ -105,7 +105,7 @@ await scenario('S2 sales period taps', 'owner', '/store/sales', async (p) => {
 
   for (let i = 0; i < n; i++) { await chips.nth(i).click({ force: true }).catch(() => {}); await p.waitForTimeout(250) }
 })
-await scenario('S3 save 3 favourites on /gifts', 'guest', '/gifts', async (p) => {
+await scenario('S3 save 3 favourites on /tours', 'guest', '/tours', async (p) => {
   const save = p.locator('button[aria-label^=\'Save \']')
 
   for (let i = 0; i < 3; i++) { await save.nth(i).click(); await p.waitForTimeout(300) }
@@ -114,20 +114,20 @@ await scenario('S4 type in /search (12 keys)', 'guest', '/search', async (p) => 
   const input = p.locator('input').first()
 
   await input.click()
-  await input.pressSequentially('victorinox ch', { delay: 40 })
+  await input.pressSequentially('furka pa', { delay: 40 })
   await p.waitForTimeout(500)
 })
-await scenario('S5 store orders: switch tabs', 'owner', '/store/orders', async (p) => {
+await scenario('S5 store products: switch tabs', 'owner', '/store/products/tours', async (p) => {
   const tabs = p.locator('[role=\'tab\']')
   const n = Math.min(await tabs.count(), 5)
 
   for (let i = 0; i < n; i++) { await tabs.nth(i).click({ force: true }).catch(() => {}); await p.waitForTimeout(250) }
 })
-await scenario('S6 scroll a story (24 steps)', 'guest', '/stories/musegg-morning', async (p) => {
+await scenario('S6 scroll a pass page (24 steps)', 'guest', '/passes/furka', async (p) => {
   for (let i = 1; i <= 24; i++) { await p.evaluate(y => window.scrollBy(0, y), 160); await p.waitForTimeout(40) }
 })
 await scenario('S7 planner streams first answer', 'guest', '/plan', async (p) => {
-  await p.getByText('Plan my day in Luzerne').first().click()
+  await p.getByText('Plan my ride over the passes').first().click()
   await p.waitForTimeout(9000)
 })
 await browser.close()

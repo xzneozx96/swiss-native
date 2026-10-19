@@ -40,6 +40,8 @@ declare module '@tanstack/react-router' {
 const rootElement = document.getElementById('root')!
 
 if (!rootElement.innerHTML) {
+  // Start on the route's chunks now, not after the mount, so they download alongside the German chunk.
+  void router.load().catch(console.error)
   // Whoever saved German waits for its chunk before the first paint; everyone else already has English.
   // If German cannot be fetched the app still starts, in English.
   void loadDictionary(storedLanguage())

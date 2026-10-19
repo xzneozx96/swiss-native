@@ -17,9 +17,11 @@ import { readStored, writeStored } from '@/lib/storage'
 
 export type Language = 'en' | 'de'
 
-type Dictionary = Record<MessageKey, string>
+export type Dictionary = Record<MessageKey, string>
 
 const loaded: Partial<Record<Language, Dictionary>> = { en }
+const loading: Partial<Record<Language, Promise<Dictionary>>> = {}
+const loadingForText: Partial<Record<Language, Promise<Dictionary>>> = {}
 const loaders: Record<Language, () => Promise<Dictionary>> = {
   en: () => Promise.resolve(en),
   de: () => import('@/i18n/de').then(module => module.de),
@@ -27,13 +29,27 @@ const loaders: Record<Language, () => Promise<Dictionary>> = {
 const intlLocales: Record<Language, IntlLocale> = { en: 'en-CH', de: 'de-CH' }
 const STORAGE_KEY = 'sk.language'
 
-/** Only English ships in the first load. German is its own chunk, fetched once it is needed. */
+/** Only English ships in the first load. German is its own chunk, fetched once it is needed. A failed fetch is forgotten, so the next call tries again. */
 export function loadDictionary(language: Language): Promise<Dictionary> {
-  return loaders[language]().then((dictionary) => {
-    loaded[language] = dictionary
+  loading[language] ??= loaders[language]().then(
+    (dictionary) => {
+      loaded[language] = dictionary
 
-    return dictionary
-  })
+      return dictionary
+    },
+    (error: unknown) => {
+      delete loading[language]
+      throw error
+    },
+  )
+
+  return loading[language]
+}
+
+function loadForText(language: Language): Promise<Dictionary> {
+  loadingForText[language] ??= loadDictionary(language).catch(() => en)
+
+  return loadingForText[language]
 }
 
 export function storedLanguage(): Language {
@@ -126,4 +142,18 @@ export function useLocale(): LocaleContextValue {
   }
 
   return context
+}
+
+/**
+ * The messages of any language, for text that keeps its own language whatever the UI shows (a
+ * logged email). Suspends while that language loads; English stands in if it cannot be fetched.
+ */
+export function useMessages(language: Language): Dictionary {
+  const dictionary = loaded[language]
+
+  // Once a language was waited for, it is always read through use(): React replays a suspended
+  // component and expects the same use() call again.
+  return dictionary && !loadingForText[language]
+    ? dictionary
+    : use(loadForText(language))
 }

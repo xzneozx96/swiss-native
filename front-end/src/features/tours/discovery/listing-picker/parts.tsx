@@ -163,17 +163,26 @@ export function MonthChips({
 
     if (!el)
       return
-    setEdges({
-      start: el.scrollLeft > 2,
-      end: el.scrollLeft + el.clientWidth < el.scrollWidth - 2,
-    })
+    const start = el.scrollLeft > 2
+    const end = el.scrollLeft + el.clientWidth < el.scrollWidth - 2
+
+    // Scrolling fires this many times a second; only a changed edge re-renders.
+    setEdges(prev =>
+      prev.start === start && prev.end === end ? prev : { start, end },
+    )
   }
 
+  // The observer's first report is the initial measure.
   useEffect(() => {
-    measure()
-    window.addEventListener('resize', measure)
+    const el = ref.current
 
-    return () => window.removeEventListener('resize', measure)
+    if (!el)
+      return
+    const observer = new ResizeObserver(measure)
+
+    observer.observe(el)
+
+    return () => observer.disconnect()
   }, [months.length])
 
   // Keep the active chip in view when the month changes from the grid.

@@ -164,12 +164,12 @@ function Halves({
     = booking.slot?.day === day.day
       ? booking.slot
       : day.slots.find(s => s.seats > 0)
-  const [half, setHalf] = useState<Half>(
+  const [half, setHalf] = useState<Half>(() =>
     anchor && !isMorning(anchor) ? 'pm' : 'am',
   )
   const rows = Math.ceil(Math.max(morning.length, afternoon.length) / COLS)
   const shown = half === 'am' ? morning : afternoon
-  const refs = useRef<Record<Half, HTMLButtonElement | null>>({
+  const buttonsRef = useRef<Record<Half, HTMLButtonElement | null>>({
     am: null,
     pm: null,
   })
@@ -192,7 +192,7 @@ function Halves({
       = keys[(keys.indexOf(half) + step + keys.length) % keys.length] ?? half
 
     setHalf(next)
-    refs.current[next]?.focus()
+    buttonsRef.current[next]?.focus()
   }
 
   return (
@@ -206,7 +206,7 @@ function Halves({
             <button
               key={key}
               ref={(el) => {
-                refs.current[key] = el
+                buttonsRef.current[key] = el
               }}
               aria-checked={active}
               className={pillClass(active, full)}

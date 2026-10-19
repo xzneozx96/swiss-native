@@ -52,22 +52,73 @@ export function bookingAmountDue(booking: TourBooking): number {
     ? Math.max(0, booking.firstAmount - bookingPaid(booking))
     : bookingBalance(booking)
 }
+// Seat counts run once per departure on schedules and pickers, so the lookups are indexed once
+// per array. Keyed on the arrays, not on `data`: a draft keystroke makes a new `data` but keeps
+// both arrays, and any change to departures or bookings replaces its array.
+const departureIndexes = new WeakMap<
+  readonly Departure[],
+  Map<string, Departure>
+>()
+const bookingIndexes = new WeakMap<
+  readonly TourBooking[],
+  Map<string, TourBooking[]>
+>()
+
+function findDeparture(
+  data: TourData,
+  departureId: string,
+): Departure | undefined {
+  let index = departureIndexes.get(data.departures)
+
+  if (!index) {
+    index = new Map()
+    for (const departure of data.departures) {
+      if (!index.has(departure.id))
+        index.set(departure.id, departure)
+    }
+    departureIndexes.set(data.departures, index)
+  }
+
+  return index.get(departureId)
+}
+/** The bookings that hold places on a departure (any night of a stay), in booking order. */
+export function departureBookings(
+  data: TourData,
+  departureId: string,
+): readonly TourBooking[] {
+  let index = bookingIndexes.get(data.bookings)
+
+  if (!index) {
+    index = new Map()
+    for (const booking of data.bookings) {
+      for (const id of bookingNights(booking)) {
+        const list = index.get(id)
+
+        if (!list)
+          index.set(id, [booking])
+        else if (list.at(-1) !== booking)
+          list.push(booking)
+      }
+    }
+    bookingIndexes.set(data.bookings, index)
+  }
+
+  return index.get(departureId) ?? []
+}
 export function availableSeats(
   data: TourData,
   departureId: string,
   now: Date,
 ): number {
-  const departure = data.departures.find(d => d.id === departureId)
+  const departure = findDeparture(data, departureId)
 
   if (!departure)
     return 0
-  const held = data.bookings
-    .filter(
-      b =>
-        bookingNights(b).includes(departureId)
-        && (b.status === 'pending_payment'
-          ? Date.parse(b.holdUntil) > now.getTime()
-          : !['expired', 'cancelled'].includes(b.status)),
+  const held = departureBookings(data, departureId)
+    .filter(b =>
+      b.status === 'pending_payment'
+        ? Date.parse(b.holdUntil) > now.getTime()
+        : !['expired', 'cancelled'].includes(b.status),
     )
     .reduce((sum, b) => sum + participantSeats(b), 0)
 
@@ -90,14 +141,11 @@ export function upcomingDepartures(
   now: Date,
 ): Departure[] {
   return data.departures
-    .filter(
-      d =>
-        d.tourId === tourId
-        && !d.closed
-        && !d.cancelledAt
-        && Date.parse(d.startsAt) > now.getTime(),
-    )
-    .sort((a, b) => Date.parse(a.startsAt) - Date.parse(b.startsAt))
+    .filter(d => d.tourId === tourId && !d.closed && !d.cancelledAt)
+    .map(departure => ({ departure, start: Date.parse(departure.startsAt) }))
+    .filter(({ start }) => start > now.getTime())
+    .sort((a, b) => a.start - b.start)
+    .map(({ departure }) => departure)
 }
 /** The soonest upcoming departure that still has a free seat. */
 export function nextAvailableDeparture(
@@ -118,10 +166,8 @@ export function departureSeats(
   departureId: string,
   now: Date,
 ): { confirmed: number, held: number, available: number, capacity: number } {
-  const bookings = data.bookings.filter(b =>
-    bookingNights(b).includes(departureId),
-  )
-  const seats = (list: TourBooking[]) =>
+  const bookings = departureBookings(data, departureId)
+  const seats = (list: readonly TourBooking[]) =>
     list.reduce((sum, b) => sum + participantSeats(b), 0)
 
   return {
@@ -138,7 +184,7 @@ export function departureSeats(
       ),
     ),
     available: availableSeats(data, departureId, now),
-    capacity: data.departures.find(d => d.id === departureId)?.capacity ?? 0,
+    capacity: findDeparture(data, departureId)?.capacity ?? 0,
   }
 }
 export type BalanceOverdue

@@ -41,11 +41,15 @@ export function ChainOfThoughtHeader({
 }) {
   return (
     <CollapsibleTrigger className="group inline-flex max-w-full cursor-pointer items-center gap-1.5 rounded-md py-1 text-[13px] text-muted outline-none transition-colors hover:text-foreground focus-visible:focus-ring">
-      <SparkleIcon
-        aria-hidden
-        className={clsx('shrink-0', isStreaming && 'animate-pulse text-accent')}
-        size={15}
-      />
+      <span
+        className={clsx('inline-flex shrink-0', isStreaming && 'animate-pulse')}
+      >
+        <SparkleIcon
+          aria-hidden
+          className={isStreaming ? 'text-accent' : undefined}
+          size={15}
+        />
+      </span>
       <span
         className={clsx('truncate font-medium', isStreaming && 'text-shimmer')}
       >

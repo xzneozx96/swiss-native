@@ -1,10 +1,11 @@
 import { Link } from '@tanstack/react-router'
+import { Suspense } from 'react'
 
 import { ChevronRightIcon, EmailIcon } from '@/components/icons'
 
 import { useLocale } from '@/contexts/locale-context'
 import { useDemoSelector } from '@/features/demo'
-import { renderMail } from '@/features/notifications/components/render-mail'
+import { MailSubject } from '@/features/notifications/components/mail-subject'
 import { formatOrderDateTime } from '@/lib/dates'
 import {
   itemClass,
@@ -58,7 +59,9 @@ export function NotificationsPanel({
                   <>
                     <span className="flex min-w-0 flex-1 flex-col">
                       <span className="truncate font-medium" lang={mail.language}>
-                        {renderMail(mail).subject}
+                        <Suspense fallback={'\u00A0'}>
+                          <MailSubject mail={mail} />
+                        </Suspense>
                       </span>
                       <span className="text-sm text-muted tabular-nums">
                         {formatOrderDateTime(mail.at, intlLocale)}

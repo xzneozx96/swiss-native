@@ -2,7 +2,8 @@ import type { LovesSearch } from '@/features/lab/loves/lab-loves'
 
 import { createFileRoute } from '@tanstack/react-router'
 
-import { IDEAS, LabLoves } from '@/features/lab/loves/lab-loves'
+import { IDEA_COUNT } from '@/features/lab/loves/counts'
+import { LabLoves } from '@/features/lab/loves/lab-loves'
 
 // Throwaway design lab: five ideas for Erich's three loves on the story home.
 export const Route = createFileRoute('/_guest/lab/loves')({
@@ -11,7 +12,7 @@ export const Route = createFileRoute('/_guest/lab/loves')({
 
     return {
       idea:
-        Number.isInteger(idea) && idea >= 1 && idea <= IDEAS.length ? idea : 1,
+        Number.isInteger(idea) && idea >= 1 && idea <= IDEA_COUNT ? idea : 1,
       lang: search.lang === 'de' ? 'de' : 'en',
     }
   },

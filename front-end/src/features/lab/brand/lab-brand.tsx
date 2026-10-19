@@ -4,6 +4,7 @@
  * "In context" renders the idea inside the real home-page stack at its recommended spot.
  */
 import type { BrandCopy, LabLanguage } from './copy'
+import type { IDEA_COUNT } from './counts'
 import type { Round2Copy } from './round2-copy'
 
 import { Link } from '@tanstack/react-router'
@@ -96,7 +97,7 @@ const slotName: Record<Slot, { en: string, de: string }> = {
   },
 }
 
-const IDEAS: Record<Piece, Idea[]> = {
+const IDEAS: { [P in Piece]: Idea[] & { length: (typeof IDEA_COUNT)[P] } } = {
   usp: [
     {
       name: { en: 'Faithful strip', de: 'Getreue Leiste' },
@@ -295,10 +296,6 @@ const IDEAS: Record<Piece, Idea[]> = {
       render: (c, _, r) => <QuoteAirmail c={c} r={r} />,
     },
   ],
-}
-
-export function ideaCount(piece: Piece) {
-  return IDEAS[piece].length
 }
 
 function Segment<T extends string | number | boolean>({

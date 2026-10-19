@@ -5,6 +5,7 @@
  * tours chapter. The real home does not show this block until an idea is chosen.
  */
 import type { LovesLanguage } from './copy'
+import type { IDEA_COUNT } from './counts'
 
 import { Link } from '@tanstack/react-router'
 
@@ -25,13 +26,13 @@ export interface LovesSearch {
   lang: LovesLanguage
 }
 
-export const IDEAS = [
+const IDEAS = [
   IdeaTags,
   IdeaStamps,
   IdeaPhotos,
   IdeaSentence,
   IdeaOdometer,
-]
+] as const satisfies { length: typeof IDEA_COUNT }
 
 function Segment<T extends string | number>({
   label,

@@ -16,7 +16,7 @@ function photoSrc(avatar: string) {
  */
 export function GuestAvatar({
   guest,
-  photo = guest.avatar,
+  photo: draft,
   className = 'size-12 text-base',
 }: {
   guest: Pick<Guest, 'name' | 'avatar'>
@@ -25,6 +25,7 @@ export function GuestAvatar({
   /** Size. */
   className?: string
 }) {
+  const photo = draft ?? guest.avatar
   const src = (photo && photoSrc(photo)) || avatarUrl(guest.name)
 
   return (
