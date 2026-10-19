@@ -22,6 +22,8 @@ export type Dictionary = Record<MessageKey, string>
 const loaded: Partial<Record<Language, Dictionary>> = { en }
 const loading: Partial<Record<Language, Promise<Dictionary>>> = {}
 const loadingForText: Partial<Record<Language, Promise<Dictionary>>> = {}
+const failedAt: Partial<Record<Language, number>> = {}
+const RETRY_AFTER_MS = 10_000
 const loaders: Record<Language, () => Promise<Dictionary>> = {
   en: () => Promise.resolve(en),
   de: () => import('@/i18n/de').then(module => module.de),
@@ -34,6 +36,9 @@ export function loadDictionary(language: Language): Promise<Dictionary> {
   loading[language] ??= loaders[language]().then(
     (dictionary) => {
       loaded[language] = dictionary
+      // A mail row that fell back to English reads the real dictionary from now on.
+      delete loadingForText[language]
+      delete failedAt[language]
 
       return dictionary
     },
@@ -46,8 +51,19 @@ export function loadDictionary(language: Language): Promise<Dictionary> {
   return loading[language]
 }
 
+/** English stands in after a failed fetch; once RETRY_AFTER_MS has passed, the next read tries German again. */
 function loadForText(language: Language): Promise<Dictionary> {
-  loadingForText[language] ??= loadDictionary(language).catch(() => en)
+  const failed = failedAt[language]
+
+  if (failed !== undefined && Date.now() - failed > RETRY_AFTER_MS) {
+    delete failedAt[language]
+    delete loadingForText[language]
+  }
+  loadingForText[language] ??= loadDictionary(language).catch(() => {
+    failedAt[language] = Date.now()
+
+    return en
+  })
 
   return loadingForText[language]
 }

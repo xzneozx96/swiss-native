@@ -15,7 +15,7 @@
  */
 import type { IconComponent } from '@/components/icons'
 
-import { lazy, Suspense, useEffect, useId, useRef, useState } from 'react'
+import { useEffect, useId, useRef, useState } from 'react'
 
 import {
   ArrowRightIcon,
@@ -28,11 +28,7 @@ import {
 } from '@/components/icons'
 import { useLocale } from '@/contexts/locale-context'
 import { shop } from '@/features/catalog/seed'
-
-const loadSheet = () => import('@/features/tours/discovery/listing-booking-sheet')
-const ListingBookingSheet = lazy(() =>
-  loadSheet().then(module => ({ default: module.ListingBookingSheet })),
-)
+import { LazyBookingSheet, preloadBookingSheet } from '@/features/tours/discovery/lazy-booking-sheet'
 
 /**
  * The amenities a rider looks for, shown as icons. Flip `confirmed` once the client
@@ -236,7 +232,6 @@ export function StayKey() {
   const [flipped, setFlipped] = useState(false)
   const [booking, setBooking] = useState(false)
   // The sheet mounts on the first Book tap and then stays, so it can play its closing slide.
-  const [sheetMounted, setSheetMounted] = useState(false)
   // Each swing alternates between two identical keyframes, so a new one always restarts.
   const [swing, setSwing] = useState(0)
   const stageRef = useRef<HTMLDivElement>(null)
@@ -435,12 +430,9 @@ export function StayKey() {
         <button
           className="flex h-12 items-center justify-center gap-2 rounded-full bg-accent px-5 text-sm font-semibold text-accent-foreground outline-none focus-visible:ring-2 focus-visible:ring-[#33312E] focus-visible:ring-offset-2 active:scale-[0.98]"
           type="button"
-          onClick={() => {
-            setSheetMounted(true)
-            setBooking(true)
-          }}
-          onFocus={loadSheet}
-          onPointerEnter={loadSheet}
+          onClick={() => setBooking(true)}
+          onFocus={preloadBookingSheet}
+          onPointerEnter={preloadBookingSheet}
         >
           {c.cta}
           <ArrowRightIcon size={16} />
@@ -453,15 +445,11 @@ export function StayKey() {
         </a>
       </div>
 
-      {sheetMounted && (
-        <Suspense fallback={null}>
-          <ListingBookingSheet
-            isOpen={booking}
-            kind="stay"
-            onClose={() => setBooking(false)}
-          />
-        </Suspense>
-      )}
+      <LazyBookingSheet
+        isOpen={booking}
+        kind="stay"
+        onClose={() => setBooking(false)}
+      />
     </section>
   )
 }

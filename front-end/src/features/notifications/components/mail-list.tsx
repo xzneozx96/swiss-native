@@ -1,5 +1,7 @@
 import type { Mail } from '../types'
 
+import { Suspense } from 'react'
+
 import { useMessages } from '@/contexts/locale-context'
 import { useDemoSelector } from '@/features/demo'
 import { dateTimeFormat } from '@/lib/format'
@@ -27,7 +29,14 @@ export function MailList({ items }: { items: Mail[] }) {
               ? `${guest.name} <${String(mail.params.email ?? guest.email)}>`
               : 'Guest'
 
-        return <MailItem key={mail.id} mail={mail} open={i === 0} to={to} />
+        return (
+          <Suspense
+            key={mail.id}
+            fallback={<li aria-busy="true" className="h-14 rounded-2xl border border-separator bg-surface" />}
+          >
+            <MailItem mail={mail} open={i === 0} to={to} />
+          </Suspense>
+        )
       })}
     </ul>
   )

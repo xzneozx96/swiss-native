@@ -48,32 +48,34 @@ export function MailPanel() {
                 Emails are not sent in the prototype. Each one appears here, in
                 the recipient’s language, newest first.
               </p>
-              <Suspense fallback={null}>
-                <Tabs className="w-full">
-                  <Tabs.ListContainer>
-                    <Tabs.List aria-label="Recipient">
-                      <Tabs.Tab id="guest">
-                        Guest (
-                        {guestMail.length}
-                        )
-                        <Tabs.Indicator />
-                      </Tabs.Tab>
-                      <Tabs.Tab id="staff">
-                        Staff (
-                        {staffMail.length}
-                        )
-                        <Tabs.Indicator />
-                      </Tabs.Tab>
-                    </Tabs.List>
-                  </Tabs.ListContainer>
-                  <Tabs.Panel className="pt-3" id="guest">
+              <Tabs className="w-full">
+                <Tabs.ListContainer>
+                  <Tabs.List aria-label="Recipient">
+                    <Tabs.Tab id="guest">
+                      Guest (
+                      {guestMail.length}
+                      )
+                      <Tabs.Indicator />
+                    </Tabs.Tab>
+                    <Tabs.Tab id="staff">
+                      Staff (
+                      {staffMail.length}
+                      )
+                      <Tabs.Indicator />
+                    </Tabs.Tab>
+                  </Tabs.List>
+                </Tabs.ListContainer>
+                <Tabs.Panel className="pt-3" id="guest">
+                  <Suspense fallback={null}>
                     <MailList items={guestMail} />
-                  </Tabs.Panel>
-                  <Tabs.Panel className="pt-3" id="staff">
+                  </Suspense>
+                </Tabs.Panel>
+                <Tabs.Panel className="pt-3" id="staff">
+                  <Suspense fallback={null}>
                     <MailList items={staffMail} />
-                  </Tabs.Panel>
-                </Tabs>
-              </Suspense>
+                  </Suspense>
+                </Tabs.Panel>
+              </Tabs>
             </Drawer.Body>
           </Drawer.Dialog>
         </Drawer.Content>

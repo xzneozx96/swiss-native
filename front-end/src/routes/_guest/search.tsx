@@ -5,21 +5,16 @@ import {
   useNavigate,
   useRouter,
 } from '@tanstack/react-router'
-import { lazy, Suspense, useState } from 'react'
+import { useState } from 'react'
 
 import { useLocale } from '@/contexts/locale-context'
 import { useDemoSelector } from '@/features/demo'
 import { GlobalSearch } from '@/features/search/components/global-search'
+import { LazyBookingSheet } from '@/features/tours/discovery/lazy-booking-sheet'
 import { durationText } from '@/features/tours/lib/duration'
 import { isTour } from '@/features/tours/lib/selectors'
 import { formatMoney } from '@/lib/format'
 import { pickText } from '@/lib/localized'
-
-const ListingBookingSheet = lazy(() =>
-  import('@/features/tours/discovery/listing-booking-sheet').then(module => ({
-    default: module.ListingBookingSheet,
-  })),
-)
 
 // Global search from the discovery home (UX proposal: search is not in the spec).
 export const Route = createFileRoute('/_guest/search')({
@@ -101,13 +96,11 @@ function SearchPage() {
           void navigate({ search: { q: value || undefined }, replace: true })}
       />
       {booking && (
-        <Suspense fallback={null}>
-          <ListingBookingSheet
-            isOpen
-            kind={booking}
-            onClose={() => setBooking(null)}
-          />
-        </Suspense>
+        <LazyBookingSheet
+          isOpen
+          kind={booking}
+          onClose={() => setBooking(null)}
+        />
       )}
     </>
   )

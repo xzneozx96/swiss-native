@@ -11,17 +11,13 @@
  * a row it stays in the photo column, passing behind the photos. Bees are planned from
  * 2027; the first-season dates are bookable from the sheet the main button opens.
  */
-import { lazy, Suspense, useLayoutEffect, useRef, useState } from 'react'
+import { useLayoutEffect, useRef, useState } from 'react'
 
 import { ArrowRightIcon } from '@/components/icons'
 import { useLocale } from '@/contexts/locale-context'
 import { shop } from '@/features/catalog/seed'
+import { LazyBookingSheet, preloadBookingSheet } from '@/features/tours/discovery/lazy-booking-sheet'
 import { photoUrl } from '@/lib/photos'
-
-const loadSheet = () => import('@/features/tours/discovery/listing-booking-sheet')
-const ListingBookingSheet = lazy(() =>
-  loadSheet().then(module => ({ default: module.ListingBookingSheet })),
-)
 
 const copy = {
   en: {
@@ -322,7 +318,6 @@ export function ExperienceFlight() {
   const [geo, setGeo] = useState<Geometry | null>(null)
   const [booking, setBooking] = useState(false)
   // The sheet mounts on the first Book tap and then stays, so it can play its closing slide.
-  const [sheetMounted, setSheetMounted] = useState(false)
 
   // Re-measure on every size change of the stage (width, wrapping copy, web fonts).
   useLayoutEffect(() => {
@@ -471,12 +466,9 @@ export function ExperienceFlight() {
         <button
           className="flex h-12 items-center justify-center gap-2 rounded-full bg-accent px-5 text-sm font-semibold text-accent-foreground outline-none focus-visible:ring-2 focus-visible:ring-[#F1EEE4] active:scale-[0.98]"
           type="button"
-          onClick={() => {
-            setSheetMounted(true)
-            setBooking(true)
-          }}
-          onFocus={loadSheet}
-          onPointerEnter={loadSheet}
+          onClick={() => setBooking(true)}
+          onFocus={preloadBookingSheet}
+          onPointerEnter={preloadBookingSheet}
         >
           {c.cta}
           <ArrowRightIcon size={16} />
@@ -492,15 +484,11 @@ export function ExperienceFlight() {
         </p>
       </div>
 
-      {sheetMounted && (
-        <Suspense fallback={null}>
-          <ListingBookingSheet
-            isOpen={booking}
-            kind="experience"
-            onClose={() => setBooking(false)}
-          />
-        </Suspense>
-      )}
+      <LazyBookingSheet
+        isOpen={booking}
+        kind="experience"
+        onClose={() => setBooking(false)}
+      />
     </section>
   )
 }
