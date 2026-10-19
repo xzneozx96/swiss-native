@@ -66,3 +66,32 @@ for (const [language, shown, hidden] of [['en', 'Explore', 'Entdecken'], ['de', 
     await expect(page.getByText(hidden, { exact: true })).toHaveCount(0)
   })
 }
+
+test('a booking sheet whose chunk cannot load closes again instead of breaking the page @smoke', async ({ page }) => {
+  const errors: string[] = []
+
+  page.on('pageerror', error => errors.push(error.message))
+  await page.route('**/listing-booking-sheet*', route => route.abort())
+  await page.goto('/#/')
+
+  const book = page.getByRole('button', { name: 'Book a stay' })
+
+  await book.scrollIntoViewIfNeeded()
+  await book.click()
+  await page.waitForTimeout(500)
+
+  await expect(book).toBeVisible()
+  await expect(page.getByRole('dialog')).toHaveCount(0)
+  expect(errors).toEqual([])
+})
+
+test('the booking sheet opens when its chunk loads @smoke', async ({ page }) => {
+  await page.goto('/#/')
+
+  const book = page.getByRole('button', { name: 'Book a stay' })
+
+  await book.scrollIntoViewIfNeeded()
+  await book.click()
+
+  await expect(page.getByRole('dialog')).toBeVisible()
+})
